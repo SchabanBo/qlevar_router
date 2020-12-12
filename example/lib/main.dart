@@ -1,3 +1,4 @@
+import 'package:example/childrens.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
@@ -6,7 +7,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final router = QPages(routes: [
@@ -16,11 +16,7 @@ class MyApp extends StatelessWidget {
           page: UserScreen(
             userId: '2',
           )),
-      QRoute(
-          path: '/pref',
-          page: UserPreferencesScreen(
-            userId: '1',
-          )),
+      QRoute(path: '/settings', page: SettingsScreen()),
     ]);
     return QRouter(
         child: MaterialApp.router(
@@ -43,19 +39,12 @@ class HomeScreen extends StatelessWidget {
               'Home Page',
               style: Theme.of(context).textTheme.headline3,
             ),
-            OutlinedButton(
-              child: Text('Go to User'),
+            TextButton(
+              child: Text('To User'),
               onPressed: () {
                 QRouter.of(context).pushNamed('/user');
               },
             ),
-            OutlinedButton(
-              child: Text('Push using the Navigator'),
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
-              },
-            )
           ],
         ),
       ),
@@ -70,6 +59,12 @@ class UserScreen extends StatelessWidget {
     this.userId,
   });
 
+  final router = QPages(routes: [
+    QRoute(path: '/', page: Child1()),
+    QRoute(path: '/child2', page: Child2()),
+    QRoute(path: '/child3', page: Child3()),
+  ]);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,12 +77,25 @@ class UserScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.headline3,
             ),
             Text('ID: $userId'),
-            OutlinedButton(
-              child: Text('Preferences'),
+            TextButton(
+              child: Text('To Settings'),
               onPressed: () {
-                QRouter.of(context).pushNamed('/pref');
+                QRouter.of(context).pushNamed('/settings');
               },
             ),
+            Container(
+              height: 1,
+              width: double.infinity,
+              color: Colors.amber,
+            ),
+            Expanded(
+              child: QRouter(
+                pages: router,
+                child: Router(
+                  routerDelegate: router.routerDelegate,
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -95,13 +103,7 @@ class UserScreen extends StatelessWidget {
   }
 }
 
-class UserPreferencesScreen extends StatelessWidget {
-  final String userId;
-
-  UserPreferencesScreen({
-    this.userId,
-  });
-
+class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,10 +112,15 @@ class UserPreferencesScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'User Preferences',
+              'Settings',
               style: Theme.of(context).textTheme.headline3,
             ),
-            Text('ID $userId'),
+            TextButton(
+              child: Text('To Home'),
+              onPressed: () {
+                QRouter.of(context).replaceAllNamed(['/']);
+              },
+            ),
           ],
         ),
       ),
