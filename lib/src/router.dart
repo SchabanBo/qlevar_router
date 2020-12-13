@@ -1,64 +1,28 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'route.dart';
 import 'route_parser.dart';
+import 'types.dart';
 
-class QRouter extends InheritedWidget {
-  final QPages pages;
+class QRouterApp extends StatelessWidget {
+  final List<QRoute> routes;
+  final String initRoute;
+  final MaterialApp Function(MaterialApp) materialApp;
 
-  const QRouter({
-    Key key,
-    @required this.pages,
-    @required Widget child,
-  }) : super(key: key, child: child);
-
-  static QRouter of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<QRouter>();
-  }
-
-  void pushNamed(String routeName) {
-    pages.pushNamed(routeName);
-  }
-
-  void replaceNamed(String routeName) {
-    pages.replaceNamed(routeName);
-  }
-
-  void replaceAllNamed(List<String> routeNames) {
-    pages.replaceAllNamed(routeNames);
-  }
-
-  void pop() {
-    pages.pop();
-  }
+  const QRouterApp({
+    this.initRoute = '/',
+    @required this.routes,
+    @required this.materialApp,
+  });
 
   @override
-  bool updateShouldNotify(QRouter old) => pages != old.pages;
-}
+  Widget build(BuildContext context) {
+    final app = MaterialApp.router(
+      routerDelegate: QRouterDelegate(),
+      routeInformationParser: QRouteInformationParser(),
+    );
 
-class QPages {
-  final QRouterDelegate routerDelegate;
-  final QRouteInformationParser informationParser;
-
-  QPages({@required List<QRoute> routes})
-      : routerDelegate = QRouterDelegate(routes: routes),
-        informationParser = QRouteInformationParser();
-
-  void pushNamed(String routeName) {
-    routerDelegate.pushNamed(routeName);
-  }
-
-  void replaceNamed(String routeName) {
-    routerDelegate.replaceNamed(routeName);
-  }
-
-  void replaceAllNamed(List<String> routeNames) {
-    routerDelegate.replaceAllNamed(routeNames);
-  }
-
-  void pop() {
-    routerDelegate.pop();
+    return materialApp == null ? app : materialApp(app);
   }
 }
 
@@ -72,7 +36,9 @@ class QRouterDelegate extends RouterDelegate<QUri>
   final List<String> _stack = ['/'];
   final List<QRoute> routes;
   QRouterDelegate({this.routes, GlobalKey<NavigatorState> navigatorKey})
-      : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>();
+      : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
+    QR.notifer.addListener(notifyListeners);
+  }
 
   @override
   QUri get currentConfiguration => QUri(_stack.last);
@@ -80,15 +46,7 @@ class QRouterDelegate extends RouterDelegate<QUri>
   @override
   Widget build(BuildContext context) => Navigator(
         key: navigatorKey,
-        pages: [
-          ..._stack.map((routeName) {
-            return MaterialPage(
-                key: ValueKey(routeName),
-                child: routes
-                    .firstWhere((element) => element.path == routeName)
-                    .page);
-          }),
-        ],
+        pages: _pages,
         onPopPage: (route, result) {
           if (!route.didPop(result)) {
             return false;
@@ -106,6 +64,21 @@ class QRouterDelegate extends RouterDelegate<QUri>
       ..clear()
       ..add(configuration.uri.toString());
     return SynchronousFuture(null);
+  }
+
+  List<Page<dynamic>> get _pages {
+    switch (QR.notifer.state) {
+      case RouteState.Push:
+        _stack.add(QR.notifer.routes.first);
+        break;
+      default:
+    }
+    return _stack
+        .map((routeName) => MaterialPage(
+            key: ValueKey(routeName),
+            child:
+                routes.firstWhere((element) => element.path == routeName).page))
+        .toList();
   }
 
   void pushNamed(String name) {

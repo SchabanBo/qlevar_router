@@ -7,7 +7,7 @@ class Grandson1 extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Grandson 1',
+          'Grandson 1 $now',
           style: Theme.of(context).textTheme.headline3,
         ),
         TextButton(
@@ -27,7 +27,7 @@ class Grandson2 extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Grandson 2',
+          'Grandson 2 $now',
           style: Theme.of(context).textTheme.headline3,
         ),
         TextButton(
@@ -47,7 +47,7 @@ class Grandson3 extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Grandson 3',
+          'Grandson 3 $now',
           style: Theme.of(context).textTheme.headline3,
         ),
         TextButton(
@@ -59,4 +59,9 @@ class Grandson3 extends StatelessWidget {
       ],
     );
   }
+}
+
+String get now {
+  final n = DateTime.now();
+  return 'At: ${n.hour}:${n.minute}:${n.second}';
 }

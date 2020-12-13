@@ -1,6 +1,8 @@
-import 'package:example/childrens.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+
+import 'childrens.dart';
+import 'grandsons.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,7 +38,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'Home Page',
+              'Home Page $now',
               style: Theme.of(context).textTheme.headline3,
             ),
             TextButton(
@@ -73,7 +75,7 @@ class UserScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'User',
+              'User $now',
               style: Theme.of(context).textTheme.headline3,
             ),
             Text('ID: $userId'),
@@ -93,6 +95,9 @@ class UserScreen extends StatelessWidget {
                 pages: router,
                 child: Router(
                   routerDelegate: router.routerDelegate,
+                  routeInformationParser: router.informationParser,
+                  routeInformationProvider:
+                      QRouteInformationProvider(initialRoute: '/'),
                 ),
               ),
             )
@@ -112,7 +117,7 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'Settings',
+              'Settings $now',
               style: Theme.of(context).textTheme.headline3,
             ),
             TextButton(

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'route.dart';
+import 'types.dart';
 
 class QRouteInformationParser extends RouteInformationParser<QUri> {
   @override
@@ -9,4 +9,10 @@ class QRouteInformationParser extends RouteInformationParser<QUri> {
   @override
   RouteInformation restoreRouteInformation(QUri uri) =>
       RouteInformation(location: Uri.decodeComponent(uri.uri.toString()));
+}
+
+class QRouteInformationProvider extends PlatformRouteInformationProvider {
+  QRouteInformationProvider({String initialRoute})
+      : super(
+            initialRouteInformation: RouteInformation(location: initialRoute));
 }

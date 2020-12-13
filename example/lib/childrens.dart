@@ -1,5 +1,5 @@
-import 'package:example/grandsons.dart';
 import 'package:flutter/material.dart';
+import 'package:example/grandsons.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 class Child1 extends StatelessWidget {
@@ -8,7 +8,7 @@ class Child1 extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Child 1',
+          'Child 1 $now',
           style: Theme.of(context).textTheme.headline3,
         ),
         TextButton(
@@ -34,7 +34,7 @@ class Child2 extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Child 2',
+          'Child 2 $now',
           style: Theme.of(context).textTheme.headline3,
         ),
         TextButton(
@@ -53,6 +53,9 @@ class Child2 extends StatelessWidget {
             pages: router,
             child: Router(
               routerDelegate: router.routerDelegate,
+              routeInformationParser: router.informationParser,
+              routeInformationProvider:
+                  QRouteInformationProvider(initialRoute: '/'),
             ),
           ),
         )
@@ -67,7 +70,7 @@ class Child3 extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Child 3',
+          'Child 3 $now',
           style: Theme.of(context).textTheme.headline3,
         ),
         TextButton(
