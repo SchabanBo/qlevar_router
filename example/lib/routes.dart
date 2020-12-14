@@ -1,7 +1,7 @@
-import 'package:example/screens/items.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'screens/dashboard.dart';
+import 'screens/items.dart';
 import 'screens/store.dart';
 
 class AppRoutes {

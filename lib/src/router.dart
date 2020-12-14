@@ -73,8 +73,8 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
         childRouter = QRouter(
           routerDelegate: QRouterDelegate(
               key: match.route.path, initRoute: '${match.route.fullPath}/'),
-          // routeInformationParser: QRouteInformationParser(),
-          // routeInformationProvider: QRouteInformationProvider(),
+           routeInformationParser: QRouteInformationParser(),
+           routeInformationProvider: QRouteInformationProvider(),
         );
       }
       return MaterialPage(

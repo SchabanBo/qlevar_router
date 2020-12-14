@@ -6,8 +6,10 @@ import 'types.dart';
 class QRouteInformationParser extends RouteInformationParser<MatchRoute> {
   @override
   Future<MatchRoute> parseRouteInformation(
-          RouteInformation routeInformation) async =>
-      SynchronousFuture(QR.findMatch(routeInformation.location ?? '/'));
+      RouteInformation routeInformation) async {
+    QR.log('Searching for Route: ${routeInformation.location}');
+    return SynchronousFuture(QR.findMatch(routeInformation.location ?? '/'));
+  }
 
   @override
   RouteInformation restoreRouteInformation(MatchRoute match) =>

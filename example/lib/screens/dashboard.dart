@@ -17,7 +17,7 @@ class DashboardScreen extends StatelessWidget {
         actions: [
           FlatButton(
             onPressed: () {
-              QR.to('/dashboard/items');
+              QR.replace('/dashboard/items');
             },
             child: Text(
               'Items',
@@ -26,7 +26,7 @@ class DashboardScreen extends StatelessWidget {
           ),
           FlatButton(
             onPressed: () {
-              QR.to('/dashboard/orders');
+              QR.replace('/dashboard/orders');
             },
             child: Text(
               'Orders',
