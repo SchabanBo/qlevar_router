@@ -11,7 +11,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade800,
+        backgroundColor: Colors.green.shade800,
         title: Text('Dashboard $now'),
         centerTitle: true,
         actions: [
@@ -46,7 +46,16 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(width: 15),
         ],
       ),
-      body: childRouter,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+                'https://i1.wp.com/www.firstchoiceproduce.com/wp-content/uploads/2017/11/first-choice-home-fresh-produce.jpg?fit=1920%2C1080&ssl=1'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: childRouter,
+      ),
     );
   }
 }
@@ -54,6 +63,8 @@ class DashboardScreen extends StatelessWidget {
 class DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
-      child: Text('This is the dashboard content.' +
-          'Use the app bar to get to another page.'));
+      child: Text(
+          'This is the dashboard content. ' +
+              'Use the appbar to get to another page.',
+          style: TextStyle(color: Colors.white, fontSize: 35)));
 }

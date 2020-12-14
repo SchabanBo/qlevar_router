@@ -11,7 +11,7 @@ class ItemsScreen extends StatelessWidget {
         children: [
           Text(
             'Items',
-            style: TextStyle(color: Colors.green.shade900, fontSize: 35),
+            style: TextStyle(color: Colors.white, fontSize: 35),
           ),
           Wrap(
             children: database.items

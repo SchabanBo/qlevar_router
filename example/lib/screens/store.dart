@@ -26,7 +26,16 @@ class StoreScreen extends StatelessWidget {
           const SizedBox(width: 15),
         ],
       ),
-      body: childRouter,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+                'https://i.pinimg.com/originals/6c/55/bb/6c55bb682541f51946025683440b8d10.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: childRouter,
+      ),
     );
   }
 }
