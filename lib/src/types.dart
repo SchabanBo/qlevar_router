@@ -41,7 +41,11 @@ extension QRouterExtensions on QRInterface {
   static bool enableLog = true;
   RoutesTree get routesTree => _routesTree;
   MatchRoute findMatch(String route) => _routesTree.getMatch(route);
-  void to(String route) {}
+  void to(String route) {
+    final match = findMatch(route);
+    match.route.delegate.pushNamed(match);
+  }
+
   void replace(String route) {
     final match = findMatch(route);
     match.route.delegate.replaceNamed(match);

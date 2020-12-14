@@ -1,9 +1,12 @@
+import 'package:example/helpers/database.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'routes.dart';
 
 void main() {
+  Get.put(Database(), permanent: true);
   runApp(MyApp());
 }
 

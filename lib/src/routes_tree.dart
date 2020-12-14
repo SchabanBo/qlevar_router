@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 
 import 'router.dart';
@@ -13,8 +12,8 @@ class RoutesTree {
 
     for (var route in routes) {
       final fullPath = basePath + route.path;
-      final children = buildTree(route.children, basePath, route.path);
-      QR.log('"$fullPath" added with key "${route.path}');
+      final children = buildTree(route.children, fullPath, route.path);
+      QR.log('"$fullPath" added with key "$key"');
       result.add(_QRoute(
         page: route.page,
         path: route.path,
@@ -23,13 +22,13 @@ class RoutesTree {
         children: children,
       ));
     }
-
+    _routes.addAll(result);
     return result;
   }
 
   void setTree(List<QRoute> routes) {
     assert(_routes.isEmpty, 'Tree already set');
-    buildTree(routes, '', '/').forEach(_routes.add);
+    buildTree(routes, '', '/');
   }
 
   MatchRoute getMatch(String path) {
@@ -67,6 +66,10 @@ class _QRoute {
       this.children});
 
   bool get hasChidlren => children != null && children.isNotEmpty;
+
+  @override
+  String toString() =>
+      'key: $key, fullPath: $fullPath, path: $path, hasChidlren: $hasChidlren';
 }
 
 class MatchRoute {

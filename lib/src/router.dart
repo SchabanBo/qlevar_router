@@ -33,7 +33,8 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
   final GlobalKey<NavigatorState> navigatorKey;
   final List<MatchRoute> _stack = [];
   QRouterDelegate({@required String key, String initRoute})
-      : navigatorKey = GlobalKey<NavigatorState>() {
+      : navigatorKey = GlobalKey<NavigatorState>(),
+        assert(initRoute != null) {
     QR.routesTree.setDelegate(key, this);
     _stack.add(QR.findMatch(initRoute));
   }
@@ -66,10 +67,20 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
 
   List<Page<dynamic>> get _pages {
     return _stack.map((match) {
+      QRouter childRouter;
+
+      if (match.route.hasChidlren) {
+        childRouter = QRouter(
+          routerDelegate: QRouterDelegate(
+              key: match.route.path, initRoute: '${match.route.fullPath}/'),
+          // routeInformationParser: QRouteInformationParser(),
+          // routeInformationProvider: QRouteInformationProvider(),
+        );
+      }
       return MaterialPage(
           name: match.route.path,
           key: ValueKey(match.route.fullPath),
-          child: match.route.page(null));
+          child: match.route.page(childRouter));
     }).toList();
   }
 
