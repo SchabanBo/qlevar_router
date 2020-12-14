@@ -1,23 +1,25 @@
+
+import 'package:flutter/cupertino.dart';
+
+import 'router.dart';
 import 'types.dart';
 
 class RoutesTree {
-  final List<_QRoute> routes = [];
-  RoutesTree({List<QRoute> routes});
+  final List<_QRoute> _routes = [];
 
-  List<_QRoute> buildTree(List<QRoute> _routes, String basePath, int level) {
+  List<_QRoute> buildTree(List<QRoute> routes, String basePath, String key) {
     final result = <_QRoute>[];
-    if (_routes == null || _routes.isEmpty) return result;
+    if (routes == null || routes.isEmpty) return result;
 
-    for (var route in _routes) {
+    for (var route in routes) {
       final fullPath = basePath + route.path;
-      final children = buildTree(route.children, basePath, level++);
-
+      final children = buildTree(route.children, basePath, route.path);
+      QR.log('"$fullPath" added with key "${route.path}');
       result.add(_QRoute(
         page: route.page,
         path: route.path,
         fullPath: fullPath,
-        notifer: QRNotifer(),
-        level: level,
+        key: key,
         children: children,
       ));
     }
@@ -25,27 +27,52 @@ class RoutesTree {
     return result;
   }
 
-  void setTree(List<QRoute> _routes) {
-    assert(routes.isNotEmpty, 'Build already set');
-    buildTree(_routes, '/', 0).forEach(routes.add);
+  void setTree(List<QRoute> routes) {
+    assert(_routes.isEmpty, 'Tree already set');
+    buildTree(routes, '', '/').forEach(_routes.add);
+  }
+
+  MatchRoute getMatch(String path) {
+    assert(_routes.any((element) => element.fullPath == path),
+        'Path [$path] not set in the route tree');
+    final match = _routes.firstWhere((element) => element.fullPath == path);
+    QR.log('Route found ${match.fullPath}');
+    return MatchRoute(route: match);
+  }
+
+  List<_QRoute> getKey(String key) {
+    return _routes.where((element) => element.key == key).toList();
+  }
+
+  void setDelegate(String key, QRouterDelegate delegate) {
+    getKey(key).forEach((element) {
+      element.delegate = delegate;
+    });
   }
 }
 
 class _QRoute {
-  final int level;
+  final String key;
   final String path;
   final String fullPath;
-  final QRNotifer notifer;
+  QRouterDelegate delegate;
   final QRouteBuilder page;
   final List<_QRoute> children;
 
   _QRoute(
-      {this.level,
-      this.path,
-      this.fullPath,
-      this.notifer,
-      this.page,
+      {@required this.key,
+      @required this.path,
+      @required this.fullPath,
+      @required this.page,
       this.children});
 
   bool get hasChidlren => children != null && children.isNotEmpty;
+}
+
+class MatchRoute {
+  final _QRoute route;
+
+  MatchRoute({
+    @required this.route,
+  });
 }

@@ -2,46 +2,44 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'route_parser.dart';
+import 'routes_tree.dart';
 import 'types.dart';
 
 class QRouterApp extends StatelessWidget {
   final List<QRoute> routes;
   final String initRoute;
-  final MaterialApp Function(MaterialApp) materialApp;
 
   const QRouterApp({
     this.initRoute = '/',
     @required this.routes,
-    @required this.materialApp,
   });
 
   @override
   Widget build(BuildContext context) {
-    final app = MaterialApp.router(
-      routerDelegate: QRouterDelegate(),
+    QR.routesTree.setTree(routes);
+    return MaterialApp.router(
+      routerDelegate: QRouterDelegate(key: '/', initRoute: initRoute),
       routeInformationParser: QRouteInformationParser(),
     );
-
-    return materialApp == null ? app : materialApp(app);
   }
 }
 
-class QRouterDelegate extends RouterDelegate<QUri>
+class QRouterDelegate extends RouterDelegate<MatchRoute>
     with
         // ignore: prefer_mixin
         ChangeNotifier,
-        PopNavigatorRouterDelegateMixin<QUri> {
+        PopNavigatorRouterDelegateMixin<MatchRoute> {
   @override
   final GlobalKey<NavigatorState> navigatorKey;
-  final List<String> _stack = ['/'];
-  final List<QRoute> routes;
-  QRouterDelegate({this.routes, GlobalKey<NavigatorState> navigatorKey})
-      : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
-    QR.notifer.addListener(notifyListeners);
+  final List<MatchRoute> _stack = [];
+  QRouterDelegate({@required String key, String initRoute})
+      : navigatorKey = GlobalKey<NavigatorState>() {
+    QR.routesTree.setDelegate(key, this);
+    _stack.add(QR.findMatch(initRoute));
   }
 
   @override
-  QUri get currentConfiguration => QUri(_stack.last);
+  MatchRoute get currentConfiguration => _stack.last;
 
   @override
   Widget build(BuildContext context) => Navigator(
@@ -59,46 +57,44 @@ class QRouterDelegate extends RouterDelegate<QUri>
       );
 
   @override
-  Future<void> setNewRoutePath(QUri configuration) {
+  Future<void> setNewRoutePath(MatchRoute route) {
     _stack
       ..clear()
-      ..add(configuration.uri.toString());
+      ..add(route);
     return SynchronousFuture(null);
   }
 
   List<Page<dynamic>> get _pages {
-    switch (QR.notifer.state) {
-      case RouteState.Push:
-        _stack.add(QR.notifer.routes.first);
-        break;
-      default:
-    }
-    return _stack
-        .map((routeName) => MaterialPage(
-            key: ValueKey(routeName),
-            child:
-                routes.firstWhere((element) => element.path == routeName).page))
-        .toList();
+    return _stack.map((match) {
+      return MaterialPage(
+          name: match.route.path,
+          key: ValueKey(match.route.fullPath),
+          child: match.route.page(null));
+    }).toList();
   }
 
-  void pushNamed(String name) {
-    _stack.add(name);
+  void pushNamed(MatchRoute route) {
+    _stack.add(route);
     notifyListeners();
   }
 
-  void replaceNamed(String name) {
+  void replaceNamed(MatchRoute route) {
     _stack.removeLast();
-    _stack.add(name);
+    _stack.add(route);
     notifyListeners();
   }
 
-  void replaceAllNamed(List<String> routeNames) {
+  void replaceAllNamed(List<MatchRoute> routes) {
     _stack.clear();
-    _stack.addAll(routeNames);
+    _stack.addAll(routes);
     notifyListeners();
   }
 
   void pop() {
+    if (_stack.length <= 1) {
+      print('Stack has just one page. Cannot pop');
+      return;
+    }
     _stack.removeLast();
     notifyListeners();
   }

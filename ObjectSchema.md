@@ -23,6 +23,18 @@ It works in replace with getMaterialApp.router
 - replace
 - replaceAll
 
+## Example
+
+- Store `/store`
+  - Items `/store/items`
+    - Item `store/items/2`
+- Dashboard `/dashboard`
+  - ItemsManagement `/dashboard/items`
+    - Item `/dashboard/items/4`
+  - All Orders `/dashboard/orders`
+    - Details `/dashboard/orders/4`
+      - OrderItem `/dashboard/orders/3/items/4`
+
 ## Notes
 
 QRouter => MaterialApp => routeDelegate

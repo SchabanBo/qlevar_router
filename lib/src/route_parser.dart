@@ -1,14 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'routes_tree.dart';
 import 'types.dart';
 
-class QRouteInformationParser extends RouteInformationParser<QUri> {
+class QRouteInformationParser extends RouteInformationParser<MatchRoute> {
   @override
-  Future<QUri> parseRouteInformation(RouteInformation routeInformation) async =>
-      QUri(routeInformation.location);
+  Future<MatchRoute> parseRouteInformation(
+          RouteInformation routeInformation) async =>
+      SynchronousFuture(QR.findMatch(routeInformation.location ?? '/'));
 
   @override
-  RouteInformation restoreRouteInformation(QUri uri) =>
-      RouteInformation(location: Uri.decodeComponent(uri.uri.toString()));
+  RouteInformation restoreRouteInformation(MatchRoute match) =>
+      RouteInformation(location: match.route.fullPath);
 }
 
 class QRouteInformationProvider extends PlatformRouteInformationProvider {
