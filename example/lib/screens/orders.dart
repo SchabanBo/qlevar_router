@@ -19,6 +19,7 @@ class OrdersScreen extends StatelessWidget {
         Expanded(
           child: Row(
             children: [
+              const SizedBox(width: 15),
               Expanded(
                   child: ListView.builder(
                       shrinkWrap: true,
@@ -38,12 +39,14 @@ class OrdersScreen extends StatelessWidget {
                           ),
                         );
                       })),
+              const SizedBox(width: 15),
               Flexible(
                 child: AnimatedSwitcher(
                   duration: 500.milliseconds,
                   child: routerChild,
                 ),
               ),
+              const SizedBox(width: 15),
             ],
           ),
         ),
