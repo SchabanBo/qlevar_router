@@ -11,6 +11,8 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 5,
+        bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
         title: Text('Dashboard $now'),
         centerTitle: true,

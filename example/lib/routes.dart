@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'screens/dashboard.dart';
 import 'screens/items.dart';
+import 'screens/orders.dart';
 import 'screens/store.dart';
 
 class AppRoutes {
@@ -12,6 +14,13 @@ class AppRoutes {
         children: [
           QRoute(path: '/', page: (child) => DashboardContent()),
           QRoute(path: '/items', page: (child) => ItemsScreen()),
+          QRoute(
+              path: '/orders',
+              page: (child) => OrdersScreen(child),
+              children: [
+                QRoute(path: '/', page: (child) =>  Container()),
+                QRoute(path: '/2', page: (child) => OrderDetails()),
+              ]),
         ]),
     QRoute(path: '/store', page: (childRouter) => StoreScreen(childRouter)),
   ];

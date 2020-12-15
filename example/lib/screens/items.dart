@@ -25,9 +25,22 @@ class ItemsScreen extends StatelessWidget {
                             width: 150,
                             height: 150,
                           ),
-                          Text(
-                            e.name,
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          Container(
+                            width: 150,
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(8),
+                                  topRight: Radius.circular(8),
+                                )),
+                            child: Center(
+                              child: Text(
+                                e.name,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                              ),
+                            ),
                           )
                         ],
                       ),
