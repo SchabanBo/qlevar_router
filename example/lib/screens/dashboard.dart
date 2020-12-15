@@ -64,7 +64,7 @@ class DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
       child: Text(
-          'This is the dashboard content. ' +
-              'Use the appbar to get to another page.',
+          ""'This is the dashboard content. '
+              'Use the appbar to get to another page.'"",
           style: TextStyle(color: Colors.white, fontSize: 35)));
 }

@@ -4,11 +4,20 @@ import 'routes_tree.dart';
 import 'types.dart';
 
 class QRouteInformationParser extends RouteInformationParser<MatchRoute> {
+  final String _parent;
+  const QRouteInformationParser({@required String parent}) : _parent = parent;
+
   @override
   Future<MatchRoute> parseRouteInformation(
       RouteInformation routeInformation) async {
-    QR.log('Searching for Route: ${routeInformation.location}');
-    return SynchronousFuture(QR.findMatch(routeInformation.location ?? '/'));
+    QR.log(
+        // ignore: lines_longer_than_80_chars
+        'Searching for Route: ${routeInformation.location} for parent $_parent');
+    if (routeInformation.location == null) {
+      return SynchronousFuture(null);
+    }
+    return SynchronousFuture(
+        QR.findMatch('$_parent${routeInformation.location ?? '/'}'));
   }
 
   @override

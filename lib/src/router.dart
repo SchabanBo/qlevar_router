@@ -16,10 +16,13 @@ class QRouterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (routes.map((e) => e.path).contains('/') == false) {
+      routes.add(QRoute(path: '/', redirectGuard: (s) => initRoute));
+    }
     QR.routesTree.setTree(routes);
     return MaterialApp.router(
       routerDelegate: QRouterDelegate(key: '/', initRoute: initRoute),
-      routeInformationParser: QRouteInformationParser(),
+      routeInformationParser: QRouteInformationParser(parent: ''),
     );
   }
 }
@@ -59,6 +62,7 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
 
   @override
   Future<void> setNewRoutePath(MatchRoute route) {
+    QR.log('setNewRoutePath: ${route.route}');
     _stack
       ..clear()
       ..add(route);
@@ -73,8 +77,10 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
         childRouter = QRouter(
           routerDelegate: QRouterDelegate(
               key: match.route.path, initRoute: '${match.route.fullPath}/'),
-           routeInformationParser: QRouteInformationParser(),
-           routeInformationProvider: QRouteInformationProvider(),
+          routeInformationParser:
+              QRouteInformationParser(parent: match.route.fullPath),
+          routeInformationProvider: QRouteInformationProvider(
+              initialRoute: '/'),
         );
       }
       return MaterialPage(

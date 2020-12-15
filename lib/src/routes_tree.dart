@@ -17,6 +17,7 @@ class RoutesTree {
       result.add(_QRoute(
         page: route.page,
         path: route.path,
+        redirectGuard: route.redirectGuard ?? (s) => null,
         fullPath: fullPath,
         key: key,
         children: children,
@@ -35,6 +36,11 @@ class RoutesTree {
     assert(_routes.any((element) => element.fullPath == path),
         'Path [$path] not set in the route tree');
     final match = _routes.firstWhere((element) => element.fullPath == path);
+    final redrict = match.redirectGuard(path);
+    if (redrict != null) {
+      QR.log('Redirect to $redrict');
+      return getMatch(redrict);
+    }
     QR.log('Route found ${match.fullPath}');
     return MatchRoute(route: match);
   }
@@ -54,6 +60,7 @@ class _QRoute {
   final String key;
   final String path;
   final String fullPath;
+  final RedirectGuard redirectGuard;
   QRouterDelegate delegate;
   final QRouteBuilder page;
   final List<_QRoute> children;
@@ -61,6 +68,7 @@ class _QRoute {
   _QRoute(
       {@required this.key,
       @required this.path,
+      @required this.redirectGuard,
       @required this.fullPath,
       @required this.page,
       this.children});

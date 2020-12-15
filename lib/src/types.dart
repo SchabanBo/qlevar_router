@@ -17,13 +17,19 @@ class QRouter<T> extends Router<T> {
 }
 
 typedef QRouteBuilder = Widget Function(QRouter);
+typedef RedirectGuard = String Function(String);
 
 class QRoute {
   final String path;
   final QRouteBuilder page;
+  final RedirectGuard redirectGuard;
   final List<QRoute> children;
 
-  QRoute({@required this.path, @required this.page, this.children});
+  QRoute(
+      {@required this.path,
+      this.redirectGuard,
+      this.page,
+      this.children});
 }
 
 class QUri {
