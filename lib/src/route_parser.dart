@@ -21,8 +21,9 @@ class QRouteInformationParser extends RouteInformationParser<MatchRoute> {
       return SynchronousFuture(null);
     }
     var routeMatch =
-        QR.findMatch('$_parent${routeInformation.location ?? ''}');
-            
+        QR.findMatch('$_parent${routeInformation.location ?? '/'}');
+    routeMatch.route.shakeTheTree();
+    
     // Search for the matching key for this parser.
     while (true) {
       if (routeMatch.route.key == _key) {

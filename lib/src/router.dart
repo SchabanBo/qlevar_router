@@ -11,7 +11,7 @@ class QRouterApp extends StatelessWidget {
   final _baseKey = 'root';
 
   const QRouterApp({
-    this.initRoute = '',
+    this.initRoute = '/',
     @required this.routes,
   });
 
@@ -82,10 +82,11 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
       if (match.route.hasChidlren) {
         childRouter = QRouter(
           routerDelegate: QRouterDelegate(
-              key: match.route.path, initRoute: '${match.route.fullPath}'),
+              key: match.route.path, initRoute: '${match.route.fullPath}/'),
           routeInformationParser: QRouteInformationParser(
               parent: match.route.fullPath, key: match.route.path),
-          routeInformationProvider: QRouteInformationProvider(initialRoute: ''),
+          routeInformationProvider:
+              QRouteInformationProvider(initialRoute: '/'),
         );
       }
       return MaterialPage(
@@ -96,9 +97,6 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
   }
 
   bool _isOldMatch(MatchRoute matchRoute) {
-    if (_stack.isEmpty) {
-      return false;
-    }
     final last = _stack.last;
     return last.route.key == matchRoute.route.key &&
         last.route.path == matchRoute.route.path;
@@ -114,10 +112,7 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
       QR.log('${route.route} is already on the top of the stack');
       return;
     }
-    // TODO: Do you have to check this
-    if (_stack.isNotEmpty) {
-      _stack.removeLast();
-    }
+    _stack.removeLast();
     _stack.add(route);
     notifyListeners();
   }

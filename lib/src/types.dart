@@ -48,10 +48,7 @@ extension QRouterExtensions on QRInterface {
     match.route.delegate.push(match);
   }
 
-  void replace(String route){
-    final match = findMatch(route);
-    match.route.delegate.replace(match);
-  }
+  void replace(String route) => findMatch(route).route.shakeTheTree();
 
   void log(String mes) {
     if (enableLog) {

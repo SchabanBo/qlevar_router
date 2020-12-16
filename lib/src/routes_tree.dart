@@ -12,65 +12,47 @@ class RoutesTree {
     if (routes == null || routes.isEmpty) return result;
 
     for (var route in routes) {
-      var path = route.path.trim();
-      if (path.startsWith('/')) {
-        path = path.substring(1);
-      }
-      final fullPath = '$basePath/$path';
+      final fullPath = basePath + route.path;
       final _route = _QRoute(
         page: route.page,
-        path: path,
+        path: route.path,
         redirectGuard: route.redirectGuard ?? (s) => null,
         fullPath: fullPath,
         key: key,
       );
-      _route.children.addAll(buildTree(route.children, fullPath, path, _route));
-      QR.log('"$fullPath" added with path: $path, key "$key"');
+      _route.children
+          .addAll(buildTree(route.children, fullPath, route.path, _route));
+      QR.log('"$fullPath" added with key "$key"');
       result.add(_route);
     }
+    _routes.addAll(result);
     return result;
   }
 
   void setTree(List<QRoute> routes, String baseKey) {
     assert(_routes.isEmpty, 'Tree already set');
-    buildTree(routes, '', baseKey, null).forEach(_routes.add);
+    buildTree(routes, '', baseKey, null);
   }
 
   MatchRoute getMatch(String path) {
-    // if (path == '/' && _routes.any((element) => element.path == path)) {
-    //   final match = _routes.firstWhere((element) => element.path == path);
-    //   QR.log('Route $match found for $path.');
-    //   final redrict = match.redirectGuard(path);
-    //   if (redrict != null) {
-    //     QR.log('Redirect to $redrict');
-    //     return getMatch(redrict);
-    //   }
-    //   return MatchRoute(route: match);
-    // }
-    final segments =Uri.parse(path).pathSegments.toList();
-    segments.add('');    
-    var searchIn = _routes;
-    for (var part in segments) {
-      final match = searchIn.firstWhere((element) => element.path == '$part');
-      QR.log('Part $match found for $part.');
-      final redrict = match.redirectGuard(path);
-      if (redrict != null) {
-        QR.log('Redirect to $redrict');
-        return getMatch(redrict);
-      }
-      if (segments.indexOf(part) == segments.length - 1) {
-        QR.log('Route found $path');
-        return MatchRoute(route: match);
-      }
-      match.delegate.replace(MatchRoute(route: match));
-      searchIn = match.children;
+    assert(_routes.any((element) => element.fullPath == path),
+        'Path [$path] not set in the route tree');
+    final match = _routes.firstWhere((element) => element.fullPath == path);
+    final redrict = match.redirectGuard(path);
+    if (redrict != null) {
+      QR.log('Redirect to $redrict');
+      return getMatch(redrict);
     }
-    assert(true, 'Path [$path] not set in the route tree');
-    return MatchRoute(route: null);
+    QR.log('Route found ${match.fullPath}');
+    return MatchRoute(route: match);
+  }
+
+  List<_QRoute> getKey(String key) {
+    return _routes.where((element) => element.key == key).toList();
   }
 
   void setDelegate(String key, QRouterDelegate delegate) {
-    _routes.where((element) => element.key == key).forEach((element) {
+    getKey(key).forEach((element) {
       element.delegate = delegate;
     });
   }
@@ -95,6 +77,13 @@ class _QRoute {
       this.parent});
 
   bool get hasChidlren => children != null && children.isNotEmpty;
+
+  void shakeTheTree() {
+    delegate.replace(MatchRoute(route: this));
+    if (parent?.delegate != null) {
+      parent.shakeTheTree();
+    }
+  }
 
   @override
   String toString() =>

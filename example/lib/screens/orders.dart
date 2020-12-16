@@ -94,7 +94,6 @@ class OrderDetails extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 15),
                                 Text(
-                                  // ignore: lines_longer_than_80_chars
                                   'Price: ${order.items[i].count * order.items[i].item.price} €',
                                   style: TextStyle(fontSize: 15),
                                 ),
