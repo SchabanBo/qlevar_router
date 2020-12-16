@@ -8,6 +8,7 @@ import 'types.dart';
 class QRouterApp extends StatelessWidget {
   final List<QRoute> routes;
   final String initRoute;
+  final _baseKey = 'root';
 
   const QRouterApp({
     this.initRoute = '/',
@@ -19,10 +20,11 @@ class QRouterApp extends StatelessWidget {
     if (routes.map((e) => e.path).contains('/') == false) {
       routes.add(QRoute(path: '/', redirectGuard: (s) => initRoute));
     }
-    QR.routesTree.setTree(routes);
+    QR.routesTree.setTree(routes, _baseKey);
     return MaterialApp.router(
-      routerDelegate: QRouterDelegate(key: '/', initRoute: initRoute),
-      routeInformationParser: QRouteInformationParser(parent: ''),
+      routerDelegate: QRouterDelegate(key: _baseKey, initRoute: initRoute),
+      routeInformationParser:
+          QRouteInformationParser(parent: '', key: _baseKey),
     );
   }
 }
@@ -63,6 +65,10 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
   @override
   Future<void> setNewRoutePath(MatchRoute route) {
     QR.log('setNewRoutePath: ${route.route}');
+    if (_isOldMatch(route)) {
+      QR.log('${route.route} is already on the top of the stack');
+      return SynchronousFuture(null);
+    }
     _stack
       ..clear()
       ..add(route);
@@ -77,10 +83,10 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
         childRouter = QRouter(
           routerDelegate: QRouterDelegate(
               key: match.route.path, initRoute: '${match.route.fullPath}/'),
-          routeInformationParser:
-              QRouteInformationParser(parent: match.route.fullPath),
-          routeInformationProvider: QRouteInformationProvider(
-              initialRoute: '/'),
+          routeInformationParser: QRouteInformationParser(
+              parent: match.route.fullPath, key: match.route.path),
+          routeInformationProvider:
+              QRouteInformationProvider(initialRoute: '/'),
         );
       }
       return MaterialPage(
@@ -90,18 +96,28 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
     }).toList();
   }
 
-  void pushNamed(MatchRoute route) {
+  bool _isOldMatch(MatchRoute matchRoute) {
+    final last = _stack.last;
+    return last.route.key == matchRoute.route.key &&
+        last.route.path == matchRoute.route.path;
+  }
+
+  void push(MatchRoute route) {
     _stack.add(route);
     notifyListeners();
   }
 
-  void replaceNamed(MatchRoute route) {
+  void replace(MatchRoute route) {
+    if (_isOldMatch(route)) {
+      QR.log('${route.route} is already on the top of the stack');
+      return;
+    }
     _stack.removeLast();
     _stack.add(route);
     notifyListeners();
   }
 
-  void replaceAllNamed(List<MatchRoute> routes) {
+  void replaceAll(List<MatchRoute> routes) {
     _stack.clear();
     _stack.addAll(routes);
     notifyListeners();

@@ -72,26 +72,33 @@ class OrderDetails extends StatelessWidget {
             _getRow('Created At', order.createdAt.toString()),
             const SizedBox(height: 25),
             Expanded(
-              child: Card(
-                  child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: order.items.length,
-                itemBuilder: (c, i) => ListTile(
-                    isThreeLine: true,
-                    leading: Image.network(
-                      order.items[i].item.image,
-                      width: 50,
-                      height: 50,
-                    ),
-                    title: Text(order.items[i].item.name),
-                    trailing: Text('${order.items[i].item.price}€',
-                        style: TextStyle(color: Colors.red)),
-                    subtitle: _getRow(
-                        'Count: ${order.items[i].count}',
-                        // ignore: lines_longer_than_80_chars
-                        'Price: ${order.items[i].count * order.items[i].item.price} €')),
-              )),
-            ),
+                child: Card(
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: order.items.length,
+                        itemBuilder: (c, i) => ListTile(
+                              isThreeLine: true,
+                              leading: Image.network(
+                                order.items[i].item.image,
+                                width: 50,
+                                height: 50,
+                              ),
+                              title: Text(order.items[i].item.name,
+                                  style: TextStyle(fontSize: 20)),
+                              trailing: Text('${order.items[i].item.price}€',
+                                  style: TextStyle(color: Colors.red)),
+                              subtitle: Row(children: [
+                                Text(
+                                  'Count: ${order.items[i].count}',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                const SizedBox(width: 15),
+                                Text(
+                                  'Price: ${order.items[i].count * order.items[i].item.price} €',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ]),
+                            )))),
             const SizedBox(height: 25),
             Card(
               child: Row(
@@ -126,14 +133,13 @@ class OrderDetails extends StatelessWidget {
             flex: 1,
             child: Text(
               '$lable: ',
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
           ),
           Expanded(
-            flex: 2,
             child: Text(
               value,
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
           ),
           Spacer(),

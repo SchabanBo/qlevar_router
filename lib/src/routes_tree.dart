@@ -6,30 +6,32 @@ import 'types.dart';
 class RoutesTree {
   final List<_QRoute> _routes = [];
 
-  List<_QRoute> buildTree(List<QRoute> routes, String basePath, String key) {
+  List<_QRoute> buildTree(
+      List<QRoute> routes, String basePath, String key, _QRoute parent) {
     final result = <_QRoute>[];
     if (routes == null || routes.isEmpty) return result;
 
     for (var route in routes) {
       final fullPath = basePath + route.path;
-      final children = buildTree(route.children, fullPath, route.path);
-      QR.log('"$fullPath" added with key "$key"');
-      result.add(_QRoute(
+      final _route = _QRoute(
         page: route.page,
         path: route.path,
         redirectGuard: route.redirectGuard ?? (s) => null,
         fullPath: fullPath,
         key: key,
-        children: children,
-      ));
+      );
+      _route.children
+          .addAll(buildTree(route.children, fullPath, route.path, _route));
+      QR.log('"$fullPath" added with key "$key"');
+      result.add(_route);
     }
     _routes.addAll(result);
     return result;
   }
 
-  void setTree(List<QRoute> routes) {
+  void setTree(List<QRoute> routes, String baseKey) {
     assert(_routes.isEmpty, 'Tree already set');
-    buildTree(routes, '', '/');
+    buildTree(routes, '', baseKey, null);
   }
 
   MatchRoute getMatch(String path) {
@@ -63,7 +65,8 @@ class _QRoute {
   final RedirectGuard redirectGuard;
   QRouterDelegate delegate;
   final QRouteBuilder page;
-  final List<_QRoute> children;
+  final _QRoute parent;
+  final List<_QRoute> children = [];
 
   _QRoute(
       {@required this.key,
@@ -71,9 +74,16 @@ class _QRoute {
       @required this.redirectGuard,
       @required this.fullPath,
       @required this.page,
-      this.children});
+      this.parent});
 
   bool get hasChidlren => children != null && children.isNotEmpty;
+
+  void shakeTheTree() {
+    delegate.replace(MatchRoute(route: this));
+    if (parent?.delegate != null) {
+      parent.shakeTheTree();
+    }
+  }
 
   @override
   String toString() =>

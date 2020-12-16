@@ -25,11 +25,7 @@ class QRoute {
   final RedirectGuard redirectGuard;
   final List<QRoute> children;
 
-  QRoute(
-      {@required this.path,
-      this.redirectGuard,
-      this.page,
-      this.children});
+  QRoute({@required this.path, this.redirectGuard, this.page, this.children});
 }
 
 class QUri {
@@ -49,13 +45,10 @@ extension QRouterExtensions on QRInterface {
   MatchRoute findMatch(String route) => _routesTree.getMatch(route);
   void to(String route) {
     final match = findMatch(route);
-    match.route.delegate.pushNamed(match);
+    match.route.delegate.push(match);
   }
 
-  void replace(String route) {
-    final match = findMatch(route);
-    match.route.delegate.replaceNamed(match);
-  }
+  void replace(String route) => findMatch(route).route.shakeTheTree();
 
   void log(String mes) {
     if (enableLog) {
