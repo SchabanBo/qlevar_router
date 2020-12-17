@@ -19,7 +19,7 @@ class AppRoutes {
               page: (child) => OrdersScreen(child),
               children: [
                 QRoute(path: '/', page: (child) =>  Container()),
-                QRoute(path: '/2', page: (child) => OrderDetails()),
+                QRoute(path: '/:orderId', page: (child) => OrderDetails()),
               ]),
         ]),
     QRoute(path: '/store', page: (childRouter) => StoreScreen(childRouter)),

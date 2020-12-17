@@ -71,5 +71,6 @@ extension QRouterExtensions on _QRInterface {
 
 class QCurrentRoute {
   String fullPath = '';
+  Map<String, dynamic> params = {};
   MatchRoute match;
 }

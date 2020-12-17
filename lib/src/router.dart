@@ -19,6 +19,15 @@ class QRouterApp extends StatelessWidget {
     if (routes.map((e) => e.path).contains('/') == false) {
       routes.add(QRoute(path: '/', redirectGuard: (s) => initRoute));
     }
+    if (routes.map((e) => e.path).contains('/notfound') == false) {
+      routes.add(QRoute(
+          path: '/notfound',
+          page: (r) => Material(
+                child: Center(
+                  child: Text('Page Not Found'),
+                ),
+              )));
+    }
     QR.routesTree.setTree(routes);
     final delegate = QRouterDelegate(initRoute: initRoute);
     QR.routesTree.setRootDelegate(delegate);

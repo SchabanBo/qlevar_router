@@ -35,7 +35,8 @@ class OrdersScreen extends StatelessWidget {
                               '#${item.id} - From: ${item.from}',
                               style: TextStyle(fontSize: 20),
                             ),
-                            onTap: () => QR.replace('/dashboard/orders/2'),
+                            onTap: () =>
+                                QR.replace('/dashboard/orders/${item.id}'),
                           ),
                         );
                       })),
@@ -56,7 +57,8 @@ class OrdersScreen extends StatelessWidget {
 }
 
 class OrderDetails extends StatelessWidget {
-  final order = Get.find<Database>().orders[2];
+  final order = Get.find<Database>()
+      .orders[int.parse(QR.currentRoute.params['orderId'].toString())-1];
   @override
   Widget build(BuildContext context) {
     return Card(
