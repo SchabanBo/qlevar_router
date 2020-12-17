@@ -8,10 +8,9 @@ import 'types.dart';
 class QRouterApp extends StatelessWidget {
   final List<QRoute> routes;
   final String initRoute;
-  final _baseKey = 'root';
 
   const QRouterApp({
-    this.initRoute = '/',
+    this.initRoute = '',
     @required this.routes,
   });
 
@@ -20,11 +19,12 @@ class QRouterApp extends StatelessWidget {
     if (routes.map((e) => e.path).contains('/') == false) {
       routes.add(QRoute(path: '/', redirectGuard: (s) => initRoute));
     }
-    QR.routesTree.setTree(routes, _baseKey);
+    QR.routesTree.setTree(routes);
+    final delegate = QRouterDelegate(initRoute: initRoute);
+    QR.routesTree.setRootDelegate(delegate);
     return MaterialApp.router(
-      routerDelegate: QRouterDelegate(key: _baseKey, initRoute: initRoute),
-      routeInformationParser:
-          QRouteInformationParser(parent: '', key: _baseKey),
+      routerDelegate: delegate,
+      routeInformationParser: QRouteInformationParser(parent: ''),
     );
   }
 }
@@ -37,11 +37,9 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
   @override
   final GlobalKey<NavigatorState> navigatorKey;
   final List<MatchRoute> _stack = [];
-  QRouterDelegate({@required String key, String initRoute})
-      : navigatorKey = GlobalKey<NavigatorState>(),
-        assert(initRoute != null) {
-    QR.routesTree.setDelegate(key, this);
-    _stack.add(QR.findMatch(initRoute));
+  QRouterDelegate({String initRoute, MatchRoute matchRoute})
+      : navigatorKey = GlobalKey<NavigatorState>() {
+    _stack.add(matchRoute == null ? QR.findMatch(initRoute) : matchRoute);
   }
 
   @override
@@ -79,14 +77,16 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
     return _stack.map((match) {
       QRouter childRouter;
 
-      if (match.route.hasChidlren) {
+      if (match.childMatch != null) {
+        final delegate = QRouterDelegate(matchRoute: match.childMatch);
+        for (var item in match.route.children) {
+          item.delegate = delegate;
+        }
         childRouter = QRouter(
-          routerDelegate: QRouterDelegate(
-              key: match.route.path, initRoute: '${match.route.fullPath}/'),
-          routeInformationParser: QRouteInformationParser(
-              parent: match.route.fullPath, key: match.route.path),
-          routeInformationProvider:
-              QRouteInformationProvider(initialRoute: '/'),
+          routerDelegate: delegate,
+          routeInformationParser:
+              QRouteInformationParser(parent: match.route.fullPath),
+          routeInformationProvider: QRouteInformationProvider(initialRoute: ''),
         );
       }
       return MaterialPage(
@@ -98,8 +98,7 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
 
   bool _isOldMatch(MatchRoute matchRoute) {
     final last = _stack.last;
-    return last.route.key == matchRoute.route.key &&
-        last.route.path == matchRoute.route.path;
+    return last.route.path == matchRoute.route.path;
   }
 
   void push(MatchRoute route) {

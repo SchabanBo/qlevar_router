@@ -20,12 +20,18 @@ typedef QRouteBuilder = Widget Function(QRouter);
 typedef RedirectGuard = String Function(String);
 
 class QRoute {
+  final String name;
   final String path;
   final QRouteBuilder page;
   final RedirectGuard redirectGuard;
   final List<QRoute> children;
 
-  QRoute({@required this.path, this.redirectGuard, this.page, this.children});
+  QRoute(
+      {this.name,
+      @required this.path,
+      this.redirectGuard,
+      this.page,
+      this.children});
 }
 
 class QUri {
@@ -33,22 +39,28 @@ class QUri {
   QUri(String path) : uri = Uri.parse(path);
 }
 
-class QRInterface {}
+class _QRInterface {
+  final QCurrentRoute currentRoute = QCurrentRoute();
+  bool enableLog = true;
+}
 
 // ignore: non_constant_identifier_names
-final QR = QRInterface();
+final QR = _QRInterface();
 
-extension QRouterExtensions on QRInterface {
+extension QRouterExtensions on _QRInterface {
   static final RoutesTree _routesTree = RoutesTree();
-  static bool enableLog = true;
   RoutesTree get routesTree => _routesTree;
-  MatchRoute findMatch(String route) => _routesTree.getMatch(route);
+  MatchRoute findMatch(String route, {String parent}) =>
+      _routesTree.getMatch(route, parentPath: parent);
   void to(String route) {
     final match = findMatch(route);
     match.route.delegate.push(match);
   }
 
-  void replace(String route) => findMatch(route).route.shakeTheTree();
+  void replace(String route) {
+    final match = findMatch(route);
+    match.route.delegate.replace(match);
+  }
 
   void log(String mes) {
     if (enableLog) {
@@ -57,22 +69,7 @@ extension QRouterExtensions on QRInterface {
   }
 }
 
-class QRNotifer extends ChangeNotifier {
-  RouteState state = RouteState.Init;
-  List<String> routes = [];
-
-  void push(String name) {
-    state = RouteState.Push;
-    routes = [name];
-  }
-}
-
-enum RouteState {
-  None,
-  Init,
-  Push,
-  Replace,
-  ReplaceAll,
-  Pop,
-  PopAll,
+class QCurrentRoute {
+  String fullPath = '';
+  MatchRoute match;
 }
