@@ -33,7 +33,8 @@ class QRouterApp extends StatelessWidget {
     QR.routesTree.setRootDelegate(delegate);
     return MaterialApp.router(
       routerDelegate: delegate,
-      routeInformationParser: QRouteInformationParser(parent: ''),
+      routeInformationParser:
+          QRouteInformationParser(parent: 'QRouterBasePath'),
     );
   }
 }
@@ -46,8 +47,14 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
   @override
   final GlobalKey<NavigatorState> navigatorKey;
   final List<MatchRoute> _stack = [];
+  bool _mounted = false;
   QRouterDelegate({String initRoute, MatchRoute matchRoute})
       : navigatorKey = GlobalKey<NavigatorState>() {
+    if (matchRoute != null) {
+      print(matchRoute.route.toString());
+    }
+    print('$initRoute-' + navigatorKey.hashCode.toString());
+
     _stack.add(matchRoute == null ? QR.findMatch(initRoute) : matchRoute);
   }
 
@@ -55,27 +62,24 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
   MatchRoute get currentConfiguration => _stack.last;
 
   @override
-  Widget build(BuildContext context) => Navigator(
-        key: navigatorKey,
-        pages: _pages,
-        onPopPage: (route, result) {
-          if (!route.didPop(result)) {
-            return false;
-          }
-
-          _stack.removeLast();
-          notifyListeners();
-          return true;
-        },
-      );
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: navigatorKey,
+      pages: _pages,
+      onPopPage: (route, result) {
+        if (!route.didPop(result)) {
+          return false;
+        }
+        _stack.removeLast();
+        notifyListeners();
+        return true;
+      },
+    );
+  }
 
   @override
   Future<void> setNewRoutePath(MatchRoute route) {
     QR.log('setNewRoutePath: ${route.route}');
-    if (_isOldMatch(route)) {
-      QR.log('${route.route} is already on the top of the stack');
-      return SynchronousFuture(null);
-    }
     _stack
       ..clear()
       ..add(route);
@@ -83,11 +87,13 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
   }
 
   List<Page<dynamic>> get _pages {
+    final s = navigatorKey.hashCode;
     return _stack.map((match) {
       QRouter childRouter;
 
-      if (match.childMatch != null) {
-        final delegate = QRouterDelegate(matchRoute: match.childMatch);
+      if (match.childMatch != null || match.childInit != null) {
+        final delegate = QRouterDelegate(
+            initRoute: match.childInit, matchRoute: match.childMatch);
         for (var item in match.route.children) {
           item.delegate = delegate;
         }
@@ -95,9 +101,11 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
           routerDelegate: delegate,
           routeInformationParser:
               QRouteInformationParser(parent: match.route.fullPath),
-          routeInformationProvider: QRouteInformationProvider(initialRoute: ''),
+          routeInformationProvider:
+              QRouteInformationProvider(initialRoute: match.childInit ?? ''),
         );
       }
+
       return MaterialPage(
           name: match.route.path,
           key: ValueKey(match.route.fullPath),
@@ -107,7 +115,9 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
 
   bool _isOldMatch(MatchRoute matchRoute) {
     final last = _stack.last;
-    return last.route.path == matchRoute.route.path;
+    return last.route.path == matchRoute.route.path &&
+        last.childInit == matchRoute.childInit &&
+        last.childMatch == matchRoute.childMatch;
   }
 
   void push(MatchRoute route) {
@@ -138,5 +148,12 @@ class QRouterDelegate extends RouterDelegate<MatchRoute>
     }
     _stack.removeLast();
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    if (_mounted) return;
+    super.dispose();
+    _mounted = true;
   }
 }

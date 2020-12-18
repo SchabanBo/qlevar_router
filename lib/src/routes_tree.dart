@@ -53,14 +53,32 @@ class RoutesTree {
       searchIn =
           MatchRoute.fromTree(routes: searchIn, path: item).route.children;
     }
-    return MatchRoute.fromTree(routes: searchIn, path: path);
+    _cleanTree(searchIn);
+    MatchRoute match;
+    // if init route for a path.
+    if (path == '' || path == '/') {
+      if (path.startsWith('/')) path = path.substring(1);
+      match = MatchRoute.fromTree(routes: searchIn, path: path);
+    } else {
+      final uri = Uri.parse(path);
+      String childInit;
+      if (uri.pathSegments.length > 1 && uri.pathSegments[1].isNotEmpty) {
+        childInit = '/${uri.pathSegments[1]}';
+      }
+      match = MatchRoute.fromTree(
+          routes: searchIn, path: uri.pathSegments[0], childInit: childInit);
+    }
+    return !match.found ? _notFound(path) : match;
   }
 
   MatchRoute getMatch(String path, {String parentPath}) {
     parentPath = parentPath ?? '';
+    path = path.trim();
     QR.log('matching for $path for parent: $parentPath');
 
     if (parentPath.isNotEmpty) {
+      QR.log('Use parent path $parentPath');
+      if (parentPath == 'QRouterBasePath') parentPath = '';
       return _getMatchWithParent(path, parentPath);
     }
 
@@ -92,7 +110,6 @@ class RoutesTree {
       searchIn = parent.children;
     }
     // Clean the unused route.
-    _cleanTree(searchIn);
 
     // return the new match
     final match =
@@ -100,6 +117,8 @@ class RoutesTree {
     if (!match.found) return _notFound(path);
 
     searchIn = match.route.children;
+    
+    _cleanTree(searchIn);
 
     // build rest tree
     var childMatch = match;
@@ -141,7 +160,17 @@ class RoutesTree {
     return match;
   }
 
-  void _cleanTree(List<_QRoute> routes) {}
+  void _cleanTree(List<_QRoute> routes) {
+    for (var item in routes) {
+      if (item.hasChidlren) {
+        _cleanTree(item.children);
+      }
+      if (item.delegate != null) {
+        item.delegate.dispose();
+        item.delegate = null;
+      }
+    }
+  }
 }
 
 class _QRoute {
@@ -185,17 +214,20 @@ class MatchRoute {
   final _QRoute route;
   MatchRoute childMatch;
   final bool found;
+  final String childInit;
   Map<String, dynamic> params = {};
   MatchRoute({
     this.route,
     this.found = true,
     this.childMatch,
     this.params,
+    this.childInit,
   });
 
   factory MatchRoute.notFound() => MatchRoute(found: false);
 
-  factory MatchRoute.fromTree({List<_QRoute> routes, String path}) {
+  factory MatchRoute.fromTree(
+      {List<_QRoute> routes, String path, String childInit}) {
     if (routes.isEmpty) {
       return null;
     }
@@ -220,6 +252,6 @@ class MatchRoute {
     if (redirect != null) {
       return QR.findMatch(redirect);
     }
-    return MatchRoute(route: match, params: params);
+    return MatchRoute(route: match, params: params, childInit: childInit);
   }
 }
