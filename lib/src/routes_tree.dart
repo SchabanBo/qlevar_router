@@ -13,7 +13,7 @@ class RoutesTree {
   QRouterDelegate _rootDelegate;
 
   // Build the Route Tree.
-  List<_QRoute> _buildTree(List<QRoute> routes, String basePath) {
+  List<_QRoute> _buildTree(List<QRoute> routes, String basePath, int key) {
     final result = <_QRoute>[];
     if (routes == null || routes.isEmpty) return result;
     for (var route in routes) {
@@ -23,6 +23,7 @@ class RoutesTree {
       }
       final fullPath = basePath + (path.isEmpty ? '' : '/$path');
       final _route = _QRoute(
+        key: key + routes.indexOf(route),
         name: route.name ?? path,
         isComponent: path.startsWith(':'),
         path: path,
@@ -30,8 +31,10 @@ class RoutesTree {
         redirectGuard: route.redirectGuard ?? (s) => null,
         fullPath: fullPath,
       );
-      _route.children.addAll(_buildTree(route.children, fullPath));
+      _route.children
+          .addAll(_buildTree(route.children, fullPath, key + routes.length));
       result.add(_route);
+      key += routes.indexOf(route);
       QR.log('"${_route.name}" added with base $basePath');
     }
     return result;
@@ -44,7 +47,10 @@ class RoutesTree {
       return _rootDelegate;
     }
 
-    _routes.addAll(_buildTree(routes, ''));
+    _routes.addAll(_buildTree(routes, '', 1));
+    for (var route in _routes) {
+      route.printTree(0);
+    }
     _rootDelegate = delegate();
     return _rootDelegate;
   }
@@ -59,17 +65,45 @@ class RoutesTree {
       return QR.currentRoute.match;
     }
 
-    MatchRoute match;
+    final match = _getMatchWithoutParent(path);
 
-    if (parentPath.isNotEmpty) {
-      if (parentPath == 'QRouterBasePath') parentPath = '';
-      match = _getMatchWithParent(path, parentPath);
-      if (parentPath.isEmpty) {
-        _cureentTree = match;
-      }
-    } else {
-      match = _getMatchWithoutParent(path);
+    final redirect = match.route.redirectGuard(path);
+    if (redirect != null) {
+      return getMatch(redirect);
     }
+
+    // Build Match Context
+    var routeNode = match;
+    final newTree =
+        (_cureentTree != null && routeNode.route.key == _cureentTree.key)
+            ? _cureentTree
+            : MatchContext.fromRoute(routeNode);
+    var contextNode = newTree;
+
+    while (routeNode.childMatch != null) {
+      if (contextNode.childContext != null &&
+          routeNode.childMatch.route.key == contextNode.childContext.key) {
+        routeNode = routeNode.childMatch;
+        contextNode = contextNode.childContext;
+        continue;
+      }
+      contextNode.childContext = MatchContext.fromRoute(routeNode.childMatch);
+      contextNode.childRouter = QRouter(
+          routerDelegate:
+              QRouterDelegate(matchRoute: contextNode.childContext));
+      routeNode = routeNode.childMatch;
+      contextNode = contextNode.childContext;
+    }
+
+    // if (parentPath.isNotEmpty) {
+    //   if (parentPath == 'QRouterBasePath') parentPath = '';
+    //   match = _getMatchWithParent(path, parentPath);
+    //   if (parentPath.isEmpty) {
+    //     _cureentTree = match;
+    //   }
+    // } else {
+    //   match = ;
+    // }
 
     // //Set initRoute
     // final initMatch = MatchRoute.fromTree(routes: searchIn, path: '');
@@ -86,14 +120,13 @@ class RoutesTree {
       }
     }
 
-    final context = MatchContext.fromRoute(match);
-
     // Set current route info
+    _cureentTree = newTree;
     QR.currentRoute.fullPath = path;
     QR.currentRoute..params = match.params;
-    QR.currentRoute.match = context;
+    QR.currentRoute.match = newTree;
 
-    return context;
+    return newTree;
   }
 
   MatchRoute _getMatchWithParent(String path, String parentPath) {
@@ -121,16 +154,17 @@ class RoutesTree {
   }
 
   MatchRoute _getMatchWithoutParent(String path) {
-    final currentRoute = Uri.parse(QR.currentRoute.fullPath).pathSegments;
     final newRoute = Uri.parse(path).pathSegments;
 
+
+    // TODO: Build always the full tree
     // InitalRoute
     if (newRoute.isEmpty) {
       return MatchRoute.fromTree(routes: _routes, path: '');
     }
 
     var searchIn = _routes;
-    _QRoute parent;
+    _QRoute match;
     var matchLevel = 0;
     // Search for the match level
     for (matchLevel;
@@ -140,15 +174,15 @@ class RoutesTree {
         break;
       }
 
-      parent = searchIn
+      match = searchIn
           .firstWhere((element) => element.path == currentRoute[matchLevel]);
-      searchIn = parent.children;
+      searchIn = match.children;
     }
     // Clean the unused route.
 
     // return the new match
     final match =
-        MatchRoute.fromTree(routes: searchIn, path: newRoute[matchLevel++]);
+        MatchRoute.fromTree(routes: _routes, path: newRoute[0]);
     if (!match.found) return _notFound(path);
 
     searchIn = match.route.children;
@@ -165,16 +199,23 @@ class RoutesTree {
     return match;
   }
 
+  void changePath(String path) {
+    final match = getMatch(path);
+    _rootDelegate.setNewRoutePath(match);
+  }
+
   // Get match object for notFound Page.
   MatchRoute _notFound(String path) {
+    // TODO: Fix notFound
     QR.currentRoute.fullPath = path;
     final match = MatchRoute.fromTree(routes: _routes, path: 'notFound');
-    QR.currentRoute.match = match;
+    //QR.currentRoute.match = match;
     return match;
   }
 }
 
 class _QRoute {
+  final int key;
   final String name;
   final String path;
   final String fullPath;
@@ -186,6 +227,7 @@ class _QRoute {
   _QRoute(
       {this.name,
       this.isComponent = false,
+      this.key,
       @required this.path,
       @required this.page,
       @required this.redirectGuard,
@@ -205,14 +247,24 @@ class _QRoute {
   String toString() =>
       // ignore: lines_longer_than_80_chars
       'fullPath: $fullPath, path: $path,isComponent: $isComponent hasChidlren: $hasChidlren';
+
+  String _info() =>
+      // ignore: lines_longer_than_80_chars
+      'key: $key, name: $name, fullPath: $fullPath, path: $path, isComponent: $isComponent';
+  void printTree(int width) {
+    QR.log(''.padRight(width, '-') + _info());
+    for (var item in children) {
+      item.printTree(width + 2);
+    }
+  }
 }
 
 class MatchRoute {
   final _QRoute route;
   final bool found;
-  MatchRoute childMatch;
   final String childInit;
   final Map<String, dynamic> params;
+  MatchRoute childMatch;
   MatchRoute({
     this.route,
     this.found = true,
@@ -255,28 +307,29 @@ class MatchRoute {
 }
 
 class MatchContext {
+  final int key;
   final String name;
   final String fullPath;
   final QRouteBuilder page;
-  final MatchContext childContext;
-  final QRouter<dynamic> childRouter;
+  MatchContext childContext;
+  QRouter<dynamic> childRouter;
 
   MatchContext(
       {this.name,
+      this.key,
       this.fullPath,
       this.page,
       this.childContext,
       this.childRouter});
 
   factory MatchContext.fromRoute(MatchRoute route,
-          {QRouter<dynamic> childRouter}) =>
+          {QRouter<dynamic> childRouter, MatchContext childContext}) =>
       MatchContext(
           name: route.route.name,
+          key: route.route.key,
           fullPath: route.route.fullPath,
           page: route.route.page,
-          childContext: route.childMatch == null
-              ? null
-              : MatchContext.fromRoute(route.childMatch),
+          childContext: childContext,
           childRouter: childRouter);
 
   MaterialPage toMaterialPage() => MaterialPage(
@@ -286,6 +339,6 @@ class MatchContext {
     if (childRouter == null) {
       return;
     }
-    childRouter.routerDelegate.setNewRoutePath(childRouter);
+    childRouter.routerDelegate.setNewRoutePath(childContext);
   }
 }

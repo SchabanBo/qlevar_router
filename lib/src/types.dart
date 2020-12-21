@@ -53,9 +53,7 @@ extension QRouterExtensions on _QRContext {
   MatchContext findMatch(String route, {String parent}) =>
       _routesTree.getMatch(route, parentPath: parent);
 
-  void replace(String route) {
-    final match = findMatch(route);
-  }
+  void replace(String route) => _routesTree.changePath(route);
 
   void log(String mes) {
     if (enableLog) {

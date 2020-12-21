@@ -29,8 +29,8 @@ class QRouterApp extends StatelessWidget {
               )));
     }
 
-    final delegate = QR.routesTree
-        .setTree(routes, () => QRouterDelegate(initRoute: initRoute));
+    final delegate = QR.routesTree.setTree(
+        routes, () => QRouterDelegate(matchRoute: QR.findMatch(initRoute)));
 
     return MaterialApp.router(
       routerDelegate: delegate,
@@ -48,9 +48,9 @@ class QRouterDelegate extends RouterDelegate<MatchContext>
   @override
   final GlobalKey<NavigatorState> navigatorKey;
   final List<MatchContext> _stack = [];
-  QRouterDelegate({String initRoute, MatchContext matchRoute})
+  QRouterDelegate({MatchContext matchRoute})
       : navigatorKey = GlobalKey<NavigatorState>() {
-    //_stack.add(matchRoute == null ? QR.findMatch(initRoute) : matchRoute);
+    _stack.add(matchRoute);
   }
 
   @override
@@ -84,10 +84,8 @@ class QRouterDelegate extends RouterDelegate<MatchContext>
     return SynchronousFuture(null);
   }
 
-  bool _isOldMatch(MatchContext matchRoute) {
-    final last = _stack.last;
-    return last.fullPath == matchRoute.fullPath && last.name == matchRoute.name;
-  }
+  bool _isOldMatch(MatchContext matchRoute) =>
+      _stack.last.key == matchRoute.key;
 
   void pop() {
     if (_stack.length <= 1) {
