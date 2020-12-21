@@ -3,13 +3,13 @@ import 'package:flutter/widgets.dart';
 import 'routes_tree.dart';
 import 'types.dart';
 
-class QRouteInformationParser extends RouteInformationParser<MatchRoute> {
+class QRouteInformationParser extends RouteInformationParser<MatchContext> {
   final String _parent;
 
   const QRouteInformationParser({@required String parent}) : _parent = parent;
 
   @override
-  Future<MatchRoute> parseRouteInformation(
+  Future<MatchContext> parseRouteInformation(
       RouteInformation routeInformation) async {
     QR.log(
         // ignore: lines_longer_than_80_chars
@@ -21,8 +21,8 @@ class QRouteInformationParser extends RouteInformationParser<MatchRoute> {
   }
 
   @override
-  RouteInformation restoreRouteInformation(MatchRoute match) =>
-      RouteInformation(location: match.route.fullPath);
+  RouteInformation restoreRouteInformation(MatchContext match) =>
+      RouteInformation(location: match.fullPath);
 }
 
 class QRouteInformationProvider extends PlatformRouteInformationProvider {

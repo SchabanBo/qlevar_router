@@ -39,27 +39,22 @@ class QUri {
   QUri(String path) : uri = Uri.parse(path);
 }
 
-class _QRInterface {
+class _QRContext {
   final QCurrentRoute currentRoute = QCurrentRoute();
   bool enableLog = true;
 }
 
 // ignore: non_constant_identifier_names
-final QR = _QRInterface();
+final QR = _QRContext();
 
-extension QRouterExtensions on _QRInterface {
+extension QRouterExtensions on _QRContext {
   static final RoutesTree _routesTree = RoutesTree();
   RoutesTree get routesTree => _routesTree;
-  MatchRoute findMatch(String route, {String parent}) =>
+  MatchContext findMatch(String route, {String parent}) =>
       _routesTree.getMatch(route, parentPath: parent);
-  void to(String route) {
-    final match = findMatch(route);
-    match.route.delegate.push(match);
-  }
 
   void replace(String route) {
     final match = findMatch(route);
-    match.route.delegate.replace(match);
   }
 
   void log(String mes) {
@@ -72,5 +67,5 @@ extension QRouterExtensions on _QRInterface {
 class QCurrentRoute {
   String fullPath = '';
   Map<String, dynamic> params = {};
-  MatchRoute match;
+  MatchContext match;
 }

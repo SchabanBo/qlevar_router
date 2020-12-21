@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'router.dart';
 import 'types.dart';
@@ -8,7 +9,11 @@ import 'types.dart';
 class RoutesTree {
   final List<_QRoute> _routes = [];
 
-  List<_QRoute> buildTree(List<QRoute> routes, String basePath) {
+  MatchContext _cureentTree;
+  QRouterDelegate _rootDelegate;
+
+  // Build the Route Tree.
+  List<_QRoute> _buildTree(List<QRoute> routes, String basePath) {
     final result = <_QRoute>[];
     if (routes == null || routes.isEmpty) return result;
     for (var route in routes) {
@@ -25,26 +30,70 @@ class RoutesTree {
         redirectGuard: route.redirectGuard ?? (s) => null,
         fullPath: fullPath,
       );
-      _route.children.addAll(buildTree(route.children, fullPath));
+      _route.children.addAll(_buildTree(route.children, fullPath));
       result.add(_route);
       QR.log('"${_route.name}" added with base $basePath');
     }
     return result;
   }
 
-  void setTree(List<QRoute> routes) {
+  QRouterDelegate setTree(
+      List<QRoute> routes, QRouterDelegate Function() delegate) {
     if (_routes.isNotEmpty) {
       QR.log('Tree already set');
-      return;
+      return _rootDelegate;
     }
 
-    _routes.addAll(buildTree(routes, ''));
+    _routes.addAll(_buildTree(routes, ''));
+    _rootDelegate = delegate();
+    return _rootDelegate;
   }
 
-  void setRootDelegate(QRouterDelegate delegate) {
-    for (var item in _routes) {
-      item.delegate = delegate;
+  MatchContext getMatch(String path, {String parentPath}) {
+    parentPath = parentPath ?? '';
+    path = path.trim();
+    QR.log('matching for $path for parent: $parentPath');
+
+    // Check if the same route
+    if (path == QR.currentRoute.fullPath && QR.currentRoute.match != null) {
+      return QR.currentRoute.match;
     }
+
+    MatchRoute match;
+
+    if (parentPath.isNotEmpty) {
+      if (parentPath == 'QRouterBasePath') parentPath = '';
+      match = _getMatchWithParent(path, parentPath);
+      if (parentPath.isEmpty) {
+        _cureentTree = match;
+      }
+    } else {
+      match = _getMatchWithoutParent(path);
+    }
+
+    // //Set initRoute
+    // final initMatch = MatchRoute.fromTree(routes: searchIn, path: '');
+    // if (!match.found) return _notFound(path);
+    // childMatch.childMatch = initMatch;
+
+    // AddParams
+    final params = Uri.parse(path).queryParametersAll;
+    for (var item in params.entries) {
+      if (item.value.length == 1) {
+        match.params.addAll({item.key: item.value.first});
+      } else if (item.value.isNotEmpty) {
+        match.params.addAll({item.key: item.value});
+      }
+    }
+
+    final context = MatchContext.fromRoute(match);
+
+    // Set current route info
+    QR.currentRoute.fullPath = path;
+    QR.currentRoute..params = match.params;
+    QR.currentRoute.match = context;
+
+    return context;
   }
 
   MatchRoute _getMatchWithParent(String path, String parentPath) {
@@ -53,7 +102,7 @@ class RoutesTree {
       searchIn =
           MatchRoute.fromTree(routes: searchIn, path: item).route.children;
     }
-    _cleanTree(searchIn);
+
     MatchRoute match;
     // if init route for a path.
     if (path == '' || path == '/') {
@@ -71,21 +120,7 @@ class RoutesTree {
     return !match.found ? _notFound(path) : match;
   }
 
-  MatchRoute getMatch(String path, {String parentPath}) {
-    parentPath = parentPath ?? '';
-    path = path.trim();
-    QR.log('matching for $path for parent: $parentPath');
-
-    if (parentPath.isNotEmpty) {
-      QR.log('Use parent path $parentPath');
-      if (parentPath == 'QRouterBasePath') parentPath = '';
-      return _getMatchWithParent(path, parentPath);
-    }
-
-    // Check if the same route
-    if (path == QR.currentRoute.fullPath && QR.currentRoute.match != null) {
-      return QR.currentRoute.match;
-    }
+  MatchRoute _getMatchWithoutParent(String path) {
     final currentRoute = Uri.parse(QR.currentRoute.fullPath).pathSegments;
     final newRoute = Uri.parse(path).pathSegments;
 
@@ -117,8 +152,6 @@ class RoutesTree {
     if (!match.found) return _notFound(path);
 
     searchIn = match.route.children;
-    
-    _cleanTree(searchIn);
 
     // build rest tree
     var childMatch = match;
@@ -129,47 +162,15 @@ class RoutesTree {
       if (!match.found) return _notFound(path);
       childMatch = childMatch.childMatch;
     }
-
-    //Set initRoute
-    final initMatch = MatchRoute.fromTree(routes: searchIn, path: '');
-    if (!match.found) return _notFound(path);
-    childMatch.childMatch = initMatch;
-
-    // AddParams
-    final params = Uri.parse(path).queryParametersAll;
-    for (var item in params.entries) {
-      if (item.value.length == 1) {
-        match.params.addAll({item.key: item.value.first});
-      } else if (item.value.isNotEmpty) {
-        match.params.addAll({item.key: item.value});
-      }
-    }
-
-    // Set current route info
-    QR.currentRoute.fullPath = path;
-    QR.currentRoute..params = match.params;
-    QR.currentRoute.match = match;
-
     return match;
   }
 
+  // Get match object for notFound Page.
   MatchRoute _notFound(String path) {
     QR.currentRoute.fullPath = path;
     final match = MatchRoute.fromTree(routes: _routes, path: 'notFound');
     QR.currentRoute.match = match;
     return match;
-  }
-
-  void _cleanTree(List<_QRoute> routes) {
-    for (var item in routes) {
-      if (item.hasChidlren) {
-        _cleanTree(item.children);
-      }
-      if (item.delegate != null) {
-        item.delegate.dispose();
-        item.delegate = null;
-      }
-    }
   }
 }
 
@@ -180,8 +181,6 @@ class _QRoute {
   final RedirectGuard redirectGuard;
   final QRouteBuilder page;
   final bool isComponent;
-  QRouterDelegate delegate;
-
   final List<_QRoute> children = [];
 
   _QRoute(
@@ -190,8 +189,7 @@ class _QRoute {
       @required this.path,
       @required this.page,
       @required this.redirectGuard,
-      @required this.fullPath,
-      this.delegate});
+      @required this.fullPath});
 
   _QRoute copyWith({String name, String path, String fullPath}) => _QRoute(
       fullPath: fullPath ?? this.fullPath,
@@ -199,8 +197,7 @@ class _QRoute {
       path: path ?? this.path,
       page: page,
       redirectGuard: redirectGuard,
-      isComponent: isComponent,
-      delegate: delegate);
+      isComponent: isComponent);
 
   bool get hasChidlren => children != null && children.isNotEmpty;
 
@@ -212,16 +209,16 @@ class _QRoute {
 
 class MatchRoute {
   final _QRoute route;
-  MatchRoute childMatch;
   final bool found;
+  MatchRoute childMatch;
   final String childInit;
-  Map<String, dynamic> params = {};
+  final Map<String, dynamic> params;
   MatchRoute({
     this.route,
     this.found = true,
+    this.childInit,
     this.childMatch,
     this.params,
-    this.childInit,
   });
 
   factory MatchRoute.notFound() => MatchRoute(found: false);
@@ -248,10 +245,47 @@ class MatchRoute {
     } else {
       match = matchs.first;
     }
-    final redirect = match.redirectGuard(QR.currentRoute.fullPath);
-    if (redirect != null) {
-      return QR.findMatch(redirect);
-    }
+    // TODO : Fix redirect.
+    //final redirect = match.redirectGuard(QR.currentRoute.fullPath);
+    // if (redirect != null) {
+    //   return QR.findMatch(redirect);
+    // }
     return MatchRoute(route: match, params: params, childInit: childInit);
+  }
+}
+
+class MatchContext {
+  final String name;
+  final String fullPath;
+  final QRouteBuilder page;
+  final MatchContext childContext;
+  final QRouter<dynamic> childRouter;
+
+  MatchContext(
+      {this.name,
+      this.fullPath,
+      this.page,
+      this.childContext,
+      this.childRouter});
+
+  factory MatchContext.fromRoute(MatchRoute route,
+          {QRouter<dynamic> childRouter}) =>
+      MatchContext(
+          name: route.route.name,
+          fullPath: route.route.fullPath,
+          page: route.route.page,
+          childContext: route.childMatch == null
+              ? null
+              : MatchContext.fromRoute(route.childMatch),
+          childRouter: childRouter);
+
+  MaterialPage toMaterialPage() => MaterialPage(
+      name: name, key: ValueKey(fullPath), child: page(childRouter));
+
+  void triggerChild() {
+    if (childRouter == null) {
+      return;
+    }
+    childRouter.routerDelegate.setNewRoutePath(childRouter);
   }
 }
