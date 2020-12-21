@@ -88,7 +88,7 @@ class RoutesTree {
         continue;
       }
       contextNode.childContext = MatchContext.fromRoute(routeNode.childMatch);
-      contextNode.childRouter = QRouter(
+      contextNode.router = QRouter(
           routerDelegate:
               QRouterDelegate(matchRoute: contextNode.childContext));
       routeNode = routeNode.childMatch;
@@ -156,46 +156,27 @@ class RoutesTree {
   MatchRoute _getMatchWithoutParent(String path) {
     final newRoute = Uri.parse(path).pathSegments;
 
-
-    // TODO: Build always the full tree
-    // InitalRoute
+    // InitalRoute `/`
     if (newRoute.isEmpty) {
       return MatchRoute.fromTree(routes: _routes, path: '');
     }
 
+    // Build Match Base
     var searchIn = _routes;
-    _QRoute match;
-    var matchLevel = 0;
-    // Search for the match level
-    for (matchLevel;
-        matchLevel < min(newRoute.length, currentRoute.length);
-        matchLevel++) {
-      if (currentRoute[matchLevel] != newRoute[matchLevel]) {
-        break;
-      }
-
-      match = searchIn
-          .firstWhere((element) => element.path == currentRoute[matchLevel]);
-      searchIn = match.children;
-    }
-    // Clean the unused route.
-
-    // return the new match
-    final match =
-        MatchRoute.fromTree(routes: _routes, path: newRoute[0]);
+    final match = MatchRoute.fromTree(routes: searchIn, path: newRoute[0]);
     if (!match.found) return _notFound(path);
-
     searchIn = match.route.children;
 
-    // build rest tree
+    // Build Match Tree
     var childMatch = match;
-    for (matchLevel; matchLevel < newRoute.length; matchLevel++) {
-      searchIn = childMatch.route.children;
+    for (var i = 1; i < newRoute.length; i++) {
       childMatch.childMatch =
-          MatchRoute.fromTree(routes: searchIn, path: newRoute[matchLevel]);
-      if (!match.found) return _notFound(path);
+          MatchRoute.fromTree(routes: searchIn, path: newRoute[i]);
+      if (!childMatch.childMatch.found) return _notFound(path);
+      searchIn = childMatch.childMatch.route.children;
       childMatch = childMatch.childMatch;
     }
+
     return match;
   }
 
@@ -312,7 +293,7 @@ class MatchContext {
   final String fullPath;
   final QRouteBuilder page;
   MatchContext childContext;
-  QRouter<dynamic> childRouter;
+  QRouter<dynamic> router;
 
   MatchContext(
       {this.name,
@@ -320,25 +301,25 @@ class MatchContext {
       this.fullPath,
       this.page,
       this.childContext,
-      this.childRouter});
+      this.router});
 
   factory MatchContext.fromRoute(MatchRoute route,
-          {QRouter<dynamic> childRouter, MatchContext childContext}) =>
+          {QRouter<dynamic> router, MatchContext childContext}) =>
       MatchContext(
           name: route.route.name,
           key: route.route.key,
           fullPath: route.route.fullPath,
           page: route.route.page,
           childContext: childContext,
-          childRouter: childRouter);
+          router: router);
 
   MaterialPage toMaterialPage() => MaterialPage(
-      name: name, key: ValueKey(fullPath), child: page(childRouter));
+      name: name, key: ValueKey(fullPath), child: page(router));
 
   void triggerChild() {
-    if (childRouter == null) {
+    if (router == null) {
       return;
     }
-    childRouter.routerDelegate.setNewRoutePath(childContext);
+    router.routerDelegate.setNewRoutePath(childContext);
   }
 }
