@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 
 import 'router.dart';
 import 'types.dart';
@@ -81,16 +82,27 @@ class RoutesTree {
     var contextNode = newTree;
 
     while (routeNode.childMatch != null) {
-      if (contextNode.childContext != null &&
-          routeNode.childMatch.route.key == contextNode.childContext.key) {
-        routeNode = routeNode.childMatch;
-        contextNode = contextNode.childContext;
-        continue;
+      final needInit =
+          // There is no previus context
+          contextNode.childContext == null ||
+              // This is new child route (it has new key)
+              routeNode.childMatch.route.key != contextNode.childContext.key ||
+              // It is component (can't compare old route. always create new)
+              routeNode.childMatch.route.isComponent;
+
+      if (needInit) {
+        contextNode.childContext = MatchContext.fromRoute(routeNode.childMatch);
+        // If there was no router and the child has a child
+        // then we need new router.
+        if (contextNode.router == null) {
+          contextNode.router = QRouter(
+              routeInformationParser: QRouteInformationParser(
+                  parent: routeNode.childMatch.route.path),
+              routeInformationProvider: QRouteInformationProvider(),
+              routerDelegate:
+                  QRouterDelegate(matchRoute: contextNode.childContext));
+        }
       }
-      contextNode.childContext = MatchContext.fromRoute(routeNode.childMatch);
-      contextNode.router = QRouter(
-          routerDelegate:
-              QRouterDelegate(matchRoute: contextNode.childContext));
       routeNode = routeNode.childMatch;
       contextNode = contextNode.childContext;
     }
@@ -123,7 +135,7 @@ class RoutesTree {
     // Set current route info
     _cureentTree = newTree;
     QR.currentRoute.fullPath = path;
-    QR.currentRoute..params = match.params;
+    QR.currentRoute..params = match.getParames();
     QR.currentRoute.match = newTree;
 
     return newTree;
@@ -177,10 +189,18 @@ class RoutesTree {
       childMatch = childMatch.childMatch;
     }
 
+    // Set initRoute `/` if needed
+    if (childMatch.route.hasChidlren) {
+      childMatch.childMatch = MatchRoute.fromTree(routes: searchIn, path: '');
+      if (!childMatch.childMatch.found) return _notFound(path);
+      searchIn = childMatch.childMatch.route.children;
+      childMatch = childMatch.childMatch;
+    }
+
     return match;
   }
 
-  void changePath(String path) {
+  void updatePath(String path) {
     final match = getMatch(path);
     _rootDelegate.setNewRoutePath(match);
   }
@@ -285,12 +305,21 @@ class MatchRoute {
     // }
     return MatchRoute(route: match, params: params, childInit: childInit);
   }
+
+  Map<String, dynamic> getParames() {
+    final result = params;
+    if (childMatch != null) {
+      result.addAll(childMatch.getParames());
+    }
+    return result;
+  }
 }
 
 class MatchContext {
   final int key;
   final String name;
   final String fullPath;
+  final bool isComponent;
   final QRouteBuilder page;
   MatchContext childContext;
   QRouter<dynamic> router;
@@ -299,6 +328,7 @@ class MatchContext {
       {this.name,
       this.key,
       this.fullPath,
+      this.isComponent,
       this.page,
       this.childContext,
       this.router});
@@ -307,14 +337,15 @@ class MatchContext {
           {QRouter<dynamic> router, MatchContext childContext}) =>
       MatchContext(
           name: route.route.name,
+          isComponent: route.route.isComponent,
           key: route.route.key,
           fullPath: route.route.fullPath,
           page: route.route.page,
           childContext: childContext,
           router: router);
 
-  MaterialPage toMaterialPage() => MaterialPage(
-      name: name, key: ValueKey(fullPath), child: page(router));
+  MaterialPage toMaterialPage() =>
+      MaterialPage(name: name, key: ValueKey(fullPath), child: page(router));
 
   void triggerChild() {
     if (router == null) {

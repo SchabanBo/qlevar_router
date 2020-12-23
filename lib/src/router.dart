@@ -79,13 +79,15 @@ class QRouterDelegate extends RouterDelegate<MatchContext>
       _stack
         ..clear()
         ..add(route);
+      notifyListeners();
     }
     route.triggerChild();
     return SynchronousFuture(null);
   }
 
-  bool _isOldMatch(MatchContext matchRoute) =>
-      _stack.last.key == matchRoute.key;
+  bool _isOldMatch(MatchContext matchRoute) => matchRoute.isComponent
+      ? _stack.last.fullPath == matchRoute.fullPath
+      : _stack.last.key == matchRoute.key;
 
   void pop() {
     if (_stack.length <= 1) {
