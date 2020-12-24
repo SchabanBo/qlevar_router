@@ -64,7 +64,7 @@ class RoutesTree {
       return QR.currentRoute.match;
     }
 
-    final match = _getMatchWithoutParent(path);
+    final match = _getMatch(path);
 
     final redirect = match.route.redirectGuard(path);
     if (redirect != null) {
@@ -119,7 +119,7 @@ class RoutesTree {
       if (routeNode.childMatch == null && match.params.isNotEmpty) {
         contextNode.childContext = contextNode.childContext
             .copyWith(fullPath: path, isComponent: true);
-      }      
+      }
       contextNode = contextNode.childContext;
     }
 
@@ -156,7 +156,7 @@ class RoutesTree {
     return !match.found ? _notFound(path) : match;
   }
 
-  MatchRoute _getMatchWithoutParent(String path) {
+  MatchRoute _getMatch(String path) {
     final newRoute = Uri.parse(path).pathSegments;
 
     // InitalRoute `/`
@@ -198,10 +198,8 @@ class RoutesTree {
 
   // Get match object for notFound Page.
   MatchRoute _notFound(String path) {
-    // TODO: Fix notFound
     QR.currentRoute.fullPath = path;
-    final match = MatchRoute.fromTree(routes: _routes, path: 'notFound');
-    //QR.currentRoute.match = match;
+    final match = MatchRoute.fromTree(routes: _routes, path: 'notfound');
     return match;
   }
 }
@@ -289,11 +287,6 @@ class MatchRoute {
     } else {
       match = matchs.first;
     }
-    // TODO : Fix redirect.
-    //final redirect = match.redirectGuard(QR.currentRoute.fullPath);
-    // if (redirect != null) {
-    //   return QR.findMatch(redirect);
-    // }
     return MatchRoute(route: match, params: params, childInit: childInit);
   }
 
@@ -303,54 +296,5 @@ class MatchRoute {
       result.addAll(childMatch.getParames());
     }
     return result;
-  }
-}
-
-class MatchContext {
-  final int key;
-  final String name;
-  final String fullPath;
-  final bool isComponent;
-  final QRouteBuilder page;
-  MatchContext childContext;
-  QRouter<dynamic> router;
-
-  MatchContext(
-      {this.name,
-      this.key,
-      this.fullPath,
-      this.isComponent,
-      this.page,
-      this.childContext,
-      this.router});
-
-  MatchContext copyWith({String fullPath, bool isComponent}) => MatchContext(
-      key: key,
-      name: name,
-      fullPath: fullPath ?? this.fullPath,
-      isComponent: isComponent ?? this.isComponent,
-      page: page,
-      childContext: childContext,
-      router: router);
-
-  factory MatchContext.fromRoute(MatchRoute route,
-          {QRouter<dynamic> router, MatchContext childContext}) =>
-      MatchContext(
-          name: route.route.name,
-          isComponent: route.route.isComponent,
-          key: route.route.key,
-          fullPath: route.route.fullPath,
-          page: route.route.page,
-          childContext: childContext,
-          router: router);
-
-  MaterialPage toMaterialPage() =>
-      MaterialPage(name: name, key: ValueKey(fullPath), child: page(router));
-
-  void triggerChild() {
-    if (router == null) {
-      return;
-    }
-    router.routerDelegate.setNewRoutePath(childContext);
   }
 }

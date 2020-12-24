@@ -67,3 +67,53 @@ class QCurrentRoute {
   Map<String, dynamic> params = {};
   MatchContext match;
 }
+
+class MatchContext {
+  final int key;
+  final String name;
+  final String fullPath;
+  final bool isComponent;
+  final QRouteBuilder page;
+  MatchContext childContext;
+  QRouter<dynamic> router;
+
+  MatchContext(
+      {this.name,
+      this.key,
+      this.fullPath,
+      this.isComponent,
+      this.page,
+      this.childContext,
+      this.router});
+
+  MatchContext copyWith({String fullPath, bool isComponent}) => MatchContext(
+      key: key,
+      name: name,
+      fullPath: fullPath ?? this.fullPath,
+      isComponent: isComponent ?? this.isComponent,
+      page: page,
+      childContext: childContext,
+      router: router);
+
+  factory MatchContext.fromRoute(MatchRoute route,
+          {QRouter<dynamic> router, MatchContext childContext}) =>
+      MatchContext(
+          name: route.route.name,
+          isComponent: route.route.isComponent,
+          key: route.route.key,
+          fullPath: route.route.fullPath,
+          page: route.route.page,
+          childContext: childContext,
+          router: router);
+
+  MaterialPage toMaterialPage() =>
+      MaterialPage(name: name, key: ValueKey(fullPath), child: page(router));
+
+  void triggerChild() {
+    if (router == null) {
+      return;
+    }
+    router.routerDelegate.setNewRoutePath(childContext);
+  }
+}
+

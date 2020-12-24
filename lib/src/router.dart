@@ -24,7 +24,7 @@ class QRouterApp extends StatelessWidget {
           path: '/notfound',
           page: (r) => Material(
                 child: Center(
-                  child: Text('Page Not Found'),
+                  child: Text('Page Not Found "${QR.currentRoute.fullPath}"'),
                 ),
               )));
     }

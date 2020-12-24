@@ -65,8 +65,23 @@ class DashboardScreen extends StatelessWidget {
 class DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
-      child: Text(
-          ""'This is the dashboard content. '
-              'Use the appbar to get to another page.'"",
-          style: TextStyle(color: Colors.white, fontSize: 35)));
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+              ""
+              'This is the dashboard content. '
+              'Use the appbar to get to another page.'
+              "",
+              style: TextStyle(color: Colors.white, fontSize: 35)),
+          RaisedButton(
+            onPressed: () {
+              QR.replace('/somepage');
+            },
+            child: Text(
+              'Or Test Not found page',
+            ),
+          ),
+        ],
+      ));
 }
