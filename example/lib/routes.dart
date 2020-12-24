@@ -13,12 +13,18 @@ class AppRoutes {
         page: (childRouter) => DashboardScreen(childRouter),
         children: [
           QRoute(path: '/', page: (child) => DashboardContent()),
-          QRoute(path: '/items', page: (child) => ItemsScreen()),
+          QRoute(
+              path: '/items',
+              page: (child) => ItemsScreen(child),
+              children: [
+                QRoute(path: '/', page: (child) => Container()),
+                QRoute(path: '/details', page: (c) => ItemDetailsScreen())
+              ]),
           QRoute(
               path: '/orders',
               page: (child) => OrdersScreen(child),
               children: [
-                QRoute(path: '/', page: (child) =>  Container()),
+                QRoute(path: '/', page: (child) => Container()),
                 QRoute(path: '/:orderId', page: (child) => OrderDetails()),
               ]),
         ]),

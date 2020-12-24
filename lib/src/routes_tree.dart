@@ -1,8 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import '../qlevar_router.dart';
 
 import 'router.dart';
 import 'types.dart';
@@ -73,6 +71,16 @@ class RoutesTree {
       return getMatch(redirect);
     }
 
+    // AddParams
+    final params = Uri.parse(path).queryParametersAll;
+    for (var item in params.entries) {
+      if (item.value.length == 1) {
+        match.params.addAll({item.key: item.value.first});
+      } else if (item.value.isNotEmpty) {
+        match.params.addAll({item.key: item.value});
+      }
+    }
+
     // Build Match Context
     var routeNode = match;
     final newTree =
@@ -103,39 +111,22 @@ class RoutesTree {
                   QRouterDelegate(matchRoute: contextNode.childContext));
         }
       }
+
       routeNode = routeNode.childMatch;
+
+      // if there is params update the path on the last child
+      // so he can update with new request with new params
+      if (routeNode.childMatch == null && match.params.isNotEmpty) {
+        contextNode.childContext = contextNode.childContext
+            .copyWith(fullPath: path, isComponent: true);
+      }      
       contextNode = contextNode.childContext;
-    }
-
-    // if (parentPath.isNotEmpty) {
-    //   if (parentPath == 'QRouterBasePath') parentPath = '';
-    //   match = _getMatchWithParent(path, parentPath);
-    //   if (parentPath.isEmpty) {
-    //     _cureentTree = match;
-    //   }
-    // } else {
-    //   match = ;
-    // }
-
-    // //Set initRoute
-    // final initMatch = MatchRoute.fromTree(routes: searchIn, path: '');
-    // if (!match.found) return _notFound(path);
-    // childMatch.childMatch = initMatch;
-
-    // AddParams
-    final params = Uri.parse(path).queryParametersAll;
-    for (var item in params.entries) {
-      if (item.value.length == 1) {
-        match.params.addAll({item.key: item.value.first});
-      } else if (item.value.isNotEmpty) {
-        match.params.addAll({item.key: item.value});
-      }
     }
 
     // Set current route info
     _cureentTree = newTree;
     QR.currentRoute.fullPath = path;
-    QR.currentRoute..params = match.getParames();
+    QR.currentRoute.params = match.getParames();
     QR.currentRoute.match = newTree;
 
     return newTree;
@@ -332,6 +323,15 @@ class MatchContext {
       this.page,
       this.childContext,
       this.router});
+
+  MatchContext copyWith({String fullPath, bool isComponent}) => MatchContext(
+      key: key,
+      name: name,
+      fullPath: fullPath ?? this.fullPath,
+      isComponent: isComponent ?? this.isComponent,
+      page: page,
+      childContext: childContext,
+      router: router);
 
   factory MatchContext.fromRoute(MatchRoute route,
           {QRouter<dynamic> router, MatchContext childContext}) =>

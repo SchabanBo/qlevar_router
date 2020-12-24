@@ -58,7 +58,7 @@ class OrdersScreen extends StatelessWidget {
 
 class OrderDetails extends StatelessWidget {
   final order = Get.find<Database>()
-      .orders[int.parse(QR.currentRoute.params['orderId'].toString())-1];
+      .orders[int.parse(QR.currentRoute.params['orderId'].toString()) - 1];
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -97,7 +97,7 @@ class OrderDetails extends StatelessWidget {
                                 const SizedBox(width: 15),
                                 Text(
                                   // ignore: lines_longer_than_80_chars
-                                  'Price: ${order.items[i].count * order.items[i].item.price} €',
+                                  'Price: ${(order.items[i].count * order.items[i].item.price).toStringAsFixed(2)} €',
                                   style: TextStyle(fontSize: 15),
                                 ),
                               ]),
@@ -125,9 +125,10 @@ class OrderDetails extends StatelessWidget {
     );
   }
 
-  double _getTotla() => order.items
+  String _getTotla() => order.items
       .map((e) => (e.count * e.item.price))
-      .reduce((value, element) => value + element);
+      .reduce((value, element) => value + element)
+      .toStringAsFixed(2);
 
   Row _getRow(String lable, String value) => Row(
         children: [
