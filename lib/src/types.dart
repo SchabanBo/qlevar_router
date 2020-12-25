@@ -19,14 +19,13 @@ class QRouter<T> extends Router<T> {
 typedef QRouteBuilder = Widget Function(QRouter);
 typedef RedirectGuard = String Function(String);
 
-
 /// Create new route.
 /// [name] the name of the route.
 /// [path] the path of the route.
 /// [page] the page to show
-/// It give the child router to use it in the parent page 
+/// It give the child router to use it in the parent page
 /// when the route has children, otherwise it give null.
-/// [redirectGuard] it gives the called path and takes the new path 
+/// [redirectGuard] it gives the called path and takes the new path
 /// to navigate to, give it null when you don't want to redirect.
 /// [children] the children of this route.
 class QRoute {
@@ -44,33 +43,6 @@ class QRoute {
       this.children});
 }
 
-class QUri {
-  final Uri uri;
-  QUri(String path) : uri = Uri.parse(path);
-}
-
-class _QRContext {
-  final QCurrentRoute currentRoute = QCurrentRoute();
-  bool enableLog = true;
-}
-
-// ignore: non_constant_identifier_names
-final QR = _QRContext();
-
-extension QRouterExtensions on _QRContext {
-  static final RoutesTree _routesTree = RoutesTree();
-  RoutesTree get routesTree => _routesTree;
-  MatchContext findMatch(String route, {String parent}) =>
-      _routesTree.getMatch(route, parentPath: parent);
-
-  void replace(String route) => _routesTree.updatePath(route);
-
-  void log(String mes) {
-    if (enableLog) {
-      print('Qlevar-Route: $mes');
-    }
-  }
-}
 
 class QCurrentRoute {
   String fullPath = '';
@@ -126,4 +98,3 @@ class MatchContext {
     router.routerDelegate.setNewRoutePath(childContext);
   }
 }
-

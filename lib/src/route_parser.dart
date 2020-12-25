@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import '../qlevar_router.dart';
 import 'types.dart';
 
 class QRouteInformationParser extends RouteInformationParser<MatchContext> {

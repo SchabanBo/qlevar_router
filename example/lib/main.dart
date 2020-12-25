@@ -12,8 +12,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => QRouterApp(
-        initRoute: '/dashboard',
-        routes: AppRoutes().routes,
+  Widget build(BuildContext context) => MaterialApp.router(
+        routerDelegate: QR.router(AppRoutes().routes, initRoute: '/dashboard'),
+        routeInformationParser: QR.routeParser(),
       );
 }

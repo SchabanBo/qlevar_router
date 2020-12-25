@@ -1,43 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'route_parser.dart';
+import '../qlevar_router.dart';
 import 'types.dart';
-
-class QRouterApp extends StatelessWidget {
-  final List<QRoute> routes;
-  final String initRoute;
-
-  const QRouterApp({
-    this.initRoute = '',
-    @required this.routes,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (routes.map((e) => e.path).contains('/') == false) {
-      routes.add(QRoute(path: '/', redirectGuard: (s) => initRoute));
-    }
-    if (routes.map((e) => e.path).contains('/notfound') == false) {
-      routes.add(QRoute(
-          path: '/notfound',
-          page: (r) => Material(
-                child: Center(
-                  child: Text('Page Not Found "${QR.currentRoute.fullPath}"'),
-                ),
-              )));
-    }
-
-    final delegate = QR.routesTree.setTree(
-        routes, () => QRouterDelegate(matchRoute: QR.findMatch(initRoute)));
-
-    return MaterialApp.router(
-      routerDelegate: delegate,
-      routeInformationParser:
-          QRouteInformationParser(parent: 'QRouterBasePath'),
-    );
-  }
-}
 
 class QRouterDelegate extends RouterDelegate<MatchContext>
     with
