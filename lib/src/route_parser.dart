@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'routes_tree.dart';
 import 'types.dart';
 
 class QRouteInformationParser extends RouteInformationParser<MatchContext> {

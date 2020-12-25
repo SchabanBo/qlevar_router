@@ -14,7 +14,9 @@ class DashboardScreen extends StatelessWidget {
         elevation: 5,
         bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
-        title: Text('Dashboard $now'),
+        title: InkWell(
+            onTap: () => QR.replace('/dashboard'),
+            child: Text('Dashboard $now')),
         centerTitle: true,
         actions: [
           FlatButton(
@@ -80,6 +82,15 @@ class DashboardContent extends StatelessWidget {
             },
             child: Text(
               'Or Test Not found page',
+            ),
+          ),
+          const SizedBox(height: 5),
+          RaisedButton(
+            onPressed: () {
+              QR.replace('/redirect');
+            },
+            child: Text(
+              'Or Test redirect, "Redirect to items page"',
             ),
           ),
         ],

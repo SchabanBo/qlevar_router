@@ -19,6 +19,16 @@ class QRouter<T> extends Router<T> {
 typedef QRouteBuilder = Widget Function(QRouter);
 typedef RedirectGuard = String Function(String);
 
+
+/// Create new route.
+/// [name] the name of the route.
+/// [path] the path of the route.
+/// [page] the page to show
+/// It give the child router to use it in the parent page 
+/// when the route has children, otherwise it give null.
+/// [redirectGuard] it gives the called path and takes the new path 
+/// to navigate to, give it null when you don't want to redirect.
+/// [children] the children of this route.
 class QRoute {
   final String name;
   final String path;

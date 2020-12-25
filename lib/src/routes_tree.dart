@@ -66,7 +66,7 @@ class RoutesTree {
 
     final match = _getMatch(path);
 
-    final redirect = match.route.redirectGuard(path);
+    final redirect = match.checkRedirect(path);
     if (redirect != null) {
       return getMatch(redirect);
     }
@@ -131,31 +131,7 @@ class RoutesTree {
 
     return newTree;
   }
-
-  MatchRoute _getMatchWithParent(String path, String parentPath) {
-    var searchIn = _routes;
-    for (var item in Uri.parse(parentPath).pathSegments) {
-      searchIn =
-          MatchRoute.fromTree(routes: searchIn, path: item).route.children;
-    }
-
-    MatchRoute match;
-    // if init route for a path.
-    if (path == '' || path == '/') {
-      if (path.startsWith('/')) path = path.substring(1);
-      match = MatchRoute.fromTree(routes: searchIn, path: path);
-    } else {
-      final uri = Uri.parse(path);
-      String childInit;
-      if (uri.pathSegments.length > 1 && uri.pathSegments[1].isNotEmpty) {
-        childInit = '/${uri.pathSegments[1]}';
-      }
-      match = MatchRoute.fromTree(
-          routes: searchIn, path: uri.pathSegments[0], childInit: childInit);
-    }
-    return !match.found ? _notFound(path) : match;
-  }
-
+ 
   MatchRoute _getMatch(String path) {
     final newRoute = Uri.parse(path).pathSegments;
 
@@ -296,5 +272,14 @@ class MatchRoute {
       result.addAll(childMatch.getParames());
     }
     return result;
+  }
+
+  String checkRedirect(String path) {
+    final redirect = route.redirectGuard(path);
+    return redirect != null
+        ? redirect
+        : childMatch == null
+            ? null
+            : childMatch.checkRedirect(path);
   }
 }
