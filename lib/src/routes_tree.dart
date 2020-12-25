@@ -48,7 +48,7 @@ class RoutesTree {
 
     _routes.addAll(_buildTree(routes, '', 1));
     for (var route in _routes) {
-      route.printTree(0);
+      route.printTree(1);
     }
     _rootDelegate = delegate();
     return _rootDelegate;
@@ -131,7 +131,7 @@ class RoutesTree {
 
     return newTree;
   }
- 
+
   MatchRoute _getMatch(String path) {
     final newRoute = Uri.parse(path).pathSegments;
 
@@ -220,7 +220,7 @@ class _QRoute {
   void printTree(int width) {
     QR.log(''.padRight(width, '-') + _info());
     for (var item in children) {
-      item.printTree(width + 2);
+      item.printTree(width++);
     }
   }
 }
