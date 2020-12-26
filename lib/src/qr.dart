@@ -9,6 +9,7 @@ final QR = _QRContext();
 class _QRContext {
   final QCurrentRoute currentRoute = QCurrentRoute();
   final bool enableLog = true;
+  final bool enableDebugLog = true;
   final RoutesTree _routesTree = RoutesTree();
 
   QRouterDelegate router(List<QRoute> routes, {String initRoute = ''}) {
@@ -38,8 +39,8 @@ class _QRContext {
 
   void replace(String route) => _routesTree.updatePath(route);
 
-  void log(String mes) {
-    if (enableLog) {
+  void log(String mes, {bool isDebug = false}) {
+    if (enableLog && (!isDebug || enableDebugLog)) {
       print('Qlevar-Route: $mes');
     }
   }

@@ -15,6 +15,7 @@ class RoutesTree {
   List<_QRoute> _buildTree(List<QRoute> routes, String basePath, int key) {
     final result = <_QRoute>[];
     if (routes == null || routes.isEmpty) return result;
+
     for (var route in routes) {
       var path = route.path;
       if (path.startsWith('/')) {
@@ -57,7 +58,7 @@ class RoutesTree {
   MatchContext getMatch(String path, {String parentPath}) {
     parentPath = parentPath ?? '';
     path = path.trim();
-    QR.log('matching for $path for parent: $parentPath');
+    QR.log('matching for $path for parent: $parentPath', isDebug: true);
 
     // Check if the same route
     if (path == QR.currentRoute.fullPath && QR.currentRoute.match != null) {

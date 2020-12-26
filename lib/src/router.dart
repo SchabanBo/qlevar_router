@@ -38,8 +38,12 @@ class QRouterDelegate extends RouterDelegate<MatchContext>
 
   @override
   Future<void> setNewRoutePath(MatchContext route) {
-    QR.log('setNewRoutePath: ${route.fullPath}');
+    if (route == null) {
+      return SynchronousFuture(null);
+    }
+    QR.log('setNewRoutePath: ${route.fullPath}', isDebug: true);
     if (!_isOldMatch(route)) {
+      QR.log('New Path: ${route.fullPath}');
       _stack
         ..clear()
         ..add(route);
