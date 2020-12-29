@@ -43,17 +43,19 @@ class QRoute {
       this.children});
 }
 
-
+/// The cureent route inforamtion 
 class QCurrentRoute {
   String fullPath = '';
   Map<String, dynamic> params = {};
   MatchContext match;
 }
 
+/// the match context for a route
 class MatchContext {
   final int key;
   final String name;
   final String fullPath;
+  String cureentPath;
   final bool isComponent;
   final QRouteBuilder page;
   MatchContext childContext;
@@ -91,10 +93,22 @@ class MatchContext {
   MaterialPage toMaterialPage() =>
       MaterialPage(name: name, key: ValueKey(fullPath), child: page(router));
 
+  void updatePath(String path){
+    cureentPath = path;
+    if (childContext!=null) {
+      childContext.updatePath(path);
+    }
+  }
+
   void triggerChild() {
     if (router == null) {
       return;
     }
     router.routerDelegate.setNewRoutePath(childContext);
   }
+
+  bool isMatch(MatchContext other) => other.isComponent
+      ? fullPath == other.fullPath
+      : key == other.key;
+
 }

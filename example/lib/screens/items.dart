@@ -21,7 +21,7 @@ class ItemsScreen extends StatelessWidget {
           Wrap(
             children: database.items
                 .map((e) => InkWell(
-                      onTap: () => QR.replace(
+                      onTap: () => QR.to(
                           '/dashboard/items/details?itemName=${e.name}'),
                       child: Card(
                         elevation: 8,

@@ -6,11 +6,19 @@ import 'routes_tree.dart';
 // ignore: non_constant_identifier_names
 final QR = _QRContext();
 
+
+/// The main class of qlevar-router
 class _QRContext {
+
+  /// The information for the current route
+  /// here you can find the params for the current route 
+  /// or even the fullpath
   final QCurrentRoute currentRoute = QCurrentRoute();
   final bool enableLog = true;
-  final bool enableDebugLog = true;
+  final bool enableDebugLog = false;
   final RoutesTree _routesTree = RoutesTree();
+  /// list of string for the paths that has been called.
+  final history = <String>[];
 
   QRouterDelegate router(List<QRoute> routes, {String initRoute = ''}) {
     if (routes.map((e) => e.path).contains('/') == false) {
@@ -37,8 +45,13 @@ class _QRContext {
   MatchContext findMatch(String route, {String parent}) =>
       _routesTree.getMatch(route, parentPath: parent);
 
-  void replace(String route) => _routesTree.updatePath(route);
+  /// Navigate to new page with [path]
+  void to(String path) => _routesTree.updatePath(path);
 
+  // back to previous page
+  void back() => to(QR.history[QR.history.length - 2]);
+
+  /// wirte log 
   void log(String mes, {bool isDebug = false}) {
     if (enableLog && (!isDebug || enableDebugLog)) {
       print('Qlevar-Route: $mes');

@@ -5,13 +5,15 @@ The clever way to Route in your projects.
 - [Qlevar Router (QR) Demo](#qlevar-router-qr-demo)
   - [Using](#using)
     - [Configuration](#configuration)
-      - [Params](#params)
-      - [Not found page](#not-found-page)
+    - [Params](#params)
+    - [Not found page](#not-found-page)
     - [Nested Routing](#nested-routing)
     - [Redirecting](#redirecting)
     - [Context-less Navigation](#context-less-navigation)
+    - [Known issues](#known-issues)
   - [Classes](#classes)
     - [QRoute](#qroute)
+    - [QR](#qr)
 
 ## Using
 
@@ -25,11 +27,12 @@ To use this package you must first use the Router with the `MaterialApp` or `Cup
         routeInformationParser: QR.routeParser(),
       )
 ```
+
 `routes` are the list of QRoute that represent the routes for your project.
 
 `initRoute` is optional, when it is not provided the route `/` will be used.
 
-#### Params
+### Params
 
 send params with your route and receive them in the next page.
 
@@ -54,7 +57,7 @@ final itemName = QR.currentRoute.params['itemName'].toString()
 final numbers = QR.currentRoute.params['numbers']
 ```
 
-#### Not found page
+### Not found page
 
 you can set your custom not found pag to show it whenever page was not found, or a default one will be set.
 
@@ -133,35 +136,42 @@ or it takes `null` so the page can be accessed.
 
 ### Context-less Navigation
 
-No need for context when navigation
+No more need for context when you want to navigate.
+if you need to route to new page simply
+
+```dart
+  QR.to('/dashboard/items');
+```
+
+and QR is clever enough to know with `Router` he should update.
+
+want to go back
+
+```dart
+  QR.back();
+```
+
+### Known issues
+
+- Back and foreword buttons on browser not working as expected.
+- Back button on mobile closes the app.
+- for now just the MaterialApp/MaterialPage are implemented.
 
 ## Classes
 
 ### QRoute
 
-- name
-
+- **name**:
 The name of the route
-
-- path
-
+- **path**:
 The path of this route
-
-- page
-
+- **page**:
 The page to show, a normal widget.
 It give the child router to place it in the parent page where it needed
 when the route has no children it give null.
-
-- redirectGuard
-
-a method to redirect to new page.
+- **redirectGuard**: a method to redirect to new page.
 it gives the called path and takes the new path to navigate to, give it null when you don't want to redirect.
-
-- children
-
- the children of this route
-
+- **children**: the children of this route
 - Example
 
 ```dart
@@ -191,3 +201,12 @@ it gives the called path and takes the new path to navigate to, give it null whe
               ]),
         ]),
 ```
+
+### QR
+
+- **to(String path)**: navigate to new path, call this method from anywhere and QR is clever enough to know which router he should update.
+- **back()**: navigate back to a previous page.
+- **history**: list of string for the paths that has been called.
+- **currentRoute**: The information for the current route.
+  - **fullPath**: the full path of the current route.
+  - **params**: Map<String,dynamic> contains the params for the current route.

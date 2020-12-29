@@ -129,7 +129,7 @@ class RoutesTree {
     QR.currentRoute.fullPath = path;
     QR.currentRoute.params = match.getParames();
     QR.currentRoute.match = newTree;
-
+    QR.history.add(path);
     return newTree;
   }
 
@@ -171,6 +171,14 @@ class RoutesTree {
   void updatePath(String path) {
     final match = getMatch(path);
     _rootDelegate.setNewRoutePath(match);
+  }
+
+  void back(){
+    final match = QR.currentRoute.match;
+    var matchNode = match;
+    while (matchNode.childContext != null) {
+      matchNode = matchNode.childContext;
+    }
   }
 
   // Get match object for notFound Page.

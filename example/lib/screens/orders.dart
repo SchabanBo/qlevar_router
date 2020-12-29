@@ -12,9 +12,19 @@ class OrdersScreen extends StatelessWidget {
     final database = Get.find<Database>();
     return Column(
       children: [
-        Text(
-          'Orders',
-          style: TextStyle(color: Colors.white, fontSize: 35),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Orders',
+              style: TextStyle(color: Colors.white, fontSize: 35),
+            ),
+            const SizedBox(width: 15),
+            RaisedButton(
+              child: Text('Back'),
+              onPressed: QR.back,
+            ),
+          ],
         ),
         Expanded(
           child: Row(
@@ -35,8 +45,7 @@ class OrdersScreen extends StatelessWidget {
                               '#${item.id} - From: ${item.from}',
                               style: TextStyle(fontSize: 20),
                             ),
-                            onTap: () =>
-                                QR.replace('/dashboard/orders/${item.id}'),
+                            onTap: () => QR.to('/dashboard/orders/${item.id}'),
                           ),
                         );
                       })),

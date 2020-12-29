@@ -22,7 +22,7 @@ class QRouteInformationParser extends RouteInformationParser<MatchContext> {
 
   @override
   RouteInformation restoreRouteInformation(MatchContext match) =>
-      RouteInformation(location: match.fullPath);
+      RouteInformation(location:QR.currentRoute.fullPath);
 }
 
 class QRouteInformationProvider extends PlatformRouteInformationProvider {

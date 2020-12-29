@@ -15,13 +15,13 @@ class DashboardScreen extends StatelessWidget {
         bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
         title: InkWell(
-            onTap: () => QR.replace('/dashboard'),
+            onTap: () => QR.to('/dashboard'),
             child: Text('Dashboard $now')),
         centerTitle: true,
         actions: [
           FlatButton(
             onPressed: () {
-              QR.replace('/dashboard/items');
+              QR.to('/dashboard/items');
             },
             child: Text(
               'Items',
@@ -30,7 +30,7 @@ class DashboardScreen extends StatelessWidget {
           ),
           FlatButton(
             onPressed: () {
-              QR.replace('/dashboard/orders');
+              QR.to('/dashboard/orders');
             },
             child: Text(
               'Orders',
@@ -40,7 +40,7 @@ class DashboardScreen extends StatelessWidget {
           Container(height: double.infinity, width: 2, color: Colors.white),
           FlatButton(
             onPressed: () {
-              QR.replace('/store');
+              QR.to('/store');
             },
             child: Text(
               'Store',
@@ -78,7 +78,7 @@ class DashboardContent extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 35)),
           RaisedButton(
             onPressed: () {
-              QR.replace('/somepage');
+              QR.to('/somepage');
             },
             child: Text(
               'Or Test Not found page',
@@ -87,7 +87,7 @@ class DashboardContent extends StatelessWidget {
           const SizedBox(height: 5),
           RaisedButton(
             onPressed: () {
-              QR.replace('/redirect');
+              QR.to('/redirect');
             },
             child: Text(
               'Or Test redirect, "Redirect to items page"',
