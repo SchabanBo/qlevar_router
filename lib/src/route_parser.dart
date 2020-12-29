@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'routes_tree.dart';
+import '../qlevar_router.dart';
 import 'types.dart';
 
 class QRouteInformationParser extends RouteInformationParser<MatchContext> {
@@ -22,7 +22,7 @@ class QRouteInformationParser extends RouteInformationParser<MatchContext> {
 
   @override
   RouteInformation restoreRouteInformation(MatchContext match) =>
-      RouteInformation(location: match.fullPath);
+      RouteInformation(location:QR.currentRoute.fullPath);
 }
 
 class QRouteInformationProvider extends PlatformRouteInformationProvider {

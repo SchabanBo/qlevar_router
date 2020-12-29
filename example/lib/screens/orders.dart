@@ -12,9 +12,19 @@ class OrdersScreen extends StatelessWidget {
     final database = Get.find<Database>();
     return Column(
       children: [
-        Text(
-          'Orders',
-          style: TextStyle(color: Colors.white, fontSize: 35),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Orders',
+              style: TextStyle(color: Colors.white, fontSize: 35),
+            ),
+            const SizedBox(width: 15),
+            RaisedButton(
+              child: Text('Back'),
+              onPressed: QR.back,
+            ),
+          ],
         ),
         Expanded(
           child: Row(
@@ -35,8 +45,7 @@ class OrdersScreen extends StatelessWidget {
                               '#${item.id} - From: ${item.from}',
                               style: TextStyle(fontSize: 20),
                             ),
-                            onTap: () =>
-                                QR.replace('/dashboard/orders/${item.id}'),
+                            onTap: () => QR.to('/dashboard/orders/${item.id}'),
                           ),
                         );
                       })),
@@ -58,7 +67,7 @@ class OrdersScreen extends StatelessWidget {
 
 class OrderDetails extends StatelessWidget {
   final order = Get.find<Database>()
-      .orders[int.parse(QR.currentRoute.params['orderId'].toString())-1];
+      .orders[int.parse(QR.currentRoute.params['orderId'].toString()) - 1];
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -97,7 +106,7 @@ class OrderDetails extends StatelessWidget {
                                 const SizedBox(width: 15),
                                 Text(
                                   // ignore: lines_longer_than_80_chars
-                                  'Price: ${order.items[i].count * order.items[i].item.price} €',
+                                  'Price: ${(order.items[i].count * order.items[i].item.price).toStringAsFixed(2)} €',
                                   style: TextStyle(fontSize: 15),
                                 ),
                               ]),
@@ -125,9 +134,10 @@ class OrderDetails extends StatelessWidget {
     );
   }
 
-  double _getTotla() => order.items
+  String _getTotla() => order.items
       .map((e) => (e.count * e.item.price))
-      .reduce((value, element) => value + element);
+      .reduce((value, element) => value + element)
+      .toStringAsFixed(2);
 
   Row _getRow(String lable, String value) => Row(
         children: [

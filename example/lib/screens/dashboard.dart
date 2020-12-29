@@ -14,12 +14,14 @@ class DashboardScreen extends StatelessWidget {
         elevation: 5,
         bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
-        title: Text('Dashboard $now'),
+        title: InkWell(
+            onTap: () => QR.to('/dashboard'),
+            child: Text('Dashboard $now')),
         centerTitle: true,
         actions: [
           FlatButton(
             onPressed: () {
-              QR.replace('/dashboard/items');
+              QR.to('/dashboard/items');
             },
             child: Text(
               'Items',
@@ -28,7 +30,7 @@ class DashboardScreen extends StatelessWidget {
           ),
           FlatButton(
             onPressed: () {
-              QR.replace('/dashboard/orders');
+              QR.to('/dashboard/orders');
             },
             child: Text(
               'Orders',
@@ -38,7 +40,7 @@ class DashboardScreen extends StatelessWidget {
           Container(height: double.infinity, width: 2, color: Colors.white),
           FlatButton(
             onPressed: () {
-              QR.replace('/store');
+              QR.to('/store');
             },
             child: Text(
               'Store',
@@ -65,8 +67,32 @@ class DashboardScreen extends StatelessWidget {
 class DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
-      child: Text(
-          ""'This is the dashboard content. '
-              'Use the appbar to get to another page.'"",
-          style: TextStyle(color: Colors.white, fontSize: 35)));
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+              ""
+              'This is the dashboard content. '
+              'Use the appbar to get to another page.'
+              "",
+              style: TextStyle(color: Colors.white, fontSize: 35)),
+          RaisedButton(
+            onPressed: () {
+              QR.to('/somepage');
+            },
+            child: Text(
+              'Or Test Not found page',
+            ),
+          ),
+          const SizedBox(height: 5),
+          RaisedButton(
+            onPressed: () {
+              QR.to('/redirect');
+            },
+            child: Text(
+              'Or Test redirect, "Redirect to items page"',
+            ),
+          ),
+        ],
+      ));
 }

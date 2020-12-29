@@ -1,60 +1,60 @@
 class Database {
   final items = [
-    Item(
+    StoreItem(
         id: 1,
         name: 'Lettuce',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/lettuce.png',
         price: 0.89),
-    Item(
+    StoreItem(
         id: 2,
         name: 'Tomatoes',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/tomatoes.png',
         price: 2.5),
-    Item(
+    StoreItem(
         id: 3,
         name: 'Spring onions',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/spring-onions.png',
         price: 1.0),
-    Item(
+    StoreItem(
         id: 4,
         name: 'Potatoes',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/potatoes.png',
         price: 0.99),
-    Item(
+    StoreItem(
         id: 5,
         name: 'Cauliflower',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/cauliflower.png',
         price: 0.2),
-    Item(
+    StoreItem(
         id: 6,
         name: 'Peas',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/peas.png',
         price: 0.5),
-    Item(
+    StoreItem(
         id: 7,
         name: 'Sweet corn',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/sweet-corn.png',
         price: 0.7),
-    Item(
+    StoreItem(
         id: 8,
         name: 'Broccoli',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/broccoli.png',
         price: 0.44),
-    Item(
+    StoreItem(
         id: 9,
         name: 'Capsicums',
         image:
             'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/capsicums.png',
         price: 1.2),
-    Item(
+    StoreItem(
         id: 10,
         name: 'Eggplant',
         image:
@@ -119,14 +119,14 @@ class Order {
 class OrderItem {
   int itemId;
   int count;
-  Item item;
+  StoreItem item;
   OrderItem({this.itemId, this.count});
 }
 
-class Item {
+class StoreItem {
   int id;
   String name;
   String image;
   double price;
-  Item({this.id, this.name, this.image, this.price});
+  StoreItem({this.id, this.name, this.image, this.price});
 }

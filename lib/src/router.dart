@@ -1,44 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'route_parser.dart';
-import 'routes_tree.dart';
+import '../qlevar_router.dart';
 import 'types.dart';
-
-class QRouterApp extends StatelessWidget {
-  final List<QRoute> routes;
-  final String initRoute;
-
-  const QRouterApp({
-    this.initRoute = '',
-    @required this.routes,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (routes.map((e) => e.path).contains('/') == false) {
-      routes.add(QRoute(path: '/', redirectGuard: (s) => initRoute));
-    }
-    if (routes.map((e) => e.path).contains('/notfound') == false) {
-      routes.add(QRoute(
-          path: '/notfound',
-          page: (r) => Material(
-                child: Center(
-                  child: Text('Page Not Found'),
-                ),
-              )));
-    }
-
-    final delegate = QR.routesTree.setTree(
-        routes, () => QRouterDelegate(matchRoute: QR.findMatch(initRoute)));
-
-    return MaterialApp.router(
-      routerDelegate: delegate,
-      routeInformationParser:
-          QRouteInformationParser(parent: 'QRouterBasePath'),
-    );
-  }
-}
 
 class QRouterDelegate extends RouterDelegate<MatchContext>
     with
@@ -47,7 +11,7 @@ class QRouterDelegate extends RouterDelegate<MatchContext>
         PopNavigatorRouterDelegateMixin<MatchContext> {
   @override
   final GlobalKey<NavigatorState> navigatorKey;
-  final List<MatchContext> _stack = [];
+  final _stack = <MatchContext>[];
   QRouterDelegate({MatchContext matchRoute})
       : navigatorKey = GlobalKey<NavigatorState>() {
     _stack.add(matchRoute);
@@ -65,7 +29,7 @@ class QRouterDelegate extends RouterDelegate<MatchContext>
         if (!route.didPop(result)) {
           return false;
         }
-        _stack.removeLast();
+        pop();
         notifyListeners();
         return true;
       },
@@ -74,20 +38,35 @@ class QRouterDelegate extends RouterDelegate<MatchContext>
 
   @override
   Future<void> setNewRoutePath(MatchContext route) {
-    QR.log('setNewRoutePath: ${route.fullPath}');
-    if (!_isOldMatch(route)) {
-      _stack
-        ..clear()
-        ..add(route);
-      notifyListeners();
+    if (route == null) {
+      return SynchronousFuture(null);
     }
+    QR.log('setNewRoutePath: ${route.fullPath}', isDebug: true);
+    if (!_isOldMatch(route)) _setNewRoutePath(route);
+    // if (!_isOldMatch(route)) {
+    //   QR.log('New Path: ${route.fullPath}');
+    //   _stack
+    //     ..clear()
+    //     ..add(route);
+    //   notifyListeners();
+    // }
+
     route.triggerChild();
     return SynchronousFuture(null);
   }
 
-  bool _isOldMatch(MatchContext matchRoute) => matchRoute.isComponent
-      ? _stack.last.fullPath == matchRoute.fullPath
-      : _stack.last.key == matchRoute.key;
+  void _setNewRoutePath(MatchContext route) {
+    QR.log('New Path: ${route.fullPath}');
+    if (_stack.any((element) => element.isMatch(route))) {
+      final removeFrom = _stack.indexWhere((element) => element.isMatch(route));
+      _stack.removeRange(removeFrom + 1, _stack.length);
+    } else {
+      _stack.add(route);
+    }
+    notifyListeners();
+  }
+
+  bool _isOldMatch(MatchContext matchRoute) => _stack.last.isMatch(matchRoute);
 
   void pop() {
     if (_stack.length <= 1) {
