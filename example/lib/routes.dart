@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'screens/dashboard.dart';
@@ -10,14 +13,15 @@ class AppRoutes {
   // Dashboard
   static String dashboard = 'Dashboard';
   static String dashboardMain = 'Dashboard Main';
+  static String items = 'Items';
+  static String orders = 'Orders';
+  static String testMultiSlash = 'Test Multi Slash';
 
   // Items
-  static String items = 'Items';
   static String itemsMain = 'Items Main';
   static String itemsDetails = 'Items Details';
 
   // Oorders
-  static String orders = 'Orders';
   static String ordersMain = 'Orders Main';
   static String ordersDetails = 'Orders Details';
 
@@ -69,6 +73,26 @@ class AppRoutes {
                     path: '/:orderId',
                     page: (child) => OrderDetails()),
               ]),
+          QRoute(
+              name: testMultiSlash,
+              path: '/test/multi/slash ',
+              page: (child) => Center(
+                      child: Text(
+                    'It Works',
+                    style: TextStyle(fontSize: 22, color: Colors.yellow),
+                  ))),
+          QRoute(path: '/just', page: (c) => c, children: [
+            QRoute(path: '/a', page: (c) => c, children: [
+              QRoute(
+                path: '/test',
+                page: (c) => Center(
+                    child: Text(
+                  'Test Works',
+                  style: TextStyle(fontSize: 22, color: Colors.yellow),
+                )),
+              ),
+            ]),
+          ]),
         ]),
     QRoute(
         name: store,

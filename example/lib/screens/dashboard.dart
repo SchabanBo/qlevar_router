@@ -1,3 +1,4 @@
+import 'package:example/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
@@ -15,8 +16,7 @@ class DashboardScreen extends StatelessWidget {
         bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
         title: InkWell(
-            onTap: () => QR.to('/dashboard'),
-            child: Text('Dashboard $now')),
+            onTap: () => QR.to('/dashboard'), child: Text('Dashboard $now')),
         centerTitle: true,
         actions: [
           FlatButton(
@@ -44,6 +44,24 @@ class DashboardScreen extends StatelessWidget {
             },
             child: Text(
               'Store',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          FlatButton(
+            onPressed: () {
+              QR.toName(AppRoutes.testMultiSlash);
+            },
+            child: Text(
+              AppRoutes.testMultiSlash,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          FlatButton(
+            onPressed: () {
+              QR.to('/dashboard/just/a/test');
+            },
+            child: Text(
+              'test',
               style: TextStyle(color: Colors.white),
             ),
           ),

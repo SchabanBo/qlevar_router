@@ -3,6 +3,14 @@ import 'package:flutter/widgets.dart';
 import '../qlevar_router.dart';
 import 'types.dart';
 
+/// A delegate that is used by the [Router] widget to parse a route information
+/// into a configuration of type T.
+///
+/// This delegate is used when the [Router] widget is first built with initial
+/// route information from [Router.routeInformationProvider] and any subsequent
+/// new route notifications from it.
+/// The [Router] widget calls the [parseRouteInformation]
+/// with the route information from [Router.routeInformationProvider].
 class QRouteInformationParser extends RouteInformationParser<MatchContext> {
   const QRouteInformationParser();
   @override
