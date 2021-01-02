@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:qlevar_router/src/qr.dart';
 
 import '../qlevar_router.dart';
+import 'qr.dart';
 import 'types.dart';
 
 class QRouterDelegate extends RouterDelegate<MatchContext>

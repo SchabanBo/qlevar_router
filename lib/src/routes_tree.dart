@@ -5,6 +5,7 @@ import 'types.dart';
 
 class RoutesTree {
   final List<_QRoute> _routes = [];
+  final _routesIndex = <String, String>{};
 
   MatchContext _cureentTree;
   QRouterDelegate _rootDelegate;
@@ -35,6 +36,7 @@ class RoutesTree {
           .addAll(_buildTree(route.children, fullPath, key + routes.length));
       result.add(_route);
       key += routes.indexOf(route);
+      _routesIndex[route.name] = fullPath;
       QR.log('"${_route.name}" added with base $basePath');
     }
     return result;
@@ -170,6 +172,34 @@ class RoutesTree {
     final match = getMatch(path);
     match.setNavigationMode(mode ?? QNavigationMode());
     _rootDelegate.setNewRoutePath(match);
+  }
+
+  void updateNamedPath(
+      String name, Map<String, dynamic> params, QNavigationMode mode) {
+    var path = _routesIndex[name];
+    assert(path != null, 'Path name not found');
+    final pathParams = <String, dynamic>{};
+
+    // Search for component params
+    for (var param in params.entries) {
+      if (path.contains(':${param.key}')) {
+        path = path.replaceAll(':${param.key}', param.value.toString());
+      } else {
+        pathParams.addAll(params);
+      }
+    }
+    if (pathParams.isNotEmpty) {
+      path = '$path?';
+      // Build the params
+      for (var i = 0; i < pathParams.length; i++) {
+        final param = pathParams.entries.toList()[i];
+        path = '$path${param.key}=${param.value}';
+        if (i != pathParams.length - 1) {
+          path = '$path&';
+        }
+      }
+    }
+    updatePath(path, mode);
   }
 
   // Get match object for notFound Page.

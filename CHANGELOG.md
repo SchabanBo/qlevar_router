@@ -2,8 +2,9 @@
 
 ## dev
 
-- Add onInit/onDispose to `QRoute`
-- Add QNavigationMode (Push, PopUnitOrPush, ReplaceAll, ReplaceLast)
+- Add onInit/onDispose to `QRoute`.
+- Add QNavigationMode (Push, PopUnitOrPush, ReplaceAll, ReplaceLast).
+- Add `QR.toNamed` navigate with route name.
 
 ## [0.1.0] 29-12-2020
 

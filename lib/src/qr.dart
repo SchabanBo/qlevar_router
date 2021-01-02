@@ -46,6 +46,10 @@ class _QRContext {
   void to(String path, {QNavigationMode mode}) =>
       _routesTree.updatePath(path, mode);
 
+  void toName(String name,
+          {Map<String, dynamic> params, QNavigationMode mode}) =>
+      _routesTree.updateNamedPath(name, params, mode);
+
   // back to previous page
   void back() => to(QR.history[QR.history.length - 2]);
 
