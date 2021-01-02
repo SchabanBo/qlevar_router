@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## dev
+
+- Add onInit/onDispose to `QRoute`
+- Add QNavigationMode (Push, PopUnitOrPush, ReplaceAll, ReplaceLast)
+
 ## [0.1.0] 29-12-2020
 
 - create nested routes.

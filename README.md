@@ -3,8 +3,8 @@
 The clever way to Route in your projects.
 
 - [Qlevar Router (QR) Demo](#qlevar-router-qr-demo)
-  - [Using](#using)  
-    - [Installing](#Installing)
+  - [Using](#using)
+    - [Installing](#installing)
     - [Configuration](#configuration)
     - [Params](#params)
     - [Not found page](#not-found-page)
@@ -194,6 +194,18 @@ The path of this route
 The page to show, a normal widget.
 It give the child router to place it in the parent page where it needed
 when the route has no children it give null.
+- **onInit**: a function to do what you need before initializing the route.
+- **onDispose**: a function to do what you need before disposing the route. for example `onInit`and `onDispose` are very useful to use with Getx
+  
+  ```dart
+  QRoute(
+    name: 'Items Details',
+    path: '/details',
+    onInit: () =>Get.put(ItemsController),
+    onDispose: () => Get.delete<ItemsController>(),
+    page: (c) => ItemDetailsScreen())
+  ```
+
 - **redirectGuard**: a method to redirect to new page.
 it gives the called path and takes the new path to navigate to, give it null when you don't want to redirect.
 - **children**: the children of this route

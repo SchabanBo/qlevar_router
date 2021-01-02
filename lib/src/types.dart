@@ -25,6 +25,8 @@ typedef RedirectGuard = String Function(String);
 /// [name] the name of the route.
 /// [path] the path of the route.
 /// [page] the page to show
+/// [onInit] a function to do what you need before initializing the route.
+/// [onDispose] a function to do what you need before disposing the route.
 /// It give the child router to use it in the parent page
 /// when the route has children, otherwise it give null.
 /// [redirectGuard] it gives the called path and takes the new path

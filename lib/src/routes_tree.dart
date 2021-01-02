@@ -55,10 +55,9 @@ class RoutesTree {
     return _rootDelegate;
   }
 
-  MatchContext getMatch(String path, {String parentPath}) {
-    parentPath = parentPath ?? '';
+  MatchContext getMatch(String path) {
     path = path.trim();
-    QR.log('matching for $path for parent: $parentPath', isDebug: true);
+    QR.log('matching for $path', isDebug: true);
 
     // Check if the same route
     if (path == QR.currentRoute.fullPath && QR.currentRoute.match != null) {
@@ -105,8 +104,7 @@ class RoutesTree {
         // then we need new router.
         if (contextNode.router == null) {
           contextNode.router = QRouter(
-              routeInformationParser: QRouteInformationParser(
-                  parent: routeNode.childMatch.route.path),
+              routeInformationParser: const QRouteInformationParser(),
               routeInformationProvider: QRouteInformationProvider(),
               routerDelegate:
                   QRouterDelegate(matchRoute: contextNode.childContext));

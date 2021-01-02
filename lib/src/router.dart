@@ -72,7 +72,7 @@ class _Stack {
       : _stack.map((e) => e.toMaterialPage()).toList();
 
   void removeLast() {
-    if (_stack.length <= 1) {
+    if (_stack.length < 1) {
       print('Stack has just one page. Cannot pop');
       return;
     }
@@ -110,10 +110,18 @@ class _Stack {
 
   ///  Remove the last route in the _stack and call onDispose for it.
   void remove(MatchContext route) {
+    runOnDispose(route);
+    _stack.remove(route);
+  }
+
+  /// Run onDispose for the route and its childrens
+  void runOnDispose(MatchContext route) {
     if (route.onDispose != null) {
       route.onDispose();
     }
-    _stack.remove(route);
+    if (route.childContext != null) {
+      runOnDispose(route.childContext);
+    }
   }
 
   void _setNewRoutePath(MatchContext route) {
@@ -132,15 +140,15 @@ class _Stack {
         //}
         break;
       case NavigationType.PopUnitOrPush:
-      if (_stack.any((element) => element.isMatch(route))) {
-        final removeFrom =
-            _stack.indexWhere((element) => element.isMatch(route));
-        for (var i = removeFrom + 1; i < _stack.length; i++) {
-          remove(_stack[i]);
+        if (_stack.any((element) => element.isMatch(route))) {
+          final removeFrom =
+              _stack.indexWhere((element) => element.isMatch(route));
+          for (var i = removeFrom + 1; i < _stack.length; i++) {
+            remove(_stack[i]);
+          }
+        } else {
+          add(route);
         }
-      } else {
-        add(route);
-      }
         break;
       case NavigationType.ReplaceLast:
         removeLast();

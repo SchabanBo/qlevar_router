@@ -38,11 +38,9 @@ class _QRContext {
   }
 
   /// Get the RouteInformationParser
-  QRouteInformationParser routeParser() =>
-      QRouteInformationParser(parent: 'QRouterBasePath');
+  QRouteInformationParser routeParser() => const QRouteInformationParser();
 
-  MatchContext findMatch(String route, {String parent}) =>
-      _routesTree.getMatch(route, parentPath: parent);
+  MatchContext findMatch(String route) => _routesTree.getMatch(route);
 
   /// Navigate to new page with [path]
   void to(String path, {QNavigationMode mode}) =>
