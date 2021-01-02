@@ -7,10 +7,11 @@ import 'routes.dart';
 
 void main() {
   Get.put(Database(), permanent: true);
+  QR.enableDebugLog = true;
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget {  
   @override
   Widget build(BuildContext context) => MaterialApp.router(
         routerDelegate: QR.router(AppRoutes().routes, initRoute: '/dashboard'),

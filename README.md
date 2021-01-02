@@ -3,7 +3,8 @@
 The clever way to Route in your projects.
 
 - [Qlevar Router (QR) Demo](#qlevar-router-qr-demo)
-  - [Using](#using)
+  - [Using](#using)  
+    - [Installing](#Installing)
     - [Configuration](#configuration)
     - [Params](#params)
     - [Not found page](#not-found-page)
@@ -16,6 +17,30 @@ The clever way to Route in your projects.
     - [QR](#qr)
 
 ## Using
+
+### Installing
+
+Use this package as a library
+1. Depend on it
+Add this to your package's pubspec.yaml file:
+``` 
+dependencies:
+  qlevar_router:
+```   
+2. Install it
+You can install packages from the command line:
+
+with Flutter:
+``` 
+$ flutter pub get
+``` 
+
+3. Import it
+Now in your Dart code, you can use:
+
+```dart
+import 'package:qlevar_router/qlevar_router.dart';
+```
 
 ### Configuration
 

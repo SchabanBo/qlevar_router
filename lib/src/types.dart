@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'qr.dart';
 import 'routes_tree.dart';
 
 class QRouter<T> extends Router<T> {
@@ -33,17 +35,21 @@ class QRoute {
   final String path;
   final QRouteBuilder page;
   final RedirectGuard redirectGuard;
+  final Function onInit;
+  final Function onDispose;
   final List<QRoute> children;
 
   QRoute(
       {this.name,
       @required this.path,
-      this.redirectGuard,
+      this.onInit,
       this.page,
+      this.onDispose,
+      this.redirectGuard,
       this.children});
 }
 
-/// The cureent route inforamtion 
+/// The cureent route inforamtion
 class QCurrentRoute {
   String fullPath = '';
   Map<String, dynamic> params = {};
@@ -58,7 +64,10 @@ class MatchContext {
   String cureentPath;
   final bool isComponent;
   final QRouteBuilder page;
+  final Function onInit;
+  final Function onDispose;
   MatchContext childContext;
+  QNavigationMode mode;
   QRouter<dynamic> router;
 
   MatchContext(
@@ -66,7 +75,10 @@ class MatchContext {
       this.key,
       this.fullPath,
       this.isComponent,
+      this.onInit,
+      this.onDispose,
       this.page,
+      this.mode,
       this.childContext,
       this.router});
 
@@ -74,6 +86,8 @@ class MatchContext {
       key: key,
       name: name,
       fullPath: fullPath ?? this.fullPath,
+      onInit: onInit,
+      onDispose: onDispose,
       isComponent: isComponent ?? this.isComponent,
       page: page,
       childContext: childContext,
@@ -84,6 +98,8 @@ class MatchContext {
       MatchContext(
           name: route.route.name,
           isComponent: route.route.isComponent,
+          onDispose: route.route.onDispose,
+          onInit: route.route.onInit,
           key: route.route.key,
           fullPath: route.route.fullPath,
           page: route.route.page,
@@ -93,10 +109,17 @@ class MatchContext {
   MaterialPage toMaterialPage() =>
       MaterialPage(name: name, key: ValueKey(fullPath), child: page(router));
 
-  void updatePath(String path){
+  void updatePath(String path) {
     cureentPath = path;
-    if (childContext!=null) {
+    if (childContext != null) {
       childContext.updatePath(path);
+    }
+  }
+
+  void setNavigationMode(QNavigationMode nMode) {
+    mode = nMode;
+    if (childContext != null) {
+      childContext.setNavigationMode(nMode);
     }
   }
 
@@ -107,8 +130,6 @@ class MatchContext {
     router.routerDelegate.setNewRoutePath(childContext);
   }
 
-  bool isMatch(MatchContext other) => other.isComponent
-      ? fullPath == other.fullPath
-      : key == other.key;
-
+  bool isMatch(MatchContext other) =>
+      other.isComponent ? fullPath == other.fullPath : key == other.key;
 }

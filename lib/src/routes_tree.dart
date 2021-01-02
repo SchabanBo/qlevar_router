@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import '../qlevar_router.dart';
-
+import 'qr.dart';
+import 'route_parser.dart';
 import 'router.dart';
 import 'types.dart';
 
@@ -27,7 +25,9 @@ class RoutesTree {
         name: route.name ?? path,
         isComponent: path.startsWith(':'),
         path: path,
+        onInit: route.onInit,
         page: route.page,
+        onDispose: route.onDispose,
         redirectGuard: route.redirectGuard ?? (s) => null,
         fullPath: fullPath,
       );
@@ -168,17 +168,10 @@ class RoutesTree {
     return match;
   }
 
-  void updatePath(String path) {
+  void updatePath(String path, QNavigationMode mode) {
     final match = getMatch(path);
+    match.setNavigationMode(mode ?? QNavigationMode());
     _rootDelegate.setNewRoutePath(match);
-  }
-
-  void back(){
-    final match = QR.currentRoute.match;
-    var matchNode = match;
-    while (matchNode.childContext != null) {
-      matchNode = matchNode.childContext;
-    }
   }
 
   // Get match object for notFound Page.
@@ -194,7 +187,9 @@ class _QRoute {
   final String name;
   final String path;
   final String fullPath;
+  final Function onInit;
   final RedirectGuard redirectGuard;
+  final Function onDispose;
   final QRouteBuilder page;
   final bool isComponent;
   final List<_QRoute> children = [];
@@ -203,10 +198,12 @@ class _QRoute {
       {this.name,
       this.isComponent = false,
       this.key,
-      @required this.path,
-      @required this.page,
-      @required this.redirectGuard,
-      @required this.fullPath});
+      this.path,
+      this.page,
+      this.redirectGuard,
+      this.onInit,
+      this.onDispose,
+      this.fullPath});
 
   _QRoute copyWith({String name, String path, String fullPath}) => _QRoute(
       fullPath: fullPath ?? this.fullPath,
@@ -226,6 +223,7 @@ class _QRoute {
   String _info() =>
       // ignore: lines_longer_than_80_chars
       'key: $key, name: $name, fullPath: $fullPath, path: $path, isComponent: $isComponent';
+
   void printTree(int width) {
     QR.log(''.padRight(width, '-') + _info());
     for (var item in children) {
@@ -237,13 +235,12 @@ class _QRoute {
 class MatchRoute {
   final _QRoute route;
   final bool found;
-  final String childInit;
   final Map<String, dynamic> params;
   MatchRoute childMatch;
+
   MatchRoute({
     this.route,
     this.found = true,
-    this.childInit,
     this.childMatch,
     this.params,
   });
@@ -272,7 +269,7 @@ class MatchRoute {
     } else {
       match = matchs.first;
     }
-    return MatchRoute(route: match, params: params, childInit: childInit);
+    return MatchRoute(route: match, params: params);
   }
 
   Map<String, dynamic> getParames() {
