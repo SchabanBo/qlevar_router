@@ -50,6 +50,25 @@ class QRoute {
       this.onDispose,
       this.redirectGuard,
       this.children});
+
+  QRoute copyWith({
+    String name,
+    String path,
+    QRouteBuilder page,
+    RedirectGuard redirectGuard,
+    Function onInit,
+    Function onDispose,
+    List<QRoute> children,
+  }) =>
+      QRoute(
+        name: name ?? this.name,
+        path: path ?? this.path,
+        page: page ?? this.page,
+        redirectGuard: redirectGuard ?? this.redirectGuard,
+        onInit: onInit ?? this.onInit,
+        onDispose: onDispose ?? this.onDispose,
+        children: children ?? this.children,
+      );
 }
 
 /// The match context for a route.

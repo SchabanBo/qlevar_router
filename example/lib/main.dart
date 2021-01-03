@@ -11,7 +11,8 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {  
+/// See AppRoutes definition https://github.com/SchabanBo/qlevar_router/blob/master/example/lib/routes.dart
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp.router(
         routerDelegate: QR.router(AppRoutes().routes, initRoute: '/dashboard'),

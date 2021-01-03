@@ -16,6 +16,7 @@ class _QRContext {
   bool enableLog = true;
   bool enableDebugLog = false;
   final RoutesTree _routesTree = RoutesTree();
+  Map<String, dynamic> get params => currentRoute.params;
 
   /// list of string for the paths that has been called.
   final history = <String>[];
@@ -49,7 +50,7 @@ class _QRContext {
 
   void toName(String name,
           {Map<String, dynamic> params, QNavigationMode mode}) =>
-      _routesTree.updateNamedPath(name, params, mode);
+      _routesTree.updateNamedPath(name, params ?? <String, dynamic>{}, mode);
 
   // back to previous page
   void back() => to(QR.history[QR.history.length - 2]);

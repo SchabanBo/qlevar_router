@@ -47,24 +47,6 @@ class DashboardScreen extends StatelessWidget {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          FlatButton(
-            onPressed: () {
-              QR.toName(AppRoutes.testMultiSlash);
-            },
-            child: Text(
-              AppRoutes.testMultiSlash,
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          FlatButton(
-            onPressed: () {
-              QR.to('/dashboard/just/a/test');
-            },
-            child: Text(
-              'test',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
           const SizedBox(width: 15),
         ],
       ),
@@ -110,6 +92,13 @@ class DashboardContent extends StatelessWidget {
             child: Text(
               'Or Test redirect, "Redirect to items page"',
             ),
+          ),
+          const SizedBox(height: 5),
+          RaisedButton(
+            onPressed: () {
+              QR.toName(AppRoutes.testMultiSlash);
+            },
+            child: Text(AppRoutes.testMultiSlash),
           ),
         ],
       ));

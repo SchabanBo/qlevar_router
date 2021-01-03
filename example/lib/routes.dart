@@ -75,24 +75,12 @@ class AppRoutes {
               ]),
           QRoute(
               name: testMultiSlash,
-              path: '/test/multi/slash ',
+              path: '/test/multi/slash',
               page: (child) => Center(
                       child: Text(
                     'It Works',
                     style: TextStyle(fontSize: 22, color: Colors.yellow),
                   ))),
-          QRoute(path: '/just', page: (c) => c, children: [
-            QRoute(path: '/a', page: (c) => c, children: [
-              QRoute(
-                path: '/test',
-                page: (c) => Center(
-                    child: Text(
-                  'Test Works',
-                  style: TextStyle(fontSize: 22, color: Colors.yellow),
-                )),
-              ),
-            ]),
-          ]),
         ]),
     QRoute(
         name: store,
