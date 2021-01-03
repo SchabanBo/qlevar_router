@@ -17,13 +17,30 @@ class RoutesTree {
 
     for (var route in routes) {
       var path = route.path;
-      if (path.startsWith('/')) {
-        path = path.substring(1);
+      if (!path.startsWith('/')) {
+        path = '/$path';
+      }
+      final pathSegments = Uri.parse(path).pathSegments;
+      if (pathSegments.isEmpty) {
+        // There is no path 'Empty path'
+        path = '';
+      } else if (pathSegments.length == 1) {
+        // There is just one segment take it.
+        path = pathSegments.first;
+      } else {
+        // There is mulitble segment, convert them to tree
+        var newRoute = route.copyWith(path: pathSegments.last);
+        for (var i = pathSegments.length - 2; i >= 0; i--) {
+          newRoute = QRoute(
+              path: pathSegments[i], page: (c) => c, children: [newRoute]);
+        }
+        path = pathSegments.first;
+        route = newRoute;
       }
       final fullPath = basePath + (path.isEmpty ? '' : '/$path');
       final _route = _QRoute(
         key: key + routes.indexOf(route),
-        name: route.name ?? path,
+        name: route.name,
         isComponent: path.startsWith(':'),
         path: path,
         onInit: route.onInit,
@@ -36,7 +53,9 @@ class RoutesTree {
           .addAll(_buildTree(route.children, fullPath, key + routes.length));
       result.add(_route);
       key += routes.indexOf(route);
-      _routesIndex[route.name] = fullPath;
+      if (route.name != null) {
+        _routesIndex[route.name] = fullPath;
+      }
       QR.log('"${_route.name}" added with base $basePath');
     }
     return result;
@@ -136,14 +155,10 @@ class RoutesTree {
   MatchRoute _getMatch(String path) {
     final newRoute = Uri.parse(path).pathSegments;
 
-    // InitalRoute `/`
-    if (newRoute.isEmpty) {
-      return MatchRoute.fromTree(routes: _routes, path: '');
-    }
-
     // Build Match Base
     var searchIn = _routes;
-    final match = MatchRoute.fromTree(routes: searchIn, path: newRoute[0]);
+    final match = MatchRoute.fromTree(
+        routes: searchIn, path: newRoute.isEmpty ? '' : newRoute[0]);
     if (!match.found) return _notFound(path);
     searchIn = match.route.children;
 
@@ -233,13 +248,17 @@ class _QRoute {
       this.onDispose,
       this.fullPath});
 
-  _QRoute copyWith({String name, String path, String fullPath}) => _QRoute(
-      fullPath: fullPath ?? this.fullPath,
-      name: name ?? this.name,
-      path: path ?? this.path,
-      page: page,
-      redirectGuard: redirectGuard,
-      isComponent: isComponent);
+  _QRoute copyWith({String name, String path, String fullPath}) {
+    final result = _QRoute(
+        fullPath: fullPath ?? this.fullPath,
+        name: name ?? this.name,
+        path: path ?? this.path,
+        page: page,
+        redirectGuard: redirectGuard,
+        isComponent: isComponent);
+    result.children.addAll(children);
+    return result;
+  }
 
   bool get hasChidlren => children != null && children.isNotEmpty;
 
@@ -255,7 +274,7 @@ class _QRoute {
   void printTree(int width) {
     QR.log(''.padRight(width, '-') + _info());
     for (var item in children) {
-      item.printTree(width++);
+      item.printTree(width + 1);
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../qlevar_router.dart';
 import 'routes_tree.dart';
 
+/// Qlevar Router.
 // ignore: non_constant_identifier_names
 final QR = _QRContext();
 
@@ -11,10 +12,11 @@ class _QRContext {
   /// The information for the current route
   /// here you can find the params for the current route
   /// or even the fullpath
-  final QCurrentRoute currentRoute = QCurrentRoute();
+  final _QCurrentRoute currentRoute = _QCurrentRoute();
   bool enableLog = true;
   bool enableDebugLog = false;
   final RoutesTree _routesTree = RoutesTree();
+  Map<String, dynamic> get params => currentRoute.params;
 
   /// list of string for the paths that has been called.
   final history = <String>[];
@@ -48,7 +50,7 @@ class _QRContext {
 
   void toName(String name,
           {Map<String, dynamic> params, QNavigationMode mode}) =>
-      _routesTree.updateNamedPath(name, params, mode);
+      _routesTree.updateNamedPath(name, params ?? <String, dynamic>{}, mode);
 
   // back to previous page
   void back() => to(QR.history[QR.history.length - 2]);
@@ -81,4 +83,16 @@ enum NavigationType {
   PopUnitOrPush,
   ReplaceLast,
   ReplaceAll,
+}
+
+/// The cureent route inforamtion
+class _QCurrentRoute {
+  /// The current full path
+  String fullPath = '';
+
+  /// The params for the current route
+  Map<String, dynamic> params = {};
+
+  /// The last match information
+  MatchContext match;
 }

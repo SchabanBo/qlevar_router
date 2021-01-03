@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'qr.dart';
 import 'routes_tree.dart';
 
+/// QRouter to palce where the children of natsten route should appear.
 class QRouter<T> extends Router<T> {
   const QRouter({
     Key key,
@@ -44,21 +45,33 @@ class QRoute {
   QRoute(
       {this.name,
       @required this.path,
-      this.onInit,
       this.page,
+      this.onInit,
       this.onDispose,
       this.redirectGuard,
       this.children});
+
+  QRoute copyWith({
+    String name,
+    String path,
+    QRouteBuilder page,
+    RedirectGuard redirectGuard,
+    Function onInit,
+    Function onDispose,
+    List<QRoute> children,
+  }) =>
+      QRoute(
+        name: name ?? this.name,
+        path: path ?? this.path,
+        page: page ?? this.page,
+        redirectGuard: redirectGuard ?? this.redirectGuard,
+        onInit: onInit ?? this.onInit,
+        onDispose: onDispose ?? this.onDispose,
+        children: children ?? this.children,
+      );
 }
 
-/// The cureent route inforamtion
-class QCurrentRoute {
-  String fullPath = '';
-  Map<String, dynamic> params = {};
-  MatchContext match;
-}
-
-/// the match context for a route
+/// The match context for a route.
 class MatchContext {
   final int key;
   final String name;

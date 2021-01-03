@@ -5,6 +5,7 @@ import '../qlevar_router.dart';
 import 'qr.dart';
 import 'types.dart';
 
+/// Qlevar Router implementation for [RouterDelegate]
 class QRouterDelegate extends RouterDelegate<MatchContext>
     with
         // ignore: prefer_mixin
