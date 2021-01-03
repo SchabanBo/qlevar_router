@@ -1,3 +1,4 @@
+import 'package:example/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -21,8 +22,10 @@ class ItemsScreen extends StatelessWidget {
           Wrap(
             children: database.items
                 .map((e) => InkWell(
-                      onTap: () => QR.to(
-                          '/dashboard/items/details?itemName=${e.name}'),
+                      // onTap: () => QR.to(
+                      //     '/dashboard/items/details?itemName=${e.name}'), OR
+                      onTap: () => QR.toName(AppRoutes.itemsDetails,
+                          params: {'itemName': e.name}),
                       child: Card(
                         elevation: 8,
                         margin: EdgeInsets.all(10),

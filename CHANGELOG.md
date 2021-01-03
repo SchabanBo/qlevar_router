@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.2.0] 03-01-2021
+
+- Add onInit/onDispose to `QRoute`.
+- Add QNavigationMode (Push, PopUnitOrPush, ReplaceAll, ReplaceLast).
+- Add `QR.toNamed` navigate with route name.
+- Enable the scenario to define path with multi slashes `/path/to/some`.
+
 ## [0.1.0] 29-12-2020
 
 - create nested routes.

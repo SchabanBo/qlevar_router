@@ -1,3 +1,4 @@
+import 'package:example/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -45,7 +46,9 @@ class OrdersScreen extends StatelessWidget {
                               '#${item.id} - From: ${item.from}',
                               style: TextStyle(fontSize: 20),
                             ),
-                            onTap: () => QR.to('/dashboard/orders/${item.id}'),
+                            //onTap: () => QR.to('/dashboard/orders/${item.id}'), OR
+                            onTap: () => QR.toName(AppRoutes.ordersDetails,
+                                params: {'orderId': item.id}),
                           ),
                         );
                       })),

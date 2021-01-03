@@ -1,3 +1,4 @@
+import 'package:example/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
@@ -15,8 +16,7 @@ class DashboardScreen extends StatelessWidget {
         bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
         title: InkWell(
-            onTap: () => QR.to('/dashboard'),
-            child: Text('Dashboard $now')),
+            onTap: () => QR.to('/dashboard'), child: Text('Dashboard $now')),
         centerTitle: true,
         actions: [
           FlatButton(
@@ -92,6 +92,13 @@ class DashboardContent extends StatelessWidget {
             child: Text(
               'Or Test redirect, "Redirect to items page"',
             ),
+          ),
+          const SizedBox(height: 5),
+          RaisedButton(
+            onPressed: () {
+              QR.toName(AppRoutes.testMultiSlash);
+            },
+            child: Text(AppRoutes.testMultiSlash),
           ),
         ],
       ));

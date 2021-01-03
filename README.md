@@ -4,6 +4,7 @@ The clever way to Route in your projects.
 
 - [Qlevar Router (QR) Demo](#qlevar-router-qr-demo)
   - [Using](#using)
+    - [Installing](#installing)
     - [Configuration](#configuration)
     - [Params](#params)
     - [Not found page](#not-found-page)
@@ -14,8 +15,33 @@ The clever way to Route in your projects.
   - [Classes](#classes)
     - [QRoute](#qroute)
     - [QR](#qr)
+    - [Navigation mode](#navigation-mode)
 
 ## Using
+
+### Installing
+
+Use this package as a library
+1. Depend on it
+Add this to your package's pubspec.yaml file:
+``` 
+dependencies:
+  qlevar_router:
+```   
+2. Install it
+You can install packages from the command line:
+
+with Flutter:
+``` 
+$ flutter pub get
+``` 
+
+3. Import it
+Now in your Dart code, you can use:
+
+```dart
+import 'package:qlevar_router/qlevar_router.dart';
+```
 
 ### Configuration
 
@@ -140,7 +166,15 @@ No more need for context when you want to navigate.
 if you need to route to new page simply
 
 ```dart
+
+  // white the path to the page
   QR.to('/dashboard/items');
+
+  // OR
+  
+  // Here the path of the route is '/dashboard/items/:itemId' and the QRoute.name = 'Item Page'
+  // and the result is '/dashboard/items/3'
+  QR.toName('Item Page', params:{'itemId':3})
 ```
 
 and QR is clever enough to know with `Router` he should update.
@@ -169,6 +203,18 @@ The path of this route
 The page to show, a normal widget.
 It give the child router to place it in the parent page where it needed
 when the route has no children it give null.
+- **onInit**: a function to do what you need before initializing the route.
+- **onDispose**: a function to do what you need before disposing the route. for example `onInit`and `onDispose` are very useful to use with Getx
+  
+  ```dart
+  QRoute(
+    name: 'Items Details',
+    path: '/details',
+    onInit: () =>Get.put(ItemsController),
+    onDispose: () => Get.delete<ItemsController>(),
+    page: (c) => ItemDetailsScreen())
+  ```
+
 - **redirectGuard**: a method to redirect to new page.
 it gives the called path and takes the new path to navigate to, give it null when you don't want to redirect.
 - **children**: the children of this route
@@ -204,9 +250,19 @@ it gives the called path and takes the new path to navigate to, give it null whe
 
 ### QR
 
-- **to(String path)**: navigate to new path, call this method from anywhere and QR is clever enough to know which router he should update.
+- **to(String path, [NavigationMode](#navigation-mode) mode)**: navigate to new path, call this method from anywhere and QR is clever enough to know which router he should update.
+- **toName(String name, Map<String,dynamic> params, [NavigationMode](#navigation-mode) mode)**: Navigation to new route by the name, just give the name of the route and the params to add to the route and QR will build the path and navigate to it for you.
 - **back()**: navigate back to a previous page.
 - **history**: list of string for the paths that has been called.
 - **currentRoute**: The information for the current route.
   - **fullPath**: the full path of the current route.
   - **params**: Map<String,dynamic> contains the params for the current route.
+
+### Navigation mode
+
+- **type**: an enum `NavigationType` the default type is `ReplaceLast`:
+  Navigation type, used when navigation to new page.
+ -**Push**: place the new page on the top of the stack and don't remove the last one.
+ -**PopUnitOrPush**: Pop all page unit you get this page in the stack if the page   in the stack push in on the top.
+ -**ReplaceLast**: replace the last page with this page.
+ -**ReplaceAll**: remove all page from the stack and place this on on the top.
