@@ -64,8 +64,9 @@ class RoutesTree {
   QRouterDelegate setTree(
       List<QRoute> routes, QRouterDelegate Function() delegate) {
     if (_routes.isNotEmpty) {
-      QR.log('Tree already set');
-      return _rootDelegate;
+      QR.log('Reset Tree');
+      _routes.clear();
+      _routesIndex.clear();
     }
 
     _routes.addAll(_buildTree(routes, '', 1));
