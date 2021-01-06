@@ -49,7 +49,9 @@ class QRoute {
       this.onInit,
       this.onDispose,
       this.redirectGuard,
-      this.children});
+      this.children})
+      : assert(path != null),
+        assert(redirectGuard != null || page != null);
 
   QRoute copyWith({
     String name,

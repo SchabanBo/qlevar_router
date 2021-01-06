@@ -22,9 +22,6 @@ class _QRContext {
   final history = <String>[];
 
   QRouterDelegate router(List<QRoute> routes, {String initRoute = ''}) {
-    if (routes.map((e) => e.path).contains('/') == false) {
-      routes.add(QRoute(path: '/', redirectGuard: (s) => initRoute));
-    }
     if (routes.map((e) => e.path).contains('/notfound') == false) {
       routes.add(QRoute(
           path: '/notfound',
@@ -72,7 +69,7 @@ class QNavigationMode {
 }
 
 /// Navigation type, used when navigation to new page.
-/// [Pash] place the new page on the top of the stack.
+/// [Push] place the new page on the top of the stack.
 /// and don't remove the last one.
 /// [PopUnitOrPush] Pop all page unit you get this page in the stack
 /// if the page doesn't exist in the stack push in on the top.

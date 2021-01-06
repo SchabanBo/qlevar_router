@@ -1,9 +1,9 @@
-import 'package:example/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../helpers/database.dart';
+import '../routes.dart';
 
 class OrdersScreen extends StatelessWidget {
   final QRouter routerChild;

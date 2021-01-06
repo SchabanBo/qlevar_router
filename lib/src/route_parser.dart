@@ -30,6 +30,7 @@ class QRouteInformationParser extends RouteInformationParser<MatchContext> {
       RouteInformation(location: QR.currentRoute.fullPath);
 }
 
+/// Create Route Provider with [initialRoute]
 class QRouteInformationProvider extends PlatformRouteInformationProvider {
   QRouteInformationProvider({String initialRoute})
       : super(
