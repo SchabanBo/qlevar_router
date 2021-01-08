@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 
 import 'qr.dart';
 import 'routes_tree.dart';
@@ -144,7 +145,9 @@ class MatchContext {
     if (router == null) {
       return;
     }
-    router.routerDelegate.setNewRoutePath(childContext);
+    (router.routeInformationProvider as QRouteInformationProvider)
+        .didPushRouteInformation(RouteInformation(location: cureentPath));
+    // router.routerDelegate.setNewRoutePath(childContext);
   }
 
   bool isMatch(MatchContext other) =>

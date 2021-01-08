@@ -11,7 +11,7 @@ class RoutesTree {
   QRouterDelegate _rootDelegate;
 
   // Build the Route Tree.
-  List<_QRoute> _buildTree(List<QRoute> routes, String basePath, int key) {
+  List<_QRoute> _buildTree(List<QRoute> routes, String basePath) {
     final result = <_QRoute>[];
     if (routes == null || routes.isEmpty) return result;
 
@@ -39,7 +39,7 @@ class RoutesTree {
       }
       final fullPath = basePath + (path.isEmpty ? '' : '/$path');
       final _route = _QRoute(
-        key: key + routes.indexOf(route),
+        key: _routesIndex.length + 1,
         name: route.name,
         isComponent: path.startsWith(':'),
         path: path,
@@ -49,14 +49,10 @@ class RoutesTree {
         redirectGuard: route.redirectGuard ?? (s) => null,
         fullPath: fullPath,
       );
-      _route.children
-          .addAll(_buildTree(route.children, fullPath, key + routes.length));
+      _route.children.addAll(_buildTree(route.children, fullPath));
       result.add(_route);
-      key += routes.indexOf(route);
-      if (route.name != null) {
-        _routesIndex[route.name] = fullPath;
-      }
-      QR.log('"${_route.name}" added with base $basePath');
+      _routesIndex[route.name ?? _route.fullPath] = fullPath;
+      QR.log('"${_route.name}" added with path ${_route.fullPath}');
     }
     return result;
   }
@@ -69,7 +65,7 @@ class RoutesTree {
       _routesIndex.clear();
     }
 
-    _routes.addAll(_buildTree(routes, '', 1));
+    _routes.addAll(_buildTree(routes, ''));
     for (var route in _routes) {
       route.printTree(1);
     }
@@ -127,7 +123,8 @@ class RoutesTree {
         if (contextNode.router == null) {
           contextNode.router = QRouter(
               routeInformationParser: const QRouteInformationParser(),
-              routeInformationProvider: QRouteInformationProvider(),
+              routeInformationProvider:
+                  QRouteInformationProvider(), // Set the provider with index and then search the match parent
               routerDelegate:
                   QRouterDelegate(matchRoute: contextNode.childContext));
         }
