@@ -89,7 +89,4 @@ class _QCurrentRoute {
 
   /// The params for the current route
   Map<String, dynamic> params = {};
-
-  /// The last match information
-  MatchContext match;
 }
