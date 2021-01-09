@@ -1,8 +1,8 @@
 # Qlevar Router (QR) [Show Demo](https://routerexample.qlevar.de)
 
- [![likes](https://badges.bar/sentry/likes)](https://pub.dev/packages/qlevar_router)
- [![popularity](https://badges.bar/sentry/popularity)](https://pub.dev/packages/qlevar_router)
- [![pub points](https://badges.bar/sentry/pub%20points)](https://pub.dev/packages/qlevar_router)
+ [![likes](https://badges.bar/qlevar_router/likes)](https://pub.dev/packages/qlevar_router)
+ [![popularity](https://badges.bar/qlevar_router/popularity)](https://pub.dev/packages/qlevar_router)
+ [![pub points](https://badges.bar/qlevar_router/pub%20points)](https://pub.dev/packages/qlevar_router)
 
 With Navigator2.0 Manage your project routes and create nested routes. Update only one widget in your page when navigating to new route. Simply navigation without context to your page.
 

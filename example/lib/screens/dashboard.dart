@@ -100,6 +100,14 @@ class DashboardContent extends StatelessWidget {
             },
             child: Text(AppRoutes.testMultiSlash),
           ),
+          const SizedBox(height: 5),
+          RaisedButton(
+            onPressed: () {
+              QR.toName(AppRoutes.testMultiComponent,
+                  params: {'name': 'Max', 'number': 55});
+            },
+            child: Text(AppRoutes.testMultiComponent),
+          ),
         ],
       ));
 }

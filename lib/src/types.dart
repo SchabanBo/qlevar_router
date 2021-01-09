@@ -79,7 +79,6 @@ class MatchContext {
   final int key;
   final String name;
   final String fullPath;
-  String cureentPath;
   final bool isComponent;
   final QRouteBuilder page;
   final Function onInit;
@@ -126,13 +125,6 @@ class MatchContext {
 
   MaterialPage toMaterialPage() =>
       MaterialPage(name: name, key: ValueKey(fullPath), child: page(router));
-
-  void updatePath(String path) {
-    cureentPath = path;
-    if (childContext != null) {
-      childContext.updatePath(path);
-    }
-  }
 
   void setNavigationMode(QNavigationMode nMode) {
     mode = nMode;

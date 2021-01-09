@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:example/screens/tests_screens/multi_component_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -15,7 +16,7 @@ class AppRoutes {
   static String dashboardMain = 'Dashboard Main';
   static String items = 'Items';
   static String orders = 'Orders';
-  static String testMultiSlash = 'Test Multi Slash';
+  static String tests = 'Tests';
 
   // Items
   static String itemsMain = 'Items Main';
@@ -27,6 +28,10 @@ class AppRoutes {
 
   // Store
   static String store = 'Store';
+
+  // Tests
+  static String testMultiSlash = 'Test Multi Slash';
+  static String testMultiComponent = 'Test Multi Component';
 
   //Other
   static String redirect = 'Redirect';
@@ -74,13 +79,23 @@ class AppRoutes {
                     page: (child) => OrderDetails()),
               ]),
           QRoute(
-              name: testMultiSlash,
-              path: '/test/multi/slash',
-              page: (child) => Center(
-                      child: Text(
-                    'It Works',
-                    style: TextStyle(fontSize: 22, color: Colors.yellow),
-                  ))),
+              name: tests,
+              path: '/test',
+              page: (child) => Container(child: child),
+              children: [
+                QRoute(
+                    name: testMultiSlash,
+                    path: '/multi/slash/path',
+                    page: (child) => Center(
+                            child: Text(
+                          'It Works',
+                          style: TextStyle(fontSize: 22, color: Colors.yellow),
+                        ))),
+                QRoute(
+                    name: testMultiComponent,
+                    path: '/:number/:name',
+                    page: (child) => TestMultiComponent()),
+              ]),
         ]),
     QRoute(
         name: store,

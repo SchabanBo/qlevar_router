@@ -78,8 +78,8 @@ class RoutesTree {
     QR.log('matching for $path', isDebug: true);
 
     // Check if the same route
-    if (path == QR.currentRoute.fullPath && QR.currentRoute.match != null) {
-      return QR.currentRoute.match;
+    if (path == QR.currentRoute.fullPath && _cureentTree != null) {
+      return _cureentTree;
     }
 
     final match = _getMatch(path);
@@ -145,7 +145,6 @@ class RoutesTree {
     _cureentTree = newTree;
     QR.currentRoute.fullPath = path;
     QR.currentRoute.params = match.getParames();
-    QR.currentRoute.match = newTree;
     QR.history.add(path);
     return newTree;
   }
