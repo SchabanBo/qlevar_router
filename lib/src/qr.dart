@@ -21,7 +21,7 @@ class _QRContext {
   /// list of string for the paths that has been called.
   final history = <String>[];
 
-  QRouterDelegate router(List<QRoute> routes, {String initRoute = ''}) {
+  QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
     if (routes.map((e) => e.path).contains('/notfound') == false) {
       routes.add(QRoute(
           path: '/notfound',
@@ -89,7 +89,4 @@ class _QCurrentRoute {
 
   /// The params for the current route
   Map<String, dynamic> params = {};
-
-  /// The last match information
-  MatchContext match;
 }

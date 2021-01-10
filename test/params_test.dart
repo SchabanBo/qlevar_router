@@ -86,4 +86,46 @@ void main() {
     expect(find.byType(WidgetOne), findsOneWidget);
     expect(find.byType(WidgetTwo), findsNothing);
   });
+
+  testWidgets("multi compoent test", (tester) async {
+    await tester.pumpWidget(AppWarpper([
+      QRoute(
+          path: '/',
+          page: (c) => Scaffold(
+                body: WidgetOne(),
+              )),
+      QRoute(
+          path: '/user',
+          page: (c) => Scaffold(
+                body: Container(child: c),
+              ),
+          children: [
+            QRoute(
+                path: '/:userId',
+                page: (c) => Container(child: c),
+                children: [
+                  QRoute(path: '/', page: (c) => WidgetOne()),
+                  QRoute(
+                      path: '/info',
+                      page: (c) => Container(child: c),
+                      children: [
+                        QRoute(path: '/', page: (c) => WidgetOne()),
+                        QRoute(path: '/:companyId', page: (c) => WidgetTwo())
+                      ]),
+                ]),
+          ]),
+    ]));
+    QR.to('/user/5/info/7');
+    await tester.pumpAndSettle();
+    expect(QR.currentRoute.fullPath, '/user/5/info/7');
+    expect(QR.params['userId'], '5');
+    expect(QR.params['companyId'], '7');
+    expect(find.byType(WidgetTwo), findsOneWidget);
+    expect(find.byType(WidgetOne), findsNothing);
+    QR.back();
+    await tester.pumpAndSettle();
+    expect(QR.params.length, 0);
+    expect(find.byType(WidgetOne), findsOneWidget);
+    expect(find.byType(WidgetTwo), findsNothing);
+  });
 }

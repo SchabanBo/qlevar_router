@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.2.1] 10-01-2021
+
+- Fix Routes keys order.
+- Add `QRouteBuilder`.
+- Fix missing `onInit/onDispose`.
+- Fix multi component issue.
+
 ## [0.2.0] 03-01-2021
 
 - Add onInit/onDispose to `QRoute`.

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'qr.dart';
+import '../qlevar_router.dart';
 import 'routes_tree.dart';
 
 /// QRouter to palce where the children of natsten route should appear.
@@ -19,7 +19,7 @@ class QRouter<T> extends Router<T> {
             routerDelegate: routerDelegate);
 }
 
-typedef QRouteBuilder = Widget Function(QRouter);
+typedef QRoutePage = Widget Function(QRouter);
 typedef RedirectGuard = String Function(String);
 
 /// Create new route.
@@ -33,30 +33,30 @@ typedef RedirectGuard = String Function(String);
 /// [redirectGuard] it gives the called path and takes the new path
 /// to navigate to, give it null when you don't want to redirect.
 /// [children] the children of this route.
-class QRoute {
+class QRoute extends QRouteBase {
   final String name;
-  final String path;
-  final QRouteBuilder page;
+  final QRoutePage page;
   final RedirectGuard redirectGuard;
   final Function onInit;
   final Function onDispose;
-  final List<QRoute> children;
+  final List<QRouteBase> children;
 
   QRoute(
       {this.name,
-      @required this.path,
+      String path,
       this.page,
       this.onInit,
       this.onDispose,
       this.redirectGuard,
       this.children})
       : assert(path != null),
-        assert(redirectGuard != null || page != null);
+        assert(redirectGuard != null || page != null),
+        super(path);
 
   QRoute copyWith({
     String name,
     String path,
-    QRouteBuilder page,
+    QRoutePage page,
     RedirectGuard redirectGuard,
     Function onInit,
     Function onDispose,
@@ -73,14 +73,25 @@ class QRoute {
       );
 }
 
+abstract class QRouteBase {
+  final String path;
+  QRouteBase(this.path);
+}
+
+/// Create a [QRoute]
+// ignore: one_member_abstracts
+abstract class QRouteBuilder extends QRouteBase {
+  QRouteBuilder({String path}) : super(path);
+  QRoute createRoute();
+}
+
 /// The match context for a route.
 class MatchContext {
   final int key;
   final String name;
   final String fullPath;
-  String cureentPath;
   final bool isComponent;
-  final QRouteBuilder page;
+  final QRoutePage page;
   final Function onInit;
   final Function onDispose;
   MatchContext childContext;
@@ -125,13 +136,6 @@ class MatchContext {
 
   MaterialPage toMaterialPage() =>
       MaterialPage(name: name, key: ValueKey(fullPath), child: page(router));
-
-  void updatePath(String path) {
-    cureentPath = path;
-    if (childContext != null) {
-      childContext.updatePath(path);
-    }
-  }
 
   void setNavigationMode(QNavigationMode nMode) {
     mode = nMode;

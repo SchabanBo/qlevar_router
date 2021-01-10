@@ -8,30 +8,31 @@ import 'screens/dashboard.dart';
 import 'screens/items.dart';
 import 'screens/orders.dart';
 import 'screens/store.dart';
+import 'screens/tests_screens/multi_component_screen.dart';
 
 class AppRoutes {
   // Dashboard
   static String dashboard = 'Dashboard';
   static String dashboardMain = 'Dashboard Main';
   static String items = 'Items';
-  static String orders = 'Orders';
-  static String testMultiSlash = 'Test Multi Slash';
+
+  static String tests = 'Tests';
 
   // Items
   static String itemsMain = 'Items Main';
   static String itemsDetails = 'Items Details';
 
-  // Oorders
-  static String ordersMain = 'Orders Main';
-  static String ordersDetails = 'Orders Details';
-
   // Store
   static String store = 'Store';
+
+  // Tests
+  static String testMultiSlash = 'Test Multi Slash';
+  static String testMultiComponent = 'Test Multi Component';
 
   //Other
   static String redirect = 'Redirect';
 
-  final routes = [
+  final routes = <QRouteBase>[
     QRoute(
         name: dashboard,
         path: '/dashboard',
@@ -61,26 +62,25 @@ class AppRoutes {
                     onDispose: () => print('onDispose Items Details'),
                     page: (c) => ItemDetailsScreen())
               ]),
+          OrdersRoutes(),
           QRoute(
-              name: orders,
-              path: '/orders',
-              page: (child) => OrdersScreen(child),
+              name: tests,
+              path: '/test',
+              page: (child) => Container(child: child),
               children: [
                 QRoute(
-                    name: ordersMain, path: '/', page: (child) => Container()),
+                    name: testMultiSlash,
+                    path: '/multi/slash/path',
+                    page: (child) => Center(
+                            child: Text(
+                          'It Works',
+                          style: TextStyle(fontSize: 22, color: Colors.yellow),
+                        ))),
                 QRoute(
-                    name: ordersDetails,
-                    path: '/:orderId',
-                    page: (child) => OrderDetails()),
+                    name: testMultiComponent,
+                    path: '/:number/:name',
+                    page: (child) => TestMultiComponent()),
               ]),
-          QRoute(
-              name: testMultiSlash,
-              path: '/test/multi/slash',
-              page: (child) => Center(
-                      child: Text(
-                    'It Works',
-                    style: TextStyle(fontSize: 22, color: Colors.yellow),
-                  ))),
         ]),
     QRoute(
         name: store,
@@ -91,4 +91,23 @@ class AppRoutes {
         path: '/redirect',
         redirectGuard: (path) => '/dashboard/items'),
   ];
+}
+
+class OrdersRoutes extends QRouteBuilder {
+  static String orders = 'Orders';
+  static String ordersMain = 'Orders Main';
+  static String ordersDetails = 'Orders Details';
+
+  @override
+  QRoute createRoute() => QRoute(
+          name: orders,
+          path: '/orders',
+          page: (child) => OrdersScreen(child),
+          children: [
+            QRoute(name: ordersMain, path: '/', page: (child) => Container()),
+            QRoute(
+                name: ordersDetails,
+                path: '/:orderId',
+                page: (child) => OrderDetails()),
+          ]);
 }
