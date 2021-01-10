@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:qlevar_router/qlevar_router.dart';
 
-import 'qr.dart';
+import '../qlevar_router.dart';
 import 'routes_tree.dart';
 
 /// QRouter to palce where the children of natsten route should appear.
@@ -137,9 +136,7 @@ class MatchContext {
     if (router == null) {
       return;
     }
-    (router.routeInformationProvider as QRouteInformationProvider)
-        .didPushRouteInformation(RouteInformation(location: cureentPath));
-    // router.routerDelegate.setNewRoutePath(childContext);
+    router.routerDelegate.setNewRoutePath(childContext);
   }
 
   bool isMatch(MatchContext other) =>

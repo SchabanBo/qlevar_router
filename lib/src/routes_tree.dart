@@ -123,8 +123,7 @@ class RoutesTree {
         if (contextNode.router == null) {
           contextNode.router = QRouter(
               routeInformationParser: const QRouteInformationParser(),
-              routeInformationProvider:
-                  QRouteInformationProvider(), // Set the provider with index and then search the match parent
+              routeInformationProvider: QRouteInformationProvider(),
               routerDelegate:
                   QRouterDelegate(matchRoute: contextNode.childContext));
         }
