@@ -11,11 +11,15 @@ class RoutesTree {
   QRouterDelegate _rootDelegate;
 
   // Build the Route Tree.
-  List<_QRoute> _buildTree(List<QRoute> routes, String basePath) {
+  List<_QRoute> _buildTree(List<QRouteBase> routes, String basePath) {
     final result = <_QRoute>[];
     if (routes == null || routes.isEmpty) return result;
 
-    for (var route in routes) {
+    for (var routebase in routes) {
+      var route = routebase is QRoute
+          ? routebase
+          : (routebase as QRouteBuilder).createRoute();
+
       var path = route.path;
       if (!path.startsWith('/')) {
         path = '/$path';
@@ -58,7 +62,7 @@ class RoutesTree {
   }
 
   QRouterDelegate setTree(
-      List<QRoute> routes, QRouterDelegate Function() delegate) {
+      List<QRouteBase> routes, QRouterDelegate Function() delegate) {
     if (_routes.isNotEmpty) {
       QR.log('Reset Tree');
       _routes.clear();
@@ -229,7 +233,7 @@ class _QRoute {
   final Function onInit;
   final RedirectGuard redirectGuard;
   final Function onDispose;
-  final QRouteBuilder page;
+  final QRoutePage page;
   final bool isComponent;
   final List<_QRoute> children = [];
 
@@ -250,6 +254,8 @@ class _QRoute {
         name: name ?? this.name,
         path: path ?? this.path,
         page: page,
+        onInit: onInit,
+        onDispose: onDispose,
         redirectGuard: redirectGuard,
         isComponent: isComponent);
     result.children.addAll(children);

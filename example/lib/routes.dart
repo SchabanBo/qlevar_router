@@ -15,16 +15,12 @@ class AppRoutes {
   static String dashboard = 'Dashboard';
   static String dashboardMain = 'Dashboard Main';
   static String items = 'Items';
-  static String orders = 'Orders';
+
   static String tests = 'Tests';
 
   // Items
   static String itemsMain = 'Items Main';
   static String itemsDetails = 'Items Details';
-
-  // Oorders
-  static String ordersMain = 'Orders Main';
-  static String ordersDetails = 'Orders Details';
 
   // Store
   static String store = 'Store';
@@ -36,7 +32,7 @@ class AppRoutes {
   //Other
   static String redirect = 'Redirect';
 
-  final routes = [
+  final routes = <QRouteBase>[
     QRoute(
         name: dashboard,
         path: '/dashboard',
@@ -66,18 +62,7 @@ class AppRoutes {
                     onDispose: () => print('onDispose Items Details'),
                     page: (c) => ItemDetailsScreen())
               ]),
-          QRoute(
-              name: orders,
-              path: '/orders',
-              page: (child) => OrdersScreen(child),
-              children: [
-                QRoute(
-                    name: ordersMain, path: '/', page: (child) => Container()),
-                QRoute(
-                    name: ordersDetails,
-                    path: '/:orderId',
-                    page: (child) => OrderDetails()),
-              ]),
+          OrdersRoutes(),
           QRoute(
               name: tests,
               path: '/test',
@@ -106,4 +91,23 @@ class AppRoutes {
         path: '/redirect',
         redirectGuard: (path) => '/dashboard/items'),
   ];
+}
+
+class OrdersRoutes extends QRouteBuilder {
+  static String orders = 'Orders';
+  static String ordersMain = 'Orders Main';
+  static String ordersDetails = 'Orders Details';
+
+  @override
+  QRoute createRoute() => QRoute(
+          name: orders,
+          path: '/orders',
+          page: (child) => OrdersScreen(child),
+          children: [
+            QRoute(name: ordersMain, path: '/', page: (child) => Container()),
+            QRoute(
+                name: ordersDetails,
+                path: '/:orderId',
+                page: (child) => OrderDetails()),
+          ]);
 }
