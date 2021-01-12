@@ -39,13 +39,9 @@ class TreeBuilder {
       final fullPath = basePath + (path.isEmpty ? '' : '/$path');
       final _route = QRouteInternal(
         key: tree.treeIndex.length + 1,
-        name: route.name,
         isComponent: path.startsWith(':'),
         path: path,
-        onInit: route.onInit,
-        page: route.page,
-        onDispose: route.onDispose,
-        redirectGuard: route.redirectGuard ?? (s) => null,
+        route: route,
         fullPath: fullPath,
       );
       _route.children.addAll(_buildTree(tree, route.children, fullPath));

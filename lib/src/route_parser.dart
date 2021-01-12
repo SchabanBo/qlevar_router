@@ -10,9 +10,7 @@ class QRouteInformationParser extends RouteInformationParser<MatchContext> {
   @override
   Future<MatchContext> parseRouteInformation(
       RouteInformation routeInformation) async {
-    QR.log(
-        // ignore: lines_longer_than_80_chars
-        'Searching for Route: ${routeInformation.location}');
+    QR.log('Searching for Route: ${routeInformation.location}', isDebug: true);
     if (routeInformation.location == null) {
       return SynchronousFuture(null);
     }

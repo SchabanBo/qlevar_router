@@ -19,8 +19,6 @@ class AppWarpperWithInit extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp.router(
       routeInformationParser: QR.routeParser(),
-      routeInformationProvider:
-          QRouteInformationProvider(initialRoute: initRoute),
       routerDelegate: QR.router(pages, initRoute: initRoute));
 }
 

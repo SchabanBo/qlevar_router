@@ -24,7 +24,7 @@ class _QRContext {
 
   QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
     _navigator.setTree(routes);
-    return QRouterDelegate(matchRoute: _navigator.getMatch(initRoute));
+    return QRouterDelegate(_navigator, initRoute);
   }
 
   /// Get the RouteInformationParser

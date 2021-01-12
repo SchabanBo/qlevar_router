@@ -8,36 +8,28 @@ class Tree {
 
 class QRouteInternal {
   final int key;
-  final String name;
   final String path;
   final String fullPath;
-  final Function onInit;
-  final RedirectGuard redirectGuard;
-  final Function onDispose;
-  final QRoutePage page;
   final bool isComponent;
+  final QRoute route;
   final List<QRouteInternal> children = [];
 
-  QRouteInternal(
-      {this.name,
-      this.isComponent = false,
-      this.key,
-      this.path,
-      this.page,
-      this.redirectGuard,
-      this.onInit,
-      this.onDispose,
-      this.fullPath});
+  QRouteInternal({
+    this.key,
+    this.path,
+    this.fullPath,
+    this.route,
+    this.isComponent = false,
+  });
 
-  QRouteInternal copyWith({String name, String path, String fullPath}) {
+  String get name => route?.name;
+
+  QRouteInternal copyWith({String path, String fullPath}) {
     final result = QRouteInternal(
-        fullPath: fullPath ?? this.fullPath,
-        name: name ?? this.name,
+        key: key,
         path: path ?? this.path,
-        page: page,
-        onInit: onInit,
-        onDispose: onDispose,
-        redirectGuard: redirectGuard,
+        fullPath: fullPath ?? this.fullPath,
+        route: route,
         isComponent: isComponent);
     result.children.addAll(children);
     return result;
@@ -102,18 +94,12 @@ class MatchRoute {
     return MatchRoute(route: match, params: params);
   }
 
-  MatchContext toMatchContext(
-          {QRouter<dynamic> router, MatchContext childContext}) =>
-      MatchContext(
-          name: route.name,
-          isComponent: route.isComponent,
-          onDispose: route.onDispose,
-          onInit: route.onInit,
-          key: route.key,
-          fullPath: route.fullPath,
-          page: route.page,
-          childContext: childContext,
-          router: router);
+  MatchContext toMatchContext({MatchContext childContext}) => MatchContext(
+      route: route.route,
+      isComponent: route.isComponent,
+      key: route.key,
+      fullPath: route.fullPath,
+      childContext: childContext);
 
   Map<String, dynamic> getParames() {
     final result = params;
@@ -124,7 +110,7 @@ class MatchRoute {
   }
 
   String checkRedirect(String path) {
-    final redirect = route.redirectGuard(path);
+    final redirect = route.route.redirectGuard(path);
     return redirect != null
         ? redirect
         : childMatch == null
