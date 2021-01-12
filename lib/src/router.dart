@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../qlevar_router.dart';
 import 'qr.dart';
-import 'types.dart';
+import 'routes_tree/routes_tree.dart';
 
 /// Qlevar Router implementation for [RouterDelegate]
 class QRouterDelegate extends RouterDelegate<MatchContext>

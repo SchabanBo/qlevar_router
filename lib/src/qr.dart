@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
-
 import '../qlevar_router.dart';
-import 'routes_tree.dart';
+import 'navigator.dart';
 
 /// Qlevar Router.
 // ignore: non_constant_identifier_names
@@ -9,52 +7,45 @@ final QR = _QRContext();
 
 /// The main class of qlevar-router
 class _QRContext {
-  /// The information for the current route
-  /// here you can find the params for the current route
-  /// or even the fullpath
-  final _QCurrentRoute currentRoute = _QCurrentRoute();
-  bool enableLog = true;
-  bool enableDebugLog = false;
-  final RoutesTree _routesTree = RoutesTree();
-  Map<String, dynamic> get params => currentRoute.params;
+  /// Settings for the package
+  final settings = QrSettings();
 
   /// list of string for the paths that has been called.
   final history = <String>[];
 
-  QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
-    if (routes.map((e) => e.path).contains('/notfound') == false) {
-      routes.add(QRoute(
-          path: '/notfound',
-          page: (r) => Material(
-                child: Center(
-                  child: Text('Page Not Found "${QR.currentRoute.fullPath}"'),
-                ),
-              )));
-    }
+  /// The information for the current route
+  /// here you can find the params for the current route
+  /// or even the fullpath
+  final _QCurrentRoute currentRoute = _QCurrentRoute();
 
-    return _routesTree.setTree(
-        routes, () => QRouterDelegate(matchRoute: findMatch(initRoute)));
+  Map<String, dynamic> get params => currentRoute.params;
+
+  final _navigator = QNavigator();
+
+  QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
+    _navigator.setTree(routes);
+    return QRouterDelegate(matchRoute: _navigator.getMatch(initRoute));
   }
 
   /// Get the RouteInformationParser
-  QRouteInformationParser routeParser() => const QRouteInformationParser();
-
-  MatchContext findMatch(String route) => _routesTree.getMatch(route);
+  QRouteInformationParser routeParser() =>
+      QRouteInformationParser(_navigator.getMatch);
 
   /// Navigate to new page with [path]
-  void to(String path, {QNavigationMode mode}) =>
-      _routesTree.updatePath(path, mode);
+  void to(String path, {QNavigationMode mode}) => _navigator.toPath(path, mode);
 
+  /// Navigate to new page with [Name]
+  /// Give the name of the route and the [params] to apply
   void toName(String name,
           {Map<String, dynamic> params, QNavigationMode mode}) =>
-      _routesTree.updateNamedPath(name, params ?? <String, dynamic>{}, mode);
+      _navigator.toName(name, params ?? <String, dynamic>{}, mode);
 
   // back to previous page
   void back() => to(QR.history[QR.history.length - 2]);
 
   /// wirte log
   void log(String mes, {bool isDebug = false}) {
-    if (enableLog && (!isDebug || enableDebugLog)) {
+    if (settings.enableLog && (!isDebug || settings.enableDebugLog)) {
       print('Qlevar-Route: $mes');
     }
   }
@@ -89,4 +80,10 @@ class _QCurrentRoute {
 
   /// The params for the current route
   Map<String, dynamic> params = {};
+}
+
+/// The package settings
+class QrSettings {
+  bool enableLog = true;
+  bool enableDebugLog = false;
 }
