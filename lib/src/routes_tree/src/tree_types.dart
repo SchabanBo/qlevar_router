@@ -110,11 +110,17 @@ class MatchRoute {
   }
 
   String checkRedirect(String path) {
-    final redirect = route.route.redirectGuard(path);
+    final redirect = route.route.redirectGuard == null
+        ? null
+        : route.route.redirectGuard(path);
     return redirect != null
         ? redirect
         : childMatch == null
             ? null
             : childMatch.checkRedirect(path);
   }
+
+  @override
+  String toString() =>
+      'key: ${route.key}, name: ${route.route.name} found: $found';
 }

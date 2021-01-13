@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
+import 'routes_tree/routes_tree.dart';
 
-/// QRouter to palce where the children of natsten route should appear.
-class QRouter<T> extends Router<T> {
-  const QRouter({
-    Key key,
-    RouteInformationProvider routeInformationProvider,
-    RouteInformationParser<T> routeInformationParser,
-    @required RouterDelegate<T> routerDelegate,
-    BackButtonDispatcher backButtonDispatcher,
-  }) : super(
-            key: key,
-            backButtonDispatcher: backButtonDispatcher,
-            routeInformationParser: routeInformationParser,
-            routeInformationProvider: routeInformationProvider,
-            routerDelegate: routerDelegate);
+abstract class QNavigator extends StatelessWidget {
+  final NaviKey navKey;
+  final OnPop onPop;
+  QNavigator(this.navKey, this.onPop);
 }
 
-typedef QRoutePage = Widget Function(QRouter);
+class QPageNavigator extends QNavigator {
+  final Route<dynamic> initPage;
+  QPageNavigator(NaviKey navKey, this.initPage, OnPop onPop)
+      : super(navKey, onPop);
+  @override
+  Widget build(BuildContext context) => Navigator(
+        key: navKey.navigatorKey,
+        onGenerateInitialRoutes: (navigator, initialRoute) => [initPage],
+        onPopPage: (route, result) {
+          if (!route.didPop(result)) {
+            return false;
+          }
+          return onPop();
+        },
+      );
+}
+
+typedef QRoutePage = Widget Function(QNavigator);
 typedef RedirectGuard = String Function(String);
+typedef OnPop = bool Function();
 
 /// Create new route.
 /// [name] the name of the route.
@@ -39,7 +48,7 @@ class QRoute extends QRouteBase {
   final List<QRouteBase> children;
 
   QRoute(
-      {this.name,
+      {String name,
       String path,
       this.page,
       this.onInit,
@@ -48,6 +57,7 @@ class QRoute extends QRouteBase {
       this.children})
       : assert(path != null),
         assert(redirectGuard != null || page != null),
+        name = name ?? path,
         super(path);
 
   QRoute copyWith({

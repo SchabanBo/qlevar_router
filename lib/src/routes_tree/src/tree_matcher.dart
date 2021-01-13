@@ -54,15 +54,6 @@ class TreeMatcher {
 
       if (needInit) {
         contextNode.childContext = routeNode.childMatch.toMatchContext();
-        // If there was no router and the child has a child
-        // then we need new router.
-        // if (contextNode.router == null) {
-        //   contextNode.router = QRouter(
-        //       routeInformationParser: const QRouteInformationParser(),
-        //       routeInformationProvider: QRouteInformationProvider(),
-        //       routerDelegate:
-        //           QRouterDelegate(matchRoute: contextNode.childContext));
-        // }
       }
 
       routeNode = routeNode.childMatch;

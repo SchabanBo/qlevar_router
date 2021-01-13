@@ -1,5 +1,7 @@
-import '../qlevar_router.dart';
 import 'navigator.dart';
+import 'route_parser.dart';
+import 'router.dart';
+import 'types.dart';
 
 /// Qlevar Router.
 // ignore: non_constant_identifier_names
@@ -20,7 +22,7 @@ class _QRContext {
 
   Map<String, dynamic> get params => currentRoute.params;
 
-  final _navigator = QNavigator();
+  final _navigator = QNavigatorController();
 
   QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
     _navigator.setTree(routes);
@@ -28,8 +30,7 @@ class _QRContext {
   }
 
   /// Get the RouteInformationParser
-  QRouteInformationParser routeParser() =>
-      QRouteInformationParser(_navigator.getMatch);
+  QRouteInformationParser routeParser() => const QRouteInformationParser();
 
   /// Navigate to new page with [path]
   void to(String path, {QNavigationMode mode}) => _navigator.toPath(path, mode);
@@ -41,7 +42,7 @@ class _QRContext {
       _navigator.toName(name, params ?? <String, dynamic>{}, mode);
 
   // back to previous page
-  void back() => to(QR.history[QR.history.length - 2]);
+  void back() => _navigator.pop();
 
   /// wirte log
   void log(String mes, {bool isDebug = false}) {

@@ -5,16 +5,14 @@ import './routes_tree/routes_tree.dart';
 
 /// The parser for QRouter
 class QRouteInformationParser extends RouteInformationParser<MatchContext> {
-  final MatchContext Function(String) _getMatch;
-  const QRouteInformationParser(this._getMatch);
+  const QRouteInformationParser();
   @override
   Future<MatchContext> parseRouteInformation(
       RouteInformation routeInformation) async {
-    QR.log('Searching for Route: ${routeInformation.location}', isDebug: true);
     if (routeInformation.location == null) {
       return SynchronousFuture(null);
     }
-    return _getMatch(routeInformation.location);
+    return MatchContext(fullPath: routeInformation.location);
   }
 
   @override

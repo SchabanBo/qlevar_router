@@ -6,7 +6,7 @@ import '../helpers/database.dart';
 import '../routes.dart';
 
 class OrdersScreen extends StatelessWidget {
-  final QRouter routerChild;
+  final QNavigator routerChild;
   OrdersScreen(this.routerChild);
   @override
   Widget build(BuildContext context) {

@@ -7,11 +7,10 @@ import 'tree_types.dart';
 
 class RoutesTree {
   Tree _tree;
-  final _builder = TreeBuilder();
   final _matcher = TreeMatcher();
 
   void buildTree(List<QRouteBase> routes) {
-    _tree = _builder.buildTree(routes);
+    _tree = TreeBuilder().buildTree(routes);
     _matcher.tree = _tree;
     QR.log('Tree Built', isDebug: true);
   }

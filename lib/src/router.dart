@@ -8,26 +8,26 @@ import 'routes_tree/routes_tree.dart';
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<MatchContext> with ChangeNotifier {
-  final QNavigator _navigator;
-  final _stack = <Page<dynamic>>[];
+  final QNavigatorController _navigator;
   final String _initRoute;
 
   QRouterDelegate(this._navigator, this._initRoute) {
     _navigator.notify = notifyListeners;
+    QR.log('Root Navigator key: ${_navigator.rootKey.code}');
   }
 
   @override
-  MatchContext get currentConfiguration => MatchContext();
+  MatchContext get currentConfiguration =>
+      MatchContext(fullPath: QR.currentRoute.fullPath);
 
   @override
   Future<void> setInitialRoutePath(MatchContext configuration) {
-    _stack.add(_navigator.initRoute(_initRoute));
     return SynchronousFuture(null);
   }
 
   @override
   Future<void> setNewRoutePath(MatchContext route) {
-    _navigator.updatePath(route, QNavigationMode());
+    _navigator.toPath(route.fullPath, QNavigationMode());
     return SynchronousFuture(null);
   }
 
@@ -37,8 +37,10 @@ class QRouterDelegate extends RouterDelegate<MatchContext> with ChangeNotifier {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: _navigator.rootKey,
-      pages: _stack,
+      key: _navigator.rootKey.navigatorKey,
+      initialRoute: _initRoute,
+      onGenerateInitialRoutes: (navigator, initialRoute) =>
+          [_navigator.initRoute(_initRoute)],
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;

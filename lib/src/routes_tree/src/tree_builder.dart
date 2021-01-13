@@ -56,7 +56,7 @@ class TreeBuilder {
   Tree buildTree(List<QRouteBase> routes) {
     _checkRoutes(routes);
     final tree = Tree();
-    _buildTree(tree, routes, '');
+    tree.routes.addAll(_buildTree(tree, routes, ''));
     for (var route in tree.routes) {
       route.printTree(1);
     }
