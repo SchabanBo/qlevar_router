@@ -1,8 +1,6 @@
-import 'package:qlevar_router/src/navigator/navigator.dart';
-import 'package:qlevar_router/src/qr_controller.dart';
-
+import 'qr_controller.dart';
 import 'route_parser.dart';
-import 'router.dart';
+import 'router_delegate.dart';
 import 'types.dart';
 
 /// Qlevar Router.
@@ -24,27 +22,28 @@ class _QRContext {
 
   Map<String, dynamic> get params => currentRoute.params;
 
-  final _navigator = QRController();
+  final _controller = QRController();
 
   QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
-    _navigator.setTree(routes);
-    return QRouterDelegate(_navigator);
+    _controller.setTree(routes);
+    return _controller.createDelegate(initRoute);
   }
 
   /// Get the RouteInformationParser
   QRouteInformationParser routeParser() => const QRouteInformationParser();
 
   /// Navigate to new page with [path]
-  void to(String path, {QNavigationMode mode}) => _navigator.toPath(path, mode);
+  void to(String path, {QNavigationMode mode}) =>
+      _controller.toPath(path, mode);
 
   /// Navigate to new page with [Name]
   /// Give the name of the route and the [params] to apply
   void toName(String name,
           {Map<String, dynamic> params, QNavigationMode mode}) =>
-      _navigator.toName(name, params ?? <String, dynamic>{}, mode);
+      _controller.toName(name, params ?? <String, dynamic>{}, mode);
 
   // back to previous page
-  void back() => _navigator.pop();
+  void back() => _controller.pop();
 
   /// wirte log
   void log(String mes, {bool isDebug = false}) {
