@@ -1,4 +1,6 @@
-import 'navigator.dart';
+import 'package:qlevar_router/src/navigator/navigator.dart';
+import 'package:qlevar_router/src/qr_controller.dart';
+
 import 'route_parser.dart';
 import 'router.dart';
 import 'types.dart';
@@ -22,11 +24,11 @@ class _QRContext {
 
   Map<String, dynamic> get params => currentRoute.params;
 
-  final _navigator = QNavigatorController();
+  final _navigator = QRController();
 
   QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
     _navigator.setTree(routes);
-    return QRouterDelegate(_navigator, initRoute);
+    return QRouterDelegate(_navigator);
   }
 
   /// Get the RouteInformationParser

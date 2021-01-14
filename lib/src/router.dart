@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import 'navigator.dart';
+import 'package:qlevar_router/src/navigator/navigator.dart';
+import 'package:qlevar_router/src/navigator/src/navigator_controller.dart';
+import 'package:qlevar_router/src/qr_controller.dart';
 import 'qr.dart';
 import 'routes_tree/routes_tree.dart';
 
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<MatchContext> with ChangeNotifier {
-  final QNavigatorController _navigator;
-  final String _initRoute;
+  final QRController _navigator;
 
-  QRouterDelegate(this._navigator, this._initRoute) {
+  QRouterDelegate(this._navigator) {
     _navigator.notify = notifyListeners;
-    QR.log('Root Navigator key: ${_navigator.rootKey.code}');
+    QR.log('Root Navigator key: ${_navigator.rootState.hashCode}');
   }
 
   @override
@@ -36,17 +36,9 @@ class QRouterDelegate extends RouterDelegate<MatchContext> with ChangeNotifier {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      key: _navigator.rootKey.navigatorKey,
-      initialRoute: _initRoute,
-      onGenerateInitialRoutes: (navigator, initialRoute) =>
-          [_navigator.initRoute(_initRoute)],
-      onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
-        }
-        return _navigator.pop();
-      },
-    );
+    return QNavigatorInternal(_navigator.rootState);
   }
+
+  Page<dynamic> palceHolder() =>
+      MaterialPage(key: ValueKey('placeHolder'), child: Container());
 }

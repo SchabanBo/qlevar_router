@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
 import '../../../qlevar_router.dart';
+import '../../navigator/navigator.dart';
 
 /// The match context tree for a route.
 class MatchContext {
@@ -9,7 +7,7 @@ class MatchContext {
   final QRoute route;
   final String fullPath;
   final bool isComponent;
-  final NaviKey navigatorKey;
+  final QNavigatorState state;
   bool isNew;
   MatchContext childContext;
 
@@ -17,17 +15,17 @@ class MatchContext {
       {this.key,
       this.fullPath,
       this.isComponent,
-      NaviKey navigatorKey,
+      QNavigatorState state,
       this.route,
       this.isNew = true,
       this.childContext})
-      : navigatorKey = navigatorKey ?? NaviKey._();
+      : state = state ?? QNavigatorState();
 
   MatchContext copyWith({String fullPath, bool isComponent}) => MatchContext(
       key: key,
       fullPath: fullPath ?? this.fullPath,
       isComponent: isComponent ?? this.isComponent,
-      navigatorKey: navigatorKey,
+      state: state,
       route: route,
       isNew: isNew,
       childContext: childContext);
@@ -45,18 +43,9 @@ class MatchContext {
   void printTree({int padding = 0}) {
     QR.log(
         // ignore: prefer_interpolation_to_compose_strings
-        ''.padLeft(padding, '-') +
-            '${toString()} With key ${navigatorKey.code}');
+        ''.padLeft(padding, '-') + '${toString()} With key ${state.hashCode}');
     if (childContext != null) {
       childContext.printTree(padding: ++padding);
     }
   }
-}
-
-class NaviKey {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  NaviKey._();
-
-  NavigatorState get state => navigatorKey.currentState;
-  int get code => navigatorKey.hashCode;
 }

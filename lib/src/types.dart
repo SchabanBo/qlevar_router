@@ -1,32 +1,9 @@
-import 'package:flutter/material.dart';
-import 'routes_tree/routes_tree.dart';
+import 'package:flutter/widgets.dart';
 
-abstract class QNavigator extends StatelessWidget {
-  final NaviKey navKey;
-  final OnPop onPop;
-  QNavigator(this.navKey, this.onPop);
-}
-
-class QPageNavigator extends QNavigator {
-  final Route<dynamic> initPage;
-  QPageNavigator(NaviKey navKey, this.initPage, OnPop onPop)
-      : super(navKey, onPop);
-  @override
-  Widget build(BuildContext context) => Navigator(
-        key: navKey.navigatorKey,
-        onGenerateInitialRoutes: (navigator, initialRoute) => [initPage],
-        onPopPage: (route, result) {
-          if (!route.didPop(result)) {
-            return false;
-          }
-          return onPop();
-        },
-      );
-}
+abstract class QNavigator extends StatefulWidget {}
 
 typedef QRoutePage = Widget Function(QNavigator);
 typedef RedirectGuard = String Function(String);
-typedef OnPop = bool Function();
 
 /// Create new route.
 /// [name] the name of the route.
