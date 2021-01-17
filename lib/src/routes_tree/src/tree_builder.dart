@@ -44,9 +44,9 @@ class TreeBuilder {
         route: route,
         fullPath: fullPath,
       );
+      tree.treeIndex[route.name ?? _route.fullPath] = fullPath;
       _route.children.addAll(_buildTree(tree, route.children, fullPath));
       result.add(_route);
-      tree.treeIndex[route.name ?? _route.fullPath] = fullPath;
       QR.log('"${_route.name}" added with path ${_route.fullPath}',
           isDebug: true);
     }

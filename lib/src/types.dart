@@ -1,8 +1,17 @@
 import 'package:flutter/widgets.dart';
 
-abstract class QNavigator extends StatefulWidget {}
+class QRouter extends Router {
+  QRouter({
+    Key key,
+    RouterDelegate routerDelegate,
+    BackButtonDispatcher backButtonDispatcher,
+  }) : super(
+            key: key,
+            routerDelegate: routerDelegate,
+            backButtonDispatcher: backButtonDispatcher);
+}
 
-typedef QRoutePage = Widget Function(QNavigator);
+typedef QRoutePage = Widget Function(QRouter);
 typedef RedirectGuard = String Function(String);
 
 /// Create new route.

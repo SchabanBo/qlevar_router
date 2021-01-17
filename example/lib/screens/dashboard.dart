@@ -5,7 +5,7 @@ import '../helpers/date_time.dart';
 import '../routes.dart';
 
 class DashboardScreen extends StatelessWidget {
-  final QNavigator childRouter;
+  final QRouter childRouter;
   const DashboardScreen(this.childRouter);
 
   @override

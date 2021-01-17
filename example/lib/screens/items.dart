@@ -6,7 +6,7 @@ import '../helpers/database.dart';
 import '../routes.dart';
 
 class ItemsScreen extends StatelessWidget {
-  final QNavigator routerChild;
+  final QRouter routerChild;
   ItemsScreen(this.routerChild);
 
   final database = Get.find<Database>();

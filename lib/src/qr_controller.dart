@@ -1,8 +1,9 @@
-import '../qlevar_router.dart';
-import 'navigator/src/navigator_controller.dart';
+import 'match_context.dart';
+import 'navigator/navigator_controller.dart';
+import 'qr.dart';
 import 'router_delegate.dart';
-import 'routes_tree/src/match_context.dart';
-import 'routes_tree/src/routes_tree.dart';
+import 'routes_tree/routes_tree.dart';
+import 'types.dart';
 
 class QRController {
   /// The internal route Tree
@@ -14,9 +15,8 @@ class QRController {
   QRouterDelegate createDelegate(String initRoute) {
     final match = _getMatch(initRoute);
     match.treeUpdated();
-    final request = _controller.createRequest(match, -1, 'Root');
-    final page = _controller.createState(match, request: request);
-    return QRouterDelegate(this, page, request);
+    return QRouterDelegate(
+        _controller.createRouterController(-1, 'Root', match));
   }
 
   void toPath(String path, QNavigationMode mode) {
@@ -35,6 +35,9 @@ class QRController {
       _controller.setNewMatch(match, mode);
 
   MatchContext _getMatch(String path) {
+    if (!path.startsWith('/')) {
+      path = '/$path';
+    }
     QR.log('Navigate to $path');
     final match = _routesTree.getMatch(path);
     return match;

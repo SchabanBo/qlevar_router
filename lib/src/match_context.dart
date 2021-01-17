@@ -1,4 +1,4 @@
-import '../../../qlevar_router.dart';
+import 'types.dart';
 
 /// The match context tree for a route.
 class MatchContext {
@@ -17,13 +17,14 @@ class MatchContext {
       this.isNew = true,
       this.childContext});
 
-  MatchContext copyWith({String fullPath, bool isComponent}) => MatchContext(
-      key: key,
-      fullPath: fullPath ?? this.fullPath,
-      isComponent: isComponent ?? this.isComponent,
-      route: route,
-      isNew: isNew,
-      childContext: childContext);
+  MatchContext copyWith({String fullPath, bool isComponent, bool isNew}) =>
+      MatchContext(
+          key: key,
+          fullPath: fullPath ?? this.fullPath,
+          isComponent: isComponent ?? this.isComponent,
+          route: route,
+          isNew: isNew ?? this.isNew,
+          childContext: childContext);
 
   void treeUpdated() {
     isNew = false;

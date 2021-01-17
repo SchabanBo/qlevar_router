@@ -4,7 +4,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import '../helpers/date_time.dart';
 
 class StoreScreen extends StatelessWidget {
-  final QNavigator childRouter;
+  final QRouter childRouter;
   const StoreScreen(this.childRouter);
   @override
   Widget build(BuildContext context) {

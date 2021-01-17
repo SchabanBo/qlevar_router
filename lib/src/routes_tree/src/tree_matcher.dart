@@ -1,5 +1,5 @@
+import '../../match_context.dart';
 import '../../qr.dart';
-import 'match_context.dart';
 import 'tree_types.dart';
 
 class TreeMatcher {
@@ -62,7 +62,7 @@ class TreeMatcher {
       // so he can update with new request with new params
       if (routeNode.childMatch == null && match.params.isNotEmpty) {
         contextNode.childContext = contextNode.childContext
-            .copyWith(fullPath: path, isComponent: true);
+            .copyWith(fullPath: path, isComponent: true, isNew: true);
       }
       contextNode = contextNode.childContext;
     }
