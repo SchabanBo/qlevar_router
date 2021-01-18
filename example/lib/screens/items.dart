@@ -32,7 +32,7 @@ class ItemsScreen extends StatelessWidget {
                         margin: EdgeInsets.all(10),
                         child: Column(
                           children: [
-                            Image.network(
+                            Image.asset(
                               e.image,
                               width: 150,
                               height: 150,
@@ -84,13 +84,13 @@ class ItemDetailsScreen extends StatelessWidget {
             '${QR.currentRoute.params['itemName']} Details',
             style: TextStyle(color: Colors.white, fontSize: 35),
           ),
-          Image.network(
+          Image.asset(
             item.image,
             height: 200,
             width: 200,
           ),
           Text('Id: ${item.id}'),
-          Text('Price: ${item.price}'),
+          Text('Price ${item.price}'),
         ],
       ),
     );

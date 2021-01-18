@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.2.2] 
+
+- Fix Back and foreword buttons on browser.
+- Fix Back button on mobile closes the app.
+- Fix Fix multi key problem after back.
+- Add Custom logger.
+
 ## [0.2.1] 10-01-2021
 
 - Fix Routes keys order.

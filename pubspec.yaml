@@ -1,6 +1,6 @@
 name: qlevar_router
-description: With Navigator2.0 update only one widget in your page when navigating to new route. Manage your project routes and create nested routes. Simply navigation without context to your page.
-version: 0.2.1
+description: Manage you project Routes. Create nested routes. Simply navigation without context to your pages. Change only one sub widget in your page when navigating to new route.
+version: 0.2.2
 repository: https://github.com/SchabanBo/qlevar_router
 
 environment:

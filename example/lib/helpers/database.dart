@@ -1,65 +1,29 @@
 class Database {
   final items = [
+    StoreItem(id: 1, name: 'Lettuce', image: 'images/lettuce.png', price: 0.89),
     StoreItem(
-        id: 1,
-        name: 'Lettuce',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/lettuce.png',
-        price: 0.89),
-    StoreItem(
-        id: 2,
-        name: 'Tomatoes',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/tomatoes.png',
-        price: 2.5),
+        id: 2, name: 'Tomatoes', image: 'images/tomatoes.png', price: 2.5),
     StoreItem(
         id: 3,
         name: 'Spring onions',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/spring-onions.png',
+        image: 'images/spring-onions.png',
         price: 1.0),
     StoreItem(
-        id: 4,
-        name: 'Potatoes',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/potatoes.png',
-        price: 0.99),
+        id: 4, name: 'Potatoes', image: 'images/potatoes.png', price: 0.99),
     StoreItem(
         id: 5,
         name: 'Cauliflower',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/cauliflower.png',
+        image: 'images/cauliflower.png',
         price: 0.2),
+    StoreItem(id: 6, name: 'Peas', image: 'images/peas.png', price: 0.5),
     StoreItem(
-        id: 6,
-        name: 'Peas',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/peas.png',
-        price: 0.5),
+        id: 7, name: 'Sweet corn', image: 'images/sweet-corn.png', price: 0.7),
     StoreItem(
-        id: 7,
-        name: 'Sweet corn',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/sweet-corn.png',
-        price: 0.7),
+        id: 8, name: 'Broccoli', image: 'images/broccoli.png', price: 0.44),
     StoreItem(
-        id: 8,
-        name: 'Broccoli',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/broccoli.png',
-        price: 0.44),
+        id: 9, name: 'Capsicums', image: 'images/capsicums.png', price: 1.2),
     StoreItem(
-        id: 9,
-        name: 'Capsicums',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/capsicums.png',
-        price: 1.2),
-    StoreItem(
-        id: 10,
-        name: 'Eggplant',
-        image:
-            'https://www.vegetables.co.nz/assets/vegetables/_resampled/FillWyI0MDAiLCIzMDAiXQ/eggplant.png',
-        price: 2.1),
+        id: 10, name: 'Eggplant', image: 'images/eggplant.png', price: 2.1),
   ];
   final orders = [
     Order(id: 1, from: 'USA', createdAt: DateTime(2020, 5, 14), items: [
