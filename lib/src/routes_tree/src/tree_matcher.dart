@@ -9,6 +9,18 @@ class TreeMatcher {
   // ignore: avoid_setters_without_getters
   set tree(Tree t) => _tree = t;
 
+  MatchContext _getFirstMatch(MatchRoute match) {
+    if (_cureentTree != null && match.route.key == _cureentTree.key) {
+      return _cureentTree;
+    }
+
+    if (_cureentTree != null) {
+      _cureentTree.dispoase();
+      _cureentTree = null;
+    }
+    return match.toMatchContext();
+  }
+
   MatchContext getMatch(String path) {
     path = path.trim();
     QR.log('matching for $path', isDebug: true);
@@ -37,10 +49,7 @@ class TreeMatcher {
 
     // Build Match Context
     var routeNode = match;
-    final newTree =
-        (_cureentTree != null && routeNode.route.key == _cureentTree.key)
-            ? _cureentTree
-            : routeNode.toMatchContext();
+    final newTree = _getFirstMatch(routeNode);
     var contextNode = newTree;
 
     while (routeNode.childMatch != null) {
@@ -53,6 +62,11 @@ class TreeMatcher {
               routeNode.childMatch.route.isComponent;
 
       if (needInit) {
+        // Be sure to dispose and clean up the old context.
+        if (contextNode.childContext != null) {
+          contextNode.childContext.dispoase();
+          contextNode.childContext = null;
+        }
         contextNode.childContext = routeNode.childMatch.toMatchContext();
       }
 

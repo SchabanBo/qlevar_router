@@ -92,7 +92,7 @@ class OrderDetails extends StatelessWidget {
                         itemCount: order.items.length,
                         itemBuilder: (c, i) => ListTile(
                               isThreeLine: true,
-                              leading: Image.network(
+                              leading: Image.asset(
                                 order.items[i].item.image,
                                 width: 50,
                                 height: 50,

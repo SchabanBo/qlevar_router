@@ -22,7 +22,6 @@ The clever way to Route in your projects.
     - [Params](#params)
     - [Redirecting](#redirecting)
     - [Not found page](#not-found-page)
-    - [Known issues](#known-issues)
   - [Classes](#classes)
     - [QRoute](#qroute)
     - [QR](#qr)
@@ -74,13 +73,11 @@ The path of the route should start with `/`.
 
 ### InitRoute
 
-As default the initRoute is `/`, if you want to change it you need to give the new value to the `initRoute` in the router method **AND** set the `routeInformationProvider` like this
+As default the initRoute is `/`, if you want to change it you need to give the new value to the `initRoute` in the router method
 
 ```dart
 MaterialApp.router(
         routerDelegate: QR.router(AppRoutes().routes, initRoute: '/dashboard'),
-        routeInformationProvider:
-            QRouteInformationProvider(initialRoute: '/dashboard'),
         routeInformationParser: QR.routeParser(),
       );
 
@@ -212,13 +209,6 @@ or it takes `null` so the page can be accessed.
 you can set your custom not found pag to show it whenever page was not found, or a default one will be set.
 
 **Note:** the route to the not found page must be `/notfound`.
-
-
-### Known issues
-
-- Back and foreword buttons on browser not working as expected.
-- Back button on mobile closes the app.
-- for now just the MaterialApp/MaterialPage are implemented.
 
 ## Classes
 

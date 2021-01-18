@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 
 import 'navigator/router_controller.dart';
 import 'qr.dart';
-import 'routes_tree/routes_tree.dart';
 
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
-class QRouterDelegate extends RouterDelegate<MatchContext> with ChangeNotifier {
+class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   final key = GlobalKey<NavigatorState>();
   final RouterController _request;
   QRouterDelegate(this._request) {
@@ -16,21 +15,20 @@ class QRouterDelegate extends RouterDelegate<MatchContext> with ChangeNotifier {
   }
 
   @override
-  MatchContext get currentConfiguration =>
-      MatchContext(fullPath: QR.currentRoute.fullPath);
+  String get currentConfiguration => QR.currentRoute.fullPath;
 
   @override
-  Future<void> setInitialRoutePath(MatchContext configuration) =>
+  Future<void> setInitialRoutePath(String configuration) =>
       SynchronousFuture(null);
 
   @override
-  Future<void> setNewRoutePath(MatchContext route) {
-    QR.to(route.fullPath);
+  Future<void> setNewRoutePath(String route) {
+    QR.to(route);
     return SynchronousFuture(null);
   }
 
   @override
-  Future<bool> popRoute() async => _request.onPop();
+  Future<bool> popRoute() async => QR.back();
 
   @override
   Widget build(BuildContext context) => Navigator(
@@ -40,7 +38,7 @@ class QRouterDelegate extends RouterDelegate<MatchContext> with ChangeNotifier {
           if (!route.didPop(result)) {
             return false;
           }
-          return _request.onPop();
+          return QR.back();
         },
       );
 

@@ -53,8 +53,7 @@ class DashboardScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(
-                'https://i1.wp.com/www.firstchoiceproduce.com/wp-content/uploads/2017/11/first-choice-home-fresh-produce.jpg?fit=1920%2C1080&ssl=1'),
+            image: AssetImage('images/dashboard_background.jpg'),
             fit: BoxFit.cover,
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import '../qr.dart';
 import 'router_controller.dart';
 
 // ignore: prefer_mixin
@@ -18,12 +19,12 @@ class InnerRouterDelegate extends RouterDelegate<int> with ChangeNotifier {
           if (!route.didPop(result)) {
             return false;
           }
-          return _request.onPop();
+          return QR.back();
         },
       );
 
   @override
-  Future<bool> popRoute() async => _request.onPop();
+  Future<bool> popRoute() async => QR.back();
 
   @override
   Future<void> setNewRoutePath(int configuration) async {

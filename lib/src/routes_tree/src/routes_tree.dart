@@ -11,6 +11,7 @@ class RoutesTree {
 
   void buildTree(List<QRouteBase> routes) {
     QR.history.clear();
+    QR.currentRoute.fullPath = '';
     _tree = TreeBuilder().buildTree(routes);
     _matcher.tree = _tree;
     QR.log('Tree Built', isDebug: true);

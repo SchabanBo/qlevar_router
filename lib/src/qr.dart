@@ -43,12 +43,12 @@ class _QRContext {
       _controller.toName(name, params ?? <String, dynamic>{}, mode);
 
   // back to previous page
-  void back() => _controller.pop();
+  bool back() => _controller.pop();
 
   /// wirte log
   void log(String mes, {bool isDebug = false}) {
     if (settings.enableLog && (!isDebug || settings.enableDebugLog)) {
-      print('Qlevar-Route: $mes');
+      settings.logger('Qlevar-Route: $mes');
     }
   }
 }
@@ -88,4 +88,5 @@ class _QCurrentRoute {
 class QrSettings {
   bool enableLog = true;
   bool enableDebugLog = false;
+  Function(String) logger = print;
 }

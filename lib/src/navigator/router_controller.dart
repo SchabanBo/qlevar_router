@@ -25,8 +25,6 @@ class RouterController extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool onPop() {}
-
   void _updatePages(Page<dynamic> page, QNavigationMode mode) {
     mode = mode ?? QNavigationMode();
     switch (mode.type) {

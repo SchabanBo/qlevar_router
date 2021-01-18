@@ -6,9 +6,12 @@ class AppWarpper extends StatelessWidget {
   AppWarpper(this.pages);
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-      routeInformationParser: QR.routeParser(),
-      routerDelegate: QR.router(pages));
+  Widget build(BuildContext context) {
+    QR.settings.enableDebugLog = true;
+    return MaterialApp.router(
+        routeInformationParser: QR.routeParser(),
+        routerDelegate: QR.router(pages));
+  }
 }
 
 class AppWarpperWithInit extends StatelessWidget {
@@ -17,9 +20,12 @@ class AppWarpperWithInit extends StatelessWidget {
   AppWarpperWithInit(this.pages, {this.initRoute});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-      routeInformationParser: QR.routeParser(),
-      routerDelegate: QR.router(pages, initRoute: initRoute));
+  Widget build(BuildContext context) {
+    QR.settings.enableDebugLog = true;
+    return MaterialApp.router(
+        routeInformationParser: QR.routeParser(),
+        routerDelegate: QR.router(pages, initRoute: initRoute));
+  }
 }
 
 class WidgetOne extends StatelessWidget {

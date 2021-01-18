@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qlevar_router/src/navigator/router_pages.dart';
 
 import '../match_context.dart';
 import '../qr.dart';
@@ -8,7 +7,6 @@ import 'navigator.dart';
 import 'router_controller.dart';
 
 class QNavigatorController {
-  // TODO :: clean list when updated
   final _contollers = <RouterController>[];
 
   void setNewMatch(MatchContext match, QNavigationMode mode) => _updatePath(
@@ -39,7 +37,10 @@ class QNavigatorController {
         ? null
         : _getInnerRouter(match, match.childContext);
 
-    return QRMaterialPage.fromMath(match, childRouter);
+    return MaterialPage(
+        name: match.route.name,
+        child: match.route.page(childRouter),
+        key: ValueKey(match.key));
   }
 
   QRouter _getInnerRouter(MatchContext parent, MatchContext match) {

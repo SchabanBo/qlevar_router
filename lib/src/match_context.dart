@@ -1,3 +1,4 @@
+import 'qr.dart';
 import 'types.dart';
 
 /// The match context tree for a route.
@@ -15,7 +16,13 @@ class MatchContext {
       this.isComponent,
       this.route,
       this.isNew = true,
-      this.childContext});
+      this.childContext}) {
+    // Run onInit for the new match.
+    if (route?.onInit != null) {
+      QR.log('Run onInit for ${route.name}', isDebug: true);
+      route.onInit.call();
+    }
+  }
 
   MatchContext copyWith({String fullPath, bool isComponent, bool isNew}) =>
       MatchContext(
@@ -30,6 +37,17 @@ class MatchContext {
     isNew = false;
     if (childContext != null) {
       childContext.treeUpdated();
+    }
+  }
+
+  void dispoase() {
+    if (route?.onDispose != null) {
+      QR.log('Run onDispose for ${route.name}', isDebug: true);
+      route.onDispose.call();
+    }
+    if (childContext != null) {
+      childContext.dispoase();
+      childContext = null;
     }
   }
 
