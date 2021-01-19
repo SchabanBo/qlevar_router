@@ -64,13 +64,13 @@ class QNavigationMode {
 /// Navigation type, used when navigation to new page.
 /// [Push] place the new page on the top of the stack.
 /// and don't remove the last one.
-/// [PopUnitOrPush] Pop all page unit you get this page in the stack
+/// [PopUntilOrPush] Pop all page unit you get this page in the stack
 /// if the page doesn't exist in the stack push in on the top.
 /// [ReplaceLast] replace the last page with this page.
 /// [ReplaceAll] remove all page from the stack and place this on on the top.
 enum NavigationType {
   Push,
-  PopUnitOrPush,
+  PopUntilOrPush,
   ReplaceLast,
   ReplaceAll,
 }

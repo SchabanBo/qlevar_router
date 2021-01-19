@@ -5,8 +5,8 @@ import '../qr.dart';
 class RouterController extends ChangeNotifier {
   final int key;
   final String name;
-  final _pages = <Page<dynamic>>[];
-  List<Page<dynamic>> get pages => List.unmodifiable(_pages);
+  final _pages = <Page>[];
+  List<Page> get pages => List.unmodifiable(_pages);
 
   RouterController({this.key, this.name, Page<dynamic> initPage}) {
     _pages.add(initPage);
@@ -19,13 +19,13 @@ class RouterController extends ChangeNotifier {
     }
   }
 
-  void updatePage(Page<dynamic> page, QNavigationMode mode) {
+  void updatePage(Page page, QNavigationMode mode) {
     QR.log('Update ${toString()}', isDebug: true);
     _updatePages(page, mode);
     notifyListeners();
   }
 
-  void _updatePages(Page<dynamic> page, QNavigationMode mode) {
+  void _updatePages(Page page, QNavigationMode mode) {
     mode = mode ?? QNavigationMode();
     switch (mode.type) {
       default:

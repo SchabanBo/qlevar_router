@@ -282,6 +282,6 @@ it gives the called path and takes the new path to navigate to, give it null whe
 
 - **type**: an enum `NavigationType` the default type is `ReplaceLast`:
   - **Push**: place the new page on the top of the stack and don't remove the last one.
-  - **PopUnitOrPush**: Pop all page unit you get this page in the stack if the page   in the stack push in on the top.
+  - **PopUntilOrPush**: Pop all page unit you get this page in the stack if the page   in the stack push in on the top.
   - **ReplaceLast**: replace the last page with this page.
   - **ReplaceAll**: remove all page from the stack and place this on on the top.

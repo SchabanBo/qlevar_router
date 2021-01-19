@@ -7,10 +7,11 @@ import 'navigator.dart';
 import 'router_controller.dart';
 
 class QNavigatorController {
-  final _contollers = <RouterController>[];
+  final _conManeger = RouterControllerManger();
 
-  void setNewMatch(MatchContext match, QNavigationMode mode) => _updatePath(
-      _contollers.firstWhere((element) => element.key == -1), match, mode);
+  void setNewMatch(MatchContext match, QNavigationMode mode) {
+    return _updatePath(_conManeger.rootController(), match, mode);
+  }
 
   void _updatePath(RouterController parentRequest, MatchContext match,
       QNavigationMode mode) {
@@ -18,14 +19,13 @@ class QNavigatorController {
       QR.log('$match is the new route has the reqest $parentRequest.',
           isDebug: true);
       parentRequest.updatePage(_getPage(match), mode);
-      _contollers.firstWhere((element) => element.key == -1).updateUrl();
+      _conManeger.rootController().updateUrl();
       match.treeUpdated();
       return;
     }
     if (match.childContext != null) {
       QR.log('$match is the old route. checking child', isDebug: true);
-      final request =
-          _contollers.firstWhere((element) => element.key == match.key);
+      final request = _conManeger.withKey(match.key);
       _updatePath(request, match.childContext, mode);
       return;
     }
@@ -52,8 +52,24 @@ class QNavigatorController {
   }
 
   RouterController createRouterController(
-      int key, String name, MatchContext match) {
-    final page = _getPage(match);
+          int key, String name, MatchContext match) =>
+      _conManeger.create(key, name, _getPage(match));
+
+  bool pop() {
+    if (QR.history.isEmpty) {
+      return false;
+    }
+    QR.to(QR.history[QR.history.length - 2],
+        mode: QNavigationMode(type: NavigationType.PopUntilOrPush));
+    QR.history.removeLast();
+    return true;
+  }
+}
+
+class RouterControllerManger {
+  final _contollers = <RouterController>[];
+
+  RouterController create(int key, String name, Page page) {
     if (_contollers.any((element) => element.key == key)) {
       final controller =
           _contollers.firstWhere((element) => element.key == key);
@@ -65,13 +81,9 @@ class QNavigatorController {
     return controller;
   }
 
-  bool pop() {
-    if (QR.history.isEmpty) {
-      return false;
-    }
-    QR.to(QR.history[QR.history.length - 2],
-        mode: QNavigationMode(type: NavigationType.PopUnitOrPush));
-    QR.history.removeLast();
-    return true;
-  }
+  RouterController rootController() =>
+      _contollers.firstWhere((element) => element.key == -1);
+
+  RouterController withKey(int key) =>
+      _contollers.firstWhere((element) => element.key == key);
 }
