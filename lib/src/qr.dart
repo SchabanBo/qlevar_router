@@ -59,6 +59,9 @@ class QNavigationMode {
   final NavigationType type;
 
   QNavigationMode({this.type = NavigationType.ReplaceLast});
+
+  @override
+  String toString() => '$type';
 }
 
 /// Navigation type, used when navigation to new page.
