@@ -29,7 +29,7 @@ class StoreScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/store_background.jpg'),
+            image: AssetImage('assets/images/store_background.jpg'),
             fit: BoxFit.cover,
           ),
         ),

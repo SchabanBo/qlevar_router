@@ -53,7 +53,7 @@ class DashboardScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/dashboard_background.jpg'),
+            image: AssetImage('assets/images/dashboard_background.jpg'),
             fit: BoxFit.cover,
           ),
         ),
