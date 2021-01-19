@@ -56,13 +56,20 @@ class QNavigatorController {
       _conManeger.create(key, name, _getPage(match));
 
   bool pop() {
-    if (QR.history.isEmpty) {
+    try {
+      if (QR.history.isEmpty) {
+        return false;
+      }
+      QR.to(QR.history.elementAt(QR.history.length - 2),
+          mode: QNavigationMode(type: NavigationType.PopUntilOrPush));
+      QR.history.removeLast();
+      QR.history.removeLast();
+      print('History : ${QR.history}');
+
+      return true;
+    } catch (e) {
       return false;
     }
-    QR.to(QR.history[QR.history.length - 2],
-        mode: QNavigationMode(type: NavigationType.PopUntilOrPush));
-    QR.history.removeLast();
-    return true;
   }
 }
 
@@ -81,11 +88,12 @@ class RouterControllerManger {
     return controller;
   }
 
-  RouterController rootController() =>
-      _contollers.firstWhere((element) => element.key == -1);
+  RouterController rootController() => _contollers
+      .firstWhere((element) => element.key == -1, orElse: () => null);
+
 
   RouterController withKey(int key) =>
-      _contollers.firstWhere((element) => element.key == key);
+      _contollers.firstWhere((element) => element.key == key, orElse: () => null);
 
   void clean(List<int> cleanup) {
     for (var key in cleanup) {

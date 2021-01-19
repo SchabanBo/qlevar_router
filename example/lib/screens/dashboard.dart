@@ -18,6 +18,11 @@ class DashboardScreen extends StatelessWidget {
         title: InkWell(
             onTap: () => QR.to('/dashboard'), child: Text('Dashboard $now')),
         centerTitle: true,
+        leading: BackButton(
+          onPressed: () {
+            QR.back();
+          },
+        ),
         actions: [
           FlatButton(
             onPressed: () {
