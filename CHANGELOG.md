@@ -1,11 +1,12 @@
 # CHANGELOG
 
-## [0.2.2] 
+## [0.2.2] 19-01-2021
 
 - Fix Back and foreword buttons on browser.
 - Fix Back button on mobile closes the app.
 - Fix Fix multi key problem after back.
 - Add Custom logger.
+- Fix History Error when back two times (@obadajasm)
 
 ## [0.2.1] 10-01-2021
 
