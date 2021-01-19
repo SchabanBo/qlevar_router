@@ -22,7 +22,6 @@ The clever way to Route in your projects.
     - [Params](#params)
     - [Redirecting](#redirecting)
     - [Not found page](#not-found-page)
-    - [Known issues](#known-issues)
   - [Classes](#classes)
     - [QRoute](#qroute)
     - [QR](#qr)
@@ -74,13 +73,11 @@ The path of the route should start with `/`.
 
 ### InitRoute
 
-As default the initRoute is `/`, if you want to change it you need to give the new value to the `initRoute` in the router method **AND** set the `routeInformationProvider` like this
+As default the initRoute is `/`, if you want to change it you need to give the new value to the `initRoute` in the router method
 
 ```dart
 MaterialApp.router(
         routerDelegate: QR.router(AppRoutes().routes, initRoute: '/dashboard'),
-        routeInformationProvider:
-            QRouteInformationProvider(initialRoute: '/dashboard'),
         routeInformationParser: QR.routeParser(),
       );
 
@@ -213,13 +210,6 @@ you can set your custom not found pag to show it whenever page was not found, or
 
 **Note:** the route to the not found page must be `/notfound`.
 
-
-### Known issues
-
-- Back and foreword buttons on browser not working as expected.
-- Back button on mobile closes the app.
-- for now just the MaterialApp/MaterialPage are implemented.
-
 ## Classes
 
 ### QRoute
@@ -292,6 +282,6 @@ it gives the called path and takes the new path to navigate to, give it null whe
 
 - **type**: an enum `NavigationType` the default type is `ReplaceLast`:
   - **Push**: place the new page on the top of the stack and don't remove the last one.
-  - **PopUnitOrPush**: Pop all page unit you get this page in the stack if the page   in the stack push in on the top.
+  - **PopUntilOrPush**: Pop all page unit you get this page in the stack if the page   in the stack push in on the top.
   - **ReplaceLast**: replace the last page with this page.
   - **ReplaceAll**: remove all page from the stack and place this on on the top.

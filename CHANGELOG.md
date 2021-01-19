@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [0.2.2] 19-01-2021
+
+- Fix Back and foreword buttons on browser.
+- Fix Back button on mobile closes the app.
+- Fix Fix multi key problem after back.
+- Add Custom logger.
+- Fix History Error when back two times (@obadajasm)
+
 ## [0.2.1] 10-01-2021
 
 - Fix Routes keys order.
@@ -10,7 +18,7 @@
 ## [0.2.0] 03-01-2021
 
 - Add onInit/onDispose to `QRoute`.
-- Add QNavigationMode (Push, PopUnitOrPush, ReplaceAll, ReplaceLast).
+- Add QNavigationMode (Push, PopUntilOrPush, ReplaceAll, ReplaceLast).
 - Add `QR.toNamed` navigate with route name.
 - Enable the scenario to define path with multi slashes `/path/to/some`.
 

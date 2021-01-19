@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-
-import '../qlevar_router.dart';
-import 'routes_tree.dart';
+import 'qr_controller.dart';
+import 'route_parser.dart';
+import 'router_delegate.dart';
+import 'types.dart';
 
 /// Qlevar Router.
 // ignore: non_constant_identifier_names
@@ -9,53 +9,46 @@ final QR = _QRContext();
 
 /// The main class of qlevar-router
 class _QRContext {
-  /// The information for the current route
-  /// here you can find the params for the current route
-  /// or even the fullpath
-  final _QCurrentRoute currentRoute = _QCurrentRoute();
-  bool enableLog = true;
-  bool enableDebugLog = false;
-  final RoutesTree _routesTree = RoutesTree();
-  Map<String, dynamic> get params => currentRoute.params;
+  /// Settings for the package
+  final settings = QrSettings();
 
   /// list of string for the paths that has been called.
   final history = <String>[];
 
-  QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
-    if (routes.map((e) => e.path).contains('/notfound') == false) {
-      routes.add(QRoute(
-          path: '/notfound',
-          page: (r) => Material(
-                child: Center(
-                  child: Text('Page Not Found "${QR.currentRoute.fullPath}"'),
-                ),
-              )));
-    }
+  /// The information for the current route
+  /// here you can find the params for the current route
+  /// or even the fullpath
+  final _QCurrentRoute currentRoute = _QCurrentRoute();
 
-    return _routesTree.setTree(
-        routes, () => QRouterDelegate(matchRoute: findMatch(initRoute)));
+  Map<String, dynamic> get params => currentRoute.params;
+
+  final _controller = QRController();
+
+  QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
+    _controller.setTree(routes);
+    return _controller.createDelegate(initRoute);
   }
 
   /// Get the RouteInformationParser
   QRouteInformationParser routeParser() => const QRouteInformationParser();
 
-  MatchContext findMatch(String route) => _routesTree.getMatch(route);
-
   /// Navigate to new page with [path]
   void to(String path, {QNavigationMode mode}) =>
-      _routesTree.updatePath(path, mode);
+      _controller.toPath(path, mode);
 
+  /// Navigate to new page with [Name]
+  /// Give the name of the route and the [params] to apply
   void toName(String name,
           {Map<String, dynamic> params, QNavigationMode mode}) =>
-      _routesTree.updateNamedPath(name, params ?? <String, dynamic>{}, mode);
+      _controller.toName(name, params ?? <String, dynamic>{}, mode);
 
   // back to previous page
-  void back() => to(QR.history[QR.history.length - 2]);
+  bool back() => _controller.pop();
 
   /// wirte log
   void log(String mes, {bool isDebug = false}) {
-    if (enableLog && (!isDebug || enableDebugLog)) {
-      print('Qlevar-Route: $mes');
+    if (settings.enableLog && (!isDebug || settings.enableDebugLog)) {
+      settings.logger('Qlevar-Route: $mes');
     }
   }
 }
@@ -66,18 +59,21 @@ class QNavigationMode {
   final NavigationType type;
 
   QNavigationMode({this.type = NavigationType.ReplaceLast});
+
+  @override
+  String toString() => '$type';
 }
 
 /// Navigation type, used when navigation to new page.
 /// [Push] place the new page on the top of the stack.
 /// and don't remove the last one.
-/// [PopUnitOrPush] Pop all page unit you get this page in the stack
+/// [PopUntilOrPush] Pop all page unit you get this page in the stack
 /// if the page doesn't exist in the stack push in on the top.
 /// [ReplaceLast] replace the last page with this page.
 /// [ReplaceAll] remove all page from the stack and place this on on the top.
 enum NavigationType {
   Push,
-  PopUnitOrPush,
+  PopUntilOrPush,
   ReplaceLast,
   ReplaceAll,
 }
@@ -89,4 +85,11 @@ class _QCurrentRoute {
 
   /// The params for the current route
   Map<String, dynamic> params = {};
+}
+
+/// The package settings
+class QrSettings {
+  bool enableLog = true;
+  bool enableDebugLog = false;
+  Function(String) logger = print;
 }

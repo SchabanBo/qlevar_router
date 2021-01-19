@@ -1,38 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import '../qlevar_router.dart';
-import 'types.dart';
+import 'qr.dart';
 
-/// A delegate that is used by the [Router] widget to parse a route information
-/// into a configuration of type T.
-///
-/// This delegate is used when the [Router] widget is first built with initial
-/// route information from [Router.routeInformationProvider] and any subsequent
-/// new route notifications from it.
-/// The [Router] widget calls the [parseRouteInformation]
-/// with the route information from [Router.routeInformationProvider].
-class QRouteInformationParser extends RouteInformationParser<MatchContext> {
+/// The parser for QRouter
+class QRouteInformationParser extends RouteInformationParser<String> {
   const QRouteInformationParser();
   @override
-  Future<MatchContext> parseRouteInformation(
+  Future<String> parseRouteInformation(
       RouteInformation routeInformation) async {
-    QR.log(
-        // ignore: lines_longer_than_80_chars
-        'Searching for Route: ${routeInformation.location}');
     if (routeInformation.location == null) {
       return SynchronousFuture(null);
     }
-    return QR.findMatch(routeInformation.location);
+    return routeInformation.location;
   }
 
   @override
-  RouteInformation restoreRouteInformation(MatchContext match) =>
+  RouteInformation restoreRouteInformation(String match) =>
       RouteInformation(location: QR.currentRoute.fullPath);
-}
-
-/// Create Route Provider with [initialRoute]
-class QRouteInformationProvider extends PlatformRouteInformationProvider {
-  QRouteInformationProvider({String initialRoute})
-      : super(
-            initialRouteInformation: RouteInformation(location: initialRoute));
 }
