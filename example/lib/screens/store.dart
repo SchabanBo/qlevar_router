@@ -13,11 +13,6 @@ class StoreScreen extends StatelessWidget {
         backgroundColor: Colors.amber,
         title: Text('Store $now'),
         centerTitle: true,
-        leading: BackButton(
-          onPressed: () {
-            QR.back();
-          },
-        ),
         actions: [
           FlatButton(
             onPressed: () {

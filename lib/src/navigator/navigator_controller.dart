@@ -56,20 +56,13 @@ class QNavigatorController {
       _conManeger.create(key, name, _getPage(match));
 
   bool pop() {
-    try {
-      if (QR.history.isEmpty) {
-        return false;
-      }
-      QR.to(QR.history.elementAt(QR.history.length - 2),
-          mode: QNavigationMode(type: NavigationType.PopUntilOrPush));
-      QR.history.removeLast();
-      QR.history.removeLast();
-      print('History : ${QR.history}');
-
-      return true;
-    } catch (e) {
+    if (QR.history.length < 2) {
       return false;
     }
+    QR.to(QR.history.elementAt(QR.history.length - 2),
+        mode: QNavigationMode(type: NavigationType.PopUntilOrPush));
+    QR.history.removeRange(QR.history.length - 2, QR.history.length);
+    return true;
   }
 }
 
