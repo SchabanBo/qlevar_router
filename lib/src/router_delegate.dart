@@ -10,7 +10,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   final key = GlobalKey<NavigatorState>();
   final RouterController _request;
   QRouterDelegate(this._request) {
-    QR.log('Root Controller : $_request');
+    QR.log('Root Controller : $_request', isDebug: true);
     _request.addListener(notifyListeners);
   }
 

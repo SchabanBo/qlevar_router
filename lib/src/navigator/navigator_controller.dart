@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-
 import '../match_context.dart';
 import '../qr.dart';
 import '../types.dart';
 import 'navigator.dart';
+import 'pages.dart';
 import 'router_controller.dart';
 
 class QNavigatorController {
@@ -18,7 +17,8 @@ class QNavigatorController {
     if (match.isNew) {
       QR.log('$match is the new route has the reqest $parentRequest.',
           isDebug: true);
-      parentRequest.updatePage(_getPage(match), mode);
+      final cleanupList = parentRequest.updatePage(_getPage(match), mode);
+      _conManeger.clean(cleanupList);
       _conManeger.rootController().updateUrl();
       match.treeUpdated();
       return;
@@ -29,22 +29,22 @@ class QNavigatorController {
       _updatePath(request, match.childContext, mode);
       return;
     }
-    QR.log('No changes for $match was found', isDebug: true);
+    QR.log('No changes for $match was found');
   }
 
-  Page<dynamic> _getPage(MatchContext match) {
+  QPage _getPage(MatchContext match) {
     final childRouter = match.childContext == null
         ? null
         : _getInnerRouter(match, match.childContext);
 
-    return MaterialPage(
+    return QMaterialPage(
         name: match.route.name,
         child: match.route.page(childRouter),
-        key: ValueKey(match.key));
+        key: match.key);
   }
 
   QRouter _getInnerRouter(MatchContext parent, MatchContext match) {
-    QR.log('Get Navigator for $match', isDebug: true);
+    QR.log('Get Router for $match', isDebug: true);
     return QRouter(
       routerDelegate: InnerRouterDelegate(
           createRouterController(parent.key, parent.route.name, match)),
@@ -69,7 +69,7 @@ class QNavigatorController {
 class RouterControllerManger {
   final _contollers = <RouterController>[];
 
-  RouterController create(int key, String name, Page page) {
+  RouterController create(int key, String name, QPage page) {
     if (_contollers.any((element) => element.key == key)) {
       final controller =
           _contollers.firstWhere((element) => element.key == key);
@@ -86,4 +86,22 @@ class RouterControllerManger {
 
   RouterController withKey(int key) => _contollers
       .firstWhere((element) => element.key == key, orElse: () => null);
+
+  void clean(List<int> cleanup) {
+    for (var key in cleanup) {
+      if (_contollers.any((element) => element.key == key)) {
+        clean(withKey(key).pages.map((e) => e.matchKey).toList());
+      }
+      _cleanIfExist(key);
+    }
+  }
+
+  void _cleanIfExist(int key) {
+    if (_contollers.any((element) => element.key == key)) {
+      final controller =
+          _contollers.firstWhere((element) => element.key == key);
+      _contollers.remove(controller);
+      QR.log('Controller ${controller.toString()} is Deleted', isDebug: true);
+    }
+  }
 }
