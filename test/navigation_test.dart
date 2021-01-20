@@ -4,22 +4,32 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 import 'test_widgets/test_widgets.dart';
 
+final pages = AppWarpper([
+  QRoute(
+      path: '/',
+      name: 'HomePage',
+      page: (c) => Scaffold(
+            body: WidgetOne(),
+          )),
+  QRoute(
+      path: '/two',
+      name: 'MyPage',
+      page: (c) => Scaffold(
+            body: WidgetTwo(),
+          )),
+  QRoute(
+      path: '/three',
+      name: 'Three',
+      page: (c) => Scaffold(
+            body: WidgetThree(),
+          )),
+]);
+
 void main() {
   testWidgets("simple path navigation", (tester) async {
-    await tester.pumpWidget(AppWarpper([
-      QRoute(
-          path: '/',
-          page: (c) => Scaffold(
-                body: WidgetOne(),
-              )),
-      QRoute(
-          path: '/tow',
-          page: (c) => Scaffold(
-                body: WidgetTwo(),
-              ))
-    ]));
+    await tester.pumpWidget(pages);
     expect(find.byType(WidgetOne), findsOneWidget);
-    QR.to('/tow');
+    QR.to('/two');
     await tester.pumpAndSettle();
     expect(find.byType(WidgetOne), findsNothing);
     expect(find.byType(WidgetTwo), findsOneWidget);
@@ -30,20 +40,7 @@ void main() {
   });
 
   testWidgets("simple named navigation", (tester) async {
-    await tester.pumpWidget(AppWarpper([
-      QRoute(
-          path: '/',
-          name: 'HomePage',
-          page: (c) => Scaffold(
-                body: WidgetOne(),
-              )),
-      QRoute(
-          path: '/tow',
-          name: 'MyPage',
-          page: (c) => Scaffold(
-                body: WidgetTwo(),
-              ))
-    ]));
+    await tester.pumpWidget(pages);
     expect(find.byType(WidgetOne), findsOneWidget);
     QR.toName('MyPage');
     await tester.pumpAndSettle();
@@ -58,5 +55,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(WidgetTwo), findsNothing);
     expect(find.byType(WidgetOne), findsOneWidget);
+  });
+
+  testWidgets("simple to and pop navigation", (tester) async {
+    await tester.pumpWidget(pages);
+    expect(find.byType(WidgetOne), findsOneWidget);
+    QR.toName('MyPage');
+    QR.toName('Three');
+    QR.back();
+    expect(QR.history.last, '/two');
+
+    QR.toName('Three');
+    QR.back();
+    QR.back();
+    expect(QR.history.last, '/');
   });
 }
