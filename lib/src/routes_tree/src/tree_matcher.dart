@@ -137,9 +137,17 @@ class TreeMatcher {
       if (path.contains(':${param.key}')) {
         path = path.replaceAll(':${param.key}', param.value.toString());
       } else {
-        pathParams.addAll(params);
+        pathParams.addEntries([param]);
       }
     }
+
+    // Replace old component
+    for (var param in QR.params.entries) {
+      if (path.contains(':${param.key}')) {
+        path = path.replaceAll(':${param.key}', param.value.toString());
+      }
+    }
+
     if (pathParams.isNotEmpty) {
       path = '$path?';
       // Build the params
