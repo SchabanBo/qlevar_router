@@ -104,7 +104,6 @@ class OrdersRoutes extends QRouteBuilder {
           path: '/orders',
           page: (child) => OrdersScreen(child),
           children: [
-            QRoute(name: ordersMain, path: '/', page: (child) => Container()),
             QRoute(
                 name: ordersDetails,
                 path: '/:orderId',

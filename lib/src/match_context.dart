@@ -16,9 +16,10 @@ class MatchContext {
       this.isComponent,
       this.route,
       this.isNew = true,
-      this.childContext}) {
+      this.childContext,
+      bool isCopy = false}) {
     // Run onInit for the new match.
-    if (route?.onInit != null) {
+    if (!isCopy && route?.onInit != null) {
       QR.log('Run onInit for ${route.name}', isDebug: true);
       route.onInit.call();
     }
@@ -31,7 +32,8 @@ class MatchContext {
           isComponent: isComponent ?? this.isComponent,
           route: route,
           isNew: isNew ?? this.isNew,
-          childContext: childContext);
+          childContext: childContext,
+          isCopy: true);
 
   void treeUpdated() {
     isNew = false;

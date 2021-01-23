@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [0.2.3] 23-01-2021
+
+- Fix missing Component from last route.
+- Add Default init Route for children.
+
 ## [0.2.2] 19-01-2021
 
 - Fix Back and foreword buttons on browser.

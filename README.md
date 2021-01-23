@@ -254,11 +254,7 @@ it gives the called path and takes the new path to navigate to, give it null whe
               name: 'Items',
               path: '/items',
               page: (child) => ItemsScreen(child),
-              children: [
-                QRoute(
-                    name: 'Items Main',
-                    path: '/',
-                    page: (child) => Container()),
+              children: [         
                 QRoute(
                     name: 'Items Details',
                     path: '/details',
