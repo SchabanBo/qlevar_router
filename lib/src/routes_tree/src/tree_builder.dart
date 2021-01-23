@@ -45,6 +45,15 @@ class TreeBuilder {
         fullPath: fullPath,
       );
       tree.treeIndex[route.name ?? _route.fullPath] = fullPath;
+      // Add children default init
+      if (route.children != null &&
+          !route.children.any((element) => element.path == '/')) {
+        route.children.add(QRoute(
+          path: '/',
+          name: '${route.name} Init',
+          page: (c) => Container(),
+        ));
+      }
       _route.children.addAll(_buildTree(tree, route.children, fullPath));
       result.add(_route);
       QR.log('"${_route.name}" added with path ${_route.fullPath}',
