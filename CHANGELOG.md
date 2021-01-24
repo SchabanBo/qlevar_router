@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [0.2.5] 24-01-2021
+
+- Set route info before onInit to use it when it needed.
+
 ## [0.2.4] 24-01-2021
 
 - Don't redirect to init Page after hot restart.
