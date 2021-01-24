@@ -47,6 +47,11 @@ class TreeMatcher {
       }
     }
 
+    // Set route info before onInit to use it when it needed.
+    QR.currentRoute.fullPath = path;
+    QR.currentRoute.params = match.getParames();
+    QR.history.add(path);
+
     // Build Match Context
     var routeNode = match;
     final newTree = _getFirstMatch(routeNode);
@@ -83,9 +88,6 @@ class TreeMatcher {
 
     // Set current route info
     _cureentTree = newTree;
-    QR.currentRoute.fullPath = path;
-    QR.currentRoute.params = match.getParames();
-    QR.history.add(path);
     return newTree;
   }
 
