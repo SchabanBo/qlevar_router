@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [0.2.4] 24-01-2021
+
+- Don't redirect to init Page after hot restart.
+
 ## [0.2.3] 23-01-2021
 
 - Fix missing Component from last route.
