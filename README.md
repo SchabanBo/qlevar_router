@@ -6,8 +6,7 @@
 
 With Navigator2.0 Manage your project routes and create nested routes. Update only one widget in your page when navigating to new route. Simply navigation without context to your page.
 
-There are cases when we need to change the route of the application but not change the entire page, just one widget in it.
-I down want to loss the state of the current page but i want to change a part of it with a new route (common case is bottom navigation bar, sidebar in a dashboard, etc). That was not possible in flutter unit now.
+There are cases when we need to change the route of the application without changing the entire page and without lossing the state of the current page simplly i want to update a part in it with a new route (common case is bottom navigation bar, sidebar in a dashboard, etc). That was so hard to accomplish in flutter unit now.
 With this package you can do this [Nested Routing - Widget Update](#nested-routing---widget-update).
 
 The clever way to Route in your projects.
@@ -24,6 +23,7 @@ The clever way to Route in your projects.
     - [Not found page](#not-found-page)
   - [Classes](#classes)
     - [QRoute](#qroute)
+    - [QRouteBuilder](#qroutebuilder)
     - [QR](#qr)
     - [Navigation mode](#navigation-mode)
 
@@ -87,7 +87,7 @@ MaterialApp.router(
 
 To use the nested routing:
 
-- simply define the children for a route
+- simply define the children for a route with [QRoute](#QRoute) or [QRouteBuilder](#QRouteBuilder)
 
 ```dart
 
@@ -261,6 +261,50 @@ it gives the called path and takes the new path to navigate to, give it null whe
                     page: (child) => ItemDetailsScreen())
               ]),
         ]),
+```
+
+### QRouteBuilder
+
+When you work on a large project the router class will start to get too big and messy and here when `QRouteBuilder` come to help.
+
+Split the the router to multiple files and call them from the root router or as child to another page.
+
+``` dart
+
+// Define the sub router.
+class OrdersRoutes extends QRouteBuilder {
+  static String orders = 'Orders';
+  static String ordersMain = 'Orders Main';
+  static String ordersDetails = 'Orders Details';
+
+  @override
+  QRoute createRoute() => QRoute(
+          name: orders,
+          path: '/orders',
+          page: (child) => OrdersScreen(child),
+          children: [
+            QRoute(
+                name: ordersDetails,
+                path: '/:orderId',
+                page: (child) => OrderDetails()),
+          ]);
+}
+
+// Link it to the root route or as child to another page
+  final routes = <QRouteBase>[
+    QRoute(
+        name: dashboard,
+        path: '/dashboard',
+        page: (childRouter) => DashboardScreen(childRouter),
+        children: [
+          QRoute(
+              name: dashboardMain,
+              path: '/',
+              page: (child) => DashboardContent()),      
+          OrdersRoutes(), // Here is the call
+        ])
+  );
+
 ```
 
 ### QR
