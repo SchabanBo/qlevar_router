@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:qlevar_router/src/pages.dart';
+
 import '../match_context.dart';
 import '../qr.dart';
 import '../types.dart';
@@ -37,10 +40,28 @@ class QNavigatorController {
         ? null
         : _getInnerRouter(match, match.childContext);
 
+    final pageType = match.route.pageType;
+
+    if (pageType is QRCupertinoPage) {
+      return QCupertinoPage(
+          name: match.route.name,
+          child: match.route.page(childRouter),
+          maintainState: pageType.maintainState,
+          fullscreenDialog: pageType.fullscreenDialog,
+          restorationId: pageType.restorationId,
+          title: pageType.title,
+          matchKey: match.key,
+          key: ValueKey(match.key));
+    }
+
     return QMaterialPage(
         name: match.route.name,
         child: match.route.page(childRouter),
-        key: match.key);
+        maintainState: pageType.maintainState,
+        fullscreenDialog: pageType.fullscreenDialog,
+        restorationId: pageType.restorationId,
+        matchKey: match.key,
+        key: ValueKey(match.key));
   }
 
   QRouter _getInnerRouter(MatchContext parent, MatchContext match) {

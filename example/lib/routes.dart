@@ -28,6 +28,7 @@ class AppRoutes {
   // Tests
   static String testMultiSlash = 'Test Multi Slash';
   static String testMultiComponent = 'Test Multi Component';
+  static String testMultiComponentChild = 'Test Multi Component Child';
 
   //Other
   static String redirect = 'Redirect';
@@ -58,6 +59,7 @@ class AppRoutes {
                 QRoute(
                     name: itemsDetails,
                     path: '/details',
+                    pageType: QRCupertinoPage(),
                     onInit: () => print('onInit Items Details'),
                     onDispose: () => print('onDispose Items Details'),
                     page: (c) => ItemDetailsScreen())
@@ -79,7 +81,13 @@ class AppRoutes {
                 QRoute(
                     name: testMultiComponent,
                     path: '/:number/:name',
-                    page: (child) => TestMultiComponent()),
+                    page: (child) => TestMultiComponent(child),
+                    children: [
+                      QRoute(
+                          name: testMultiComponentChild,
+                          path: '/:childNumber',
+                          page: (child) => TestMultiComponentChild())
+                    ]),
               ]),
         ]),
     QRoute(
