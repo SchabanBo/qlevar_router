@@ -20,14 +20,19 @@ class _QRContext {
   /// or even the fullpath
   final _QCurrentRoute currentRoute = _QCurrentRoute();
 
+  /// The route params
   Map<String, dynamic> get params => currentRoute.params;
 
   final _controller = QRController();
 
+  /// Get the router for the app.
   QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
     _controller.setTree(routes);
     return _controller.createDelegate(initRoute);
   }
+
+  /// Log the project tree structure
+  void logTree() => _controller.logTree();
 
   /// Get the RouteInformationParser
   QRouteInformationParser routeParser() => const QRouteInformationParser();

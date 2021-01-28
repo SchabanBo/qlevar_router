@@ -46,10 +46,23 @@ class QRouteInternal {
       // ignore: lines_longer_than_80_chars
       'key: $key, name: $name, fullPath: $fullPath, path: $path, isComponent: $isComponent';
 
-  void printTree(int width) {
-    QR.log(''.padRight(width, '-') + _info());
+  void printTree(int width, bool isLast, List<int> separatorIndex) {
+    var line = '';
+
+    for (var i = 0; i < width; i++) {
+      line += separatorIndex.contains(i) ? '│' : ' ';
+    }
+    line += isLast ? '└─ ' : '├─ ';
+    line += _info();
+    QR.log(line);
+    if (!separatorIndex.contains(width)) {
+      separatorIndex.add(width);
+    }
+    if (isLast && separatorIndex.contains(width)) {
+      separatorIndex.remove(width);
+    }
     for (var item in children) {
-      item.printTree(width + 1);
+      item.printTree(width + 3, children.last == item, separatorIndex);
     }
   }
 }

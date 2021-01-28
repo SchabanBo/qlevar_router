@@ -66,9 +66,6 @@ class TreeBuilder {
     _checkRoutes(routes);
     final tree = Tree();
     tree.routes.addAll(_buildTree(tree, routes, ''));
-    for (var route in tree.routes) {
-      route.printTree(1);
-    }
     return tree;
   }
 

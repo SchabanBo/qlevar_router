@@ -14,7 +14,17 @@ class RoutesTree {
     QR.currentRoute.fullPath = '';
     _tree = TreeBuilder().buildTree(routes);
     _matcher.tree = _tree;
+    logTree();
     QR.log('Tree Built', isDebug: true);
+  }
+
+  void logTree() {
+    QR.log(
+        '${''.padRight(15, '-')} Project Route Tree ${''.padRight(15, '-')}');
+    for (var route in _tree.routes) {
+      route.printTree(0, _tree.routes.last == route, []);
+    }
+    QR.log(''.padRight(50, '-'));
   }
 
   MatchContext getMatch(String path) {

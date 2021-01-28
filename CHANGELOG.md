@@ -3,7 +3,8 @@
 ## [0.3.0]
 
 - Fix Router update parent when it it component.
-- Add Page Types `QRPlatformPage`, `QRMaterialPage`, `QRCupertinoPage`,  `QRCustomPage` and `QRSlidePage`
+- Add Page Types `QRPlatformPage`, `QRMaterialPage`, `QRCupertinoPage`,  `QRCustomPage` and `QRSlidePage`.
+- Better Tree Logging and method so the user can log it.
 
 ## [0.2.5] 24-01-2021
 
