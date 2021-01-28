@@ -132,3 +132,60 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
+
+class QCustomPage extends QPage {
+  final Widget child;
+  final bool maintainState;
+  final bool fullscreenDialog;
+  final int transitionDuration;
+  final int reverseTransitionDuration;
+  final bool opaque;
+  final bool barrierDismissible;
+  final Color barrierColor;
+  final String barrierLabel;
+  final RouteTransitionsBuilder transitionsBuilder;
+
+  const QCustomPage({
+    String restorationId,
+    int matchKey,
+    LocalKey key,
+    String name,
+    Object arguments,
+    this.child,
+    this.maintainState = true,
+    this.fullscreenDialog = false,
+    this.barrierColor,
+    this.barrierDismissible,
+    this.barrierLabel,
+    this.opaque,
+    this.reverseTransitionDuration,
+    this.transitionDuration,
+    this.transitionsBuilder,
+  })  : assert(child != null),
+        assert(maintainState != null),
+        assert(fullscreenDialog != null),
+        super(
+            key: key,
+            name: name,
+            arguments: arguments,
+            matchKey: matchKey,
+            restorationId: restorationId);
+
+  @override
+  Route createRoute(BuildContext context) {
+    return PageRouteBuilder(
+      pageBuilder: (c, a1, a2) => child,
+      settings: this,
+      opaque: opaque ?? true,
+      transitionDuration: Duration(milliseconds: transitionDuration),
+      reverseTransitionDuration:
+          Duration(milliseconds: reverseTransitionDuration),
+      barrierColor: barrierColor,
+      barrierDismissible: barrierDismissible ?? false,
+      barrierLabel: barrierLabel,
+      transitionsBuilder: transitionsBuilder,
+      fullscreenDialog: fullscreenDialog,
+      maintainState: maintainState,
+    );
+  }
+}

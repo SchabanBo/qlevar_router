@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:qlevar_router/src/pages.dart';
+import 'qpages.dart';
 
 class QRouter extends Router {
   QRouter({

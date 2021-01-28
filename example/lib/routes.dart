@@ -115,6 +115,10 @@ class OrdersRoutes extends QRouteBuilder {
             QRoute(
                 name: ordersDetails,
                 path: '/:orderId',
+                pageType: QRSlidePage(
+                  transitionDurationmilliseconds: 500,
+                  offset: Offset(1, 0),
+                ),
                 page: (child) => OrderDetails()),
           ]);
 }

@@ -3,6 +3,7 @@
 ## [0.2.6]
 
 - Fix Router update parent when it it component.
+- Add Page Types `QRPlatformPage`, `QRMaterialPage`, `QRCupertinoPage`,  `QRCustomPage` and `QRSlidePage`
 
 ## [0.2.5] 24-01-2021
 
