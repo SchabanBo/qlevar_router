@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [0.2.6]
+## [0.3.0]
 
 - Fix Router update parent when it it component.
 - Add Page Types `QRPlatformPage`, `QRMaterialPage`, `QRCupertinoPage`,  `QRCustomPage` and `QRSlidePage`
