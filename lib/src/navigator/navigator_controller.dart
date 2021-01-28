@@ -1,4 +1,11 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+
 import '../match_context.dart';
+import '../qpages.dart';
 import '../qr.dart';
 import '../types.dart';
 import 'navigator.dart';
@@ -6,7 +13,7 @@ import 'pages.dart';
 import 'router_controller.dart';
 
 class QNavigatorController {
-  final _conManeger = RouterControllerManger();
+  final _conManeger = _RouterControllerManger();
 
   void setNewMatch(MatchContext match, QNavigationMode mode) {
     return _updatePath(_conManeger.rootController(), match, mode);
@@ -37,10 +44,7 @@ class QNavigatorController {
         ? null
         : _getInnerRouter(match, match.childContext);
 
-    return QMaterialPage(
-        name: match.route.name,
-        child: match.route.page(childRouter),
-        key: match.key);
+    return _PageCreator(match, childRouter).create();
   }
 
   QRouter _getInnerRouter(MatchContext parent, MatchContext match) {
@@ -66,7 +70,7 @@ class QNavigatorController {
   }
 }
 
-class RouterControllerManger {
+class _RouterControllerManger {
   final _contollers = <RouterController>[];
 
   RouterController create(int key, String name, QPage page) {
@@ -103,5 +107,86 @@ class RouterControllerManger {
       _contollers.remove(controller);
       QR.log('Controller ${controller.toString()} is Deleted', isDebug: true);
     }
+  }
+}
+
+class _PageCreator {
+  final MatchContext match;
+  final QRouter childRouter;
+  final LocalKey key;
+  final QRPage pageType;
+
+  _PageCreator(this.match, this.childRouter)
+      : key = match.isComponent
+            // If the route is component we have to use uniqe key
+            // so the page get updated and the animation works
+            ? ValueKey<int>((match.key + Random().nextInt(100)))
+            : ValueKey<int>(match.key),
+        pageType = match.route.pageType;
+  QPage create() {
+    if (pageType is QRPlatformPage) {
+      return !kIsWeb && (Platform.isMacOS || Platform.isIOS)
+          ? _getCupertinoPage()
+          : _getMaterialPage();
+    }
+    if (pageType is QRCupertinoPage) {
+      return _getCupertinoPage();
+    }
+    if (pageType is QRCustomPage) {
+      return _getCustomPage();
+    }
+    return _getMaterialPage();
+  }
+
+  QMaterialPage _getMaterialPage() => QMaterialPage(
+      name: match.route.name,
+      child: match.route.page(childRouter),
+      maintainState: pageType.maintainState,
+      fullscreenDialog: pageType.fullscreenDialog,
+      restorationId: pageType.restorationId,
+      matchKey: match.key,
+      key: key);
+
+  QCupertinoPage _getCupertinoPage() => QCupertinoPage(
+      name: match.route.name,
+      child: match.route.page(childRouter),
+      maintainState: pageType.maintainState,
+      fullscreenDialog: pageType.fullscreenDialog,
+      restorationId: pageType.restorationId,
+      title: (match.route.pageType as QRCupertinoPage).title,
+      matchKey: match.key,
+      key: key);
+
+  QCustomPage _getCustomPage() {
+    final page = pageType as QRCustomPage;
+    return QCustomPage(
+        name: match.route.name,
+        child: match.route.page(childRouter),
+        maintainState: pageType.maintainState,
+        fullscreenDialog: pageType.fullscreenDialog,
+        restorationId: pageType.restorationId,
+        matchKey: match.key,
+        key: key,
+        barrierColor: page.barrierColor,
+        barrierDismissible: page.barrierDismissible,
+        barrierLabel: page.barrierLabel,
+        opaque: page.opaque,
+        reverseTransitionDuration: page.reverseTransitionDurationmilliseconds,
+        transitionDuration: page.transitionDurationmilliseconds,
+        transitionsBuilder: _buildTransaction);
+  }
+
+  Widget _buildTransaction(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    if (pageType is QRSlidePage) {
+      final slide = pageType as QRSlidePage;
+      return SlideTransition(
+          child: child,
+          position: CurvedAnimation(
+                  parent: animation, curve: slide.curve ?? Curves.easeIn)
+              .drive(Tween<Offset>(
+                  end: Offset.zero, begin: slide.offset ?? Offset(1, 0))));
+    }
+    return child;
   }
 }

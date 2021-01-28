@@ -11,6 +11,7 @@ class QRController {
   final _controller = QNavigatorController();
 
   void setTree(List<QRouteBase> routes) => _routesTree.buildTree(routes);
+  void logTree() => _routesTree.logTree();
 
   QRouterDelegate createDelegate(String initRoute) {
     final match = _getMatch(initRoute);

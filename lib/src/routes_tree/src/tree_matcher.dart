@@ -47,6 +47,8 @@ class TreeMatcher {
       }
     }
 
+    final oldParam = QR.currentRoute.params;
+
     // Set route info before onInit to use it when it needed.
     QR.currentRoute.fullPath = path;
     QR.currentRoute.params = match.getParames();
@@ -59,12 +61,7 @@ class TreeMatcher {
 
     while (routeNode.childMatch != null) {
       final needInit =
-          // There is no previus context
-          contextNode.childContext == null ||
-              // This is new child route (it has new key)
-              routeNode.childMatch.route.key != contextNode.childContext.key ||
-              // It is component (can't compare old route. always create new)
-              routeNode.childMatch.route.isComponent;
+          _needInit(routeNode, contextNode, oldParam, QR.currentRoute.params);
 
       if (needInit) {
         // Be sure to dispose and clean up the old context.
@@ -89,6 +86,37 @@ class TreeMatcher {
     // Set current route info
     _cureentTree = newTree;
     return newTree;
+  }
+
+  bool _needInit(MatchRoute routeNode, MatchContext contextNode,
+      Map<String, dynamic> oldParam, Map<String, dynamic> newParam) {
+    if (contextNode.childContext == null) {
+      // There is no previus context
+      return true;
+    }
+
+    if (routeNode.childMatch.route.key != contextNode.childContext.key) {
+      // This is new child route (it has new key)
+      return true;
+    }
+
+    if (routeNode.childMatch.route.isComponent) {
+      // It is component, try to see if it is new.
+      final component = routeNode.childMatch.route.route.path.substring(1);
+      final oldComponent = oldParam[component];
+
+      if (oldComponent == null) {
+        // Component is new
+        return true;
+      }
+
+      final isTheSame =
+          oldComponent.toString() != newParam[component].toString();
+
+      return isTheSame;
+    }
+
+    return false;
   }
 
   MatchRoute _getMatch(String path) {

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'qpages.dart';
 
 class QRouter extends Router {
   QRouter({
@@ -11,41 +12,56 @@ class QRouter extends Router {
             backButtonDispatcher: backButtonDispatcher);
 }
 
+/// The definition for the page. give you the [QRouter]
+/// to use when navigation in children.
 typedef QRoutePage = Widget Function(QRouter);
+
+/// The definition to redirect. give you the cureent path
+/// and expexted the new path to redirect to or null.
 typedef RedirectGuard = String Function(String);
 
 /// Create new route.
-/// [name] the name of the route.
-/// [path] the path of the route.
-/// [page] the page to show
-/// [onInit] a function to do what you need before initializing the route.
-/// [onDispose] a function to do what you need before disposing the route.
-/// It give the child router to use it in the parent page
-/// when the route has children, otherwise it give null.
-/// [redirectGuard] it gives the called path and takes the new path
-/// to navigate to, give it null when you don't want to redirect.
-/// [children] the children of this route.
 class QRoute extends QRouteBase {
+  /// [name] the name of the route.
   final String name;
+
+  /// [page] the page to show
+  /// It give the child router to use it in the parent page
+  /// when the route has children, otherwise it give null.
   final QRoutePage page;
+
+  /// [redirectGuard] it gives the called path and takes the new path
+  /// to navigate to, give it null when you don't want to redirect.
   final RedirectGuard redirectGuard;
+
+  /// [onInit] a function to do what you need before initializing the route.
   final Function onInit;
+
+  /// [onDispose] a function to do what you need before disposing the route.
   final Function onDispose;
+
+  /// [children] the children of this route.
   final List<QRouteBase> children;
 
-  QRoute(
+  /// The page type to use with this route. Use can use [QRMaterialPage]
+  /// or [QRCupertinoPage] or [QRPlatformPage] which is default.
+  final QRPage pageType;
+
+  const QRoute(
       {String name,
       String path,
       this.page,
       this.onInit,
       this.onDispose,
       this.redirectGuard,
+      this.pageType = const QRPlatformPage(),
       this.children})
       : assert(path != null),
         assert(redirectGuard != null || page != null),
         name = name ?? path,
         super(path);
 
+  /// Create a copy of this class.
   QRoute copyWith({
     String name,
     String path,
@@ -66,14 +82,16 @@ class QRoute extends QRouteBase {
       );
 }
 
+///
 abstract class QRouteBase {
+  /// [path] the path of the route.
   final String path;
-  QRouteBase(this.path);
+  const QRouteBase(this.path);
 }
 
-/// Create a [QRoute]
+/// Create a [QRoute] as a class, useful to organize your project.
 // ignore: one_member_abstracts
 abstract class QRouteBuilder extends QRouteBase {
-  QRouteBuilder({String path}) : super(path);
+  const QRouteBuilder({String path}) : super(path);
   QRoute createRoute();
 }
