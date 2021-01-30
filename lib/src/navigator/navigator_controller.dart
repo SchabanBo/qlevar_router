@@ -1,9 +1,10 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
+import '../helpers/platform/platform_web.dart'
+    if (dart.library.io) '../helpers/platform/platform_io.dart';
 import '../match_context.dart';
 import '../qpages.dart';
 import '../qr.dart';
@@ -125,7 +126,7 @@ class _PageCreator {
         pageType = match.route.pageType;
   QPage create() {
     if (pageType is QRPlatformPage) {
-      return !kIsWeb && (Platform.isMacOS || Platform.isIOS)
+      return QPlatform.isWeb || QPlatform.isIOS
           ? _getCupertinoPage()
           : _getMaterialPage();
     }
