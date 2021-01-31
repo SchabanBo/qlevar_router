@@ -1,3 +1,4 @@
+import 'package:example/helpers/date_time.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -19,6 +20,11 @@ class OrdersScreen extends StatelessWidget {
             Text(
               'Orders',
               style: TextStyle(color: Colors.white, fontSize: 35),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              'Created $now',
+              style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             const SizedBox(width: 15),
             RaisedButton(

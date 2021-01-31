@@ -1,3 +1,5 @@
+import 'navigator/navigation_mode.dart';
+
 import 'qr_controller.dart';
 import 'route_parser.dart';
 import 'router_delegate.dart';
@@ -38,14 +40,13 @@ class _QRContext {
   QRouteInformationParser routeParser() => const QRouteInformationParser();
 
   /// Navigate to new page with [path]
-  void to(String path, {QNavigationMode mode}) =>
-      _controller.toPath(path, mode);
+  void to(String path, {NavigationType type}) => _controller.toPath(path, type);
 
   /// Navigate to new page with [Name]
   /// Give the name of the route and the [params] to apply
   void toName(String name,
-          {Map<String, dynamic> params, QNavigationMode mode}) =>
-      _controller.toName(name, params ?? <String, dynamic>{}, mode);
+          {Map<String, dynamic> params, NavigationType type}) =>
+      _controller.toName(name, params ?? <String, dynamic>{}, type);
 
   // back to previous page
   bool back() => _controller.pop();
@@ -56,31 +57,6 @@ class _QRContext {
       settings.logger('Qlevar-Route: $mes');
     }
   }
-}
-
-/// Define how you want the navgiation to react.
-class QNavigationMode {
-  /// The navigation type
-  final NavigationType type;
-
-  QNavigationMode({this.type = NavigationType.ReplaceLast});
-
-  @override
-  String toString() => '$type';
-}
-
-/// Navigation type, used when navigation to new page.
-/// [Push] place the new page on the top of the stack.
-/// and don't remove the last one.
-/// [PopUntilOrPush] Pop all page unit you get this page in the stack
-/// if the page doesn't exist in the stack push in on the top.
-/// [ReplaceLast] replace the last page with this page.
-/// [ReplaceAll] remove all page from the stack and place this on on the top.
-enum NavigationType {
-  Push,
-  PopUntilOrPush,
-  ReplaceLast,
-  ReplaceAll,
 }
 
 /// The cureent route inforamtion

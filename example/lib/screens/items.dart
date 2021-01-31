@@ -1,3 +1,4 @@
+import 'package:example/helpers/date_time.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -20,13 +21,19 @@ class ItemsScreen extends StatelessWidget {
             'Items',
             style: TextStyle(color: Colors.white, fontSize: 35),
           ),
+          const SizedBox(width: 15),
+          Text(
+            'Created $now',
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
           Wrap(
             children: database.items
                 .map((e) => InkWell(
                       // onTap: () => QR.to(
                       //     '/dashboard/items/details?itemName=${e.name}'), OR
                       onTap: () => QR.toName(AppRoutes.itemsDetails,
-                          params: {'itemName': e.name}),
+                          params: {'itemName': e.name},
+                          type: NavigationType.Push),
                       child: Card(
                         elevation: 8,
                         margin: EdgeInsets.all(10),
@@ -82,7 +89,11 @@ class ItemDetailsScreen extends StatelessWidget {
         children: [
           Text(
             '${QR.currentRoute.params['itemName']} Details',
-            style: TextStyle(color: Colors.white, fontSize: 35),
+            style: TextStyle(fontSize: 35),
+          ),
+          Text(
+            'Created $now',
+            style: TextStyle(fontSize: 20),
           ),
           Image.asset(
             item.image,

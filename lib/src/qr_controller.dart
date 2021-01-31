@@ -1,4 +1,5 @@
 import 'match_context.dart';
+import 'navigator/navigation_mode.dart';
 import 'navigator/navigator_controller.dart';
 import 'qr.dart';
 import 'router_delegate.dart';
@@ -20,20 +21,20 @@ class QRController {
         _controller.createRouterController(-1, 'Root', match));
   }
 
-  void toPath(String path, QNavigationMode mode) {
+  void toPath(String path, NavigationType type) {
     final match = _getMatch(path);
-    setNewMatch(match, mode);
+    setNewMatch(match, type);
   }
 
-  void toName(String name, Map<String, dynamic> params, QNavigationMode mode) {
+  void toName(String name, Map<String, dynamic> params, NavigationType type) {
     final match = _routesTree.getNamedMatch(name, params);
-    setNewMatch(match, mode);
+    setNewMatch(match, type);
   }
 
   bool pop() => _controller.pop();
 
-  void setNewMatch(MatchContext match, QNavigationMode mode) =>
-      _controller.setNewMatch(match, mode);
+  void setNewMatch(MatchContext match, NavigationType type) =>
+      _controller.setNewMatch(match, type);
 
   MatchContext _getMatch(String path) {
     if (!path.startsWith('/')) {

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'navigator/router_controller.dart';
 import 'qr.dart';
 
@@ -45,7 +44,4 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
           return QR.back();
         },
       );
-
-  Page<dynamic> palceHolder() =>
-      MaterialPage(key: ValueKey('placeHolder'), child: Container());
 }

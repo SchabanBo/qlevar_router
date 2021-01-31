@@ -73,14 +73,16 @@ class DashboardContent extends StatelessWidget {
               ""
               'This is the dashboard content. '
               'Use the appbar to get to another page.'
+              'Or'
               "",
               style: TextStyle(color: Colors.white, fontSize: 35)),
+          Text('Or', style: TextStyle(color: Colors.white, fontSize: 35)),
           RaisedButton(
             onPressed: () {
               QR.to('/somepage');
             },
             child: Text(
-              'Or Test Not found page',
+              'Test Not found page',
             ),
           ),
           const SizedBox(height: 5),
@@ -89,7 +91,7 @@ class DashboardContent extends StatelessWidget {
               QR.to('/redirect');
             },
             child: Text(
-              'Or Test redirect, "Redirect to items page"',
+              'Test redirect, "Redirect to items page"',
             ),
           ),
           const SizedBox(height: 5),
