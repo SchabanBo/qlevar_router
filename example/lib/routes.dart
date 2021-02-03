@@ -68,6 +68,7 @@ class AppRoutes {
           QRoute(
               name: tests,
               path: '/test',
+              initRoute: '/multi/slash/path',
               page: (child) => Container(child: child),
               children: [
                 QRoute(

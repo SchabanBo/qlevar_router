@@ -223,7 +223,7 @@ The page to show, a normal widget.
 It give the child router to place it in the parent page where it needed
 when the route has no children it give null.
 - **onInit**: a function to do what you need before initializing the route.
-- **onDispose**: a function to do what you need before disposing the route. for example `onInit`and `onDispose` are very useful to use with Getx
+- **onDispose**: a function to do what you need before disposing the route. for example `onInit`and `onDispose` are very useful to use with Getx.
   
   ```dart
   QRoute(
@@ -263,11 +263,34 @@ it gives the called path and takes the new path to navigate to, give it null whe
         ]),
 ```
 
+- **InitRoute**: Set the initialize route for this route when it has children. This value will not be used if the route has no children. The child will be created but the path will not be changed. in the example when the route `/Item` called the `ItemsScreen` page will be created and the child will be `ItemDetailsScreen` but the path will stay `/items` not `/items/details`
+
+```dart
+
+  QRoute(
+    name: 'Items',
+    path: '/items',
+    initRoute:'/details', // This child will be created when the path is '/items'
+    page: (child) => ItemsScreen(child),
+    children: [
+      QRoute(
+        name: 'Items Details',
+        path: '/details',
+        page: (c) => ItemDetailsScreen()),
+      QRoute(
+        name: 'Add Items',
+        path: '/new',
+        page: (c) => AddItemScreen())
+
+```
+
 ### QRouteBuilder
 
 When you work on a large project the router class will start to get too big and messy and here when `QRouteBuilder` come to help.
 
 Split the the router to multiple files and call them from the root router or as child to another page.
+
+See `OrdersRoutes` class in [example routes.dart](https://github.com/SchabanBo/qlevar_router/blob/8915254889da4993afd23ea69d17657be30095ec/example/lib/routes.dart)
 
 ``` dart
 

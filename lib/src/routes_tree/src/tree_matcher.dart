@@ -141,10 +141,15 @@ class TreeMatcher {
 
     // Set initRoute `/` if needed
     if (childMatch.route.hasChidlren) {
-      childMatch.childMatch = MatchRoute.fromTree(routes: searchIn, path: '');
-      if (!childMatch.childMatch.found) return _notFound(path);
-      searchIn = childMatch.childMatch.route.children;
-      childMatch = childMatch.childMatch;
+      final initRoute =
+          Uri.parse(childMatch.route.route.initRoute ?? '').pathSegments;
+      for (var segment in initRoute.isEmpty ? [''] : initRoute) {
+        childMatch.childMatch =
+            MatchRoute.fromTree(routes: searchIn, path: segment);
+        if (!childMatch.childMatch.found) return _notFound(path);
+        searchIn = childMatch.childMatch.route.children;
+        childMatch = childMatch.childMatch;
+      }
     }
 
     return match;

@@ -40,6 +40,10 @@ class QRoute extends QRouteBase {
   /// [onDispose] a function to do what you need before disposing the route.
   final Function onDispose;
 
+  /// Set the initialize route for this route when it has children.
+  /// This value will not be used if the route has no  children
+  final String initRoute;
+
   /// [children] the children of this route.
   final List<QRouteBase> children;
 
@@ -52,6 +56,7 @@ class QRoute extends QRouteBase {
       String path,
       this.page,
       this.onInit,
+      this.initRoute,
       this.onDispose,
       this.redirectGuard,
       this.pageType = const QRPlatformPage(),
