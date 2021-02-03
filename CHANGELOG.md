@@ -1,8 +1,9 @@
 # CHANGELOG
 
-## [0.4.0]
+## [0.3.1]
 
 - Fix NavigationType for `Push`, `Pop`, `PopUnitOrPush`, `ReplaceAll`, `ReplaceLast`.
+- Add InitRoute for QRoute.
 
 ## [0.3.0] 28-01-2021
 
