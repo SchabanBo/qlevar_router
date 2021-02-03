@@ -25,7 +25,7 @@ The clever way to Route in your projects.
     - [QRoute](#qroute)
     - [QRouteBuilder](#qroutebuilder)
     - [QR](#qr)
-    - [Navigation mode](#navigation-mode)
+    - [NavigationType](#navigationtype)
 
 ## Using
 
@@ -223,7 +223,7 @@ The page to show, a normal widget.
 It give the child router to place it in the parent page where it needed
 when the route has no children it give null.
 - **onInit**: a function to do what you need before initializing the route.
-- **onDispose**: a function to do what you need before disposing the route. for example `onInit`and `onDispose` are very useful to use with Getx
+- **onDispose**: a function to do what you need before disposing the route. for example `onInit`and `onDispose` are very useful to use with Getx.
   
   ```dart
   QRoute(
@@ -263,11 +263,34 @@ it gives the called path and takes the new path to navigate to, give it null whe
         ]),
 ```
 
+- **InitRoute**: Set the initialize route for this route when it has children. This value will not be used if the route has no children. The child will be created but the path will not be changed. in the example when the route `/Item` called the `ItemsScreen` page will be created and the child will be `ItemDetailsScreen` but the path will stay `/items` not `/items/details`
+
+```dart
+
+  QRoute(
+    name: 'Items',
+    path: '/items',
+    initRoute:'/details', // This child will be created when the path is '/items'
+    page: (child) => ItemsScreen(child),
+    children: [
+      QRoute(
+        name: 'Items Details',
+        path: '/details',
+        page: (c) => ItemDetailsScreen()),
+      QRoute(
+        name: 'Add Items',
+        path: '/new',
+        page: (c) => AddItemScreen())
+
+```
+
 ### QRouteBuilder
 
 When you work on a large project the router class will start to get too big and messy and here when `QRouteBuilder` come to help.
 
 Split the the router to multiple files and call them from the root router or as child to another page.
+
+See `OrdersRoutes` class in [example routes.dart](https://github.com/SchabanBo/qlevar_router/blob/8915254889da4993afd23ea69d17657be30095ec/example/lib/routes.dart)
 
 ``` dart
 
@@ -309,7 +332,7 @@ class OrdersRoutes extends QRouteBuilder {
 
 ### QR
 
-- **to(String path, [NavigationMode](#navigation-mode) mode)**: navigate to new path, call this method from anywhere and QR is clever enough to know which router he should update.
+- **to(String path, [NavigationType](#navigation-type)**: navigate to new path, call this method from anywhere and QR is clever enough to know which router he should update.
 - **toName(String name, Map<String,dynamic> params, [NavigationMode](#navigation-mode) mode)**: Navigation to new route by the name, just give the name of the route and the params to add to the route and QR will build the path and navigate to it for you.
 - **back()**: navigate back to a previous page.
 - **history**: list of string for the paths that has been called.
@@ -318,10 +341,12 @@ class OrdersRoutes extends QRouteBuilder {
   - **fullPath**: the full path of the current route.
   - **params**: Map<String,dynamic> contains the params for the current route.
 
-### Navigation mode
+### NavigationType
 
-- **type**: an enum `NavigationType` the default type is `ReplaceLast`:
-  - **Push**: place the new page on the top of the stack and don't remove the last one.
-  - **PopUntilOrPush**: Pop all page unit you get this page in the stack if the page   in the stack push in on the top.
-  - **ReplaceLast**: replace the last page with this page.
-  - **ReplaceAll**: remove all page from the stack and place this on on the top.
+Define how you want the navigation to react.
+
+- **Push:** place the new page on the top of the stack.
+- **Pop:** remove the page on the top of the stack.
+- **ReplaceAll:** remove all page from the stack and place this on on the top.
+- **ReplaceLast:** replace the last page with this page.
+- **PopUntilOrPush:** Pop all page unit you get this page in the stack if the page doesn't exist in the stack push in on the top This is the default type to navigation.

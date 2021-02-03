@@ -1,6 +1,11 @@
 # CHANGELOG
 
-## [0.3.0]
+## [0.3.1]
+
+- Fix NavigationType for `Push`, `Pop`, `PopUnitOrPush`, `ReplaceAll`, `ReplaceLast`.
+- Add InitRoute for QRoute.
+
+## [0.3.0] 28-01-2021
 
 - Fix Router update parent when it it component.
 - Add Page Types `QRPlatformPage`, `QRMaterialPage`, `QRCupertinoPage`,  `QRCustomPage` and `QRSlidePage`.

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../helpers/database.dart';
+import '../helpers/date_time.dart';
 import '../routes.dart';
 
 class OrdersScreen extends StatelessWidget {
@@ -19,6 +20,11 @@ class OrdersScreen extends StatelessWidget {
             Text(
               'Orders',
               style: TextStyle(color: Colors.white, fontSize: 35),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              'Created $now',
+              style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             const SizedBox(width: 15),
             RaisedButton(
