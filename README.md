@@ -25,7 +25,7 @@ The clever way to Route in your projects.
     - [QRoute](#qroute)
     - [QRouteBuilder](#qroutebuilder)
     - [QR](#qr)
-    - [Navigation mode](#navigation-mode)
+    - [NavigationType](#navigationtype)
 
 ## Using
 
@@ -309,7 +309,7 @@ class OrdersRoutes extends QRouteBuilder {
 
 ### QR
 
-- **to(String path, [NavigationMode](#navigation-mode) mode)**: navigate to new path, call this method from anywhere and QR is clever enough to know which router he should update.
+- **to(String path, [NavigationType](#navigation-type)**: navigate to new path, call this method from anywhere and QR is clever enough to know which router he should update.
 - **toName(String name, Map<String,dynamic> params, [NavigationMode](#navigation-mode) mode)**: Navigation to new route by the name, just give the name of the route and the params to add to the route and QR will build the path and navigate to it for you.
 - **back()**: navigate back to a previous page.
 - **history**: list of string for the paths that has been called.
@@ -318,10 +318,12 @@ class OrdersRoutes extends QRouteBuilder {
   - **fullPath**: the full path of the current route.
   - **params**: Map<String,dynamic> contains the params for the current route.
 
-### Navigation mode
+### NavigationType
 
-- **type**: an enum `NavigationType` the default type is `ReplaceLast`:
-  - **Push**: place the new page on the top of the stack and don't remove the last one.
-  - **PopUntilOrPush**: Pop all page unit you get this page in the stack if the page   in the stack push in on the top.
-  - **ReplaceLast**: replace the last page with this page.
-  - **ReplaceAll**: remove all page from the stack and place this on on the top.
+Define how you want the navigation to react.
+
+- **Push:** place the new page on the top of the stack.
+- **Pop:** remove the page on the top of the stack.
+- **ReplaceAll:** remove all page from the stack and place this on on the top.
+- **ReplaceLast:** replace the last page with this page.
+- **PopUntilOrPush:** Pop all page unit you get this page in the stack if the page doesn't exist in the stack push in on the top This is the default type to navigation.
