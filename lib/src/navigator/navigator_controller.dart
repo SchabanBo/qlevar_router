@@ -17,16 +17,17 @@ import 'router_controller.dart';
 class QNavigatorController {
   final _conManeger = _RouterControllerManger();
 
-  void setNewMatch(MatchContext match, NavigationType mode) {
-    return _updatePath(_conManeger.rootController(), match, mode);
+  void setNewMatch(MatchContext match, NavigationType mode, bool justUrl) {
+    _updatePath(_conManeger.rootController(), match, mode, justUrl);
   }
 
-  void _updatePath(
-      RouterController parentRequest, MatchContext match, NavigationType mode) {
+  void _updatePath(RouterController parentRequest, MatchContext match,
+      NavigationType mode, bool justUrl) {
     if (match.isNew) {
       QR.log('$match is the new route has the reqest $parentRequest.',
           isDebug: true);
-      final cleanupList = parentRequest.updatePage(_getPage(match), mode);
+      final cleanupList =
+          parentRequest.updatePage(_getPage(match), mode, justUrl);
       _conManeger.clean(cleanupList);
       _conManeger.rootController().updateUrl();
       match.treeUpdated();
@@ -35,7 +36,7 @@ class QNavigatorController {
     if (match.childContext != null) {
       QR.log('$match is the old route. checking child', isDebug: true);
       final request = _conManeger.withKey(match.key);
-      _updatePath(request, match.childContext, mode);
+      _updatePath(request, match.childContext, mode, justUrl);
       return;
     }
     QR.log('No changes for $match was found');
@@ -78,7 +79,7 @@ class _RouterControllerManger {
     if (_contollers.any((element) => element.key == key)) {
       final controller =
           _contollers.firstWhere((element) => element.key == key);
-      controller.updatePage(page, NavigationType.PopUntilOrPush);
+      controller.updatePage(page, NavigationType.PopUntilOrPush, false);
       return controller;
     }
     final controller = RouterController(key: key, name: name, initPage: page);
@@ -114,16 +115,12 @@ class _RouterControllerManger {
 class _PageCreator {
   final MatchContext match;
   final QRouter childRouter;
-  final LocalKey key;
   final QRPage pageType;
+  final LocalKey key;
 
   _PageCreator(this.match, this.childRouter)
-      : key = match.isComponent
-            // If the route is component we have to use uniqe key
-            // so the page get updated and the animation works
-            ? ValueKey<int>((match.key + Random().nextInt(1000)))
-            : ValueKey<int>(match.key),
-        pageType = match.route.pageType;
+      : pageType = match.route.pageType,
+        key = ValueKey<int>(Random().nextInt(10000));
   QPage create() {
     if (pageType is QRPlatformPage) {
       if (!QPlatform.isWeb && QPlatform.isIOS) {
@@ -146,8 +143,8 @@ class _PageCreator {
       maintainState: pageType.maintainState,
       fullscreenDialog: pageType.fullscreenDialog,
       restorationId: pageType.restorationId,
-      matchKey: match.key,
-      key: key);
+      key: key,
+      matchKey: match.key);
 
   QCupertinoPage _getCupertinoPage(String title) => QCupertinoPage(
       name: match.route.name,
@@ -156,8 +153,8 @@ class _PageCreator {
       fullscreenDialog: pageType.fullscreenDialog,
       restorationId: pageType.restorationId,
       title: title,
-      matchKey: match.key,
-      key: key);
+      key: key,
+      matchKey: match.key);
 
   QCustomPage _getCustomPage() {
     final page = pageType as QRCustomPage;
@@ -167,8 +164,8 @@ class _PageCreator {
         maintainState: pageType.maintainState,
         fullscreenDialog: pageType.fullscreenDialog,
         restorationId: pageType.restorationId,
-        matchKey: match.key,
         key: key,
+        matchKey: match.key,
         barrierColor: page.barrierColor,
         barrierDismissible: page.barrierDismissible,
         barrierLabel: page.barrierLabel,

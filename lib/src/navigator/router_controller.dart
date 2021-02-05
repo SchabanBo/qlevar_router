@@ -23,18 +23,26 @@ class RouterController extends ChangeNotifier {
     }
   }
 
-  List<int> updatePage(QPage page, NavigationType type) {
+  List<int> updatePage(QPage page, NavigationType type, bool justUrl) {
     QR.log('Update Page $name');
     type ??= NavigationType.PopUntilOrPush;
     final result = _updatePages(page, type);
     QR.log('Update ${toString()} with type $type and remove $result',
         isDebug: true);
-    notifyListeners();
+    if (!justUrl) {
+      notifyListeners();
+    }
     return result;
   }
 
   List<int> _updatePages(QPage page, NavigationType type) {
     final cleanup = <int>[];
+    // if page already exist replace it.
+    if (_pages.any((element) => element.sameMatchKey(page.matchKey))) {
+      _pages.removeWhere((element) => element.sameMatchKey(page.matchKey));
+      _pages.add(page);
+      return cleanup;
+    }
     switch (type) {
       case NavigationType.ReplaceAll:
         cleanup.addAll(_pages.map((e) => e.matchKey));
@@ -58,7 +66,8 @@ class RouterController extends ChangeNotifier {
         _pages.add(page);
         break;
       default: // NavigationType.PopUntilOrPush
-        final index = _pages.indexWhere((element) => element.sameKey(page));
+        final index =
+            _pages.indexWhere((element) => element.sameMatchKey(page.matchKey));
         if (index == -1) {
           _pages.add(page);
           break;
