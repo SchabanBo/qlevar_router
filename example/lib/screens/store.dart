@@ -14,7 +14,7 @@ class StoreScreen extends StatelessWidget {
         title: Text('Store $now'),
         centerTitle: true,
         actions: [
-          FlatButton(
+          TextButton(
             onPressed: () {
               QR.to('/dashboard');
             },

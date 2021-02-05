@@ -19,7 +19,7 @@ class DashboardScreen extends StatelessWidget {
             onTap: () => QR.to('/dashboard'), child: Text('Dashboard $now')),
         centerTitle: true,
         actions: [
-          FlatButton(
+          TextButton(
             onPressed: () {
               QR.to('/dashboard/items');
             },
@@ -28,7 +28,7 @@ class DashboardScreen extends StatelessWidget {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          FlatButton(
+          TextButton(
             onPressed: () {
               QR.to('/dashboard/orders');
             },
@@ -38,7 +38,7 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
           Container(height: double.infinity, width: 2, color: Colors.white),
-          FlatButton(
+          TextButton(
             onPressed: () {
               QR.to('/store');
             },
@@ -77,7 +77,7 @@ class DashboardContent extends StatelessWidget {
               "",
               style: TextStyle(color: Colors.white, fontSize: 35)),
           Text('Or', style: TextStyle(color: Colors.white, fontSize: 35)),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {
               QR.to('/somepage');
             },
@@ -86,7 +86,7 @@ class DashboardContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 5),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {
               QR.to('/redirect');
             },
@@ -95,14 +95,14 @@ class DashboardContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 5),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {
               QR.toName(AppRoutes.testMultiSlash);
             },
             child: Text(AppRoutes.testMultiSlash),
           ),
           const SizedBox(height: 5),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {
               QR.toName(AppRoutes.testMultiComponent,
                   params: {'name': 'Max', 'number': 55});

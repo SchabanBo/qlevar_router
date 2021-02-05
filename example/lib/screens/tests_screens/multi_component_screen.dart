@@ -38,7 +38,7 @@ The request is:
             style: TextStyle(fontSize: 22, color: Colors.white),
           ),
           SizedBox(height: 18),
-          RaisedButton(
+          ElevatedButton(
               onPressed: () {
                 final param = QR.params['childNumber'] == null
                     ? 0
