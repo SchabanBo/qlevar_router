@@ -27,7 +27,7 @@ class OrdersScreen extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             const SizedBox(width: 15),
-            RaisedButton(
+            ElevatedButton(
               child: Text('Back'),
               onPressed: QR.back,
             ),
