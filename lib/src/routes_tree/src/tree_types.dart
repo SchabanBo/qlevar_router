@@ -70,7 +70,7 @@ class QRouteInternal {
 class MatchRoute {
   final QRouteInternal route;
   final bool found;
-  final Map<String, dynamic> params;
+  final Map<String, String> params;
   MatchRoute childMatch;
 
   MatchRoute({
@@ -92,7 +92,7 @@ class MatchRoute {
     }
 
     var matchs = routes.where((route) => route.path == path);
-    final params = <String, dynamic>{};
+    final params = <String, String>{};
     QRouteInternal match;
     if (matchs.isEmpty) {
       matchs = routes.where((route) => route.isComponent);
@@ -114,7 +114,7 @@ class MatchRoute {
       fullPath: route.fullPath,
       childContext: childContext);
 
-  Map<String, dynamic> getParames() {
+  Map<String, String> getParames() {
     final result = params;
     if (childMatch != null) {
       result.addAll(childMatch.getParames());

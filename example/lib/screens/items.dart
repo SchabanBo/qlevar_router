@@ -83,7 +83,6 @@ class ItemDetailsScreen extends StatelessWidget {
         (element) =>
             element.name == QR.currentRoute.params['itemName'].toString(),
         orElse: () => StoreItem(id: 0));
-
     return Card(
       child: Column(
         children: [

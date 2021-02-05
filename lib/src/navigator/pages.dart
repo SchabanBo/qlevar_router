@@ -17,9 +17,6 @@ abstract class QPage<T> extends Page {
             name: name);
 
   bool sameMatchKey(int other) => matchKey == other;
-
-  bool sameKey(QPage other) =>
-      (key as ValueKey<int>).value == (other.key as ValueKey<int>).value;
 }
 
 class QMaterialPage<T> extends QPage<T> {

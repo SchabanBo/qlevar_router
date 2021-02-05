@@ -21,20 +21,21 @@ class QRController {
         _controller.createRouterController(-1, 'Root', match));
   }
 
-  void toPath(String path, NavigationType type) {
+  void toPath(String path, NavigationType type, bool justUrl) {
     final match = _getMatch(path);
-    setNewMatch(match, type);
+    setNewMatch(match, type, justUrl);
   }
 
-  void toName(String name, Map<String, dynamic> params, NavigationType type) {
+  void toName(String name, Map<String, dynamic> params, NavigationType type,
+      bool justUrl) {
     final match = _routesTree.getNamedMatch(name, params);
-    setNewMatch(match, type);
+    setNewMatch(match, type, justUrl);
   }
 
   bool pop() => _controller.pop();
 
-  void setNewMatch(MatchContext match, NavigationType type) =>
-      _controller.setNewMatch(match, type);
+  void setNewMatch(MatchContext match, NavigationType type, bool justUrl) =>
+      _controller.setNewMatch(match, type, justUrl);
 
   MatchContext _getMatch(String path) {
     if (!path.startsWith('/')) {

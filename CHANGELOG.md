@@ -1,6 +1,12 @@
 # CHANGELOG
 
-## [0.3.1]
+## [0.3.2] 05.02.2021
+
+- Fix settings last part of route as component when the param change.
+- change QR.params from Map<String,dynamic> to Map<String,String> and add toInt and ToDouble extensions.
+- Add justUrl to `QR.to` `QR.toNamed` just to update the url.
+
+## [0.3.1] 03.02.2021
 
 - Fix NavigationType for `Push`, `Pop`, `PopUnitOrPush`, `ReplaceAll`, `ReplaceLast`.
 - Add InitRoute for QRoute.

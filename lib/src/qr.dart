@@ -23,7 +23,7 @@ class _QRContext {
   final _QCurrentRoute currentRoute = _QCurrentRoute();
 
   /// The route params
-  Map<String, dynamic> get params => currentRoute.params;
+  Map<String, String> get params => currentRoute.params;
 
   final _controller = QRController();
 
@@ -40,13 +40,16 @@ class _QRContext {
   QRouteInformationParser routeParser() => const QRouteInformationParser();
 
   /// Navigate to new page with [path]
-  void to(String path, {NavigationType type}) => _controller.toPath(path, type);
+  void to(String path, {NavigationType type, bool justUrl = false}) =>
+      _controller.toPath(path, type, justUrl);
 
   /// Navigate to new page with [Name]
   /// Give the name of the route and the [params] to apply
   void toName(String name,
-          {Map<String, dynamic> params, NavigationType type}) =>
-      _controller.toName(name, params ?? <String, dynamic>{}, type);
+          {Map<String, dynamic> params,
+          NavigationType type,
+          bool justUrl = false}) =>
+      _controller.toName(name, params ?? <String, dynamic>{}, type, justUrl);
 
   // back to previous page
   bool back() => _controller.pop();
@@ -65,7 +68,7 @@ class _QCurrentRoute {
   String fullPath = '';
 
   /// The params for the current route
-  Map<String, dynamic> params = {};
+  Map<String, String> params = {};
 }
 
 /// The package settings

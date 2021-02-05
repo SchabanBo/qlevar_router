@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../match_context.dart';
 import '../../qr.dart';
 import 'tree_types.dart';
@@ -43,7 +45,7 @@ class TreeMatcher {
       if (item.value.length == 1) {
         match.params.addAll({item.key: item.value.first});
       } else if (item.value.isNotEmpty) {
-        match.params.addAll({item.key: item.value});
+        match.params.addAll({item.key: jsonEncode(item.value)});
       }
     }
 
@@ -59,6 +61,11 @@ class TreeMatcher {
     final newTree = _getFirstMatch(routeNode);
     var contextNode = newTree;
 
+    // This list will hold all the componnent keys for this route
+    // so they don't compared in the last child
+    // to see if the last child need to set as new
+    final componentsKeys = <String>[];
+
     while (routeNode.childMatch != null) {
       final needInit =
           _needInit(routeNode, contextNode, oldParam, QR.currentRoute.params);
@@ -72,14 +79,19 @@ class TreeMatcher {
         contextNode.childContext = routeNode.childMatch.toMatchContext();
       }
 
+      if (routeNode.childMatch.route.isComponent) {
+        componentsKeys.add(routeNode.childMatch.route.route.path.substring(1));
+      }
+
       routeNode = routeNode.childMatch;
 
-      // if there is params update the path on the last child
-      // so he can update with new request with new params
-      if (routeNode.childMatch == null && match.params.isNotEmpty) {
-        contextNode.childContext = contextNode.childContext
-            .copyWith(fullPath: path, isComponent: true, isNew: true);
+      // Chack param change just for the last part of the route
+      if (routeNode.childMatch == null &&
+          _needToSetAsComponnent(oldParam, componentsKeys)) {
+        contextNode.childContext =
+            contextNode.childContext.copyWith(fullPath: path, isNew: true);
       }
+
       contextNode = contextNode.childContext;
     }
 
@@ -88,8 +100,26 @@ class TreeMatcher {
     return newTree;
   }
 
+  bool _needToSetAsComponnent(
+      Map<String, dynamic> oldParam, List<String> componentsKeys) {
+    if (oldParam.length != QR.params.length) {
+      return true;
+    }
+
+    for (var i = 0; i < oldParam.length; i++) {
+      final curenntParam = oldParam.keys.toList()[i];
+      if (componentsKeys.contains(curenntParam)) {
+        continue;
+      }
+      if (oldParam[curenntParam] != QR.params[curenntParam]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool _needInit(MatchRoute routeNode, MatchContext contextNode,
-      Map<String, dynamic> oldParam, Map<String, dynamic> newParam) {
+      Map<String, String> oldParam, Map<String, String> newParam) {
     if (contextNode.childContext == null) {
       // There is no previus context
       return true;
@@ -100,6 +130,7 @@ class TreeMatcher {
       return true;
     }
 
+    // Check componnent change
     if (routeNode.childMatch.route.isComponent) {
       // It is component, try to see if it is new.
       final component = routeNode.childMatch.route.route.path.substring(1);
@@ -110,10 +141,10 @@ class TreeMatcher {
         return true;
       }
 
-      final isTheSame =
-          oldComponent.toString() != newParam[component].toString();
-
-      return isTheSame;
+      if (oldComponent != newParam[component]) {
+        // The component has changed
+        return true;
+      }
     }
 
     return false;
@@ -179,7 +210,7 @@ class TreeMatcher {
     // Replace old component
     for (var param in QR.params.entries) {
       if (path.contains(':${param.key}')) {
-        path = path.replaceAll(':${param.key}', param.value.toString());
+        path = path.replaceAll(':${param.key}', param.value);
       }
     }
 
