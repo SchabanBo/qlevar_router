@@ -24,7 +24,7 @@ class RouterController extends ChangeNotifier {
   }
 
   List<int> updatePage(QPage page, NavigationType type, bool justUrl) {
-    QR.log('Update Page $name');
+    QR.log('Update ${justUrl ? 'Url' : 'Page'} $name');
     type ??= NavigationType.PopUntilOrPush;
     final result = _updatePages(page, type);
     QR.log('Update ${toString()} with type $type and remove $result',

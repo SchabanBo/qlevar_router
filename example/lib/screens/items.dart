@@ -6,11 +6,17 @@ import '../helpers/database.dart';
 import '../helpers/date_time.dart';
 import '../routes.dart';
 
-class ItemsScreen extends StatelessWidget {
+class ItemsScreen extends StatefulWidget {
   final QRouter routerChild;
   ItemsScreen(this.routerChild);
+  @override
+  _ItemsScreenState createState() => _ItemsScreenState();
+}
 
+class _ItemsScreenState extends State<ItemsScreen> {
   final database = Get.find<Database>();
+  bool isState = false;
+  String selectedItem = '';
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +32,57 @@ class ItemsScreen extends StatelessWidget {
             'Created $now',
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
+          Text(
+            'You can update the child by State managment or by Navigation',
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Checkbox(
+                  value: isState,
+                  onChanged: (v) {
+                    setState(() {
+                      isState = v;
+                    });
+                  }),
+              Text(
+                'State managment',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              Checkbox(
+                  value: !isState,
+                  onChanged: (v) {
+                    setState(() {
+                      isState = !v;
+                    });
+                  }),
+              Text(
+                'Navigation',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              )
+            ],
+          ),
           Wrap(
             children: database.items
                 .map((e) => InkWell(
                       // onTap: () => QR.to(
                       //     '/dashboard/items/details?itemName=${e.name}'), OR
-                      onTap: () => QR.toName(AppRoutes.itemsDetails,
-                          params: {'itemName': e.name},
-                          type: NavigationType.Push),
+                      onTap: () {
+                        if (isState) {
+                          setState(() {
+                            selectedItem = e.name;
+                          });
+                          QR.toName(AppRoutes.itemsDetails,
+                              params: {'itemName': e.name},
+                              type: NavigationType.Push,
+                              justUrl: true);
+                        } else {
+                          QR.toName(AppRoutes.itemsDetails,
+                              params: {'itemName': e.name},
+                              type: NavigationType.Push);
+                        }
+                      },
                       child: Card(
                         elevation: 8,
                         margin: EdgeInsets.all(10),
@@ -67,7 +116,13 @@ class ItemsScreen extends StatelessWidget {
                     ))
                 .toList(),
           ),
-          SizedBox(height: 350, child: routerChild),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ItemDetailsScreen(itemName: selectedItem),
+              SizedBox(width: 350, height: 350, child: widget.routerChild),
+            ],
+          )
         ],
       ),
     );
@@ -76,33 +131,38 @@ class ItemsScreen extends StatelessWidget {
 
 class ItemDetailsScreen extends StatelessWidget {
   final database = Get.find<Database>();
-
+  final String itemName;
+  ItemDetailsScreen({this.itemName});
   @override
   Widget build(BuildContext context) {
     final item = database.items.firstWhere(
         (element) =>
-            element.name == QR.currentRoute.params['itemName'].toString(),
-        orElse: () => StoreItem(id: 0));
-    return Card(
-      child: Column(
-        children: [
-          Text(
-            '${QR.currentRoute.params['itemName']} Details',
-            style: TextStyle(fontSize: 35),
-          ),
-          Text(
-            'Created $now',
-            style: TextStyle(fontSize: 20),
-          ),
-          Image.asset(
-            item.image,
-            height: 200,
-            width: 200,
-          ),
-          Text('Id: ${item.id}'),
-          Text('Price ${item.price}'),
-        ],
-      ),
-    );
+            element.name ==
+            (itemName ?? QR.currentRoute.params['itemName'].toString()),
+        orElse: () => null);
+
+    return item == null
+        ? Container()
+        : Card(
+            child: Column(
+              children: [
+                Text(
+                  '${QR.currentRoute.params['itemName']} Details',
+                  style: TextStyle(fontSize: 35),
+                ),
+                Text(
+                  'Created $now',
+                  style: TextStyle(fontSize: 20),
+                ),
+                Image.asset(
+                  item.image,
+                  height: 200,
+                  width: 200,
+                ),
+                Text('Id: ${item.id}'),
+                Text('Price ${item.price}'),
+              ],
+            ),
+          );
   }
 }

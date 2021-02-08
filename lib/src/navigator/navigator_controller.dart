@@ -26,10 +26,10 @@ class QNavigatorController {
     if (match.isNew) {
       QR.log('$match is the new route has the reqest $parentRequest.',
           isDebug: true);
+      _conManeger.rootController().updateUrl();
       final cleanupList =
           parentRequest.updatePage(_getPage(match), mode, justUrl);
       _conManeger.clean(cleanupList);
-      _conManeger.rootController().updateUrl();
       match.treeUpdated();
       return;
     }
