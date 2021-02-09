@@ -66,7 +66,8 @@ class QNavigatorController {
     if (QR.history.length < 2) {
       return false;
     }
-    QR.to(QR.history.elementAt(QR.history.length - 2));
+    QR.to(QR.history.elementAt(QR.history.length - 2),
+        type: NavigationType.Pop);
     QR.history.removeRange(QR.history.length - 2, QR.history.length);
     return true;
   }

@@ -16,7 +16,7 @@ class ItemsScreen extends StatefulWidget {
 class _ItemsScreenState extends State<ItemsScreen> {
   final database = Get.find<Database>();
   bool isState = false;
-  String selectedItem = '';
+  String selectedItem = QR.currentRoute.params['itemName'].toString();
 
   @override
   Widget build(BuildContext context) {
@@ -116,11 +116,26 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     ))
                 .toList(),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Wrap(
             children: [
-              ItemDetailsScreen(itemName: selectedItem),
-              SizedBox(width: 350, height: 350, child: widget.routerChild),
+              Column(
+                children: [
+                  Text(
+                    'State managment',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  ItemDetailsScreen(itemName: selectedItem),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    'Navigation',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  SizedBox(width: 350, height: 350, child: widget.routerChild),
+                ],
+              ),
             ],
           )
         ],

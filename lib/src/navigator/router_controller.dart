@@ -8,7 +8,12 @@ class RouterController extends ChangeNotifier {
   final int key;
   final String name;
   final _pages = <QPage>[];
-  List<QPage> get pages => List.unmodifiable(_pages);
+  // This pages are the pagesto return when the key is -1.
+  // Fix JustUrl problem with root router.
+  final _pagesCopy = <QPage>[];
+
+  List<QPage> get pages =>
+      List.unmodifiable(_pagesCopy.isNotEmpty ? _pagesCopy : _pages);
 
   bool get canPop => _pages.isNotEmpty;
 
@@ -19,6 +24,7 @@ class RouterController extends ChangeNotifier {
 
   void updateUrl() {
     if (key == -1) {
+      if (_pagesCopy.isEmpty) _pagesCopy.addAll(_pages);
       notifyListeners();
     }
   }
@@ -30,6 +36,7 @@ class RouterController extends ChangeNotifier {
     QR.log('Update ${toString()} with type $type and remove $result',
         isDebug: true);
     if (!justUrl) {
+      if (key == -1) _pagesCopy.clear();
       notifyListeners();
     }
     return result;
@@ -37,12 +44,6 @@ class RouterController extends ChangeNotifier {
 
   List<int> _updatePages(QPage page, NavigationType type) {
     final cleanup = <int>[];
-    // if page already exist replace it.
-    if (_pages.any((element) => element.sameMatchKey(page.matchKey))) {
-      _pages.removeWhere((element) => element.sameMatchKey(page.matchKey));
-      _pages.add(page);
-      return cleanup;
-    }
     switch (type) {
       case NavigationType.ReplaceAll:
         cleanup.addAll(_pages.map((e) => e.matchKey));
@@ -69,9 +70,17 @@ class RouterController extends ChangeNotifier {
         final index =
             _pages.indexWhere((element) => element.sameMatchKey(page.matchKey));
         if (index == -1) {
+          // Page not exist add it.
           _pages.add(page);
           break;
         }
+        if (index == _pages.length - 1) {
+          // Page is on top replace it.
+          _pages.removeAt(index);
+          _pages.add(page);
+          break;
+        }
+        // page exist remove unit it
         for (var i = index + 1; i < _pages.length; i++) {
           final pageToRemove = _pages[i];
           cleanup.add(pageToRemove.matchKey);
