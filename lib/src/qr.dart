@@ -1,4 +1,6 @@
-import 'navigator/navigation_mode.dart';
+import 'package:qlevar_router/src/navigator/navigation_mode.dart';
+
+import 'navigator/navigation_type.dart';
 
 import 'qr_controller.dart';
 import 'route_parser.dart';
@@ -40,16 +42,25 @@ class _QRContext {
   QRouteInformationParser routeParser() => const QRouteInformationParser();
 
   /// Navigate to new page with [path]
-  void to(String path, {NavigationType type, bool justUrl = false}) =>
-      _controller.toPath(path, type, justUrl);
+  void to(
+    String path, {
+    NavigationType type,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      _controller.toPath(path, type, justUrl, mode);
 
   /// Navigate to new page with [Name]
   /// Give the name of the route and the [params] to apply
-  void toName(String name,
-          {Map<String, dynamic> params,
-          NavigationType type,
-          bool justUrl = false}) =>
-      _controller.toName(name, params ?? <String, dynamic>{}, type, justUrl);
+  void toName(
+    String name, {
+    Map<String, dynamic> params,
+    NavigationType type,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      _controller.toName(
+          name, params ?? <String, dynamic>{}, type, justUrl, mode);
 
   // back to previous page
   bool back() => _controller.pop();

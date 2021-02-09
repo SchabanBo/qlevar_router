@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 
 import '../qr.dart';
-import 'navigation_mode.dart';
-import 'pages.dart';
+import 'navigation_type.dart';
+import 'page_types.dart';
 
 class RouterController extends ChangeNotifier {
   final int key;

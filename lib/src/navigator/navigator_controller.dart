@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import '../../qlevar_router.dart';
 
 import '../helpers/platform/platform_web.dart'
     if (dart.library.io) '../helpers/platform/platform_io.dart';
@@ -9,37 +10,46 @@ import '../match_context.dart';
 import '../qpages.dart';
 import '../qr.dart';
 import '../types.dart';
-import 'navigation_mode.dart';
-import 'navigator.dart';
-import 'pages.dart';
+import 'inner_router_delegate.dart';
+import 'navigation_type.dart';
+import 'page_types.dart';
 import 'router_controller.dart';
 
 class QNavigatorController {
   final _conManeger = _RouterControllerManger();
 
-  void setNewMatch(MatchContext match, NavigationType mode, bool justUrl) {
-    _updatePath(_conManeger.rootController(), match, mode, justUrl);
+  void setNewMatch(MatchContext match, NavigationType type, bool justUrl,
+      QNaviagtionMode mode) {
+    switch (mode?.type) {
+      default: // QNaviagtionModeType.Child
+        _updatePathAsChild(_conManeger.rootController(), match, type, justUrl);
+    }
   }
 
-  void _updatePath(RouterController parentRequest, MatchContext match,
+  void _updatePathAsChild(RouterController parentRequest, MatchContext match,
       NavigationType mode, bool justUrl) {
     if (match.isNew) {
-      QR.log('$match is the new route has the reqest $parentRequest.',
-          isDebug: true);
-      _conManeger.rootController().updateUrl();
-      final cleanupList =
-          parentRequest.updatePage(_getPage(match), mode, justUrl);
-      _conManeger.clean(cleanupList);
-      match.treeUpdated();
+      _updatePath(parentRequest, match, mode, justUrl);
       return;
     }
     if (match.childContext != null) {
       QR.log('$match is the old route. checking child', isDebug: true);
       final request = _conManeger.withKey(match.key);
-      _updatePath(request, match.childContext, mode, justUrl);
+      _updatePathAsChild(request, match.childContext, mode, justUrl);
       return;
     }
     QR.log('No changes for $match was found');
+  }
+
+  void _updatePath(RouterController parentRequest, MatchContext match,
+      NavigationType mode, bool justUrl) {
+    QR.log('$match is the new route has the reqest $parentRequest.',
+        isDebug: true);
+    _conManeger.rootController().updateUrl();
+    final cleanupList =
+        parentRequest.updatePage(_getPage(match), mode, justUrl);
+    _conManeger.clean(cleanupList);
+    match.treeUpdated();
   }
 
   QPage _getPage(MatchContext match) {
@@ -93,6 +103,9 @@ class _RouterControllerManger {
 
   RouterController withKey(int key) => _contollers
       .firstWhere((element) => element.key == key, orElse: () => null);
+
+  RouterController withName(String name) => _contollers
+      .firstWhere((element) => element.name == name, orElse: () => null);
 
   void clean(List<int> cleanup) {
     for (var key in cleanup) {

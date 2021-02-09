@@ -127,6 +127,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                   ItemDetailsScreen(itemName: selectedItem),
                 ],
               ),
+              const SizedBox(width: 150),
               Column(
                 children: [
                   Text(
