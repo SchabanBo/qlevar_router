@@ -9,19 +9,18 @@ class QNaviagtionMode {
   factory QNaviagtionMode.asChildof(String name) =>
       QNaviagtionMode(QNaviagtionModeType.ChildOf, name);
 
-  factory QNaviagtionMode.asSibling() =>
-      const QNaviagtionMode(QNaviagtionModeType.Sibling, null);
+  factory QNaviagtionMode.asStackTo(String name) =>
+      QNaviagtionMode(QNaviagtionModeType.StackTo, name);
 
-  factory QNaviagtionMode.asSiblingof(String name) =>
-      QNaviagtionMode(QNaviagtionModeType.SiblingOf, name);
+  factory QNaviagtionMode.asRootChildren() =>
+      QNaviagtionMode(QNaviagtionModeType.ChildOf, 'Root');
 
-  factory QNaviagtionMode.onRoot() =>
-      QNaviagtionMode(QNaviagtionModeType.Child, 'Root');
+  factory QNaviagtionMode.asRootStack() =>
+      QNaviagtionMode(QNaviagtionModeType.StackTo, 'Root');
 }
 
 enum QNaviagtionModeType {
   Child,
   ChildOf,
-  Sibling,
-  SiblingOf,
+  StackTo,
 }

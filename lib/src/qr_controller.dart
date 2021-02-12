@@ -1,6 +1,5 @@
-import 'package:qlevar_router/src/navigator/navigation_mode.dart';
-
 import 'match_context.dart';
+import 'navigator/navigation_mode.dart';
 import 'navigator/navigation_type.dart';
 import 'navigator/navigator_controller.dart';
 import 'qr.dart';

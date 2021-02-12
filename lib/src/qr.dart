@@ -1,5 +1,4 @@
-import 'package:qlevar_router/src/navigator/navigation_mode.dart';
-
+import 'navigator/navigation_mode.dart';
 import 'navigator/navigation_type.dart';
 
 import 'qr_controller.dart';
@@ -86,5 +85,6 @@ class _QCurrentRoute {
 class QrSettings {
   bool enableLog = true;
   bool enableDebugLog = false;
+  QNaviagtionMode defaultNavigationMode = QNaviagtionMode.asChild();
   Function(String) logger = print;
 }

@@ -4,10 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
-import 'screens/dashboard.dart';
-import 'screens/items.dart';
-import 'screens/orders.dart';
-import 'screens/store.dart';
+import 'screens/dashboard/dashboard.dart';
+import 'screens/dashboard/items.dart';
+import 'screens/dashboard/orders.dart';
+import 'screens/store/bottom_nav_bar.dart';
+import 'screens/store/store.dart';
 import 'screens/tests_screens/multi_component_screen.dart';
 
 class AppRoutes {
@@ -94,7 +95,10 @@ class AppRoutes {
     QRoute(
         name: store,
         path: '/store',
-        page: (childRouter) => StoreScreen(childRouter)),
+        page: (childRouter) => StoreScreen(childRouter),
+        children: [
+          BottomNavigationBarExampleRoutes(),
+        ]),
     QRoute(
         name: redirect,
         path: '/redirect',

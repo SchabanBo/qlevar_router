@@ -20,34 +20,74 @@ class QNavigatorController {
 
   void setNewMatch(MatchContext match, NavigationType type, bool justUrl,
       QNaviagtionMode mode) {
-    switch (mode?.type) {
-      default: // QNaviagtionModeType.Child
+    mode ??= QR.settings.defaultNavigationMode;
+    switch (mode.type) {
+      case QNaviagtionModeType.Child:
         _updatePathAsChild(_conManeger.rootController(), match, type, justUrl);
+        break;
+      case QNaviagtionModeType.ChildOf:
+        // required the parent to be already in the tree.
+        final parentController = _conManeger.withName(mode.name);
+        if (parentController == null) {
+          throw Exception(
+              'Route with name ${mode.name} is not in the active tree');
+        }
+        _updatePath(parentController, match, type, justUrl);
+        break;
+      case QNaviagtionModeType.StackTo:
+        // required the parent to be already in the old (to get the contoller)
+        //and new (to use it as start point) tree.
+        _updatePathAsStack(mode.name, match, justUrl);
+        break;
+      default:
+        throw Exception('Unkown QNaviagtionMode');
     }
   }
 
-  void _updatePathAsChild(RouterController parentRequest, MatchContext match,
-      NavigationType mode, bool justUrl) {
+  void _updatePathAsChild(RouterController parentController, MatchContext match,
+      NavigationType type, bool justUrl) {
     if (match.isNew) {
-      _updatePath(parentRequest, match, mode, justUrl);
+      _updatePath(parentController, match, type, justUrl);
       return;
     }
     if (match.childContext != null) {
       QR.log('$match is the old route. checking child', isDebug: true);
       final request = _conManeger.withKey(match.key);
-      _updatePathAsChild(request, match.childContext, mode, justUrl);
+      _updatePathAsChild(request, match.childContext, type, justUrl);
       return;
     }
     QR.log('No changes for $match was found');
   }
 
-  void _updatePath(RouterController parentRequest, MatchContext match,
-      NavigationType mode, bool justUrl) {
-    QR.log('$match is the new route has the reqest $parentRequest.',
+  void _updatePathAsStack(String name, MatchContext match, bool justUrl) {
+    if (match.route.name != name && name != 'Root') {
+      if (match.childContext == null) {
+        throw Exception('Route with name $name is not in the current tree');
+      }
+      _updatePathAsStack(name, match.childContext, justUrl);
+    }
+    final controller = _conManeger.withName(name);
+    if (controller == null) {
+      throw Exception('Route with name $name is not in the active tree');
+    }
+    QR.history.removeLast();
+    while (match.childContext != null) {
+      final matchCopy = match.childContext.copyWith();
+      matchCopy.childContext == null;
+      _updatePath(controller, matchCopy, NavigationType.Push,
+          match.childContext.childContext == null ? justUrl : true);
+      match = match.childContext;
+      QR.history.add(match.fullPath);
+    }
+  }
+
+  void _updatePath(RouterController parentController, MatchContext match,
+      NavigationType type, bool justUrl) {
+    QR.log('$match is the new route has the controller $parentController.',
         isDebug: true);
     _conManeger.rootController().updateUrl();
     final cleanupList =
-        parentRequest.updatePage(_getPage(match), mode, justUrl);
+        parentController.updatePage(_getPage(match), type, justUrl);
     _conManeger.clean(cleanupList);
     match.treeUpdated();
   }
@@ -77,7 +117,7 @@ class QNavigatorController {
       return false;
     }
     QR.to(QR.history.elementAt(QR.history.length - 2),
-        type: NavigationType.Pop);
+        type: NavigationType.PopUntilOrPush);
     QR.history.removeRange(QR.history.length - 2, QR.history.length);
     return true;
   }

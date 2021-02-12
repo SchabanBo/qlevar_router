@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
-import '../helpers/date_time.dart';
+import '../../helpers/date_time.dart';
 
 class StoreScreen extends StatelessWidget {
   final QRouter childRouter;
-  const StoreScreen(this.childRouter);
+  StoreScreen(this.childRouter);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,6 +15,18 @@ class StoreScreen extends StatelessWidget {
         title: Text('Store $now'),
         centerTitle: true,
         actions: [
+          TextButton(
+            onPressed: () {
+              QR.to('/store/bottomNavigationBar');
+            },
+            child: Text(
+              'BottomNavigationBar',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          const SizedBox(width: 15),
+          Container(height: double.infinity, width: 2, color: Colors.white),
+          const SizedBox(width: 15),
           TextButton(
             onPressed: () {
               QR.to('/dashboard');
