@@ -1,19 +1,26 @@
-/// Define how you want the navigation to react.
-enum NavigationType {
-  /// place the new page on the top of the stack.
-  Push,
+class QNaviagtionMode {
+  final QNaviagtionModeType type;
+  final String name;
+  const QNaviagtionMode(this.type, this.name);
 
-  /// Go back one page in the stack.
-  Pop,
+  factory QNaviagtionMode.asChild() =>
+      const QNaviagtionMode(QNaviagtionModeType.Child, null);
 
-  /// remove all page from the stack and place this on on the top.
-  ReplaceAll,
+  factory QNaviagtionMode.asChildof(String name) =>
+      QNaviagtionMode(QNaviagtionModeType.ChildOf, name);
 
-  /// replace the last page with this page.
-  ReplaceLast,
+  factory QNaviagtionMode.asStackTo(String name) =>
+      QNaviagtionMode(QNaviagtionModeType.StackTo, name);
 
-  /// Pop all page unit you get this page in the stack
-  /// if the page doesn't exist in the stack push in on the top.
-  /// This is the default type to navigation.
-  PopUntilOrPush,
+  factory QNaviagtionMode.asRootChildren() =>
+      QNaviagtionMode(QNaviagtionModeType.ChildOf, 'Root');
+
+  factory QNaviagtionMode.asRootStack() =>
+      QNaviagtionMode(QNaviagtionModeType.StackTo, 'Root');
+}
+
+enum QNaviagtionModeType {
+  Child,
+  ChildOf,
+  StackTo,
 }

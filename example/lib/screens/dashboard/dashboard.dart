@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
-import '../helpers/date_time.dart';
-import '../routes.dart';
+import '../../helpers/date_time.dart';
+import '../../routes.dart';
 
 class DashboardScreen extends StatelessWidget {
   final QRouter childRouter;

@@ -1,5 +1,6 @@
 import 'match_context.dart';
 import 'navigator/navigation_mode.dart';
+import 'navigator/navigation_type.dart';
 import 'navigator/navigator_controller.dart';
 import 'qr.dart';
 import 'router_delegate.dart';
@@ -21,21 +22,27 @@ class QRController {
         _controller.createRouterController(-1, 'Root', match));
   }
 
-  void toPath(String path, NavigationType type, bool justUrl) {
+  void toPath(
+      String path, NavigationType type, bool justUrl, QNaviagtionMode mode) {
     final match = _getMatch(path);
-    setNewMatch(match, type, justUrl);
+    setNewMatch(match, type, justUrl, mode);
   }
 
   void toName(String name, Map<String, dynamic> params, NavigationType type,
-      bool justUrl) {
+      bool justUrl, QNaviagtionMode mode) {
     final match = _routesTree.getNamedMatch(name, params);
-    setNewMatch(match, type, justUrl);
+    setNewMatch(match, type, justUrl, mode);
   }
 
   bool pop() => _controller.pop();
 
-  void setNewMatch(MatchContext match, NavigationType type, bool justUrl) =>
-      _controller.setNewMatch(match, type, justUrl);
+  void setNewMatch(
+    MatchContext match,
+    NavigationType type,
+    bool justUrl,
+    QNaviagtionMode mode,
+  ) =>
+      _controller.setNewMatch(match, type, justUrl, mode);
 
   MatchContext _getMatch(String path) {
     if (!path.startsWith('/')) {

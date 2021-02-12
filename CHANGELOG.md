@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [0.3.3] 12.02.2021
+
+- Add NavigationMode [beta]
+
 ## [0.3.2] 05.02.2021
 
 - Fix settings last part of route as component when the param change.

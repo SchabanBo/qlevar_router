@@ -4,28 +4,28 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 import 'test_widgets/test_widgets.dart';
 
-final pages = AppWarpper([
-  QRoute(
-      path: '/',
-      name: 'HomePage',
-      page: (c) => Scaffold(
-            body: WidgetOne(),
-          )),
-  QRoute(
-      path: '/two',
-      name: 'MyPage',
-      page: (c) => Scaffold(
-            body: WidgetTwo(),
-          )),
-  QRoute(
-      path: '/three',
-      name: 'Three',
-      page: (c) => Scaffold(
-            body: WidgetThree(),
-          )),
-]);
-
 void main() {
+  final pages = AppWarpper([
+    QRoute(
+        path: '/',
+        name: 'HomePage',
+        page: (c) => Scaffold(
+              body: WidgetOne(),
+            )),
+    QRoute(
+        path: '/two',
+        name: 'MyPage',
+        page: (c) => Scaffold(
+              body: WidgetTwo(),
+            )),
+    QRoute(
+        path: '/three',
+        name: 'Three',
+        page: (c) => Scaffold(
+              body: WidgetThree(),
+            )),
+  ]);
+
   testWidgets("simple path navigation", (tester) async {
     await tester.pumpWidget(pages);
     expect(find.byType(WidgetOne), findsOneWidget);
@@ -57,7 +57,7 @@ void main() {
     expect(find.byType(WidgetOne), findsOneWidget);
   });
 
-  testWidgets("simple to and pop navigation", (tester) async {
+  testWidgets("History", (tester) async {
     await tester.pumpWidget(pages);
     expect(find.byType(WidgetOne), findsOneWidget);
     QR.toName('MyPage');
