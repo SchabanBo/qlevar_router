@@ -37,4 +37,4 @@ QR.to('/user/2');
 Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route arguments etc ...
 With Navigator2.0 Manage your project routes and create nested routes. Update only one widget in your page when navigating to new route. Simply navigation without context to your page.
 
-The most cool feature for this package is [Nested Routing - Widget Update](0https://github.com/SchabanBo/qlevar_router/wiki/02_Features##nested-routing---widget-update) or see all [Features](https://github.com/SchabanBo/qlevar_router/wiki/02_Features)
+The most cool feature for this package is [Nested Routing - Widget Update](https://github.com/SchabanBo/qlevar_router/wiki/02_Features##nested-routing---widget-update) or see all [Features](https://github.com/SchabanBo/qlevar_router/wiki/02_Features)
