@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:qlevar_router/src/params.dart';
-
 import '../../match_context.dart';
+import '../../params.dart';
 import '../../qr.dart';
 import 'tree_types.dart';
 

@@ -39,8 +39,8 @@ class QParams {
       if (!newKeys.contains(key)) {
         if (_params[key].onDelete != null) {
           _params[key].onDelete();
-          _params.remove(key);
         }
+        _params.remove(key);
       }
     }
     for (var key in newKeys) {
