@@ -12,6 +12,11 @@ class QRouter extends Router {
             backButtonDispatcher: backButtonDispatcher);
 }
 
+class QRouteChild {
+  final QRouter childRouter;
+  QRouteChild(this.childRouter);
+}
+
 /// The definition for the page. give you the [QRouter]
 /// to use when navigation in children.
 typedef QRoutePage = Widget Function(QRouter);
@@ -87,7 +92,7 @@ class QRoute extends QRouteBase {
       );
 }
 
-///
+/// The base class for the routes
 abstract class QRouteBase {
   /// [path] the path of the route.
   final String path;

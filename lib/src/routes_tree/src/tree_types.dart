@@ -1,5 +1,6 @@
 import '../../../qlevar_router.dart';
 import '../../match_context.dart';
+import '../../params.dart';
 
 class Tree {
   final routes = <QRouteInternal>[];
@@ -70,7 +71,7 @@ class QRouteInternal {
 class MatchRoute {
   final QRouteInternal route;
   final bool found;
-  final Map<String, String> params;
+  final QParams params;
   MatchRoute childMatch;
 
   MatchRoute({
@@ -92,12 +93,12 @@ class MatchRoute {
     }
 
     var matchs = routes.where((route) => route.path == path);
-    final params = <String, String>{};
+    final params = QParams();
     QRouteInternal match;
     if (matchs.isEmpty) {
       matchs = routes.where((route) => route.isComponent);
       final component = matchs.first.path.substring(1);
-      params.addAll({component: path});
+      params[component] = path;
       final fullPath =
           matchs.first.fullPath.replaceAll(matchs.first.path, path);
       match = matchs.first.copyWith(path: path, fullPath: fullPath);
@@ -114,10 +115,10 @@ class MatchRoute {
       fullPath: route.fullPath,
       childContext: childContext);
 
-  Map<String, String> getParames() {
+  QParams getParames() {
     final result = params;
     if (childMatch != null) {
-      result.addAll(childMatch.getParames());
+      result.addAll(childMatch.getParames().asMap);
     }
     return result;
   }

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:qlevar_router/src/params.dart';
+
 import '../../match_context.dart';
 import '../../qr.dart';
 import 'tree_types.dart';
@@ -43,17 +45,17 @@ class TreeMatcher {
     final params = Uri.parse(path).queryParametersAll;
     for (var item in params.entries) {
       if (item.value.length == 1) {
-        match.params.addAll({item.key: item.value.first});
+        match.params[item.key] = item.value.first;
       } else if (item.value.isNotEmpty) {
-        match.params.addAll({item.key: jsonEncode(item.value)});
+        match.params[item.key] = jsonEncode(item.value);
       }
     }
 
-    final oldParam = QR.currentRoute.params;
+    final oldParam = QR.currentRoute.params.asStringMap();
 
     // Set route info before onInit to use it when it needed.
     QR.currentRoute.fullPath = path;
-    QR.currentRoute.params = match.getParames();
+    QR.currentRoute.params.updateParams(match.getParames());
     QR.history.add(path);
 
     // Build Match Context
@@ -101,7 +103,7 @@ class TreeMatcher {
   }
 
   bool _needToSetAsComponnent(
-      Map<String, dynamic> oldParam, List<String> componentsKeys) {
+      Map<String, String> oldParam, List<String> componentsKeys) {
     if (oldParam.length != QR.params.length) {
       return true;
     }
@@ -111,7 +113,7 @@ class TreeMatcher {
       if (componentsKeys.contains(curenntParam)) {
         continue;
       }
-      if (oldParam[curenntParam] != QR.params[curenntParam]) {
+      if (oldParam[curenntParam] != QR.params[curenntParam].value) {
         return true;
       }
     }
@@ -119,7 +121,7 @@ class TreeMatcher {
   }
 
   bool _needInit(MatchRoute routeNode, MatchContext contextNode,
-      Map<String, String> oldParam, Map<String, String> newParam) {
+      Map<String, String> oldParam, QParams newParam) {
     if (contextNode.childContext == null) {
       // There is no previus context
       return true;
@@ -141,7 +143,7 @@ class TreeMatcher {
         return true;
       }
 
-      if (oldComponent != newParam[component]) {
+      if (oldComponent != newParam[component].value) {
         // The component has changed
         return true;
       }
@@ -208,9 +210,9 @@ class TreeMatcher {
     }
 
     // Replace old component
-    for (var param in QR.params.entries) {
+    for (var param in QR.params.asMap.entries) {
       if (path.contains(':${param.key}')) {
-        path = path.replaceAll(':${param.key}', param.value);
+        path = path.replaceAll(':${param.key}', param.value.value);
       }
     }
 

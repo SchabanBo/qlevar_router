@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [0.3.4]
+
+- Add QParams with `onChanged` and `onDelete`.
+
 ## [0.3.3] 12.02.2021
 
 - Add NavigationMode [beta]

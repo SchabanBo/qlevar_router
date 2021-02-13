@@ -1,6 +1,6 @@
 import 'navigator/navigation_mode.dart';
 import 'navigator/navigation_type.dart';
-
+import 'params.dart';
 import 'qr_controller.dart';
 import 'route_parser.dart';
 import 'router_delegate.dart';
@@ -24,7 +24,7 @@ class _QRContext {
   final _QCurrentRoute currentRoute = _QCurrentRoute();
 
   /// The route params
-  Map<String, String> get params => currentRoute.params;
+  QParams get params => currentRoute.params;
 
   final _controller = QRController();
 
@@ -78,7 +78,7 @@ class _QCurrentRoute {
   String fullPath = '';
 
   /// The params for the current route
-  Map<String, String> params = {};
+  final params = QParams();
 }
 
 /// The package settings

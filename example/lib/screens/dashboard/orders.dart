@@ -75,11 +75,10 @@ class OrdersScreen extends StatelessWidget {
 }
 
 class OrderDetails extends StatelessWidget {
-  final order = Get.find<Database>()
-      .orders[int.parse(QR.currentRoute.params['orderId']) - 1];
+  final order = Get.find<Database>().orders[QR.params['orderId'].asInt - 1];
   @override
   Widget build(BuildContext context) {
-    final s = QR.currentRoute.params['orderId'].toInt();
+    final s = QR.currentRoute.params['orderId'].asInt;
     print(s);
     return Card(
       color: Colors.white70,
