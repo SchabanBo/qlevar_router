@@ -31,7 +31,9 @@ class TreeBuilder {
         var newRoute = route.copyWith(path: pathSegments.last);
         for (var i = pathSegments.length - 2; i >= 0; i--) {
           newRoute = QRoute(
-              path: pathSegments[i], page: (c) => c, children: [newRoute]);
+              path: pathSegments[i],
+              page: (c) => c.childRouter,
+              children: [newRoute]);
         }
         path = pathSegments.first;
         route = newRoute;

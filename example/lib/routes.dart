@@ -70,7 +70,7 @@ class AppRoutes {
               name: tests,
               path: '/test',
               initRoute: '/multi/slash/path',
-              page: (child) => Container(child: child),
+              page: (child) => child.childRouter,
               children: [
                 QRoute(
                     name: testMultiSlash,
