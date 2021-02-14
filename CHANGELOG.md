@@ -2,7 +2,9 @@
 
 ## [0.3.4]
 
-- Add QParams with `onChanged` and `onDelete`.
+- Add `QParams` with `onChanged` and `onDelete`.
+- Add `QRouteChild` with `onChildCalled` and `currentChild`.
+- **Breaking Change** Replace QRouter with QRouteChild and use QRouteChild.childRouter to get the QRouter.
 
 ## [0.3.3] 12.02.2021
 

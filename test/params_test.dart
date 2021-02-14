@@ -52,26 +52,14 @@ void main() {
 
   testWidgets("nested compoent test", (tester) async {
     await tester.pumpWidget(AppWarpper([
-      QRoute(
-          path: '/',
-          page: (c) => Scaffold(
-                body: WidgetOne(),
-              )),
+      QRoute(path: '/', page: (c) => Scaffold(body: WidgetOne())),
       QRoute(
           path: '/user',
-          page: (c) => Scaffold(
-                body: Container(child: c),
-              ),
+          page: (c) => Scaffold(body: c.childRouter),
           children: [
-            QRoute(
-                path: '/:userId',
-                page: (c) => Container(child: c),
-                children: [
-                  QRoute(
-                    path: '/info',
-                    page: (c) => WidgetTwo(),
-                  )
-                ]),
+            QRoute(path: '/:userId', page: (c) => c.childRouter, children: [
+              QRoute(path: '/info', page: (c) => WidgetTwo()),
+            ]),
           ]),
     ]));
     QR.to('/user/5/info');
@@ -96,23 +84,15 @@ void main() {
               )),
       QRoute(
           path: '/user',
-          page: (c) => Scaffold(
-                body: Container(child: c),
-              ),
+          page: (c) => Scaffold(body: c.childRouter),
           children: [
-            QRoute(
-                path: '/:userId',
-                page: (c) => Container(child: c),
-                children: [
-                  QRoute(path: '/', page: (c) => WidgetOne()),
-                  QRoute(
-                      path: '/info',
-                      page: (c) => Container(child: c),
-                      children: [
-                        QRoute(path: '/', page: (c) => WidgetOne()),
-                        QRoute(path: '/:companyId', page: (c) => WidgetTwo())
-                      ]),
-                ]),
+            QRoute(path: '/:userId', page: (c) => c.childRouter, children: [
+              QRoute(path: '/', page: (c) => WidgetOne()),
+              QRoute(path: '/info', page: (c) => c.childRouter, children: [
+                QRoute(path: '/', page: (c) => WidgetOne()),
+                QRoute(path: '/:companyId', page: (c) => WidgetTwo())
+              ]),
+            ]),
           ]),
     ]));
     QR.to('/user/5/info/7');

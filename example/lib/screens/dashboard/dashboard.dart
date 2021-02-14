@@ -5,8 +5,8 @@ import '../../helpers/date_time.dart';
 import '../../routes.dart';
 
 class DashboardScreen extends StatelessWidget {
-  final QRouter childRouter;
-  const DashboardScreen(this.childRouter);
+  final QRouteChild routeChild;
+  const DashboardScreen(this.routeChild);
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class DashboardScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: childRouter,
+        child: routeChild.childRouter,
       ),
     );
   }

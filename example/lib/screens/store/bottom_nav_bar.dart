@@ -39,8 +39,8 @@ class BottomNavigationBarExampleRoutes extends QRouteBuilder {
 }
 
 class BottomNavigationBarExample extends StatefulWidget {
-  final QRouter childRouter;
-  BottomNavigationBarExample(this.childRouter);
+  final QRouteChild child;
+  BottomNavigationBarExample(this.child);
   @override
   _BottomNavigationBarExampleState createState() =>
       _BottomNavigationBarExampleState();
@@ -53,12 +53,27 @@ class _BottomNavigationBarExampleState
     BottomNavigationBarExampleRoutes.bottomNavigationBarBusiness,
     BottomNavigationBarExampleRoutes.bottomNavigationBarSchool,
   ];
-  int _selectedIndex = 0;
+  int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    // set the init tab from the selected tab.
+    _selectedIndex = childrenRoutes.indexOf(widget.child.currentChild.name);
+
+    // update the selected tab when the child changed
+    widget.child.onChildCall = () {
+      setState(() {
+        _selectedIndex = childrenRoutes.indexOf(widget.child.currentChild.name);
+      });
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: widget.childRouter,
+        child: widget.child.childRouter,
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -76,17 +91,8 @@ class _BottomNavigationBarExampleState
           ),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (i) => QR.toName(childrenRoutes[i]),
       ),
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      // To update the selected tab.
-      _selectedIndex = index;
-    });
-    // To update the page
-    QR.toName(childrenRoutes[index]);
   }
 }

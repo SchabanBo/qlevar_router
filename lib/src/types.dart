@@ -12,14 +12,24 @@ class QRouter extends Router {
             backButtonDispatcher: backButtonDispatcher);
 }
 
+/// the child route for a page
 class QRouteChild {
+  /// The router for the child where the child will be displayed.
   final QRouter childRouter;
-  QRouteChild(this.childRouter);
+
+  /// a function will be called whenever a child (grandchild) for this
+  /// route is called
+  Function() onChildCall;
+
+  /// The current displayed child
+  QRoute currentChild;
+
+  QRouteChild(this.childRouter, {this.onChildCall, this.currentChild});
 }
 
 /// The definition for the page. give you the [QRouter]
 /// to use when navigation in children.
-typedef QRoutePage = Widget Function(QRouter);
+typedef QRoutePage = Widget Function(QRouteChild);
 
 /// The definition to redirect. give you the cureent path
 /// and expexted the new path to redirect to or null.

@@ -7,8 +7,8 @@ import '../../helpers/date_time.dart';
 import '../../routes.dart';
 
 class OrdersScreen extends StatelessWidget {
-  final QRouter routerChild;
-  OrdersScreen(this.routerChild);
+  final QRouteChild child;
+  OrdersScreen(this.child);
   @override
   Widget build(BuildContext context) {
     final database = Get.find<Database>();
@@ -62,7 +62,7 @@ class OrdersScreen extends StatelessWidget {
               Flexible(
                 child: AnimatedSwitcher(
                   duration: 500.milliseconds,
-                  child: routerChild,
+                  child: child.childRouter,
                 ),
               ),
               const SizedBox(width: 15),
@@ -78,8 +78,6 @@ class OrderDetails extends StatelessWidget {
   final order = Get.find<Database>().orders[QR.params['orderId'].asInt - 1];
   @override
   Widget build(BuildContext context) {
-    final s = QR.currentRoute.params['orderId'].asInt;
-    print(s);
     return Card(
       color: Colors.white70,
       margin: EdgeInsets.all(10),
