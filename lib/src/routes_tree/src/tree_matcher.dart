@@ -166,7 +166,9 @@ class TreeMatcher {
     for (var i = 1; i < newRoute.length; i++) {
       childMatch.childMatch =
           MatchRoute.fromTree(routes: searchIn, path: newRoute[i]);
-      if (!childMatch.childMatch.found) return _notFound(path);
+      if (childMatch.childMatch != null && !childMatch.childMatch.found) {
+        return _notFound(path);
+      }
       searchIn = childMatch.childMatch.route.children;
       childMatch = childMatch.childMatch;
     }
@@ -178,7 +180,9 @@ class TreeMatcher {
       for (var segment in initRoute.isEmpty ? [''] : initRoute) {
         childMatch.childMatch =
             MatchRoute.fromTree(routes: searchIn, path: segment);
-        if (!childMatch.childMatch.found) return _notFound(path);
+        if (childMatch.childMatch != null && !childMatch.childMatch.found) {
+          return _notFound(path);
+        }
         searchIn = childMatch.childMatch.route.children;
         childMatch = childMatch.childMatch;
       }
