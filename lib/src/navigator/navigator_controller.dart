@@ -230,7 +230,7 @@ class _PageCreator {
         opaque: page.opaque,
         reverseTransitionDuration: page.reverseTransitionDurationmilliseconds,
         transitionDuration: page.transitionDurationmilliseconds,
-        transitionsBuilder: _buildTransaction);
+        transitionsBuilder: page.transitionsBuilder ?? _buildTransaction);
   }
 
   Widget _buildTransaction(BuildContext context, Animation<double> animation,

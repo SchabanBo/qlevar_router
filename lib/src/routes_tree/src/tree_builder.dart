@@ -33,6 +33,7 @@ class TreeBuilder {
           newRoute = QRoute(
               path: pathSegments[i],
               page: (c) => c.childRouter,
+              pageType: route.pageType,
               children: [newRoute]);
         }
         path = pathSegments.first;
@@ -54,6 +55,7 @@ class TreeBuilder {
           path: '/',
           name: '${route.name} Init',
           page: (c) => Container(),
+          pageType: route.pageType,
         ));
       }
       _route.children.addAll(_buildTree(tree, route.children, fullPath));
