@@ -85,10 +85,8 @@ class MatchRoute {
 
   factory MatchRoute.fromTree(
       {List<QRouteInternal> routes, String path, String childInit}) {
-    if (routes.isEmpty) {
-      return null;
-    }
-    if (!routes.any((route) => route.path == path || route.isComponent)) {
+    if (routes.isEmpty ||
+        !routes.any((route) => route.path == path || route.isComponent)) {
       return MatchRoute.notFound();
     }
 
