@@ -7,8 +7,8 @@ import '../../helpers/date_time.dart';
 import '../../routes.dart';
 
 class ItemsScreen extends StatefulWidget {
-  final QRouter routerChild;
-  ItemsScreen(this.routerChild);
+  final QRouteChild child;
+  ItemsScreen(this.child);
   @override
   _ItemsScreenState createState() => _ItemsScreenState();
 }
@@ -134,7 +134,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     'Navigation',
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
-                  SizedBox(width: 350, height: 350, child: widget.routerChild),
+                  SizedBox(
+                      width: 350, height: 350, child: widget.child.childRouter),
                 ],
               ),
             ],

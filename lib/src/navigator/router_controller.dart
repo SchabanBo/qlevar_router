@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../qr.dart';
+import '../types.dart';
 import 'navigation_type.dart';
 import 'page_types.dart';
 
@@ -12,12 +13,14 @@ class RouterController extends ChangeNotifier {
   // Fix JustUrl problem with root router.
   final _pagesCopy = <QPage>[];
 
+  QRouteChild routeChild;
+
   List<QPage> get pages =>
       List.unmodifiable(_pagesCopy.isNotEmpty ? _pagesCopy : _pages);
 
   bool get canPop => _pages.isNotEmpty;
 
-  RouterController({this.key, this.name, QPage initPage}) {
+  RouterController({this.key, this.name, this.routeChild, QPage initPage}) {
     _pages.add(initPage);
     QR.log('${toString()} is created', isDebug: true);
   }
@@ -89,6 +92,13 @@ class RouterController extends ChangeNotifier {
         }
     }
     return cleanup;
+  }
+
+  void childCalled(QRoute child) {
+    routeChild.currentChild = child;
+    if (routeChild.onChildCall != null) {
+      routeChild.onChildCall();
+    }
   }
 
   @override

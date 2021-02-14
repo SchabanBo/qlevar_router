@@ -9,7 +9,8 @@ void main() {
     'QRoute assert',
     (tester) async {
       expect(() => QRoute(path: '/'), throwsAssertionError);
-      expect(() => QRoute(page: (s) => s, path: null), throwsAssertionError);
+      expect(() => QRoute(page: (s) => s.childRouter, path: null),
+          throwsAssertionError);
       expect(() => QRoute(redirectGuard: (s) => '/', path: null),
           throwsAssertionError);
     },

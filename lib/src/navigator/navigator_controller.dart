@@ -52,8 +52,9 @@ class QNavigatorController {
     }
     if (match.childContext != null) {
       QR.log('$match is the old route. checking child', isDebug: true);
-      final request = _conManeger.withKey(match.key);
-      _updatePathAsChild(request, match.childContext, type, justUrl);
+      final controller = _conManeger.withKey(match.key);
+      controller.childCalled(match.childContext.route);
+      _updatePathAsChild(controller, match.childContext, type, justUrl);
       return;
     }
     QR.log('No changes for $match was found');
@@ -93,19 +94,22 @@ class QNavigatorController {
   }
 
   QPage _getPage(MatchContext match) {
-    final childRouter = match.childContext == null
-        ? null
-        : _getInnerRouter(match, match.childContext);
-
-    return _PageCreator(match, childRouter).create();
+    QRouteChild childRoute;
+    if (match.childContext != null) {
+      childRoute = _getInnerRouter(match, match.childContext);
+    }
+    return _PageCreator(match, childRoute).create();
   }
 
-  QRouter _getInnerRouter(MatchContext parent, MatchContext match) {
+  QRouteChild _getInnerRouter(MatchContext parent, MatchContext match) {
     QR.log('Get Router for $match', isDebug: true);
-    return QRouter(
-      routerDelegate: InnerRouterDelegate(
-          createRouterController(parent.key, parent.route.name, match)),
-    );
+    final childController =
+        createRouterController(parent.key, parent.route.name, match);
+    final childRouter =
+        QRouter(routerDelegate: InnerRouterDelegate(childController));
+    childController.routeChild =
+        QRouteChild(childRouter, currentChild: match.route);
+    return childController.routeChild;
   }
 
   RouterController createRouterController(
@@ -168,11 +172,11 @@ class _RouterControllerManger {
 
 class _PageCreator {
   final MatchContext match;
-  final QRouter childRouter;
+  final QRouteChild childRoute;
   final QRPage pageType;
   final LocalKey key;
 
-  _PageCreator(this.match, this.childRouter)
+  _PageCreator(this.match, this.childRoute)
       : pageType = match.route.pageType,
         key = ValueKey<int>(Random().nextInt(10000));
   QPage create() {
@@ -193,7 +197,7 @@ class _PageCreator {
 
   QMaterialPage _getMaterialPage() => QMaterialPage(
       name: match.route.name,
-      child: match.route.page(childRouter),
+      child: match.route.page(childRoute),
       maintainState: pageType.maintainState,
       fullscreenDialog: pageType.fullscreenDialog,
       restorationId: pageType.restorationId,
@@ -202,7 +206,7 @@ class _PageCreator {
 
   QCupertinoPage _getCupertinoPage(String title) => QCupertinoPage(
       name: match.route.name,
-      child: match.route.page(childRouter),
+      child: match.route.page(childRoute),
       maintainState: pageType.maintainState,
       fullscreenDialog: pageType.fullscreenDialog,
       restorationId: pageType.restorationId,
@@ -214,7 +218,7 @@ class _PageCreator {
     final page = pageType as QRCustomPage;
     return QCustomPage(
         name: match.route.name,
-        child: match.route.page(childRouter),
+        child: match.route.page(childRoute),
         maintainState: pageType.maintainState,
         fullscreenDialog: pageType.fullscreenDialog,
         restorationId: pageType.restorationId,

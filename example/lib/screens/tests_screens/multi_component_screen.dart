@@ -5,8 +5,8 @@ import '../../helpers/date_time.dart';
 import '../../routes.dart';
 
 class TestMultiComponent extends StatelessWidget {
-  final QRouter router;
-  TestMultiComponent(this.router);
+  final QRouteChild routeChild;
+  TestMultiComponent(this.routeChild);
 
   @override
   Widget build(BuildContext context) => Center(
@@ -49,7 +49,7 @@ The request is:
               },
               child: Text('Update Child')),
           SizedBox(height: 18),
-          SizedBox(height: 100, width: 250, child: router)
+          SizedBox(height: 100, width: 250, child: routeChild.childRouter)
         ],
       ));
 }
