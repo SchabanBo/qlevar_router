@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../helpers/iterables_extensions.dart';
 import '../../qr.dart';
 import '../../types.dart';
 import 'tree_types.dart';
@@ -10,6 +11,38 @@ class TreeBuilder {
     final result = <QRouteInternal>[];
     if (routes == null || routes.isEmpty) return result;
 
+    for (var route in _prepareTree(routes)) {
+      final path = route.path;
+      final fullPath = basePath + (path.isEmpty ? '' : '/$path');
+      final _route = QRouteInternal(
+        key: tree.treeIndex.length + 1,
+        isComponent: path.startsWith(':'),
+        path: path,
+        route: route,
+        fullPath: fullPath,
+      );
+      if (route.name != null) {
+        tree.treeIndex[route.name] = fullPath;
+      }
+      // Add children default init
+      if (route.children != null &&
+          !route.children.any((element) => element.path == '/')) {
+        route.children.add(QRoute(
+          path: '/',
+          name: '${route.name} Init',
+          page: (c) => Container(),
+        ));
+      }
+      _route.children.addAll(_buildTree(tree, route.children, fullPath));
+      result.add(_route);
+      QR.log('"${_route.name}" added with path ${_route.fullPath}',
+          isDebug: true);
+    }
+    return result;
+  }
+
+  List<QRoute> _prepareTree(List<QRouteBase> routes) {
+    final result = <QRoute>[];
     for (var routebase in routes) {
       var route = routebase is QRoute
           ? routebase
@@ -33,37 +66,44 @@ class TreeBuilder {
           newRoute = QRoute(
               path: pathSegments[i],
               page: (c) => c.childRouter,
-              pageType: route.pageType,
               children: [newRoute]);
         }
         path = pathSegments.first;
         route = newRoute;
       }
-      final fullPath = basePath + (path.isEmpty ? '' : '/$path');
-      final _route = QRouteInternal(
-        key: tree.treeIndex.length + 1,
-        isComponent: path.startsWith(':'),
-        path: path,
-        route: route,
-        fullPath: fullPath,
-      );
-      tree.treeIndex[route.name ?? _route.fullPath] = fullPath;
-      // Add children default init
-      if (route.children != null &&
-          !route.children.any((element) => element.path == '/')) {
-        route.children.add(QRoute(
-          path: '/',
-          name: '${route.name} Init',
-          page: (c) => Container(),
-          pageType: route.pageType,
-        ));
-      }
-      _route.children.addAll(_buildTree(tree, route.children, fullPath));
-      result.add(_route);
-      QR.log('"${_route.name}" added with path ${_route.fullPath}',
-          isDebug: true);
+      result.add(route.copyWith(path: path));
     }
-    return result;
+    final groups = result.groupBy((r) => r.path);
+    if (!groups.entries.any((element) => element.value.length > 1)) {
+      return result;
+    }
+
+    // Group matching path
+    final groupedRoutes = <QRoute>[];
+    for (var group in groups.entries) {
+      if (group.value.length == 1) {
+        groupedRoutes.add(group.value.first);
+        continue;
+      }
+
+      bool notHasChildren(QRoute element) =>
+          element.children == null || element.children.isEmpty;
+
+      final newRoute = group.value.any(notHasChildren)
+          ? group.value.firstWhere(notHasChildren)
+          : QRoute(path: group.key, page: (c) => c.childRouter);
+
+      final children = group.value
+          .where((e) => e.children != null || e.children.isNotEmpty)
+          .map((e) => e.children)
+          .fold<List<QRouteBase>>(<QRouteBase>[], (list, route) {
+        list.addAll(route);
+        return list;
+      }).toList();
+
+      groupedRoutes.add(newRoute.copyWith(children: children));
+    }
+    return groupedRoutes;
   }
 
   Tree buildTree(List<QRouteBase> routes) {

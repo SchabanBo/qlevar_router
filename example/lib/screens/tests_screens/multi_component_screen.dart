@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../helpers/date_time.dart';
-import '../../routes.dart';
+import 'test_routes.dart';
 
 class TestMultiComponent extends StatelessWidget {
   final QRouteChild routeChild;
@@ -44,7 +44,7 @@ The request is:
                     ? 0
                     : (int.parse(QR.params['childNumber'].toString()) + 1);
 
-                QR.toName(AppRoutes.testMultiComponentChild,
+                QR.toName(TestRoutes.testMultiComponentChild,
                     params: {'childNumber': param});
               },
               child: Text('Update Child')),

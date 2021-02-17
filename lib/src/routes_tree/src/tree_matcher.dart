@@ -164,6 +164,8 @@ class TreeMatcher {
     // Build Match Tree
     var childMatch = match;
     for (var i = 1; i < newRoute.length; i++) {
+      // if the last segment is empty skip it
+      if (i == newRoute.length - 1 && newRoute[i].isEmpty) continue;
       childMatch.childMatch =
           MatchRoute.fromTree(routes: searchIn, path: newRoute[i]);
       if (!childMatch.childMatch.found) return _notFound(path);

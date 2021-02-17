@@ -29,7 +29,7 @@ class StoreScreen extends StatelessWidget {
           const SizedBox(width: 15),
           TextButton(
             onPressed: () {
-              QR.to('/dashboard');
+              QR.to('/home');
             },
             child: Text(
               'Dashboard',
