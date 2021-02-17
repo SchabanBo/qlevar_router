@@ -89,7 +89,7 @@ class QRoute extends QRouteBase {
     RedirectGuard redirectGuard,
     Function onInit,
     Function onDispose,
-    List<QRoute> children,
+    List<QRouteBase> children,
   }) =>
       QRoute(
         name: name ?? this.name,

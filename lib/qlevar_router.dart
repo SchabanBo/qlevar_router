@@ -1,3 +1,4 @@
+export 'src/helpers/iterables_extensions.dart';
 export 'src/navigator/navigation_mode.dart';
 export 'src/navigator/navigation_type.dart';
 export 'src/params.dart';

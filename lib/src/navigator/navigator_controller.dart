@@ -74,7 +74,7 @@ class QNavigatorController {
     QR.history.removeLast();
     while (match.childContext != null) {
       final matchCopy = match.childContext.copyWith();
-      matchCopy.childContext == null;
+      matchCopy.childContext = null;
       _updatePath(controller, matchCopy, NavigationType.Push,
           match.childContext.childContext == null ? justUrl : true);
       match = match.childContext;
