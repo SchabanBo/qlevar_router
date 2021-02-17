@@ -1,11 +1,12 @@
 # CHANGELOG
 
-## [0.3.5]
+## [0.3.5] 17.02.2021
 
 - Fix Error with extra slash at the end of the route.
 - Fix custom transition issue (@rockingdice)
 - Fix null exception with not found page.
 - Group multi path prefix.
+- Add `canChildNavigation` to `QRouteChild`.
 
 ## [0.3.4] 15.02.2021
 

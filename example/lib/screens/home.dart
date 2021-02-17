@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
-import '../../helpers/date_time.dart';
-import '../../routes.dart';
+import '../helpers/date_time.dart';
+import 'tests_screens/test_routes.dart';
 
-class DashboardScreen extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
   final QRouteChild routeChild;
-  const DashboardScreen(this.routeChild);
+  const HomeScreen(this.routeChild);
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +15,12 @@ class DashboardScreen extends StatelessWidget {
         elevation: 5,
         bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
-        title: InkWell(
-            onTap: () => QR.to('/dashboard'), child: Text('Dashboard $now')),
+        title: InkWell(onTap: () => QR.to('/home'), child: Text('Home $now')),
         centerTitle: true,
         actions: [
           TextButton(
             onPressed: () {
-              QR.to('/dashboard/items');
+              QR.to('/home/items');
             },
             child: Text(
               'Items',
@@ -30,7 +29,7 @@ class DashboardScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              QR.to('/dashboard/orders');
+              QR.to('/home/orders');
             },
             child: Text(
               'Orders',
@@ -63,7 +62,7 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-class DashboardContent extends StatelessWidget {
+class HomeScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
           child: Column(
@@ -71,12 +70,11 @@ class DashboardContent extends StatelessWidget {
         children: [
           Text(
               ""
-              'This is the dashboard content. '
+              'This is the Home Screen. '
               'Use the appbar to get to another page.'
-              'Or'
+              'Or test some features'
               "",
               style: TextStyle(color: Colors.white, fontSize: 35)),
-          Text('Or', style: TextStyle(color: Colors.white, fontSize: 35)),
           ElevatedButton(
             onPressed: () {
               QR.to('/somepage');
@@ -97,17 +95,24 @@ class DashboardContent extends StatelessWidget {
           const SizedBox(height: 5),
           ElevatedButton(
             onPressed: () {
-              QR.toName(AppRoutes.testMultiSlash);
+              QR.toName(TestRoutes.testMultiSlash);
             },
-            child: Text(AppRoutes.testMultiSlash),
+            child: Text(TestRoutes.testMultiSlash),
           ),
           const SizedBox(height: 5),
           ElevatedButton(
             onPressed: () {
-              QR.toName(AppRoutes.testMultiComponent,
+              QR.toName(TestRoutes.testMultiComponent,
                   params: {'name': 'Max', 'number': 55});
             },
-            child: Text(AppRoutes.testMultiComponent),
+            child: Text(TestRoutes.testMultiComponent),
+          ),
+          const SizedBox(height: 5),
+          ElevatedButton(
+            onPressed: () {
+              QR.toName(TestRoutes.testCanChildNavigate);
+            },
+            child: Text(TestRoutes.testCanChildNavigate),
           ),
         ],
       ));

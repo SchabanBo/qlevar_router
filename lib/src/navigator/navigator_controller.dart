@@ -32,7 +32,7 @@ class QNavigatorController {
           throw Exception(
               'Route with name ${mode.name} is not in the active tree');
         }
-        _updatePath(parentController, match, type, justUrl);
+        _updateIfAllowed(parentController, match, type, justUrl);
         break;
       case QNaviagtionModeType.StackTo:
         // required the parent to be already in the old (to get the contoller)
@@ -47,7 +47,7 @@ class QNavigatorController {
   void _updatePathAsChild(RouterController parentController, MatchContext match,
       NavigationType type, bool justUrl) {
     if (match.isNew) {
-      _updatePath(parentController, match, type, justUrl);
+      _updateIfAllowed(parentController, match, type, justUrl);
       return;
     }
     if (match.childContext != null) {
@@ -75,14 +75,27 @@ class QNavigatorController {
     while (match.childContext != null) {
       final matchCopy = match.childContext.copyWith();
       matchCopy.childContext = null;
-      _updatePath(controller, matchCopy, NavigationType.Push,
+      _updateIfAllowed(controller, matchCopy, NavigationType.Push,
           match.childContext.childContext == null ? justUrl : true);
       match = match.childContext;
       QR.history.add(match.fullPath);
     }
   }
 
-  void _updatePath(RouterController parentController, MatchContext match,
+  void _updateIfAllowed(RouterController parentController, MatchContext match,
+      NavigationType type, bool justUrl) {
+    if (parentController.routeChild?.canChildNavigation != null) {
+      parentController.routeChild.canChildNavigation().then((can) {
+        if (can) {
+          _update(parentController, match, type, justUrl);
+        }
+      });
+    } else {
+      _update(parentController, match, type, justUrl);
+    }
+  }
+
+  void _update(RouterController parentController, MatchContext match,
       NavigationType type, bool justUrl) {
     QR.log('$match is the new route has the controller $parentController.',
         isDebug: true);

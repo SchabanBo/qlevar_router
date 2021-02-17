@@ -24,6 +24,11 @@ class QRouteChild {
   /// The current displayed child
   QRoute currentChild;
 
+  /// A callback to see if the child can navigate.
+  /// This call back will be called befor the page updates. if it returns true
+  /// the navigation will proceed or the navigation call will be canceled
+  Future<bool> Function() canChildNavigation;
+
   QRouteChild(this.childRouter, {this.onChildCall, this.currentChild});
 }
 

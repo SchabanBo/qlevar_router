@@ -1,23 +1,20 @@
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
-import 'screens/dashboard/dashboard.dart';
 import 'screens/dashboard/items.dart';
 import 'screens/dashboard/orders.dart';
+import 'screens/home.dart';
 import 'screens/store/bottom_nav_bar.dart';
 import 'screens/store/store.dart';
-import 'screens/tests_screens/multi_component_screen.dart';
+import 'screens/tests_screens/test_routes.dart';
 
 class AppRoutes {
   // Dashboard
-  static String dashboard = 'Dashboard';
-  static String dashboardMain = 'Dashboard Main';
+  static String home = 'Home';
+  static String homeMain = 'Home Main';
   static String items = 'Items';
-
-  static String tests = 'Tests';
 
   // Items
   static String itemsMain = 'Items Main';
@@ -26,24 +23,17 @@ class AppRoutes {
   // Store
   static String store = 'Store';
 
-  // Tests
-  static String testMultiSlash = 'Test Multi Slash';
-  static String testMultiComponent = 'Test Multi Component';
-  static String testMultiComponentChild = 'Test Multi Component Child';
-
   //Other
   static String redirect = 'Redirect';
 
   final routes = <QRouteBase>[
     QRoute(
-        name: dashboard,
-        path: '/dashboard',
-        page: (childRouter) => DashboardScreen(childRouter),
+        name: home,
+        path: '/home',
+        page: (childRouter) => HomeScreen(childRouter),
         children: [
           QRoute(
-              name: dashboardMain,
-              path: '/',
-              page: (child) => DashboardContent()),
+              name: homeMain, path: '/', page: (child) => HomeScreenContent()),
           QRoute(
               name: items,
               path: '/items',
@@ -66,31 +56,7 @@ class AppRoutes {
                     page: (c) => ItemDetailsScreen())
               ]),
           OrdersRoutes(),
-          QRoute(
-              name: tests,
-              path: '/test',
-              initRoute: '/multi/slash/path',
-              page: (child) => child.childRouter,
-              children: [
-                QRoute(
-                    name: testMultiSlash,
-                    path: '/multi/slash/path',
-                    page: (child) => Center(
-                            child: Text(
-                          'It Works',
-                          style: TextStyle(fontSize: 22, color: Colors.yellow),
-                        ))),
-                QRoute(
-                    name: testMultiComponent,
-                    path: '/:number/:name',
-                    page: (child) => TestMultiComponent(child),
-                    children: [
-                      QRoute(
-                          name: testMultiComponentChild,
-                          path: '/:childNumber',
-                          page: (child) => TestMultiComponentChild())
-                    ]),
-              ]),
+          TestRoutes(),
         ]),
     QRoute(
         name: store,
@@ -102,7 +68,7 @@ class AppRoutes {
     QRoute(
         name: redirect,
         path: '/redirect',
-        redirectGuard: (path) => '/dashboard/items'),
+        redirectGuard: (path) => '/home/items'),
   ];
 }
 
