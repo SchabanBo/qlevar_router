@@ -95,6 +95,7 @@ class QRoute extends QRouteBase {
     RedirectGuard redirectGuard,
     Function onInit,
     Function onDispose,
+    String initRoute,
     List<QRouteBase> children,
   }) =>
       QRoute(
@@ -104,6 +105,7 @@ class QRoute extends QRouteBase {
         pageType: pageType ?? this.pageType,
         redirectGuard: redirectGuard ?? this.redirectGuard,
         onInit: onInit ?? this.onInit,
+        initRoute: initRoute ?? this.initRoute,
         onDispose: onDispose ?? this.onDispose,
         children: children ?? this.children,
       );
