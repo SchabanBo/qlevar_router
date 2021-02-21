@@ -101,23 +101,24 @@ class QNavigatorController {
         isDebug: true);
     _conManeger.rootController().updateUrl();
     final cleanupList =
-        parentController.updatePage(_getPage(match), type, justUrl);
+        parentController.updatePage(_getPage(match, justUrl), type, justUrl);
     _conManeger.clean(cleanupList);
     match.treeUpdated();
   }
 
-  QPage _getPage(MatchContext match) {
+  QPage _getPage(MatchContext match, bool justUrl) {
     QRouteChild childRoute;
     if (match.childContext != null) {
-      childRoute = _getInnerRouter(match, match.childContext);
+      childRoute = _getInnerRouter(match, match.childContext, justUrl);
     }
     return _PageCreator(match, childRoute).create();
   }
 
-  QRouteChild _getInnerRouter(MatchContext parent, MatchContext match) {
+  QRouteChild _getInnerRouter(
+      MatchContext parent, MatchContext match, bool justUrl) {
     QR.log('Get Router for $match', isDebug: true);
     final childController =
-        createRouterController(parent.key, parent.route.name, match);
+        createRouterController(parent.key, parent.route.name, match, justUrl);
     final childRouter =
         QRouter(routerDelegate: InnerRouterDelegate(childController));
     childController.routeChild =
@@ -126,8 +127,8 @@ class QNavigatorController {
   }
 
   RouterController createRouterController(
-          int key, String name, MatchContext match) =>
-      _conManeger.create(key, name, _getPage(match));
+          int key, String name, MatchContext match, bool justUrl) =>
+      _conManeger.create(key, name, _getPage(match, justUrl), justUrl);
 
   bool pop() {
     if (QR.history.length < 2) {
@@ -143,11 +144,11 @@ class QNavigatorController {
 class _RouterControllerManger {
   final _contollers = <RouterController>[];
 
-  RouterController create(int key, String name, QPage page) {
+  RouterController create(int key, String name, QPage page, bool justUrl) {
     if (_contollers.any((element) => element.key == key)) {
       final controller =
           _contollers.firstWhere((element) => element.key == key);
-      controller.updatePage(page, NavigationType.PopUntilOrPush, false);
+      controller.updatePage(page, NavigationType.PopUntilOrPush, justUrl);
       return controller;
     }
     final controller = RouterController(key: key, name: name, initPage: page);
@@ -179,6 +180,15 @@ class _RouterControllerManger {
           _contollers.firstWhere((element) => element.key == key);
       _contollers.remove(controller);
       QR.log('Controller ${controller.toString()} is Deleted', isDebug: true);
+    }
+  }
+
+  void printAllStacksInfo() {
+    for (var item in _contollers) {
+      for (var page in item.pages) {
+        print(
+            '${item.key}-${item.name} Stack has matchKey: ${page.matchKey} and key ${page.key}');
+      }
     }
   }
 }

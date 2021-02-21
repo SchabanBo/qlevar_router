@@ -7,6 +7,7 @@ import 'multi_component_screen.dart';
 class TestRoutes extends QRouteBuilder {
   static String tests = 'Tests';
   static String testMultiSlash = 'Test Multi Slash';
+  static String testMultiComponentParent = 'Test Multi Component Parent';
   static String testMultiComponent = 'Test Multi Component';
   static String testMultiComponentChild = 'Test Multi Component Child';
   static String testCanChildNavigate = 'Test Can Child Navigate';
@@ -27,14 +28,20 @@ class TestRoutes extends QRouteBuilder {
                       style: TextStyle(fontSize: 22, color: Colors.yellow),
                     ))),
             QRoute(
-                name: testMultiComponent,
-                path: '/:number/:name',
-                page: (child) => TestMultiComponent(child),
+                name: testMultiComponentParent,
+                path: 'multi-component',
+                page: (c) => TestMultiComponentParent(c),
                 children: [
                   QRoute(
-                      name: testMultiComponentChild,
-                      path: '/:childNumber',
-                      page: (child) => TestMultiComponentChild())
+                      name: testMultiComponent,
+                      path: '/:number/:name',
+                      page: (child) => TestMultiComponent(child),
+                      children: [
+                        QRoute(
+                            name: testMultiComponentChild,
+                            path: '/:childNumber',
+                            page: (child) => TestMultiComponentChild())
+                      ]),
                 ]),
             QRoute(
                 name: testCanChildNavigate,

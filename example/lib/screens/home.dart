@@ -102,8 +102,7 @@ class HomeScreenContent extends StatelessWidget {
           const SizedBox(height: 5),
           ElevatedButton(
             onPressed: () {
-              QR.toName(TestRoutes.testMultiComponent,
-                  params: {'name': 'Max', 'number': 55});
+              QR.toName(TestRoutes.testMultiComponentParent);
             },
             child: Text(TestRoutes.testMultiComponent),
           ),

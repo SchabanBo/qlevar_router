@@ -19,7 +19,7 @@ class QRController {
     final match = _getMatch(initRoute);
     match.treeUpdated();
     return QRouterDelegate(
-        _controller.createRouterController(-1, 'Root', match));
+        _controller.createRouterController(-1, 'Root', match, false));
   }
 
   void toPath(
