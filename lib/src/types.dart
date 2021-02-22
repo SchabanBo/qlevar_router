@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import '../qlevar_router.dart';
 import 'qpages.dart';
 
 class QRouter extends Router {
@@ -71,6 +72,10 @@ class QRoute extends QRouteBase {
   /// or [QRCupertinoPage] or [QRPlatformPage] which is default.
   final QRPage pageType;
 
+  /// Set the default navigation mode for this route.
+  /// you still can override this mode when you call with `QR.to` or `QR.toName`
+  final QNaviagtionMode navigationMode;
+
   const QRoute(
       {String name,
       String path,
@@ -80,6 +85,7 @@ class QRoute extends QRouteBase {
       this.onDispose,
       this.redirectGuard,
       this.pageType = const QRPlatformPage(),
+      this.navigationMode,
       this.children})
       : assert(path != null),
         assert(redirectGuard != null || page != null),
@@ -96,6 +102,7 @@ class QRoute extends QRouteBase {
     Function onInit,
     Function onDispose,
     String initRoute,
+    QNaviagtionMode navigationMode,
     List<QRouteBase> children,
   }) =>
       QRoute(
@@ -107,6 +114,7 @@ class QRoute extends QRouteBase {
         onInit: onInit ?? this.onInit,
         initRoute: initRoute ?? this.initRoute,
         onDispose: onDispose ?? this.onDispose,
+        navigationMode: navigationMode ?? this.navigationMode,
         children: children ?? this.children,
       );
 }

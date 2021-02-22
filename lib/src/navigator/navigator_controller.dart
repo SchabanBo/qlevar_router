@@ -20,7 +20,7 @@ class QNavigatorController {
 
   void setNewMatch(MatchContext match, NavigationType type, bool justUrl,
       QNaviagtionMode mode) {
-    mode ??= QR.settings.defaultNavigationMode;
+    mode ??= _getNaviagtionMode(match);
     switch (mode.type) {
       case QNaviagtionModeType.Child:
         _updatePathAsChild(_conManeger.rootController(), match, type, justUrl);
@@ -42,6 +42,11 @@ class QNavigatorController {
       default:
         throw Exception('Unkown QNaviagtionMode');
     }
+  }
+
+  QNaviagtionMode _getNaviagtionMode(MatchContext match) {
+    final newRoute = match.getNewMatch();
+    return newRoute.route.navigationMode ?? QR.settings.defaultNavigationMode;
   }
 
   void _updatePathAsChild(RouterController parentController, MatchContext match,

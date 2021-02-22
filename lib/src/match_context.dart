@@ -53,6 +53,12 @@ class MatchContext {
     }
   }
 
+  MatchContext getNewMatch() {
+    if (isNew) return this;
+    if (childContext != null) return childContext.getNewMatch();
+    return null;
+  }
+
   @override
   String toString() => 'Key: $key, path: $fullPath, Name: ${route.name}';
 }
