@@ -1,3 +1,6 @@
+import 'package:qlevar_router/src/helpers/widgets/stack_tree.dart';
+import 'package:qlevar_router/src/navigator/router_controller.dart';
+
 import 'navigator/navigation_mode.dart';
 import 'navigator/navigation_type.dart';
 import 'params.dart';
@@ -62,7 +65,13 @@ class _QRContext {
           name, params ?? <String, dynamic>{}, type, justUrl, mode);
 
   // back to previous page
-  bool back() => _controller.pop();
+  bool back() => _controller.navigatorController.back();
+
+  RouterController routerOf(String name) =>
+      _controller.navigatorController.routerOf(name);
+
+  DebugStackTree getStackTreeWidget() =>
+      _controller.navigatorController.getStackTreeWidget();
 
   /// wirte log
   void log(String mes, {bool isDebug = false}) {

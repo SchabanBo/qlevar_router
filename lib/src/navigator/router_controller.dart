@@ -8,6 +8,7 @@ import 'page_types.dart';
 class RouterController extends ChangeNotifier {
   final int key;
   final String name;
+  final navKey = GlobalKey<NavigatorState>();
   final _pages = <QPage>[];
   // This pages are the pagesto return when the key is -1.
   // Fix JustUrl problem with root router.
@@ -18,7 +19,7 @@ class RouterController extends ChangeNotifier {
   List<QPage> get pages =>
       List.unmodifiable(_pagesCopy.isNotEmpty ? _pagesCopy : _pages);
 
-  bool get canPop => _pages.isNotEmpty;
+  bool get canPop => _pages.length > 1;
 
   RouterController({this.key, this.name, this.routeChild, QPage initPage}) {
     _pages.add(initPage);
@@ -30,6 +31,15 @@ class RouterController extends ChangeNotifier {
       if (_pagesCopy.isEmpty) _pagesCopy.addAll(_pages);
       notifyListeners();
     }
+  }
+
+  bool pop() {
+    if (!canPop) {
+      return false;
+    }
+    _pages.removeLast();
+    notifyListeners();
+    return true;
   }
 
   List<int> updatePage(QPage page, NavigationType type, bool justUrl) {

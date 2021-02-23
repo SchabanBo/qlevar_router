@@ -6,9 +6,9 @@ import 'qr.dart';
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
-  final key = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> key;
   final RouterController _request;
-  QRouterDelegate(this._request) {
+  QRouterDelegate(this._request) : key = _request.navKey {
     QR.log('Root Controller : $_request', isDebug: true);
     _request.addListener(notifyListeners);
   }

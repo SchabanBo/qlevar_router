@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../helpers/date_time.dart';
+import 'navigation_mode.dart';
 
 class StoreScreen extends StatelessWidget {
   final QRouteChild child;
@@ -15,6 +16,14 @@ class StoreScreen extends StatelessWidget {
         title: Text('Store $now'),
         centerTitle: true,
         actions: [
+          TextButton(
+            onPressed: () => QR.toName(NavigationModeRoutes.navigationMode),
+            child: Text(
+              NavigationModeRoutes.navigationMode,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          const SizedBox(width: 15),
           TextButton(
             onPressed: () {
               QR.to('/store/bottomNavigationBar');

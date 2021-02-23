@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:qlevar_router/src/helpers/widgets/stack_tree.dart';
 import '../../qlevar_router.dart';
 
 import '../helpers/platform/platform_web.dart'
@@ -42,6 +43,7 @@ class QNavigatorController {
       default:
         throw Exception('Unkown QNaviagtionMode');
     }
+    //_conManeger.printAllStacksInfo();
   }
 
   QNaviagtionMode _getNaviagtionMode(MatchContext match) {
@@ -135,7 +137,7 @@ class QNavigatorController {
           int key, String name, MatchContext match, bool justUrl) =>
       _conManeger.create(key, name, _getPage(match, justUrl), justUrl);
 
-  bool pop() {
+  bool back() {
     if (QR.history.length < 2) {
       return false;
     }
@@ -144,10 +146,17 @@ class QNavigatorController {
     QR.history.removeRange(QR.history.length - 2, QR.history.length);
     return true;
   }
+
+  RouterController routerOf(String name) => _conManeger.withName(name);
+
+  DebugStackTree getStackTreeWidget() =>
+      DebugStackTree(_conManeger._contollers);
 }
 
 class _RouterControllerManger {
   final _contollers = <RouterController>[];
+
+  List<RouterController> get controllers => List.unmodifiable(_contollers);
 
   RouterController create(int key, String name, QPage page, bool justUrl) {
     if (_contollers.any((element) => element.key == key)) {
@@ -192,7 +201,7 @@ class _RouterControllerManger {
     for (var item in _contollers) {
       for (var page in item.pages) {
         print(
-            '${item.key}-${item.name} Stack has matchKey: ${page.matchKey} and key ${page.key}');
+            '${item.key}-${item.name} Stack has matchKey: ${page.matchKey} and key ${page.key}, NavKey ${item.navKey.hashCode}');
       }
     }
   }

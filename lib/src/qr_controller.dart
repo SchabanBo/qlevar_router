@@ -1,3 +1,5 @@
+import 'package:qlevar_router/src/navigator/router_controller.dart';
+
 import 'match_context.dart';
 import 'navigator/navigation_mode.dart';
 import 'navigator/navigation_type.dart';
@@ -11,6 +13,8 @@ class QRController {
   /// The internal route Tree
   final _routesTree = RoutesTree();
   final _controller = QNavigatorController();
+
+  QNavigatorController get navigatorController => _controller;
 
   void setTree(List<QRouteBase> routes) => _routesTree.buildTree(routes);
   void logTree() => _routesTree.logTree();
@@ -31,18 +35,29 @@ class QRController {
   void toName(String name, Map<String, dynamic> params, NavigationType type,
       bool justUrl, QNaviagtionMode mode) {
     final match = _routesTree.getNamedMatch(name, params);
-    setNewMatch(match, type, justUrl, mode);
+    setNewMatch(match, type, justUrl, mode, name: name);
   }
 
-  bool pop() => _controller.pop();
+  void setNewMatch(MatchContext match, NavigationType type, bool justUrl,
+      QNaviagtionMode mode,
+      {String name}) {
+    if (mode != null &&
+        name != null &&
+        mode.type == QNaviagtionModeType.ChildOf) {
+      match = getMatchName(name, match);
+    }
+    _controller.setNewMatch(match, type, justUrl, mode);
+  }
 
-  void setNewMatch(
-    MatchContext match,
-    NavigationType type,
-    bool justUrl,
-    QNaviagtionMode mode,
-  ) =>
-      _controller.setNewMatch(match, type, justUrl, mode);
+  MatchContext getMatchName(String name, MatchContext match) {
+    if (name == match.route.name) {
+      return match;
+    }
+    if (match.childContext != null) {
+      return getMatchName(name, match.childContext);
+    }
+    throw Exception('No match with name $name found');
+  }
 
   MatchContext _getMatch(String path) {
     if (!path.startsWith('/')) {

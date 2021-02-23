@@ -5,7 +5,6 @@ import 'router_controller.dart';
 
 // ignore: prefer_mixin
 class InnerRouterDelegate extends RouterDelegate<int> with ChangeNotifier {
-  final key = GlobalKey<NavigatorState>();
   final RouterController _request;
   InnerRouterDelegate(this._request) {
     _request.addListener(notifyListeners);
@@ -13,7 +12,7 @@ class InnerRouterDelegate extends RouterDelegate<int> with ChangeNotifier {
 
   @override
   Widget build(BuildContext context) => Navigator(
-        key: key,
+        key: _request.navKey,
         pages: _request.pages,
         onPopPage: (route, result) {
           if (!route.didPop(result)) {
