@@ -31,6 +31,7 @@ class OrdersScreen extends StatelessWidget {
               child: Text('Back'),
               onPressed: QR.back,
             ),
+            QR.getStackTreeWidget(),
           ],
         ),
         Expanded(

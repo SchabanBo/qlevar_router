@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import '../../match_context.dart';
-import '../../params.dart';
+import '../../qparams.dart';
 import '../../qr.dart';
 import 'tree_types.dart';
 
@@ -55,7 +55,6 @@ class TreeMatcher {
     // Set route info before onInit to use it when it needed.
     QR.currentRoute.fullPath = path;
     QR.currentRoute.params.updateParams(match.getParames());
-    QR.history.add(path);
 
     // Build Match Context
     var routeNode = match;

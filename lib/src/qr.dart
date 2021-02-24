@@ -1,10 +1,9 @@
-import 'package:qlevar_router/src/helpers/widgets/stack_tree.dart';
-import 'package:qlevar_router/src/navigator/navigation_request.dart';
-import 'package:qlevar_router/src/navigator/router_controller.dart';
-
+import 'helpers/widgets/stack_tree.dart';
 import 'navigator/navigation_mode.dart';
+import 'navigator/navigation_request.dart';
 import 'navigator/navigation_type.dart';
-import 'params.dart';
+import 'navigator/router_controller.dart';
+import 'qparams.dart';
 import 'qr_controller.dart';
 import 'route_parser.dart';
 import 'router_delegate.dart';
@@ -20,7 +19,7 @@ class _QRContext {
   final settings = QrSettings();
 
   /// list of string for the paths that has been called.
-  final history = <String>[];
+  final history = <NavigatioRequest>[];
 
   /// The information for the current route
   /// here you can find the params for the current route

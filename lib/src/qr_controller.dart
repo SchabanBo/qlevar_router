@@ -31,8 +31,14 @@ class QRController {
     setNewMatch(request);
   }
 
+  QNaviagtionMode _getNaviagtionMode(MatchContext match) {
+    final newRoute = match.getNewMatch();
+    return newRoute.route.navigationMode ?? QR.settings.defaultNavigationMode;
+  }
+
   void setNewMatch(NavigatioRequest request) {
     var match = _getMatch(request.path);
+    request.mode ??= _getNaviagtionMode(match);
     if (request.mode != null &&
         request.name != null &&
         request.mode.type == QNaviagtionModeType.ChildOf) {

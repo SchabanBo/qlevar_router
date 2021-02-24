@@ -80,26 +80,27 @@ class RouterController extends ChangeNotifier {
         _pages.add(page);
         break;
       default: // NavigationType.PopUntilOrPush
-        final index =
-            _pages.indexWhere((element) => element.sameMatchKey(page.matchKey));
-        if (index == -1) {
-          // Page not exist add it.
-          _pages.add(page);
-          break;
-        }
-        if (index == _pages.length - 1) {
-          // Page is on top replace it.
-          _pages.removeAt(index);
-          _pages.add(page);
-          break;
-        }
-        // page exist remove unit it
-        for (var i = index + 1; i < _pages.length; i++) {
-          final pageToRemove = _pages[i];
-          cleanup.add(pageToRemove.matchKey);
-          _pages.remove(pageToRemove);
-          i--;
-        }
+        _pages.add(page);
+      // final index =
+      //     _pages.indexWhere((element) => element.sameMatchKey(page.matchKey));
+      // if (index == -1) {
+      //   // Page not exist add it.
+      //   _pages.add(page);
+      //   break;
+      // }
+      // // if (index == _pages.length - 1) {
+      // //   // Page is on top replace it.
+      // //   _pages.removeAt(index);
+      // //   _pages.add(page);
+      // //   break;
+      // // }
+      // // page exist remove unit it
+      // for (var i = index + 1; i < _pages.length; i++) {
+      //   final pageToRemove = _pages[i];
+      //   cleanup.add(pageToRemove.matchKey);
+      //   _pages.remove(pageToRemove);
+      //   i--;
+      // }
     }
     return cleanup;
   }

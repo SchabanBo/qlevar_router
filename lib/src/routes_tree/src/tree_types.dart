@@ -1,6 +1,6 @@
 import '../../../qlevar_router.dart';
 import '../../match_context.dart';
-import '../../params.dart';
+import '../../qparams.dart';
 
 class Tree {
   final routes = <QRouteInternal>[];

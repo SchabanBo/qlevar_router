@@ -3,6 +3,7 @@ import '../../qlevar_router.dart';
 class NavigatioRequest {
   String path;
   String name;
+  String parentName;
   NavigationType type;
   bool justUrl;
   QNaviagtionMode mode;

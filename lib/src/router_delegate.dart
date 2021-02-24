@@ -26,6 +26,10 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(String route) {
+    if (QR.history.isNotEmpty && route == QR.history.last.path) {
+      QR.back();
+      return SynchronousFuture(null);
+    }
     QR.to(route);
     return SynchronousFuture(null);
   }
