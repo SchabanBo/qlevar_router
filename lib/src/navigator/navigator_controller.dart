@@ -2,16 +2,17 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:qlevar_router/src/helpers/widgets/stack_tree.dart';
-import '../../qlevar_router.dart';
 
+import '../../qlevar_router.dart';
 import '../helpers/platform/platform_web.dart'
     if (dart.library.io) '../helpers/platform/platform_io.dart';
+import '../helpers/widgets/stack_tree.dart';
 import '../match_context.dart';
 import '../qpages.dart';
 import '../qr.dart';
 import '../types.dart';
 import 'inner_router_delegate.dart';
+import 'navigation_request.dart';
 import 'navigation_type.dart';
 import 'page_types.dart';
 import 'router_controller.dart';
@@ -19,26 +20,27 @@ import 'router_controller.dart';
 class QNavigatorController {
   final _conManeger = _RouterControllerManger();
 
-  void setNewMatch(MatchContext match, NavigationType type, bool justUrl,
-      QNaviagtionMode mode) {
-    mode ??= _getNaviagtionMode(match);
-    switch (mode.type) {
+  void setNewMatch(MatchContext match, NavigatioRequest request) {
+    request.mode ??= _getNaviagtionMode(match);
+    switch (request.mode.type) {
       case QNaviagtionModeType.Child:
-        _updatePathAsChild(_conManeger.rootController(), match, type, justUrl);
+        _updatePathAsChild(
+            _conManeger.rootController(), match, request.type, request.justUrl);
         break;
       case QNaviagtionModeType.ChildOf:
         // required the parent to be already in the tree.
-        final parentController = _conManeger.withName(mode.name);
+        final parentController = _conManeger.withName(request.mode.name);
         if (parentController == null) {
           throw Exception(
-              'Route with name ${mode.name} is not in the active tree');
+              'Route with name ${request.mode.name} is not in the active tree');
         }
-        _updateIfAllowed(parentController, match, type, justUrl);
+        _updateIfAllowed(
+            parentController, match, request.type, request.justUrl);
         break;
       case QNaviagtionModeType.StackTo:
         // required the parent to be already in the old (to get the contoller)
         //and new (to use it as start point) tree.
-        _updatePathAsStack(mode.name, match, justUrl);
+        _updatePathAsStack(request.mode.name, match, request.justUrl);
         break;
       default:
         throw Exception('Unkown QNaviagtionMode');

@@ -1,8 +1,6 @@
-import 'package:qlevar_router/src/navigator/router_controller.dart';
-
 import 'match_context.dart';
 import 'navigator/navigation_mode.dart';
-import 'navigator/navigation_type.dart';
+import 'navigator/navigation_request.dart';
 import 'navigator/navigator_controller.dart';
 import 'qr.dart';
 import 'router_delegate.dart';
@@ -26,27 +24,21 @@ class QRController {
         _controller.createRouterController(-1, 'Root', match, false));
   }
 
-  void toPath(
-      String path, NavigationType type, bool justUrl, QNaviagtionMode mode) {
-    final match = _getMatch(path);
-    setNewMatch(match, type, justUrl, mode);
+  void toPath(NavigatioRequest request) => setNewMatch(request);
+
+  void toName(NavigatioRequest request, Map<String, dynamic> params) {
+    request.path = _routesTree.findPathFromName(request.name, params);
+    setNewMatch(request);
   }
 
-  void toName(String name, Map<String, dynamic> params, NavigationType type,
-      bool justUrl, QNaviagtionMode mode) {
-    final match = _routesTree.getNamedMatch(name, params);
-    setNewMatch(match, type, justUrl, mode, name: name);
-  }
-
-  void setNewMatch(MatchContext match, NavigationType type, bool justUrl,
-      QNaviagtionMode mode,
-      {String name}) {
-    if (mode != null &&
-        name != null &&
-        mode.type == QNaviagtionModeType.ChildOf) {
-      match = getMatchName(name, match);
+  void setNewMatch(NavigatioRequest request) {
+    var match = _getMatch(request.path);
+    if (request.mode != null &&
+        request.name != null &&
+        request.mode.type == QNaviagtionModeType.ChildOf) {
+      match = getMatchName(request.name, match);
     }
-    _controller.setNewMatch(match, type, justUrl, mode);
+    _controller.setNewMatch(match, request);
   }
 
   MatchContext getMatchName(String name, MatchContext match) {

@@ -1,4 +1,5 @@
 import 'package:qlevar_router/src/helpers/widgets/stack_tree.dart';
+import 'package:qlevar_router/src/navigator/navigation_request.dart';
 import 'package:qlevar_router/src/navigator/router_controller.dart';
 
 import 'navigator/navigation_mode.dart';
@@ -50,7 +51,7 @@ class _QRContext {
     bool justUrl = false,
     QNaviagtionMode mode,
   }) =>
-      _controller.toPath(path, type, justUrl, mode);
+      _controller.toPath(NavigatioRequest(path, null, justUrl, mode, type));
 
   /// Navigate to new page with [Name]
   /// Give the name of the route and the [params] to apply
@@ -61,8 +62,8 @@ class _QRContext {
     bool justUrl = false,
     QNaviagtionMode mode,
   }) =>
-      _controller.toName(
-          name, params ?? <String, dynamic>{}, type, justUrl, mode);
+      _controller.toName(NavigatioRequest(null, name, justUrl, mode, type),
+          params ?? <String, dynamic>{});
 
   // back to previous page
   bool back() => _controller.navigatorController.back();
