@@ -97,7 +97,9 @@ class PageOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: QR.getStackTreeWidget(),
+      ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

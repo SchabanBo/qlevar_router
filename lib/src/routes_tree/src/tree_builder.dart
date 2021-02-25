@@ -24,9 +24,12 @@ class TreeBuilder {
       if (route.name != null) {
         tree.treeIndex[route.name] = fullPath;
       }
+
       // Add children default init
-      if (route.children != null &&
-          !route.children.any((element) => element.path == '/')) {
+      final needInitRoute = route.children != null &&
+          (!route.children.any((element) => element.path == '/') ||
+              route.initRoute == null);
+      if (needInitRoute) {
         route.children.add(QRoute(
           path: '/',
           name: '${route.name} Init',
@@ -116,7 +119,7 @@ class TreeBuilder {
   void _checkRoutes(List<QRouteBase> routes) {
     if (routes.map((e) => e.path).contains('/notfound') == false) {
       routes.add(QRoute(
-          path: '/notfound',
+          path: '/${QR.settings.notFoundPagePath}',
           page: (r) => Material(
                 child: Center(
                   child: Text('Page Not Found "${QR.currentRoute.fullPath}"'),

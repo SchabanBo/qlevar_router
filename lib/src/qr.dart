@@ -52,6 +52,35 @@ class _QRContext {
   }) =>
       _controller.toPath(NavigatioRequest(path, null, justUrl, mode, type));
 
+  void push(
+    String path, {
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      to(path, justUrl: justUrl, mode: mode, type: NavigationType.Push);
+
+  void replaceAll(
+    String path, {
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      to(path, justUrl: justUrl, mode: mode, type: NavigationType.ReplaceAll);
+
+  void replaceLast(
+    String path, {
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      to(path, justUrl: justUrl, mode: mode, type: NavigationType.ReplaceLast);
+
+  void popUntilOrPush(
+    String path, {
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      to(path,
+          justUrl: justUrl, mode: mode, type: NavigationType.PopUntilOrPush);
+
   /// Navigate to new page with [Name]
   /// Give the name of the route and the [params] to apply
   void toName(
@@ -63,6 +92,54 @@ class _QRContext {
   }) =>
       _controller.toName(NavigatioRequest(null, name, justUrl, mode, type),
           params ?? <String, dynamic>{});
+
+  void pushName(
+    String name, {
+    Map<String, dynamic> params,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      toName(name,
+          params: params,
+          justUrl: justUrl,
+          mode: mode,
+          type: NavigationType.Push);
+
+  void replaceAllName(
+    String name, {
+    Map<String, dynamic> params,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      toName(name,
+          params: params,
+          justUrl: justUrl,
+          mode: mode,
+          type: NavigationType.ReplaceAll);
+
+  void replaceLastName(
+    String name, {
+    Map<String, dynamic> params,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      toName(name,
+          params: params,
+          justUrl: justUrl,
+          mode: mode,
+          type: NavigationType.ReplaceLast);
+
+  void popUntilOrPushName(
+    String name, {
+    Map<String, dynamic> params,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      toName(name,
+          params: params,
+          justUrl: justUrl,
+          mode: mode,
+          type: NavigationType.PopUntilOrPush);
 
   // back to previous page
   bool back() => _controller.navigatorController.back();
@@ -94,6 +171,8 @@ class _QCurrentRoute {
 class QrSettings {
   bool enableLog = true;
   bool enableDebugLog = false;
+  // Add the default not found page path without slash.
+  String notFoundPagePath = 'notfound';
   QNaviagtionMode defaultNavigationMode = QNaviagtionMode.asChild();
   Function(String) logger = print;
 }

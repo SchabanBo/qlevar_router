@@ -20,6 +20,7 @@ class QRController {
   QRouterDelegate createDelegate(String initRoute) {
     final match = _getMatch(initRoute);
     match.treeUpdated();
+    QR.history.add(NavigatioRequest(initRoute, null, false, null, null));
     return QRouterDelegate(
         _controller.createRouterController(-1, 'Root', match, false));
   }

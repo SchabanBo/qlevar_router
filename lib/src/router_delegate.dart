@@ -27,14 +27,13 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(String route) {
-    QR.log('POPPPPPPPPPPPPP');
     // I Don't know why but when the user press the back button in the browser
     // the framework will report this route multiple time.
     if (!_isNewRoute) {
       return SynchronousFuture(null);
     }
     _isNewRoute = false;
-    Future.delayed(Duration(milliseconds: 500), () => _isNewRoute = true);
+    Future.delayed(Duration(milliseconds: 200), () => _isNewRoute = true);
 
     if (QR.history.length > 1 &&
         route == QR.history[QR.history.length - 2].path) {

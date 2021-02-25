@@ -50,12 +50,12 @@ class QNavigatorController {
 
   String _updatePathAsChild(RouterController parentController,
       MatchContext match, NavigationType type, bool justUrl) {
-    if (match.isNew) {
+    final controller = _conManeger.withKey(match.key);
+    if (controller == null) {
       return _updateIfAllowed(parentController, match, type, justUrl);
     }
     if (match.childContext != null) {
       QR.log('$match is the old route. checking child', isDebug: true);
-      final controller = _conManeger.withKey(match.key);
       controller.childCalled(match.childContext.route);
       return _updatePathAsChild(controller, match.childContext, type, justUrl);
     }
@@ -154,11 +154,16 @@ class QNavigatorController {
 
   PopResult _tryPop() {
     final last = QR.history.last;
+    RouterController controller;
     if (last.mode.type == QNaviagtionModeType.ChildOf) {
-      return _conManeger.withName(last.mode.name).pop();
+      controller = _conManeger.withName(last.mode.name);
     }
     if (last.parentName != null) {
-      return _conManeger.withName(last.parentName).pop();
+      controller = _conManeger.withName(last.parentName);
+    }
+    if (controller != null) {
+      //controller.childCalled()
+      return controller.pop();
     }
     return PopResult(false);
   }

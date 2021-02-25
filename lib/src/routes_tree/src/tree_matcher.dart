@@ -191,7 +191,8 @@ class TreeMatcher {
   // Get match object for notFound Page.
   MatchRoute _notFound(String path) {
     QR.currentRoute.fullPath = path;
-    final match = MatchRoute.fromTree(routes: _tree.routes, path: 'notfound');
+    final match = MatchRoute.fromTree(
+        routes: _tree.routes, path: QR.settings.notFoundPagePath);
     return match;
   }
 }
