@@ -33,7 +33,7 @@ class QRController {
 
   QNaviagtionMode _getNaviagtionMode(MatchContext match) {
     final newRoute = match.getNewMatch();
-    return newRoute.route.navigationMode ?? QR.settings.defaultNavigationMode;
+    return newRoute?.route?.navigationMode ?? QR.settings.defaultNavigationMode;
   }
 
   void setNewMatch(NavigatioRequest request) {

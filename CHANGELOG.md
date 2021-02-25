@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [0.4.0]
+
+- Optimize pop behaver, now with `QR.back` if the current page can pop it will pop, otherwise it will be created.
+- Finish and test `childOf` NavigationMode.
+- Browser Back button will pop too if it can.
+- Fix some minor issues.
+- Add `DebugStackTreeWidget`.
+- Save more information about the route history.
+
 ## [0.3.5] 17.02.2021
 
 - Fix Error with extra slash at the end of the route.

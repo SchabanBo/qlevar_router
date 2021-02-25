@@ -8,6 +8,7 @@ import 'qr.dart';
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   final GlobalKey<NavigatorState> key;
   final RouterController _request;
+  bool _isNewRoute = true;
   QRouterDelegate(this._request) : key = _request.navKey {
     QR.log('Root Controller : $_request', isDebug: true);
     _request.addListener(notifyListeners);
@@ -26,7 +27,17 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(String route) {
-    if (QR.history.isNotEmpty && route == QR.history.last.path) {
+    QR.log('POPPPPPPPPPPPPP');
+    // I Don't know why but when the user press the back button in the browser
+    // the framework will report this route multiple time.
+    if (!_isNewRoute) {
+      return SynchronousFuture(null);
+    }
+    _isNewRoute = false;
+    Future.delayed(Duration(milliseconds: 500), () => _isNewRoute = true);
+
+    if (QR.history.length > 1 &&
+        route == QR.history[QR.history.length - 2].path) {
       QR.back();
       return SynchronousFuture(null);
     }

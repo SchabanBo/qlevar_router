@@ -1,8 +1,8 @@
-import 'package:example/helpers/qbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../helpers/date_time.dart';
+import '../../helpers/qbutton.dart';
 
 class NavigationModeRoutes extends QRouteBuilder {
   static const navigationMode = "Navigation Mode";

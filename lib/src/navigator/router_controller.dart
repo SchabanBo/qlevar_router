@@ -33,18 +33,20 @@ class RouterController extends ChangeNotifier {
     }
   }
 
-  bool pop() {
+  PopResult pop() {
     if (!canPop) {
-      return false;
+      QR.log('Page cant pop, no aother page in the satck');
+      return PopResult(false);
     }
+    final cleanup = _pages.last.matchKey;
     _pages.removeLast();
     notifyListeners();
-    return true;
+    return PopResult(true, cleanup: cleanup);
   }
 
   List<int> updatePage(QPage page, NavigationType type, bool justUrl) {
     QR.log('Update ${justUrl ? 'Url' : 'Page'} $name');
-    type ??= NavigationType.PopUntilOrPush;
+    type ??= NavigationType.Push;
     final result = _updatePages(page, type);
     QR.log('Update ${toString()} with type $type and remove $result',
         isDebug: true);
@@ -63,13 +65,6 @@ class RouterController extends ChangeNotifier {
         _pages.clear();
         _pages.add(page);
         break;
-      case NavigationType.Pop:
-        if (_pages.length <= 1) {
-          throw Exception(
-              'Can not pop page, stak contains only one page $toString()');
-        }
-        _pages.removeLast();
-        break;
       case NavigationType.Push:
         _pages.add(page);
         break;
@@ -80,27 +75,26 @@ class RouterController extends ChangeNotifier {
         _pages.add(page);
         break;
       default: // NavigationType.PopUntilOrPush
-        _pages.add(page);
-      // final index =
-      //     _pages.indexWhere((element) => element.sameMatchKey(page.matchKey));
-      // if (index == -1) {
-      //   // Page not exist add it.
-      //   _pages.add(page);
-      //   break;
-      // }
-      // // if (index == _pages.length - 1) {
-      // //   // Page is on top replace it.
-      // //   _pages.removeAt(index);
-      // //   _pages.add(page);
-      // //   break;
-      // // }
-      // // page exist remove unit it
-      // for (var i = index + 1; i < _pages.length; i++) {
-      //   final pageToRemove = _pages[i];
-      //   cleanup.add(pageToRemove.matchKey);
-      //   _pages.remove(pageToRemove);
-      //   i--;
-      // }
+        final index =
+            _pages.indexWhere((element) => element.sameMatchKey(page.matchKey));
+        if (index == -1) {
+          // Page not exist add it.
+          _pages.add(page);
+          break;
+        }
+        if (index == _pages.length - 1) {
+          // Page is on top replace it.
+          _pages.removeAt(index);
+          _pages.add(page);
+          break;
+        }
+        // page exist remove unit it
+        for (var i = index + 1; i < _pages.length; i++) {
+          final pageToRemove = _pages[i];
+          cleanup.add(pageToRemove.matchKey);
+          _pages.remove(pageToRemove);
+          i--;
+        }
     }
     return cleanup;
   }
@@ -114,4 +108,10 @@ class RouterController extends ChangeNotifier {
 
   @override
   String toString() => 'Key: $key, name: $name [$hashCode]';
+}
+
+class PopResult {
+  final bool didPop;
+  final int cleanup;
+  PopResult(this.didPop, {this.cleanup});
 }

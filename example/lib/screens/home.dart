@@ -15,7 +15,9 @@ class HomeScreen extends StatelessWidget {
         elevation: 5,
         bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
-        title: InkWell(onTap: () => QR.to('/home'), child: Text('Home $now')),
+        title: InkWell(
+            onTap: () => QR.to('/home', type: NavigationType.ReplaceAll),
+            child: Text('Home $now')),
         centerTitle: true,
         actions: [
           TextButton(

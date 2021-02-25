@@ -135,9 +135,13 @@ class QNavigatorController {
       _conManeger.create(key, name, _getPage(match, justUrl), justUrl);
 
   bool back() {
-    if (_tryPop()) {
+    final popResult = _tryPop();
+    if (popResult.didPop) {
+      _conManeger.clean([popResult.cleanup]);
+      QR.history.removeLast();
       QR.currentRoute.fullPath = QR.history.last.path;
       _conManeger.rootController().updateUrl();
+      return true;
     }
     if (QR.history.length < 2) {
       return false;
@@ -148,16 +152,15 @@ class QNavigatorController {
     return true;
   }
 
-  bool _tryPop() {
+  PopResult _tryPop() {
     final last = QR.history.last;
     if (last.mode.type == QNaviagtionModeType.ChildOf) {
-      QR.history.remove(last);
       return _conManeger.withName(last.mode.name).pop();
     }
     if (last.parentName != null) {
       return _conManeger.withName(last.parentName).pop();
     }
-    return false;
+    return PopResult(false);
   }
 
   RouterController routerOf(String name) => _conManeger.withName(name);
@@ -207,15 +210,6 @@ class _RouterControllerManger {
           _contollers.firstWhere((element) => element.key == key);
       _contollers.remove(controller);
       QR.log('Controller ${controller.toString()} is Deleted', isDebug: true);
-    }
-  }
-
-  void printAllStacksInfo() {
-    for (var item in _contollers) {
-      for (var page in item.pages) {
-        print(
-            '${item.key}-${item.name} Stack has matchKey: ${page.matchKey} and key ${page.key}, NavKey ${item.navKey.hashCode}');
-      }
     }
   }
 }
