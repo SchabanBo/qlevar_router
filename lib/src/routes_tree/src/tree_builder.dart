@@ -34,6 +34,7 @@ class TreeBuilder {
           path: '/',
           name: '${route.name} Init',
           page: (c) => Container(),
+          pageType: route.pageType,
         ));
       }
       _route.children.addAll(_buildTree(tree, route.children, fullPath));
@@ -69,7 +70,8 @@ class TreeBuilder {
           newRoute = QRoute(
               path: pathSegments[i],
               page: (c) => c.childRouter,
-              children: [newRoute]);
+              children: [newRoute],
+              pageType: route.pageType);
         }
         path = pathSegments.first;
         route = newRoute;
@@ -94,7 +96,10 @@ class TreeBuilder {
 
       final newRoute = group.value.any(notHasChildren)
           ? group.value.firstWhere(notHasChildren)
-          : QRoute(path: group.key, page: (c) => c.childRouter);
+          : QRoute(
+              path: group.key,
+              page: (c) => c.childRouter,
+              pageType: group.value.first.pageType);
 
       final children = group.value
           .where((e) => e.children.notNullOrEmpty)
