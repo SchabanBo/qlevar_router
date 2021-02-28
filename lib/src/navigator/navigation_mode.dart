@@ -12,7 +12,7 @@ class QNaviagtionMode {
   factory QNaviagtionMode.asStackTo(String name) =>
       QNaviagtionMode(QNaviagtionModeType.StackTo, name);
 
-  factory QNaviagtionMode.asRootChildren() =>
+  factory QNaviagtionMode.asRootChild() =>
       QNaviagtionMode(QNaviagtionModeType.ChildOf, 'Root');
 
   factory QNaviagtionMode.asRootStack() =>

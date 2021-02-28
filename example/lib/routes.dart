@@ -7,6 +7,7 @@ import 'screens/dashboard/items.dart';
 import 'screens/dashboard/orders.dart';
 import 'screens/home.dart';
 import 'screens/store/bottom_nav_bar.dart';
+import 'screens/store/navigation_mode.dart';
 import 'screens/store/store.dart';
 import 'screens/tests_screens/test_routes.dart';
 
@@ -63,7 +64,13 @@ class AppRoutes {
         path: '/store',
         page: (childRouter) => StoreScreen(childRouter),
         children: [
+          QRoute(
+            path: '/',
+            name: 'StoreInit',
+            page: (c) => StoreInitPage(),
+          ),
           BottomNavigationBarExampleRoutes(),
+          NavigationModeRoutes(),
         ]),
     QRoute(
         name: redirect,

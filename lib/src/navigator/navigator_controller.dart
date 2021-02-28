@@ -2,15 +2,17 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import '../../qlevar_router.dart';
 
+import '../../qlevar_router.dart';
 import '../helpers/platform/platform_web.dart'
     if (dart.library.io) '../helpers/platform/platform_io.dart';
+import '../helpers/widgets/stack_tree.dart';
 import '../match_context.dart';
 import '../qpages.dart';
 import '../qr.dart';
 import '../types.dart';
 import 'inner_router_delegate.dart';
+import 'navigation_request.dart';
 import 'navigation_type.dart';
 import 'page_types.dart';
 import 'router_controller.dart';
@@ -18,71 +20,72 @@ import 'router_controller.dart';
 class QNavigatorController {
   final _conManeger = _RouterControllerManger();
 
-  void setNewMatch(MatchContext match, NavigationType type, bool justUrl,
-      QNaviagtionMode mode) {
-    mode ??= QR.settings.defaultNavigationMode;
-    switch (mode.type) {
+  void setNewMatch(MatchContext match, NavigatioRequest request) {
+    switch (request.mode.type) {
       case QNaviagtionModeType.Child:
-        _updatePathAsChild(_conManeger.rootController(), match, type, justUrl);
+        request.parentName = _updatePathAsChild(
+            _conManeger.rootController(), match, request.type, request.justUrl);
         break;
       case QNaviagtionModeType.ChildOf:
         // required the parent to be already in the tree.
-        final parentController = _conManeger.withName(mode.name);
+        final parentController = _conManeger.withName(request.mode.name);
         if (parentController == null) {
           throw Exception(
-              'Route with name ${mode.name} is not in the active tree');
+              'Route with name ${request.mode.name} is not in the active tree');
         }
-        _updateIfAllowed(parentController, match, type, justUrl);
+        request.parentName = _updateIfAllowed(
+            parentController, match, request.type, request.justUrl);
         break;
-      case QNaviagtionModeType.StackTo:
-        // required the parent to be already in the old (to get the contoller)
-        //and new (to use it as start point) tree.
-        _updatePathAsStack(mode.name, match, justUrl);
-        break;
+      // case QNaviagtionModeType.StackTo:
+      //   // required the parent to be already in the old (to get the contoller)
+      //   //and new (to use it as start point) tree.
+      //   _updatePathAsStack(request.mode.name, match, request.justUrl);
+      //   break;
       default:
-        throw Exception('Unkown QNaviagtionMode');
+        throw Exception('Unknown QNaviagtionMode');
     }
+    QR.history.add(request);
+    //_conManeger.printAllStacksInfo();
   }
 
-  void _updatePathAsChild(RouterController parentController, MatchContext match,
-      NavigationType type, bool justUrl) {
-    if (match.isNew) {
-      _updateIfAllowed(parentController, match, type, justUrl);
-      return;
+  String _updatePathAsChild(RouterController parentController,
+      MatchContext match, NavigationType type, bool justUrl) {
+    final controller = _conManeger.withKey(match.key);
+    if (match.isNew || controller == null) {
+      return _updateIfAllowed(parentController, match, type, justUrl);
     }
     if (match.childContext != null) {
       QR.log('$match is the old route. checking child', isDebug: true);
-      final controller = _conManeger.withKey(match.key);
       controller.childCalled(match.childContext.route);
-      _updatePathAsChild(controller, match.childContext, type, justUrl);
-      return;
+      parentController.setChildOnTop(match.key);
+      return _updatePathAsChild(controller, match.childContext, type, justUrl);
     }
     QR.log('No changes for $match was found');
+    return null;
   }
 
-  void _updatePathAsStack(String name, MatchContext match, bool justUrl) {
-    if (match.route.name != name && name != 'Root') {
-      if (match.childContext == null) {
-        throw Exception('Route with name $name is not in the current tree');
-      }
-      _updatePathAsStack(name, match.childContext, justUrl);
-    }
-    final controller = _conManeger.withName(name);
-    if (controller == null) {
-      throw Exception('Route with name $name is not in the active tree');
-    }
-    QR.history.removeLast();
-    while (match.childContext != null) {
-      final matchCopy = match.childContext.copyWith();
-      matchCopy.childContext = null;
-      _updateIfAllowed(controller, matchCopy, NavigationType.Push,
-          match.childContext.childContext == null ? justUrl : true);
-      match = match.childContext;
-      QR.history.add(match.fullPath);
-    }
-  }
+  // void _updatePathAsStack(String name, MatchContext match, bool justUrl) {
+  //   if (match.route.name != name && name != 'Root') {
+  //     if (match.childContext == null) {
+  //       throw Exception('Route with name $name is not in the current tree');
+  //     }
+  //     _updatePathAsStack(name, match.childContext, justUrl);
+  //   }
+  //   final controller = _conManeger.withName(name);
+  //   if (controller == null) {
+  //     throw Exception('Route with name $name is not in the active tree');
+  //   }
+  //   while (match.childContext != null) {
+  //     final matchCopy = match.childContext.copyWith();
+  //     matchCopy.childContext = null;
+  //     _updateIfAllowed(controller, matchCopy, NavigationType.Push,
+  //         match.childContext.childContext == null ? justUrl : true);
+  //     match = match.childContext;
+  //     QR.history.add(match.fullPath);
+  //   }
+  // }
 
-  void _updateIfAllowed(RouterController parentController, MatchContext match,
+  String _updateIfAllowed(RouterController parentController, MatchContext match,
       NavigationType type, bool justUrl) {
     if (parentController.routeChild?.canChildNavigation != null) {
       parentController.routeChild.canChildNavigation().then((can) {
@@ -93,6 +96,8 @@ class QNavigatorController {
     } else {
       _update(parentController, match, type, justUrl);
     }
+
+    return parentController.name;
   }
 
   void _update(RouterController parentController, MatchContext match,
@@ -130,19 +135,51 @@ class QNavigatorController {
           int key, String name, MatchContext match, bool justUrl) =>
       _conManeger.create(key, name, _getPage(match, justUrl), justUrl);
 
-  bool pop() {
+  bool back() {
+    final popResult = _tryPop();
+    if (popResult.didPop) {
+      _conManeger.clean([popResult.cleanup]);
+      QR.history.removeLast();
+      QR.currentRoute.fullPath = QR.history.last.path;
+      _conManeger.rootController().updateUrl();
+      return true;
+    }
     if (QR.history.length < 2) {
       return false;
     }
-    QR.to(QR.history.elementAt(QR.history.length - 2),
+    QR.to(QR.history.elementAt(QR.history.length - 2).path,
         type: NavigationType.PopUntilOrPush);
     QR.history.removeRange(QR.history.length - 2, QR.history.length);
     return true;
   }
+
+  PopResult _tryPop() {
+    final last = QR.history.last;
+    RouterController controller;
+    if (last.mode.type != null &&
+        last.mode.type == QNaviagtionModeType.ChildOf) {
+      controller = _conManeger.withName(last.mode.name);
+    }
+    if (last.parentName != null) {
+      controller = _conManeger.withName(last.parentName);
+    }
+    if (controller != null) {
+      //controller.childCalled()
+      return controller.pop();
+    }
+    return PopResult(false);
+  }
+
+  RouterController routerOf(String name) => _conManeger.withName(name);
+
+  DebugStackTree getStackTreeWidget() =>
+      DebugStackTree(_conManeger._contollers);
 }
 
 class _RouterControllerManger {
   final _contollers = <RouterController>[];
+
+  List<RouterController> get controllers => List.unmodifiable(_contollers);
 
   RouterController create(int key, String name, QPage page, bool justUrl) {
     if (_contollers.any((element) => element.key == key)) {
@@ -180,15 +217,6 @@ class _RouterControllerManger {
           _contollers.firstWhere((element) => element.key == key);
       _contollers.remove(controller);
       QR.log('Controller ${controller.toString()} is Deleted', isDebug: true);
-    }
-  }
-
-  void printAllStacksInfo() {
-    for (var item in _contollers) {
-      for (var page in item.pages) {
-        print(
-            '${item.key}-${item.name} Stack has matchKey: ${page.matchKey} and key ${page.key}');
-      }
     }
   }
 }

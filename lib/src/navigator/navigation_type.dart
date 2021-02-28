@@ -3,9 +3,6 @@ enum NavigationType {
   /// place the new page on the top of the stack.
   Push,
 
-  /// Go back one page in the stack.
-  Pop,
-
   /// remove all page from the stack and place this on on the top.
   ReplaceAll,
 

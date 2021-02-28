@@ -31,7 +31,38 @@ class RoutesTree {
     return _matcher.getMatch(path);
   }
 
-  MatchContext getNamedMatch(String name, Map<String, dynamic> params) {
-    return _matcher.getMatch(_matcher.findPathFromName(name, params));
+  String findPathFromName(String name, Map<String, dynamic> params) {
+    var path = _tree.treeIndex[name];
+    assert(path != null, 'Path name not found');
+    final pathParams = <String, dynamic>{};
+
+    // Search for component params
+    for (var param in params.entries) {
+      if (path.contains(':${param.key}')) {
+        path = path.replaceAll(':${param.key}', param.value.toString());
+      } else {
+        pathParams.addEntries([param]);
+      }
+    }
+
+    // Replace old component
+    for (var param in QR.params.asMap.entries) {
+      if (path.contains(':${param.key}')) {
+        path = path.replaceAll(':${param.key}', param.value.value);
+      }
+    }
+
+    if (pathParams.isNotEmpty) {
+      path = '$path?';
+      // Build the params
+      for (var i = 0; i < pathParams.length; i++) {
+        final param = pathParams.entries.toList()[i];
+        path = '$path${param.key}=${param.value}';
+        if (i != pathParams.length - 1) {
+          path = '$path&';
+        }
+      }
+    }
+    return path;
   }
 }
