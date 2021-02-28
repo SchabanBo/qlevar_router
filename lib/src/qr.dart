@@ -1,6 +1,9 @@
+import 'helpers/widgets/stack_tree.dart';
 import 'navigator/navigation_mode.dart';
+import 'navigator/navigation_request.dart';
 import 'navigator/navigation_type.dart';
-import 'params.dart';
+import 'navigator/router_controller.dart';
+import 'qparams.dart';
 import 'qr_controller.dart';
 import 'route_parser.dart';
 import 'router_delegate.dart';
@@ -16,7 +19,7 @@ class _QRContext {
   final settings = QrSettings();
 
   /// list of string for the paths that has been called.
-  final history = <String>[];
+  final history = <NavigatioRequest>[];
 
   /// The information for the current route
   /// here you can find the params for the current route
@@ -47,7 +50,36 @@ class _QRContext {
     bool justUrl = false,
     QNaviagtionMode mode,
   }) =>
-      _controller.toPath(path, type, justUrl, mode);
+      _controller.toPath(NavigatioRequest(path, null, justUrl, mode, type));
+
+  void push(
+    String path, {
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      to(path, justUrl: justUrl, mode: mode, type: NavigationType.Push);
+
+  void replaceAll(
+    String path, {
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      to(path, justUrl: justUrl, mode: mode, type: NavigationType.ReplaceAll);
+
+  void replaceLast(
+    String path, {
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      to(path, justUrl: justUrl, mode: mode, type: NavigationType.ReplaceLast);
+
+  void popUntilOrPush(
+    String path, {
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      to(path,
+          justUrl: justUrl, mode: mode, type: NavigationType.PopUntilOrPush);
 
   /// Navigate to new page with [Name]
   /// Give the name of the route and the [params] to apply
@@ -58,11 +90,65 @@ class _QRContext {
     bool justUrl = false,
     QNaviagtionMode mode,
   }) =>
-      _controller.toName(
-          name, params ?? <String, dynamic>{}, type, justUrl, mode);
+      _controller.toName(NavigatioRequest(null, name, justUrl, mode, type),
+          params ?? <String, dynamic>{});
+
+  void pushName(
+    String name, {
+    Map<String, dynamic> params,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      toName(name,
+          params: params,
+          justUrl: justUrl,
+          mode: mode,
+          type: NavigationType.Push);
+
+  void replaceAllName(
+    String name, {
+    Map<String, dynamic> params,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      toName(name,
+          params: params,
+          justUrl: justUrl,
+          mode: mode,
+          type: NavigationType.ReplaceAll);
+
+  void replaceLastName(
+    String name, {
+    Map<String, dynamic> params,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      toName(name,
+          params: params,
+          justUrl: justUrl,
+          mode: mode,
+          type: NavigationType.ReplaceLast);
+
+  void popUntilOrPushName(
+    String name, {
+    Map<String, dynamic> params,
+    bool justUrl = false,
+    QNaviagtionMode mode,
+  }) =>
+      toName(name,
+          params: params,
+          justUrl: justUrl,
+          mode: mode,
+          type: NavigationType.PopUntilOrPush);
 
   // back to previous page
-  bool back() => _controller.pop();
+  bool back() => _controller.navigatorController.back();
+
+  RouterController routerOf(String name) =>
+      _controller.navigatorController.routerOf(name);
+
+  DebugStackTree getStackTreeWidget() =>
+      _controller.navigatorController.getStackTreeWidget();
 
   /// wirte log
   void log(String mes, {bool isDebug = false}) {
@@ -85,6 +171,8 @@ class _QCurrentRoute {
 class QrSettings {
   bool enableLog = true;
   bool enableDebugLog = false;
+  // Add the default not found page path without slash.
+  String notFoundPagePath = 'notfound';
   QNaviagtionMode defaultNavigationMode = QNaviagtionMode.asChild();
   Function(String) logger = print;
 }

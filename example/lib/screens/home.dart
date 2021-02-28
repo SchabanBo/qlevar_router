@@ -15,12 +15,20 @@ class HomeScreen extends StatelessWidget {
         elevation: 5,
         bottomOpacity: 0.4,
         backgroundColor: Colors.green.shade800,
-        title: InkWell(onTap: () => QR.to('/home'), child: Text('Home $now')),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            QR.getStackTreeWidget(),
+            InkWell(
+                onTap: () => QR.to('/home', type: NavigationType.ReplaceAll),
+                child: Text('Home $now')),
+          ],
+        ),
         centerTitle: true,
         actions: [
           TextButton(
             onPressed: () {
-              QR.to('/home/items');
+              QR.replaceAll('/home/items');
             },
             child: Text(
               'Items',
@@ -29,7 +37,7 @@ class HomeScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              QR.to('/home/orders');
+              QR.replaceAll('/home/orders');
             },
             child: Text(
               'Orders',
@@ -102,8 +110,7 @@ class HomeScreenContent extends StatelessWidget {
           const SizedBox(height: 5),
           ElevatedButton(
             onPressed: () {
-              QR.toName(TestRoutes.testMultiComponent,
-                  params: {'name': 'Max', 'number': 55});
+              QR.toName(TestRoutes.testMultiComponentParent);
             },
             child: Text(TestRoutes.testMultiComponent),
           ),

@@ -6,9 +6,10 @@ import 'qr.dart';
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
-  final key = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> key;
   final RouterController _request;
-  QRouterDelegate(this._request) {
+  bool _isNewRoute = true;
+  QRouterDelegate(this._request) : key = _request.navKey {
     QR.log('Root Controller : $_request', isDebug: true);
     _request.addListener(notifyListeners);
   }
@@ -26,6 +27,19 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(String route) {
+    // I Don't know why but when the user press the back button in the browser
+    // the framework will report this route multiple time.
+    if (!_isNewRoute) {
+      return SynchronousFuture(null);
+    }
+    _isNewRoute = false;
+    Future.delayed(Duration(milliseconds: 200), () => _isNewRoute = true);
+
+    if (QR.history.length > 1 &&
+        route == QR.history[QR.history.length - 2].path) {
+      QR.back();
+      return SynchronousFuture(null);
+    }
     QR.to(route);
     return SynchronousFuture(null);
   }

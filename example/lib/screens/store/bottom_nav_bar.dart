@@ -25,8 +25,18 @@ class BottomNavigationBarExampleRoutes extends QRouteBuilder {
                 name: bottomNavigationBarBusiness,
                 path: 'business',
                 page: (c) => Center(
-                      child: Text(bottomNavigationBarBusiness,
-                          style: TextStyle(fontSize: 25)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(bottomNavigationBarBusiness,
+                              style: TextStyle(fontSize: 25)),
+                          TextButton(
+                              onPressed: () =>
+                                  QR.toName(bottomNavigationBarSchool),
+                              child: Text('Go to School',
+                                  style: TextStyle(fontSize: 25))),
+                        ],
+                      ),
                     )),
             QRoute(
                 name: bottomNavigationBarSchool,

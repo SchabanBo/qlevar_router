@@ -8,8 +8,9 @@ import 'page_types.dart';
 class RouterController extends ChangeNotifier {
   final int key;
   final String name;
+  final navKey = GlobalKey<NavigatorState>();
   final _pages = <QPage>[];
-  // This pages are the pagesto return when the key is -1.
+  // This pages are the pages to return when the key is -1.
   // Fix JustUrl problem with root router.
   final _pagesCopy = <QPage>[];
 
@@ -18,7 +19,7 @@ class RouterController extends ChangeNotifier {
   List<QPage> get pages =>
       List.unmodifiable(_pagesCopy.isNotEmpty ? _pagesCopy : _pages);
 
-  bool get canPop => _pages.isNotEmpty;
+  bool get canPop => _pages.length > 1;
 
   RouterController({this.key, this.name, this.routeChild, QPage initPage}) {
     _pages.add(initPage);
@@ -32,9 +33,19 @@ class RouterController extends ChangeNotifier {
     }
   }
 
+  PopResult pop() {
+    if (!canPop) {
+      QR.log('Page cant pop, no another page in the stack');
+      return PopResult(false);
+    }
+    final cleanup = _pages.last.matchKey;
+    _pages.removeLast();
+    notifyListeners();
+    return PopResult(true, cleanup: cleanup);
+  }
+
   List<int> updatePage(QPage page, NavigationType type, bool justUrl) {
     QR.log('Update ${justUrl ? 'Url' : 'Page'} $name');
-    type ??= NavigationType.PopUntilOrPush;
     final result = _updatePages(page, type);
     QR.log('Update ${toString()} with type $type and remove $result',
         isDebug: true);
@@ -52,13 +63,6 @@ class RouterController extends ChangeNotifier {
         cleanup.addAll(_pages.map((e) => e.matchKey));
         _pages.clear();
         _pages.add(page);
-        break;
-      case NavigationType.Pop:
-        if (_pages.length <= 1) {
-          throw Exception(
-              'Can not pop page, stak contains only one page $toString()');
-        }
-        _pages.removeLast();
         break;
       case NavigationType.Push:
         _pages.add(page);
@@ -94,6 +98,17 @@ class RouterController extends ChangeNotifier {
     return cleanup;
   }
 
+  void setChildOnTop(int matchKey) {
+    final page = _pages.firstWhere((element) => element.sameMatchKey(matchKey),
+        orElse: () => null);
+    if (page == null || _pages.last == page) {
+      return;
+    }
+    _pages.remove(page);
+    _pages.add(page);
+    notifyListeners();
+  }
+
   void childCalled(QRoute child) {
     routeChild.currentChild = child;
     if (routeChild.onChildCall != null) {
@@ -102,5 +117,11 @@ class RouterController extends ChangeNotifier {
   }
 
   @override
-  String toString() => 'Key: $key, name: $name [$hashCode]';
+  String toString() => 'Key: $key, name: $name';
+}
+
+class PopResult {
+  final bool didPop;
+  final int cleanup;
+  PopResult(this.didPop, {this.cleanup});
 }

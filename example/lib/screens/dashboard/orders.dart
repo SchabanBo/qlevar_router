@@ -54,6 +54,7 @@ class OrdersScreen extends StatelessWidget {
                             ),
                             //onTap: () => QR.to('/dashboard/orders/${item.id}'), OR
                             onTap: () => QR.toName(OrdersRoutes.ordersDetails,
+                                type: NavigationType.Push,
                                 params: {'orderId': item.id}),
                           ),
                         );

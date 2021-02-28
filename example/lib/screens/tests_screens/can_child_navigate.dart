@@ -21,6 +21,7 @@ class _TestCanChildNavigateState extends State<TestCanChildNavigate> {
       final can =
           await Future.delayed(Duration(milliseconds: 100), () => isAllowed);
       if (!can) {
+        // ignore: deprecated_member_use
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text("Child not allowed to navigate"),
         ));
