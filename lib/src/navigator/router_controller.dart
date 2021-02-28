@@ -8,7 +8,7 @@ import 'page_types.dart';
 class RouterController extends ChangeNotifier {
   final int key;
   final String name;
-  final navKey = GlobalKey<NavigatorState>();
+  String navKey;
   final _pages = <QPage>[];
   // This pages are the pages to return when the key is -1.
   // Fix JustUrl problem with root router.

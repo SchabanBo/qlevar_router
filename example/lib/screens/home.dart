@@ -121,6 +121,12 @@ class HomeScreenContent extends StatelessWidget {
             },
             child: Text(TestRoutes.testCanChildNavigate),
           ),
+          ElevatedButton(
+            onPressed: () {
+              WidgetsBinding.instance.reassembleApplication();
+            },
+            child: Text('Test'),
+          ),
         ],
       ));
 }

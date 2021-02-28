@@ -6,12 +6,14 @@ import 'qr.dart';
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
-  final GlobalKey<NavigatorState> key;
-  final RouterController _request;
+  final key = GlobalKey<NavigatorState>();
+  final RouterController _controller;
   bool _isNewRoute = true;
-  QRouterDelegate(this._request) : key = _request.navKey {
-    QR.log('Root Controller : $_request', isDebug: true);
-    _request.addListener(notifyListeners);
+  QRouterDelegate(this._controller) {
+    QR.log('Root Controller with key $key and controller $_controller',
+        isDebug: true);
+    _controller.navKey = key.toString();
+    _controller.addListener(notifyListeners);
   }
 
   @override
@@ -50,7 +52,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   @override
   Widget build(BuildContext context) => Navigator(
         key: key,
-        pages: _request.pages,
+        pages: _controller.pages,
         onPopPage: (route, result) {
           if (!route.didPop(result)) {
             return false;

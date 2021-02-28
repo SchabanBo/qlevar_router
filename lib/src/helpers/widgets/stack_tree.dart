@@ -56,7 +56,7 @@ class _ControllerInfo {
   _ControllerInfo(RouterController controller)
       : name = controller.name,
         key = controller.key.toString(),
-        navKey = controller.navKey.toString(),
+        navKey = controller.navKey,
         pages = controller.pages.map((e) => _PageInfo(e)).toList();
 
   Widget getWidget() {
