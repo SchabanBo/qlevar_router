@@ -26,7 +26,7 @@ class TreeBuilder {
       }
 
       // Add children default init
-      final needInitRoute = route.children != null &&
+      final needInitRoute = route.children.notNullOrEmpty &&
           (!route.children.any((element) => element.path == '/') ||
               route.initRoute == null);
       if (needInitRoute) {
@@ -97,7 +97,7 @@ class TreeBuilder {
           : QRoute(path: group.key, page: (c) => c.childRouter);
 
       final children = group.value
-          .where((e) => e.children != null || e.children.isNotEmpty)
+          .where((e) => e.children.notNullOrEmpty)
           .map((e) => e.children)
           .fold<List<QRouteBase>>(<QRouteBase>[], (list, route) {
         list.addAll(route);

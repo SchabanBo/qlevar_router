@@ -64,6 +64,11 @@ class AppRoutes {
         path: '/store',
         page: (childRouter) => StoreScreen(childRouter),
         children: [
+          QRoute(
+            path: '/',
+            name: 'StoreInit',
+            page: (c) => StoreInitPage(),
+          ),
           BottomNavigationBarExampleRoutes(),
           NavigationModeRoutes(),
         ]),

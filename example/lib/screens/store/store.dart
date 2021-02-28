@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../helpers/date_time.dart';
+import '../../helpers/qbutton.dart';
 import 'navigation_mode.dart';
 
 class StoreScreen extends StatelessWidget {
@@ -12,42 +13,17 @@ class StoreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
-        title: Text('Store $now'),
-        centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: () => QR.toName(NavigationModeRoutes.navigationMode),
-            child: Text(
-              NavigationModeRoutes.navigationMode,
-              style: TextStyle(color: Colors.white),
-            ),
+          backgroundColor: Colors.amber,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              QR.getStackTreeWidget(),
+              InkWell(
+                  child: Text('Store $now'),
+                  onTap: () => QR.replaceAll('/store')),
+            ],
           ),
-          const SizedBox(width: 15),
-          TextButton(
-            onPressed: () {
-              QR.to('/store/bottomNavigationBar');
-            },
-            child: Text(
-              'BottomNavigationBar',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          const SizedBox(width: 15),
-          Container(height: double.infinity, width: 2, color: Colors.white),
-          const SizedBox(width: 15),
-          TextButton(
-            onPressed: () {
-              QR.to('/home');
-            },
-            child: Text(
-              'Dashboard',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          const SizedBox(width: 15),
-        ],
-      ),
+          centerTitle: true),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -59,4 +35,17 @@ class StoreScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class StoreInitPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Column(
+        children: [
+          QButton('Home', () => QR.to('/home')),
+          QButton('Bottom Navigation Bar',
+              () => QR.to('/store/bottomNavigationBar')),
+          QButton(NavigationModeRoutes.navigationMode,
+              () => QR.toName(NavigationModeRoutes.navigationMode)),
+        ],
+      );
 }

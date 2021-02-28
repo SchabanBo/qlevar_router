@@ -6,19 +6,21 @@ import 'router_controller.dart';
 // ignore: prefer_mixin
 class InnerRouterDelegate extends RouterDelegate<int> with ChangeNotifier {
   final RouterController _request;
+  final navKey = GlobalKey<NavigatorState>();
   InnerRouterDelegate(this._request) {
     _request.addListener(notifyListeners);
+    QR.log('New router for controller $_request created', isDebug: true);
   }
 
   @override
   Widget build(BuildContext context) => Navigator(
-        key: _request.navKey,
+        key: navKey,
         pages: _request.pages,
         onPopPage: (route, result) {
           if (!route.didPop(result)) {
             return false;
           }
-          return QR.back();
+          return _request.pop().didPop;
         },
       );
 

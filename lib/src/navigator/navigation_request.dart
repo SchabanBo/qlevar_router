@@ -7,5 +7,7 @@ class NavigatioRequest {
   NavigationType type;
   bool justUrl;
   QNaviagtionMode mode;
-  NavigatioRequest(this.path, this.name, this.justUrl, this.mode, this.type);
+  NavigatioRequest(
+      this.path, this.name, this.justUrl, this.mode, NavigationType type)
+      : type = type ?? NavigationType.PopUntilOrPush;
 }

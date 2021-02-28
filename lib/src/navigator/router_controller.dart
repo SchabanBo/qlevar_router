@@ -10,7 +10,7 @@ class RouterController extends ChangeNotifier {
   final String name;
   final navKey = GlobalKey<NavigatorState>();
   final _pages = <QPage>[];
-  // This pages are the pagesto return when the key is -1.
+  // This pages are the pages to return when the key is -1.
   // Fix JustUrl problem with root router.
   final _pagesCopy = <QPage>[];
 
@@ -35,7 +35,7 @@ class RouterController extends ChangeNotifier {
 
   PopResult pop() {
     if (!canPop) {
-      QR.log('Page cant pop, no aother page in the satck');
+      QR.log('Page cant pop, no another page in the stack');
       return PopResult(false);
     }
     final cleanup = _pages.last.matchKey;
@@ -46,7 +46,6 @@ class RouterController extends ChangeNotifier {
 
   List<int> updatePage(QPage page, NavigationType type, bool justUrl) {
     QR.log('Update ${justUrl ? 'Url' : 'Page'} $name');
-    type ??= NavigationType.Push;
     final result = _updatePages(page, type);
     QR.log('Update ${toString()} with type $type and remove $result',
         isDebug: true);
@@ -99,6 +98,17 @@ class RouterController extends ChangeNotifier {
     return cleanup;
   }
 
+  void setChildOnTop(int matchKey) {
+    final page = _pages.firstWhere((element) => element.sameMatchKey(matchKey),
+        orElse: () => null);
+    if (page == null || _pages.last == page) {
+      return;
+    }
+    _pages.remove(page);
+    _pages.add(page);
+    notifyListeners();
+  }
+
   void childCalled(QRoute child) {
     routeChild.currentChild = child;
     if (routeChild.onChildCall != null) {
@@ -107,7 +117,7 @@ class RouterController extends ChangeNotifier {
   }
 
   @override
-  String toString() => 'Key: $key, name: $name [$hashCode]';
+  String toString() => 'Key: $key, name: $name';
 }
 
 class PopResult {

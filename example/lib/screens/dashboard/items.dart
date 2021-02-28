@@ -27,7 +27,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
             'Items',
             style: TextStyle(color: Colors.white, fontSize: 35),
           ),
-          QR.getStackTreeWidget(),
           const SizedBox(width: 15),
           Text(
             'Created $now',

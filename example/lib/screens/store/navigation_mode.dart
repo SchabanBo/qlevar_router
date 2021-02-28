@@ -67,16 +67,19 @@ class NavigationModePage extends StatelessWidget {
           children: [
             QButton('Rest to Navigation Mode Page',
                 () => QR.toName(NavigationModeRoutes.navigationMode)),
-            QR.getStackTreeWidget(),
             QButton('1- Go to (Page One) As Child (Defualt mode)',
                 () => QR.toName(NavigationModeRoutes.pageOne)),
-            QButton(
-                '''
+            QButton('''
 2- Set (Page one) as root child
 The Path will still as defined, but the page will be set as child for the root router.
 This is a custom case, thats mean when this path is called from the browser url the case 1 will be used''',
-                () => QR.toName(NavigationModeRoutes.pageOne,
-                    mode: QNaviagtionMode.asRootChild())),
+                () {
+              // first we need to rest to the navigation mode page,
+              // so if this one page get cosed if it is already open.
+              QR.toName(NavigationModeRoutes.navigationMode);
+              QR.toName(NavigationModeRoutes.pageOne,
+                  mode: QNaviagtionMode.asRootChild());
+            }),
             QButton(
                 '''
 3- Call Page Two. the default mode for this route is as Root child,

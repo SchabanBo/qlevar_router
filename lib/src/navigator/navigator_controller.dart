@@ -42,7 +42,7 @@ class QNavigatorController {
       //   _updatePathAsStack(request.mode.name, match, request.justUrl);
       //   break;
       default:
-        throw Exception('Unkown QNaviagtionMode');
+        throw Exception('Unknown QNaviagtionMode');
     }
     QR.history.add(request);
     //_conManeger.printAllStacksInfo();
@@ -51,12 +51,13 @@ class QNavigatorController {
   String _updatePathAsChild(RouterController parentController,
       MatchContext match, NavigationType type, bool justUrl) {
     final controller = _conManeger.withKey(match.key);
-    if (controller == null) {
+    if (match.isNew || controller == null) {
       return _updateIfAllowed(parentController, match, type, justUrl);
     }
     if (match.childContext != null) {
       QR.log('$match is the old route. checking child', isDebug: true);
       controller.childCalled(match.childContext.route);
+      parentController.setChildOnTop(match.key);
       return _updatePathAsChild(controller, match.childContext, type, justUrl);
     }
     QR.log('No changes for $match was found');
@@ -155,7 +156,8 @@ class QNavigatorController {
   PopResult _tryPop() {
     final last = QR.history.last;
     RouterController controller;
-    if (last.mode.type == QNaviagtionModeType.ChildOf) {
+    if (last.mode.type != null &&
+        last.mode.type == QNaviagtionModeType.ChildOf) {
       controller = _conManeger.withName(last.mode.name);
     }
     if (last.parentName != null) {
