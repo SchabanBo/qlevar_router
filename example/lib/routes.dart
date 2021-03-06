@@ -1,102 +1,39 @@
-import 'dart:ui';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
-import 'screens/dashboard/items.dart';
-import 'screens/dashboard/orders.dart';
-import 'screens/home.dart';
-import 'screens/store/bottom_nav_bar.dart';
-import 'screens/store/navigation_mode.dart';
-import 'screens/store/store.dart';
-import 'screens/tests_screens/test_routes.dart';
+import 'screens/home_page.dart';
 
 class AppRoutes {
-  // Dashboard
-  static String home = 'Home';
-  static String homeMain = 'Home Main';
-  static String items = 'Items';
-
-  // Items
-  static String itemsMain = 'Items Main';
-  static String itemsDetails = 'Items Details';
-
-  // Store
-  static String store = 'Store';
-
-  //Other
-  static String redirect = 'Redirect';
-
-  final routes = <QRouteBase>[
-    QRoute(
-        name: home,
-        path: '/home',
-        page: (childRouter) => HomeScreen(childRouter),
-        children: [
-          QRoute(
-              name: homeMain, path: '/', page: (child) => HomeScreenContent()),
-          QRoute(
-              name: items,
-              path: '/items',
-              onInit: () => print('onInit Items'),
-              onDispose: () => print('onDispose Items'),
-              page: (child) => ItemsScreen(child),
-              children: [
-                QRoute(
-                    name: itemsMain,
-                    path: '/',
-                    onInit: () => print('onInit Items Main'),
-                    onDispose: () => print('onDispose Items Main'),
-                    page: (child) => Container()),
-                QRoute(
-                    name: itemsDetails,
-                    path: '/details',
-                    pageType: QRCupertinoPage(),
-                    onInit: () => print('onInit Items Details'),
-                    onDispose: () => print('onDispose Items Details'),
-                    page: (c) => ItemDetailsScreen())
-              ]),
-          OrdersRoutes(),
-          TestRoutes(),
-        ]),
-    QRoute(
-        name: store,
-        path: '/store',
-        page: (childRouter) => StoreScreen(childRouter),
-        children: [
-          QRoute(
-            path: '/',
-            name: 'StoreInit',
-            page: (c) => StoreInitPage(),
-          ),
-          BottomNavigationBarExampleRoutes(),
-          NavigationModeRoutes(),
-        ]),
-    QRoute(
-        name: redirect,
-        path: '/redirect',
-        redirectGuard: (path) => '/home/items'),
-  ];
+  List<QRoute> routes() => [
+        QRoute(path: '/', builder: () => HomePage()),
+        QRoute(
+            path: '/parent',
+            builder: () => TextPage('Hi parent'),
+            children: [
+              QRoute(path: '/child', builder: () => TextPage('Hi child')),
+            ]),
+        QRoute(path: '/:id', builder: () => TextPage('Hi ${QR.params['id']}')),
+        QRoute(
+            path: '/params',
+            builder: () => TextPage(
+                'Hi test is${QR.params['test']} and go is ${QR.params['go']}')),
+      ];
 }
 
-class OrdersRoutes extends QRouteBuilder {
-  static String orders = 'Orders';
-  static String ordersMain = 'Orders Main';
-  static String ordersDetails = 'Orders Details';
-
+class TextPage extends StatelessWidget {
+  final String text;
+  TextPage(this.text);
   @override
-  QRoute createRoute() => QRoute(
-          name: orders,
-          path: '/orders',
-          page: (child) => OrdersScreen(child),
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            QRoute(
-                name: ordersDetails,
-                path: '/:orderId',
-                pageType: QRSlidePage(
-                  transitionDurationmilliseconds: 500,
-                  offset: Offset(1, 0),
-                ),
-                page: (child) => OrderDetails()),
-          ]);
+            Center(child: Text(text, style: TextStyle(color: Colors.white))),
+            Center(child: TextButton(onPressed: QR.back, child: Text('Back'))),
+          ],
+        ));
+  }
 }

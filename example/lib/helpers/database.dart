@@ -87,7 +87,7 @@ class Database {
 
   void fillOrdersItems() {
     for (var order in orders) {
-      for (var item in order.items) {
+      for (var item in order.items!) {
         item.item = items.firstWhere((element) => element.id == item.itemId);
       }
     }
@@ -95,24 +95,24 @@ class Database {
 }
 
 class Order {
-  int id;
-  String from;
-  DateTime createdAt;
-  List<OrderItem> items;
+  int? id;
+  String? from;
+  DateTime? createdAt;
+  List<OrderItem>? items;
   Order({this.id, this.from, this.createdAt, this.items});
 }
 
 class OrderItem {
-  int itemId;
-  int count;
-  StoreItem item;
+  int? itemId;
+  int? count;
+  StoreItem? item;
   OrderItem({this.itemId, this.count});
 }
 
 class StoreItem {
-  int id;
-  String name;
-  String image;
-  double price;
+  int? id;
+  String? name;
+  String? image;
+  double? price;
   StoreItem({this.id, this.name, this.image, this.price});
 }

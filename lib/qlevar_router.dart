@@ -1,7 +1,11 @@
+import 'src/qr.dart';
+
 export 'src/helpers/iterables_extensions.dart';
-export 'src/navigator/navigation_mode.dart';
-export 'src/navigator/navigation_type.dart';
-export 'src/qpages.dart';
-export 'src/qparams.dart';
-export 'src/qr.dart';
-export 'src/types.dart';
+export 'src/pages/qpages.dart';
+export 'src/routers/router_delegate.dart';
+export 'src/routes/qroute.dart';
+export 'src/types/qparams.dart';
+export 'src/types/route_parser.dart';
+
+// ignore: non_constant_identifier_names
+final QR = QRContext();
