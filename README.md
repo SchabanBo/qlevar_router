@@ -43,22 +43,23 @@ The most cool feature for this package is [Nested Routing - Widget Update](https
 
 - [x] Build Tree
 - [x] Create Router
-- [ ] Pop
-- [ ] Navigate
-- [ ] Expand Routes
+- [x] Pop
+- [x] Navigate
 - [ ] Create Router
-- [ ] Remove Routes
-- [ ] Try to split multi routes and group them
 - [ ] QRouteChild
 - [ ] ChildTrigger in QNavigation?
+- [ ] Expand Routes
+- [ ] Remove Routes
+- [ ] Try to split multi routes and group them
+- [ ] Add popUnit or Push
 - [x] Params
   - [x] Query
   - [x] Component
 - [ ] Middleware
-  - [ ] Redirect
-  - [ ] onMatch
-  - [ ] onEnter
-  - [ ] onExit
+  - [x] Redirect
+  - [x] onMatch
+  - [x] onEnter
+  - [x] onExit
   - [ ] OnChild Try to give the widget with it
   - [ ] Add Modify History in QRouteMiddleware
   - [ ] Add allowDuplicated for route [A, A, B, A] => [A, B, A]

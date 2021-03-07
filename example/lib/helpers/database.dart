@@ -1,4 +1,5 @@
 class Database {
+  static bool canChildNavigate = true;
   final items = [
     StoreItem(
         id: 1,

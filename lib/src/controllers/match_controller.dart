@@ -1,6 +1,7 @@
 import '../../qlevar_router.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
+import 'middleware_controller.dart';
 
 class MatchController {
   final Uri path;
@@ -11,6 +12,7 @@ class MatchController {
   MatchController(String sPath, this.navigator, this.routes)
       : path = Uri.parse(sPath) {
     params.addAll(path.queryParameters);
+    QR.log('Finding Match for $sPath');
   }
 
   void updateFoundPath(String segment) {
@@ -63,19 +65,22 @@ class MatchController {
       return false;
     }
 
+    QRouteInternal? result;
     if (routes.routes.any(find)) {
-      updateFoundPath(path);
-      final result = routes.routes.firstWhere(find);
-      result.clean();
-      return result;
+      result = routes.routes.firstWhere(find);
     }
     // try find component
-    if (routes.routes.any(findComponent)) {
+    else if (routes.routes.any(findComponent)) {
+      result = routes.routes.firstWhere(findComponent);
+    }
+
+    if (result != null) {
       updateFoundPath(path);
-      final result = routes.routes.firstWhere(findComponent);
       result.clean();
+      MiddlewareController(result).runOnMatch();
       return result;
     }
+
     QR.log('[$path] is not child of ${routes.parentKey}');
     return null;
   }

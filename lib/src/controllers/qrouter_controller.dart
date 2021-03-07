@@ -1,28 +1,31 @@
 import 'package:flutter/widgets.dart';
-import 'package:qlevar_router/src/types/qhistory.dart';
 
 import '../../qlevar_router.dart';
-import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
+import '../types/qhistory.dart';
 import '../types/qroute_key.dart';
 import 'match_controller.dart';
+import 'middleware_controller.dart';
+import 'pages_controller.dart';
 
 abstract class QNavigator extends ChangeNotifier {
   bool get canPop;
 
-  void push(String name);
+  void pushName(String name);
 
-  void replace(String name, String withName);
+  void replaceName(String name, String withName);
 
-  void replaceAll(String name);
+  void replaceAllWithName(String name);
 
-  void pushPath(String path);
+  void push(String path);
 
-  void replacePath(String path, String withPath);
+  void popUnitOrPush(String path);
 
-  void replaceAllPath(String path);
+  void replace(String path, String withPath);
+
+  void replaceAll(String path);
 
   void removeLast();
 }
@@ -38,35 +41,19 @@ class QRouterController extends QNavigator {
     addRoute(match);
   }
 
-  final _activePage = <QRouteInternal>[];
+  final _pagesController = PagesController();
   @override
-  bool get canPop => _activePage.length > 1;
+  bool get canPop => _pagesController.pages.length > 1;
 
-  List<QPageInternal> get pages => List.unmodifiable(
-      _activePage.map((e) => PageCreator(e).create()).toList());
+  List<QPageInternal> get pages => List.unmodifiable(_pagesController.pages);
 
   QRouteInternal findPath(String path) {
     return MatchController(path, key.name, routes).match;
   }
 
   @override
-  void push(String name) {
+  void pushName(String name) {
     // TODO: implement push
-  }
-
-  void addRoute(QRouteInternal route, {bool notify = true}) {
-    _activePage.add(route);
-    QR.history.add(QHistoryEntry(route.activePath!, QR.params, key.name));
-    while (route.child != null) {
-      _activePage.add(route.child!);
-      QR.history
-          .add(QHistoryEntry(route.child!.activePath!, QR.params, key.name));
-      route = route.child!;
-    }
-
-    if (notify) {
-      notifyListeners();
-    }
   }
 
   @override
@@ -74,35 +61,93 @@ class QRouterController extends QNavigator {
     if (!canPop) {
       return;
     }
-    _activePage.removeLast();
+    _pagesController.removeLast();
     QR.history.removeLast();
     QR.params.updateParams(QR.history.last.params);
     notifyListeners();
   }
 
   @override
-  void replace(String name, String withName) {
+  void replaceName(String name, String withName) {
     // TODO: implement replace
   }
 
   @override
-  void replaceAll(String name) {
+  void replaceAllWithName(String name) {
     // TODO: implement replaceAll
   }
 
   @override
-  void pushPath(String path) {
+  void push(String path) {
     final match = findPath(path);
     addRoute(match);
   }
 
   @override
-  void replaceAllPath(String path) {
+  void replaceAll(String path) {
     // TODO: implement replaceAllPath
   }
 
   @override
-  void replacePath(String path, String withPath) {
+  void replace(String path, String withPath) {
     // TODO: implement replacePath
+  }
+
+  void addRoute(QRouteInternal route, {bool notify = true}) {
+    QR.log('Adding $route to Navigator with $key');
+    addRouteAsync(route, notify: notify);
+  }
+
+  Future<void> addRouteAsync(QRouteInternal route, {bool notify = true}) async {
+    var redirect = await _addRoute(route);
+    while (route.child != null && !redirect) {
+      redirect = await _addRoute(route.child!);
+      route = route.child!;
+    }
+
+    if (notify && !redirect) {
+      notifyListeners();
+    }
+  }
+
+  Future<bool> _addRoute(QRouteInternal route) async {
+    if (_pagesController.exist(route)) {
+      // if page already exsit, do not run the middleware for it or readd it
+      return false;
+    }
+    if (route.hasMiddlewares) {
+      final result = await MiddlewareController(route).runRedirect();
+      if (result != null) {
+        QR.to(result);
+        return true;
+      }
+    }
+    _pagesController.add(route);
+    QR.history.add(QHistoryEntry(route.activePath!, QR.params, key.name));
+    return false;
+  }
+
+  @override
+  void popUnitOrPush(String path) {
+    final match = findPath(path);
+    final index = _pagesController.routes
+        .indexWhere((element) => element.key.isSame(match.key));
+    if (index == -1) {
+      // Page not exist add it.
+      addRoute(match);
+      return;
+    }
+    if (index == _pagesController.pages.length - 1) {
+      // Page is on top replace it.
+      _pagesController.removeLast();
+      addRoute(match);
+      return;
+    }
+    // page exist remove unit it
+    for (var i = index + 1; i < _pagesController.pages.length; i++) {
+      _pagesController.removeIndex(i);
+      i--;
+    }
+    notifyListeners();
   }
 }

@@ -48,7 +48,9 @@ class _ControllerManager {
     }
     final key = QKey(name);
     final controller = QRouterController(
-        key, QRouteChildren.from(routes, key, routePath), initPath);
+        key,
+        QRouteChildren.from(routes, key, routePath == '/' ? '' : routePath),
+        initPath);
     _controllers.add(controller);
     return controller;
   }

@@ -2,13 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
 import '../routers/qrouter.dart';
-
-abstract class QMiddleware {
-  Future<String?> redirectGuard();
-  void onMatch();
-  void onEnter();
-  void onExit();
-}
+import 'qmiddleware.dart';
 
 typedef PageBuilder = Widget Function();
 typedef PageWithChildBuilder = Widget Function(QRouter);

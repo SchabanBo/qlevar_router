@@ -18,10 +18,4 @@ class MyApp extends StatelessWidget {
       ),
       routeInformationParser: QRouteInformationParser(),
       routerDelegate: QRouterDelegate(AppRoutes().routes()));
-
-  // @override
-  // Widget build(BuildContext context) => MaterialApp.router(
-  //       routerDelegate: QR.router(AppRoutes().routes, initRoute: '/home'),
-  //       routeInformationParser: QR.routeParser(),
-  //     );
 }

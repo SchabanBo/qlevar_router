@@ -1,4 +1,4 @@
-import 'package:qlevar_router/qlevar_router.dart';
+import '../../qlevar_router.dart';
 
 class QHistoryEntry {
   final String path;

@@ -1,5 +1,4 @@
-import 'package:qlevar_router/qlevar_router.dart';
-
+import '../../qlevar_router.dart';
 import '../types/qroute_key.dart';
 import 'qroute.dart';
 import 'qroute_children.dart';
@@ -40,7 +39,7 @@ class QRouteInternal {
 
   factory QRouteInternal.from(QRoute route, String cureentPath) {
     final key = QKey(route.name ?? route.path);
-    final fullPath = '$cureentPath/${route.path}';
+    final fullPath = '${cureentPath == '' ? '' : '$cureentPath/'}${route.path}';
     return QRouteInternal(
         key: key,
         route: route,
@@ -75,4 +74,7 @@ class QRouteInternal {
 
   @override
   String toString() => 'Route: $key, Full Path: $fullPath';
+
+  bool get hasMiddlewares =>
+      route.middleware != null && route.middleware!.isNotEmpty;
 }
