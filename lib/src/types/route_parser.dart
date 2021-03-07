@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import '../../qlevar_router.dart';
 
 /// The parser for QRouter
 class QRouteInformationParser extends RouteInformationParser<String> {

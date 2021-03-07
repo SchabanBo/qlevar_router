@@ -2,15 +2,26 @@ import 'package:flutter/widgets.dart';
 import '../../qlevar_router.dart';
 import '../controllers/qrouter_controller.dart';
 
-class QRouter extends StatelessWidget {
+class QRouter extends StatefulWidget {
   final navKey = GlobalKey<NavigatorState>();
-  final QRouterController controller;
+  final QRouterController _controller;
+  QNavigator get navigator => _controller;
+  QRouter(this._controller);
+  @override
+  _QRouterState createState() => _QRouterState();
+}
 
-  QRouter(this.controller);
+class _QRouterState extends State<QRouter> {
+  @override
+  void initState() {
+    super.initState();
+    widget._controller.addListener(() => setState(() {}));
+  }
+
   @override
   Widget build(BuildContext context) => Navigator(
-        key: navKey,
-        pages: controller.pages,
+        key: widget.navKey,
+        pages: widget._controller.pages,
         onPopPage: (route, result) {
           if (!route.didPop(result)) {
             return false;

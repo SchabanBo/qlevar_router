@@ -1,6 +1,6 @@
 class Database {
   static bool canChildNavigate = true;
-  final items = [
+  static final items = [
     StoreItem(
         id: 1,
         name: 'Lettuce',
@@ -48,7 +48,7 @@ class Database {
         image: 'assets/images/eggplant.png',
         price: 2.1),
   ];
-  final orders = [
+  static final orders = [
     Order(id: 1, from: 'USA', createdAt: DateTime(2020, 5, 14), items: [
       OrderItem(itemId: 1, count: 3),
       OrderItem(itemId: 2, count: 6),
@@ -88,7 +88,7 @@ class Database {
 
   void fillOrdersItems() {
     for (var order in orders) {
-      for (var item in order.items!) {
+      for (var item in order.items) {
         item.item = items.firstWhere((element) => element.id == item.itemId);
       }
     }
@@ -96,24 +96,37 @@ class Database {
 }
 
 class Order {
-  int? id;
-  String? from;
-  DateTime? createdAt;
-  List<OrderItem>? items;
-  Order({this.id, this.from, this.createdAt, this.items});
+  int id;
+  String from;
+  DateTime createdAt;
+  List<OrderItem> items;
+  Order({
+    required this.id,
+    required this.from,
+    required this.createdAt,
+    required this.items,
+  });
 }
 
 class OrderItem {
-  int? itemId;
-  int? count;
+  int itemId;
+  int count;
   StoreItem? item;
-  OrderItem({this.itemId, this.count});
+  OrderItem({
+    required this.itemId,
+    required this.count,
+  });
 }
 
 class StoreItem {
-  int? id;
-  String? name;
-  String? image;
-  double? price;
-  StoreItem({this.id, this.name, this.image, this.price});
+  int id;
+  String name;
+  String image;
+  double price;
+  StoreItem({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.price,
+  });
 }

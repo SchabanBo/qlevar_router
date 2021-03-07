@@ -40,6 +40,7 @@ class QRouteInternal {
   factory QRouteInternal.from(QRoute route, String cureentPath) {
     final key = QKey(route.name ?? route.path);
     final fullPath = '${cureentPath == '' ? '' : '$cureentPath/'}${route.path}';
+    QR.treeInfo.namePath[route.name ?? route.path] = route.path;
     return QRouteInternal(
         key: key,
         route: route,
@@ -50,19 +51,18 @@ class QRouteInternal {
             : QRouteChildren.from(route.children!, key, fullPath));
   }
 
-  factory QRouteInternal.notfound(String foundPath) {
+  factory QRouteInternal.notfound() {
     final route = QR.settings.notFoundPage;
     final key = QKey(route.name ?? route.path);
-    final fullPath = '${route.path}';
     return QRouteInternal(
         key: key,
         route: route,
-        fullPath: fullPath,
+        fullPath: route.path,
         isNotFound: true,
-        activePath: foundPath,
+        activePath: route.path,
         children: route.children == null
             ? null
-            : QRouteChildren.from(route.children!, key, fullPath));
+            : QRouteChildren.from(route.children!, key, route.path));
   }
 
   void clean() {
@@ -70,7 +70,9 @@ class QRouteInternal {
     activePath = null;
   }
 
-  bool isSmae(QRouteInternal other) => key.isSame(other.key);
+  bool isSame(QRouteInternal other) => key.isSame(other.key);
+
+  bool get hasChild => child != null;
 
   @override
   String toString() => 'Route: $key, Full Path: $fullPath';

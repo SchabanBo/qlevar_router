@@ -1,7 +1,7 @@
-import 'package:example/helpers/database.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
+import '../helpers/database.dart';
 import '../helpers/qbutton.dart';
 
 class ParentPage extends StatefulWidget {

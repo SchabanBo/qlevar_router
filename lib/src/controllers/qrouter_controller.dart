@@ -100,7 +100,7 @@ class QRouterController extends QNavigator {
 
   Future<void> addRouteAsync(QRouteInternal route, {bool notify = true}) async {
     var redirect = await _addRoute(route);
-    while (route.child != null && !redirect) {
+    while (route.hasChild && !redirect) {
       redirect = await _addRoute(route.child!);
       route = route.child!;
     }
@@ -111,8 +111,9 @@ class QRouterController extends QNavigator {
   }
 
   Future<bool> _addRoute(QRouteInternal route) async {
-    if (_pagesController.exist(route)) {
-      // if page already exsit, do not run the middleware for it or readd it
+    if (_pagesController.exist(route) && route.hasChild) {
+      // if page already exsit, and has a child, that means the child need
+      // to be added, so do not run the middleware for it or add it again
       return false;
     }
     if (route.hasMiddlewares) {
@@ -129,7 +130,10 @@ class QRouterController extends QNavigator {
 
   @override
   void popUnitOrPush(String path) {
-    final match = findPath(path);
+    _popUnitOrPush(findPath(path));
+  }
+
+  void _popUnitOrPush(QRouteInternal match) {
     final index = _pagesController.routes
         .indexWhere((element) => element.key.isSame(match.key));
     if (index == -1) {
@@ -137,8 +141,19 @@ class QRouterController extends QNavigator {
       addRoute(match);
       return;
     }
+
+    if (match.hasChild) {
+      // page exist and has children
+      // TODO: see if has navigator
+      _popUnitOrPush(match.child!);
+      return;
+    }
+
+    // page is exist and has no children
+    // then pop unit it or replace it
     if (index == _pagesController.pages.length - 1) {
-      // Page is on top replace it.
+      // if the same page is on the top, then replace it.
+      // remove it from the top and add it again
       _pagesController.removeLast();
       addRoute(match);
       return;
@@ -148,6 +163,8 @@ class QRouterController extends QNavigator {
       _pagesController.removeIndex(i);
       i--;
     }
+    QR.history.add(QHistoryEntry(
+        _pagesController.routes.last.activePath!, QR.params, key.name));
     notifyListeners();
   }
 }

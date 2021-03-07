@@ -37,8 +37,9 @@ class QRContext {
       _controller.createRouterController(name, routes, initPaht ?? '/');
 
   ///  return a router [QRouter] for the given routes
-  QRouter createRouter(String name, List<QRoute> routes) {
-    final controller = createRouterController(name, routes);
+  QRouter createNavigator(String name, List<QRoute> routes,
+      {String? initPaht}) {
+    final controller = createRouterController(name, routes, initPaht: initPaht);
     return QRouter(controller);
   }
 

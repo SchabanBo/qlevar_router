@@ -2,6 +2,7 @@ import 'src/qr.dart';
 
 export 'src/helpers/iterables_extensions.dart';
 export 'src/pages/qpages.dart';
+export 'src/routers/qrouter.dart';
 export 'src/routers/router_delegate.dart';
 export 'src/routes/qmiddleware.dart';
 export 'src/routes/qroute.dart';

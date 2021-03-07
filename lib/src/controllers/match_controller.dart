@@ -34,7 +34,7 @@ class MatchController {
 
     final result = _tryFind(searchIn, path.pathSegments[0]);
     if (result == null) {
-      return QRouteInternal.notfound(foundPath);
+      return QRouteInternal.notfound();
     }
     result.activePath = foundPath;
     var match = result;
@@ -42,7 +42,7 @@ class MatchController {
       searchIn = match.children!;
       match.child = _tryFind(searchIn, path.pathSegments[i]);
       if (match.child == null) {
-        return QRouteInternal.notfound(foundPath);
+        return QRouteInternal.notfound();
       }
       match.child!.activePath = foundPath;
       match = match.child!;

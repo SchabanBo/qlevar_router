@@ -30,8 +30,7 @@ class QRController {
 
   void to(String path, {String forController = QRContext.rootRouterName}) {
     final controller = _manager.withName(forController);
-    final match = controller.findPath(path);
-    controller.addRoute(match);
+    controller.popUnitOrPush(path);
     // if (match.isNotFound) {
     // }
   }

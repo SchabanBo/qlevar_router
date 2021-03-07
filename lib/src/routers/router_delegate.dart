@@ -22,13 +22,16 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setInitialRoutePath(String configuration) {
-    //_controller.pushPath(configuration);
+    if (configuration != '/') {
+      QR.log('setInitialRoutePath $configuration', isDebug: true);
+      QR.to(configuration);
+    }
     return SynchronousFuture(null);
   }
 
   @override
   Future<void> setNewRoutePath(String route) {
-    _controller.push(route);
+    QR.to(route);
     return SynchronousFuture(null);
   }
 

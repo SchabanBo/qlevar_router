@@ -5,7 +5,7 @@ import 'routes.dart';
 
 void main() {
   //Get.put(Database(), permanent: true);
-  //QR.settings.enableDebugLog = true;
+  QR.settings.enableDebugLog = true;
   runApp(MyApp());
 }
 
