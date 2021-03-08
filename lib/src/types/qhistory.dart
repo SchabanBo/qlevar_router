@@ -14,6 +14,8 @@ class QHistory {
 
   bool get hasLast => _history.length > 1;
 
+  bool get isEmpty => _history.isEmpty;
+
   void removeLast({int count = 1}) {
     for (var i = 0; i < count; i++) {
       _history.removeLast();

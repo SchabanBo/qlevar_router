@@ -43,7 +43,6 @@ class MatchController {
       }
       match = match.child!;
     }
-    result.params = params;
     return result;
   }
 
@@ -73,6 +72,7 @@ class MatchController {
       updateFoundPath(path);
       result.clean();
       result.activePath = foundPath;
+      result.params = params;
       MiddlewareController(result).runOnMatch();
       return result;
     }

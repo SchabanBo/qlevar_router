@@ -115,7 +115,7 @@ class QRouterController extends QNavigator {
     }
 
     if (notify && !redirect) {
-      notifyListeners();
+      _update();
     }
   }
 
@@ -132,8 +132,8 @@ class QRouterController extends QNavigator {
         return true;
       }
     }
-    QR.history.add(
-        QHistoryEntry(route.activePath!, QR.params, key.name, route.hasChild));
+    QR.history.add(QHistoryEntry(
+        route.activePath!, route.params!, key.name, route.hasChild));
     _pagesController.add(route);
     return false;
   }
@@ -175,15 +175,12 @@ class QRouterController extends QNavigator {
       _pagesController.removeIndex(i);
       i--;
     }
-    QR.history.add(QHistoryEntry(
-        _pagesController.routes.last.activePath!, QR.params, key.name, false));
+    QR.history.add(QHistoryEntry(_pagesController.routes.last.activePath!,
+        _pagesController.routes.last.params!, key.name, false));
     _update();
   }
 
-  void _update({bool withParams = true}) {
-    if (withParams) {
-      QR.params.updateParams(QR.history.current.params);
-    }
+  void _update() {
     notifyListeners();
   }
 
