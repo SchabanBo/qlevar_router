@@ -27,20 +27,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Wrap(
-        children: List.generate(10, (index) => index)
-            .map(
-              (e) => GestureDetector(
-                onTap: () {
-                  QR.to("/$e");
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: ListTile(
-                    title: Text(e.toString()),
-                  ),
-                ),
-              ),
-            )
+        children: List.generate(30, (index) => index)
+            .map((e) => TextButton(
+                onPressed: () => QR.to("/$e"), child: Text(e.toString())))
             .toList(),
       ),
     );
@@ -50,10 +39,11 @@ class HomePage extends StatelessWidget {
 class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print(QR.params['id']);
     final id = QR.params['id']?.asInt ?? 'No id';
     return Scaffold(
       body: Center(
-        child: Text(id.toString()),
+        child: Text('id = $id'),
       ),
     );
   }

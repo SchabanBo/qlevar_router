@@ -30,12 +30,12 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: GestureDetector(
         onTap: () {
-          QR.to('/products?id=${Random().nextInt(1000)}&text=hi');
+          QR.to('/products?id=${Random().nextInt(100)}&text=hi');
         },
         child: Padding(
           padding: const EdgeInsets.all(32.0),
           child: ListTile(
-            title: Text(e.toString()),
+            title: Text('Click me'.toString()),
           ),
         ),
       ),
@@ -50,7 +50,7 @@ class ProductPage extends StatelessWidget {
     final text = QR.params['text'].toString();
     return Scaffold(
       body: Center(
-        child: Text(text + id.toString()),
+        child: Text('text = $text \n\n id = $id'),
       ),
     );
   }
