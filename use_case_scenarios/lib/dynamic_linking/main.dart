@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 void main() => runApp(MyApp());
@@ -7,18 +10,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp.router(
         routeInformationParser: QRouteInformationParser(),
-        routerDelegate: QRouterDelegate(AppRoutes().routes()),
+        routerDelegate:
+            QRouterDelegate(AppRoutes().routes(), initPath: '/games'),
       );
 }
 
 class AppRoutes {
   List<QRoute> routes() => <QRoute>[
-        QRoute(path: '/', builder: () => HomePage()),
-        QRoute(path: '/products', builder: () => ProductPage()),
+        QRoute(path: '/games', builder: () => GamesPage(), children: [
+          QRoute(path: '/:gameId', builder: () => GameRoom()),
+        ]),
       ];
 }
 
-class HomePage extends StatelessWidget {
+class GamesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,22 +90,48 @@ class HomePage extends StatelessWidget {
           ),
         ),
       );
+
   Widget getPlaceHolder({int flex = 1}) => Flexible(
       flex: flex,
       child: InkWell(
-          onTap: () => QR.to('path'),
+          onTap: () => QR.to('/games/${Random().nextInt(1000)}'),
           child: Container(color: Colors.grey.shade400)));
 }
 
-class ProductPage extends StatelessWidget {
+class GameRoom extends StatelessWidget {
+  final gameId = QR.params['gameId']!.asInt!;
   @override
   Widget build(BuildContext context) {
-    print(QR.params.asStringMap());
-    final id = QR.params['id'].toString();
-    final text = QR.params['text'].toString();
+    final url = '${Uri.base}/${'$gameId'}';
+    final size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Game Room $gameId', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.grey.shade100,
+      ),
       body: Center(
-        child: Text('$text $id'),
+        child: Container(
+          padding: const EdgeInsets.all(25),
+          width: size.width * 0.7,
+          height: size.height * 0.7,
+          color: Colors.grey.shade400,
+          child: Column(
+            children: [
+              Text('Game Room with id $gameId', style: TextStyle(fontSize: 25)),
+              Row(
+                children: [
+                  const SizedBox(width: 25),
+                  Text(url),
+                  const SizedBox(width: 25),
+                  ElevatedButton(
+                      onPressed: () =>
+                          Clipboard.setData(ClipboardData(text: url)),
+                      child: Text('Copy Path')),
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

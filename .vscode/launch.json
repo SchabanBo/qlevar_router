@@ -6,7 +6,7 @@
             "type": "dart",
             "request": "launch",
             "program": "example/lib/main.dart"
-        } ,
+        },
         {
             "name": "Path Parameters",
             "type": "dart",
@@ -24,6 +24,12 @@
             "type": "dart",
             "request": "launch",
             "program": "use_case_scenarios/lib/dynamic_linking/main.dart"
+        },
+        {
+            "name": "Skipping Stacks",
+            "type": "dart",
+            "request": "launch",
+            "program": "use_case_scenarios/lib/skipping_stacks/main.dart"
         }
     ]
 }
