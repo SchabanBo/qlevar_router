@@ -46,7 +46,7 @@
 //                               color: Colors.white70,
 //                               child: ListTile(
 //                                 leading:
-//                                     Icon(Icons.assignment, color: Colors.black),
+//                                 Icon(Icons.assignment, color: Colors.black),
 //                                 title: Text(
 //                                   '#${item.id} - From: ${item.from}',
 //                                   style: TextStyle(fontSize: 20),
@@ -97,7 +97,7 @@
 //                               ),
 //                               title: Text(order.items[i].item!.name,
 //                                   style: TextStyle(fontSize: 20)),
-//                               trailing: Text('${order.items[i].item!.price}€',
+//                             trailing: Text('${order.items[i].item!.price}€',
 //                                   style: TextStyle(color: Colors.red)),
 //                               subtitle: Row(children: [
 //                                 Text(
@@ -106,8 +106,8 @@
 //                                 ),
 //                                 const SizedBox(width: 15),
 //                                 Text(
-//                                   // ignore: lines_longer_than_80_chars
-//                                   'Price: ${(order.items[i].count * order.items[i].item!.price).toStringAsFixed(2)} €',
+                                   // ignore: lines_longer_than_80_chars
+//                              'Price: ${(order.items[i].count * order.items[i].item!.price).toStringAsFixed(2)} €',
 //                                   style: TextStyle(fontSize: 15),
 //                                 ),
 //                               ]),
