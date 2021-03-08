@@ -43,7 +43,7 @@ class MatchController {
       }
       match = match.child!;
     }
-    QR.params.updateParams(params);
+    result.params = params;
     return result;
   }
 

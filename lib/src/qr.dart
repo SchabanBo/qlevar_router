@@ -46,8 +46,12 @@ class QRContext {
   void removeNavigator(String name) => _manager.removeNavigator(name);
 
   /// Update the borwser url
-  void updateUrlInfo(String url, {bool addHistory = true}) =>
-      rootNavigator.updateUrl(url, addHistory: addHistory);
+  void updateUrlInfo(String url,
+          {Map<String, String>? params,
+          String? navigator,
+          bool addHistory = true}) =>
+      rootNavigator.updateUrl(url,
+          params: params, navigator: navigator, addHistory: addHistory);
 
   /// Add this routes as child for the route with name.
   //void expandRoute(String name, List<QRoute> routes) {}
@@ -85,7 +89,10 @@ class QRContext {
           _manager.hasController(match.name) ? match.name : forController;
       await _toMatch(match.child!, forController: newControllerName);
     } else {
-      updateUrlInfo(match.fullPath, addHistory: false);
+      updateUrlInfo(match.fullPath,
+          params: params.asStringMap(),
+          navigator: forController,
+          addHistory: false);
     }
   }
 
@@ -104,7 +111,10 @@ class QRContext {
       if (controller.canPop) {
         controller.removeLast();
         if (lastNavi != QRContext.rootRouterName) {
-          updateUrlInfo(curremtPath, addHistory: false);
+          updateUrlInfo(curremtPath,
+              navigator: lastNavi,
+              params: history.current.params.asStringMap(),
+              addHistory: false);
         }
         return true;
       }

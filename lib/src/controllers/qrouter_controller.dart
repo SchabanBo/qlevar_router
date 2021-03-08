@@ -16,7 +16,10 @@ import 'pages_controller.dart';
 abstract class QNavigator extends ChangeNotifier {
   bool get canPop;
 
-  void updateUrl(String url, {bool addHistory = true});
+  void updateUrl(String url,
+      {Map<String, String>? params,
+      String? navigator = '',
+      bool addHistory = true});
 
   void pushName(String name);
 
@@ -185,14 +188,17 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  void updateUrl(String url, {bool addHistory = true}) {
+  void updateUrl(String url,
+      {Map<String, String>? params,
+      String? navigator,
+      bool addHistory = true}) {
     if (key.name != QRContext.rootRouterName) {
       QR.log('Only ${QRContext.rootRouterName} can update the url');
       return;
     }
-    final params = QParams();
-    params.addAll(Uri.parse(url).queryParameters);
-    QR.history.add(QHistoryEntry(url, params, 'From out', false));
+    final _params = QParams();
+    _params.addAll(params ?? Uri.parse(url).queryParameters);
+    QR.history.add(QHistoryEntry(url, _params, navigator ?? 'From out', false));
     _update();
     if (!addHistory) {
       QR.history.removeLast();

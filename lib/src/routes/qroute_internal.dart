@@ -17,6 +17,8 @@ class QRouteInternal {
 
   String? activePath;
 
+  QParams? params;
+
   /// The children for this route
   QRouteChildren? children;
 
@@ -32,6 +34,7 @@ class QRouteInternal {
     required this.route,
     required this.isNotFound,
     this.activePath,
+    this.params,
     this.children,
     this.parent,
     this.child,
@@ -68,6 +71,7 @@ class QRouteInternal {
   void clean() {
     child = null;
     activePath = null;
+    params = null;
   }
 
   bool isSame(QRouteInternal other) => key.isSame(other.key);
