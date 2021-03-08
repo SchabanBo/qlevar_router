@@ -1,11 +1,9 @@
-import 'package:example/screens/nested_route.dart';
-import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'helpers/database.dart';
 import 'helpers/text_page.dart';
 import 'screens/home_page.dart';
-import 'screens/order_page.dart';
+import 'screens/nested_route.dart';
 import 'screens/parent_page.dart';
 
 class AppRoutes {
@@ -40,28 +38,24 @@ class AppRoutes {
                   ],
                   builder: () => TextPage('Hi child 4')),
             ]),
-        QRoute(path: '/:id', builder: () => TextPage('Hi ${QR.params['id']}')),
         QRoute(
-            path: '/params',
-            builder: () => TextPage(
-                'Hi test is${QR.params['test']} and go is ${QR.params['go']}')),
+            path: '/:id',
+            builder: () => TextPage('the id is ${QR.params['id']}')),
+        QRoute(path: '/params', builder: () => TextPage(
+            // ignore: lines_longer_than_80_chars
+            'params are: test is${QR.params['test']} and go is ${QR.params['go']}')),
         QRoute.withChild(
             path: '/nested',
             builderChild: (r) => NestedRoutePage(r),
             initRoute: '/child',
             children: [
-              QRoute(
-                  path: '/child',
-                  builder: () => Center(child: Text('Hi nesated child'))),
+              QRoute(path: '/child', builder: () => NestedChild('child')),
               QRoute(
                   path: '/child-1',
-                  builder: () => Center(child: Text('Hi nesated child 1'))),
-              QRoute(
-                  path: '/child-2',
-                  builder: () => Center(child: Text('Hi nesated child 2'))),
-              QRoute(
-                  path: '/child-3',
-                  builder: () => Center(child: Text('Hi nesated child 3'))),
+                  builder: () => NestedChild('child 1'),
+                  pageType: QSlidePage()),
+              QRoute(path: '/child-2', builder: () => NestedChild('child 2')),
+              QRoute(path: '/child-3', builder: () => NestedChild('child 3')),
             ]),
       ];
 }

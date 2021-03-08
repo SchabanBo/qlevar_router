@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp.router(
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Colors.amber,
+        primaryColor: Colors.blueGrey.shade800,
       ),
       routeInformationParser: QRouteInformationParser(),
       routerDelegate: QRouterDelegate(AppRoutes().routes()));

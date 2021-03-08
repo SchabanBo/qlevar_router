@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import '../../qlevar_router.dart';
 import '../controllers/qrouter_controller.dart';
 
 class QRouter extends StatefulWidget {
@@ -26,7 +25,11 @@ class _QRouterState extends State<QRouter> {
           if (!route.didPop(result)) {
             return false;
           }
-          return QR.back();
+          if (widget._controller.canPop) {
+            widget._controller.removeLast();
+            return true;
+          }
+          return false;
         },
       );
 }

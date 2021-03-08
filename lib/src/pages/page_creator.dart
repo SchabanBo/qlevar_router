@@ -92,7 +92,10 @@ class PageCreator {
         'Can not create a navigator to a route without children. $route');
     final router = QR.createNavigator(
         qRoute.name ?? qRoute.path, qRoute.children!,
-        initPaht: qRoute.initRoute);
+        initPath: qRoute.initRoute);
+    if (qRoute.initRoute != null) {
+      route.activePath = '${route.activePath}${qRoute.initRoute}';
+    }
     return qRoute.builderChild!(router);
   }
 }

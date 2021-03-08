@@ -13,7 +13,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   QRouterDelegate(List<QRoute> routes, {String? initPath, QRoute? notFoundPage})
       : _controller = QR.createRouterController(
             QRContext.rootRouterName, routes,
-            initPaht: initPath) {
+            initPath: initPath) {
     _controller.addListener(notifyListeners);
   }
 
@@ -31,6 +31,14 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(String route) {
+    if (QR.history.hasLast && route == QR.history.last.path) {
+      QR.log(
+          // ignore: lines_longer_than_80_chars
+          'New route reported that was last visited. Useing QR.back() to response',
+          isDebug: true);
+      QR.back();
+      return SynchronousFuture(null);
+    }
     QR.to(route);
     return SynchronousFuture(null);
   }
@@ -46,7 +54,11 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
           if (!route.didPop(result)) {
             return false;
           }
-          return QR.back();
+          if (_controller.canPop) {
+            _controller.removeLast();
+            return true;
+          }
+          return false;
         },
       );
 }

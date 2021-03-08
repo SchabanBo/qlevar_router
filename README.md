@@ -16,9 +16,13 @@ class AppRoutes{
 }
 
 // Create your app
-MaterialApp.router(
-      routerDelegate: QR.router(AppRoutes().routes),
-      routeInformationParser: QR.routeParser())
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => MaterialApp.router(
+      routeInformationParser: QRouteInformationParser(),
+      routerDelegate: QRouterDelegate(AppRoutes().routes()));
+}
+
 
 // from anywhere in your code navigate to new page with
 QR.toName(AppRoutes.userPage, param:{'userId':2});
@@ -34,32 +38,7 @@ QR.to('/user/2');
 
 [Wiki](https://github.com/SchabanBo/qlevar_router/wiki)
 
-Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route arguments etc ...
-With Navigator2.0 Manage your project routes and create nested routes. Update only one widget in your page when navigating to new route. Simply navigation without context to your page.
+Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
+With Navigator 2.0 Manage your project routes and create nested routes. Change only one widget on your page when navigating to the new route. Navigate without context from anywhere to anywhere.
 
-The most cool feature for this package is [Nested Routing - Widget Update](https://github.com/SchabanBo/qlevar_router/wiki/02_Features##nested-routing---widget-update) or see all [Features](https://github.com/SchabanBo/qlevar_router/wiki/02_Features)
-
-## TODO
-
-- [x] Build Tree
-- [x] Create Router
-- [x] Pop
-- [x] Navigate
-- [ ] Create Router
-- [ ] QRouteChild
-- [ ] ChildTrigger in QNavigation?
-- [ ] Expand Routes
-- [ ] Remove Routes
-- [ ] Try to split multi routes and group them
-- [ ] Add popUnit or Push
-- [x] Params
-  - [x] Query
-  - [x] Component
-- [ ] Middleware
-  - [x] Redirect
-  - [x] onMatch
-  - [x] onEnter
-  - [x] onExit
-  - [ ] OnChild Try to give the widget with it
-  - [ ] Add Modify History in QRouteMiddleware
-  - [ ] Add allowDuplicated for route [A, A, B, A] => [A, B, A]
+See all [Features](https://github.com/SchabanBo/qlevar_router/wiki/02_Features)
