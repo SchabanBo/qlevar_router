@@ -1,11 +1,17 @@
 {
     "version": "0.2.0",
     "configurations": [
+        // {
+        //     "name": "Flutter",
+        //     "type": "dart",
+        //     "request": "launch",
+        //     "program": "use_case_scenarios/lib/query_parameters/main.dart"
+        // } ,
         {
             "name": "Flutter",
             "type": "dart",
             "request": "launch",
-            "program": "example/lib/main.dart"
+            "program": "use_case_scenarios/lib/path_parameters/main.dart"
         }
     ]
 }

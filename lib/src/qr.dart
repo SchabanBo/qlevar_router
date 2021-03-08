@@ -89,7 +89,7 @@ class QRContext {
           _manager.hasController(match.name) ? match.name : forController;
       await _toMatch(match.child!, forController: newControllerName);
     } else {
-      updateUrlInfo(match.fullPath,
+      updateUrlInfo(match.activePath!,
           params: params.asStringMap(),
           navigator: forController,
           addHistory: false);
