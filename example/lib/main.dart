@@ -5,7 +5,7 @@ import 'routes.dart';
 
 void main() {
   //Get.put(Database(), permanent: true);
-  //QR.settings.enableDebugLog = true;
+  QR.settings.enableDebugLog = true;
   runApp(MyApp());
 }
 
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp.router(
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Colors.amber,
+        primaryColor: Colors.blueGrey.shade800,
       ),
       routeInformationParser: QRouteInformationParser(),
       routerDelegate: QRouterDelegate(AppRoutes().routes()));

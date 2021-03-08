@@ -4,4 +4,6 @@ extension Iterables<T> on Iterable<T> {
       <K, List<T>>{},
       (map, element) =>
           map..putIfAbsent(keyFunction(element), () => <T>[]).add(element));
+
+  T get beforeLast => elementAt(length - 2);
 }

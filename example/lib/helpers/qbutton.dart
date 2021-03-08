@@ -9,12 +9,12 @@ class QButton extends StatelessWidget {
       {this.fontSize = 18, this.textColor = Colors.black});
   @override
   Widget build(BuildContext context) => Card(
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white,
         elevation: 5,
         child: InkWell(
           onTap: onPress,
           child: Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(15.0),
             child: Text(
               text,
               style: TextStyle(fontSize: fontSize, color: textColor),

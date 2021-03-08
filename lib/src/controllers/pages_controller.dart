@@ -1,3 +1,4 @@
+import '../../qlevar_router.dart';
 import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
 import '../routes/qroute_internal.dart';
@@ -19,6 +20,7 @@ class PagesController {
   void removeLast() {
     final route = routes.last;
     MiddlewareController(route).runOnExit();
+    QR.removeNavigator(route.name);
     routes.removeLast();
     pages.removeLast();
   }
@@ -26,7 +28,14 @@ class PagesController {
   void removeIndex(int index) {
     final route = routes[index];
     MiddlewareController(route).runOnExit();
+    QR.removeNavigator(route.name);
     routes.removeAt(index);
     pages.removeAt(index);
+  }
+
+  void removeAll() {
+    for (var i = 0; i < pages.length - 1; i++) {
+      removeLast();
+    }
   }
 }

@@ -5,11 +5,10 @@ import 'middleware_controller.dart';
 
 class MatchController {
   final Uri path;
-  final String navigator;
   final QRouteChildren routes;
-  String foundPath = "";
+  String foundPath;
   final params = QParams();
-  MatchController(String sPath, this.navigator, this.routes)
+  MatchController(String sPath, this.foundPath, this.routes)
       : path = Uri.parse(sPath) {
     params.addAll(path.queryParameters);
     QR.log('Finding Match for $sPath');
@@ -28,26 +27,22 @@ class MatchController {
     var searchIn = routes;
     if (path.pathSegments.isEmpty) {
       final match = _tryFind(searchIn, '')!;
-      match.activePath = '/';
       return match;
     }
 
     final result = _tryFind(searchIn, path.pathSegments[0]);
     if (result == null) {
-      return QRouteInternal.notfound(foundPath);
+      return QRouteInternal.notfound();
     }
-    result.activePath = foundPath;
     var match = result;
     for (var i = 1; i < path.pathSegments.length; i++) {
       searchIn = match.children!;
       match.child = _tryFind(searchIn, path.pathSegments[i]);
       if (match.child == null) {
-        return QRouteInternal.notfound(foundPath);
+        return QRouteInternal.notfound();
       }
-      match.child!.activePath = foundPath;
       match = match.child!;
     }
-
     QR.params.updateParams(params);
     return result;
   }
@@ -77,6 +72,7 @@ class MatchController {
     if (result != null) {
       updateFoundPath(path);
       result.clean();
+      result.activePath = foundPath;
       MiddlewareController(result).runOnMatch();
       return result;
     }
