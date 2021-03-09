@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
-import 'package:qlevar_router/src/routes/qroute_internal.dart';
-import 'package:qlevar_router/src/types/qroute_key.dart';
 
 import '../../qlevar_router.dart';
 import '../helpers/widgets/history.dart';
+import '../routes/qroute_internal.dart';
+import 'qroute_key.dart';
 
 class QHistory {
   final _history = <QHistoryEntry>[];
