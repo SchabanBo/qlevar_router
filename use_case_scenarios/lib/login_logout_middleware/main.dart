@@ -1,14 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 void main() => runApp(MyApp());
 
-class AuthService {
-  // static bool isAuthed = Random().nextBool();
-  static bool isAuthed = false;
-}
+bool isAuthed = false;
 
 class MyApp extends StatelessWidget {
   @override
@@ -32,7 +27,6 @@ class AppRoutes {
               redirectGuardFunc: () {
                 return Future.microtask(
                   () {
-                    final isAuthed = AuthService.isAuthed;
                     print('isAuthed = $isAuthed');
                     return isAuthed ? null : 'login';
                   },
@@ -64,7 +58,7 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    AuthService.isAuthed = false;
+                    isAuthed = false;
                     QR.to('/login');
                   },
                   child: Text('Log out'),
@@ -83,6 +77,8 @@ class HomePage extends StatelessWidget {
                       ))
                   .toList(),
             ),
+            QR.history.debug(),
+            QR.getActiveTree(),
           ],
         ),
       ),
@@ -122,14 +118,16 @@ class LoginPage extends StatelessWidget {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                AuthService.isAuthed = true;
+                isAuthed = true;
                 QR.to('/');
               },
               child: Text(
                 'Log in',
                 style: TextStyle(color: Colors.white),
               ),
-            )
+            ),
+            QR.history.debug(),
+            QR.getActiveTree(),
           ],
         ),
       ),

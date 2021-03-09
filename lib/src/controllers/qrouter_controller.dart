@@ -182,11 +182,9 @@ class QRouterController extends QNavigator {
     // page exist remove unit it
     for (var i = index + 1; i < _pagesController.pages.length; i++) {
       _pagesController.removeIndex(i);
+      QR.history.removeLast();
       i--;
     }
-    final lastRoute = _pagesController.routes.last;
-    QR.history.add(QHistoryEntry(lastRoute.key, lastRoute.activePath!,
-        lastRoute.params!, key.name, false));
     _update();
   }
 
