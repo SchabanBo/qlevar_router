@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
@@ -27,16 +25,58 @@ class AppRoutes {
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final controller = TextEditingController();
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          QR.to('/products?id=${Random().nextInt(100)}&text=hi');
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: ListTile(
-            title: Text('Click me'.toString()),
-          ),
+      backgroundColor: Colors.grey.shade200,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: height * 0.3,
+              color: Colors.grey.shade500,
+              padding: const EdgeInsets.all(25),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      width: width * 0.6,
+                      child: TextField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Search',
+                        ),
+                      )),
+                  SizedBox(width: 25),
+                  TextButton(
+                      onPressed: () {
+                        if (controller.text.isNotEmpty) {
+                          QR.to('/products?q=${controller.text}');
+                          controller.clear();
+                        }
+                      },
+                      child: Text(
+                        'Search',
+                        style: TextStyle(color: Colors.white),
+                      ))
+                ],
+              ),
+            ),
+            Wrap(
+              children: List.generate(10, (index) => index)
+                  .map((e) => Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Container(
+                          width: 200,
+                          height: height * 0.2,
+                          color: Colors.grey.shade400,
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ],
         ),
       ),
     );
@@ -46,11 +86,10 @@ class HomePage extends StatelessWidget {
 class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final id = QR.params['id'].toString();
-    final text = QR.params['text'].toString();
+    final text = QR.params['q'].toString();
     return Scaffold(
       body: Center(
-        child: Text('text = $text \n\n id = $id'),
+        child: Text('q = $text'),
       ),
     );
   }

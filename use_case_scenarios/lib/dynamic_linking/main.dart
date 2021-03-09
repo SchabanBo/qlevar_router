@@ -116,9 +116,11 @@ class GameRoom extends StatelessWidget {
           height: size.height * 0.7,
           color: Colors.grey.shade400,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('Game Room with id $gameId', style: TextStyle(fontSize: 25)),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(width: 25),
                   Text(url),
