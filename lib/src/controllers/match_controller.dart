@@ -10,8 +10,15 @@ class MatchController {
   final params = QParams();
   MatchController(String sPath, this.foundPath, this.routes)
       : path = Uri.parse(sPath) {
-    params.addAll(path.queryParameters);
     QR.log('Finding Match for $sPath');
+  }
+
+  factory MatchController.fromName(String name, QRouteChildren routes) {
+    final path = QR.treeInfo.namePath[name];
+    if (path == null) {
+      throw Exception('Route with name $name was not found in the tree info');
+    }
+    return MatchController(path, '', routes);
   }
 
   void updateFoundPath(String segment) {
@@ -20,6 +27,7 @@ class MatchController {
         path.pathSegments.last == segment &&
         path.hasQuery) {
       foundPath += '?${path.query}';
+      params.addAll(path.queryParameters);
     }
   }
 
@@ -72,7 +80,7 @@ class MatchController {
       updateFoundPath(path);
       result.clean();
       result.activePath = foundPath;
-      result.params = params;
+      result.params = params.copyWith();
       MiddlewareController(result).runOnMatch();
       return result;
     }

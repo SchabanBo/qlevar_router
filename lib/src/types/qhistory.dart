@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
 import '../helpers/widgets/history.dart';
+import '../routes/qroute_internal.dart';
+import 'qroute_key.dart';
 
 class QHistory {
   final _history = <QHistoryEntry>[];
@@ -22,6 +24,12 @@ class QHistory {
     }
   }
 
+  void remove(QRouteInternal route) {
+    final entry =
+        _history.lastIndexWhere((element) => element.key.isSame((route.key)));
+    _history.remove(entry);
+  }
+
   void add(QHistoryEntry entry) {
     if (hasLast && !allowDuplications) {
       if (current.isSame(entry)) {
@@ -34,15 +42,19 @@ class QHistory {
     _history.add(entry);
   }
 
+  void clear() => _history.clear();
+
   Widget debug() => DebugHistory(_history);
 }
 
 class QHistoryEntry {
+  final QKey key;
   final String path;
   final String navigator;
   final bool isSkipped;
   final QParams params;
-  QHistoryEntry(this.path, this.params, this.navigator, this.isSkipped);
+  QHistoryEntry(
+      this.key, this.path, this.params, this.navigator, this.isSkipped);
 
   bool isSame(QHistoryEntry other) =>
       path == other.path && navigator == other.navigator;
