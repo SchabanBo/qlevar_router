@@ -24,6 +24,10 @@ class QHistory {
     }
   }
 
+  void removeWithNavigator(String navi) {
+    _history.removeWhere((element) => element.navigator == navi);
+  }
+
   void remove(QRouteInternal route) {
     final entry =
         _history.lastIndexWhere((element) => element.key.isSame((route.key)));

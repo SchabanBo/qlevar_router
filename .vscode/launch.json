@@ -1,37 +1,41 @@
 {
     "version": "0.2.0",
     "configurations": [
-      
-        // {
-        //     "name": "Dynamic Linking",
-        //     "type": "dart",
-        //     "request": "launch",
-        //     "program": "use_case_scenarios/lib/dynamic_linking/main.dart"
-        // },
-        // {
-        //     "name": "Path Parameters",
-        //     "type": "dart",
-        //     "request": "launch",
-        //     "program": "use_case_scenarios/lib/path_parameters/main.dart"
-        // },
-        // {
-        //     "name": "Query Parameters",
-        //     "type": "dart",
-        //     "request": "launch",
-        //     "program": "use_case_scenarios/lib/query_parameters/main.dart"
-        // },
-      
+        {
+            "name": "Example",
+            "type": "dart",
+            "request": "launch",
+            "program": "example/lib/main.dart"
+        },
+        {
+            "name": "Dynamic Linking",
+            "type": "dart",
+            "request": "launch",
+            "program": "use_case_scenarios/lib/dynamic_linking/main.dart"
+        },
+        {
+            "name": "Path Parameters",
+            "type": "dart",
+            "request": "launch",
+            "program": "use_case_scenarios/lib/path_parameters/main.dart"
+        },
+        {
+            "name": "Query Parameters",
+            "type": "dart",
+            "request": "launch",
+            "program": "use_case_scenarios/lib/query_parameters/main.dart"
+        },
         {
             "name": "Login Logout Middlewares",
             "type": "dart",
             "request": "launch",
             "program": "use_case_scenarios/lib/login_logout_middleware/main.dart"
-          },
-        // {
-        //     "name": "Skipping Stacks",
-        //     "type": "dart",
-        //     "request": "launch",
-        //     "program": "use_case_scenarios/lib/skipping_stacks/main.dart"
-        // }
+        },
+        {
+            "name": "Skipping Stacks",
+            "type": "dart",
+            "request": "launch",
+            "program": "use_case_scenarios/lib/skipping_stacks/main.dart"
+        }
     ]
 }

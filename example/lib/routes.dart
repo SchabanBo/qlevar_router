@@ -7,6 +7,12 @@ import 'screens/nested_route.dart';
 import 'screens/parent_page.dart';
 
 class AppRoutes {
+  static const nested = 'Nested';
+  static const nestedChild = 'Nested Child';
+  static const nestedChild1 = 'Nested Child 1';
+  static const nestedChild2 = 'Nested Child 2';
+  static const nestedChild3 = 'Nested Child 3';
+
   List<QRoute> routes() => [
         QRoute(path: '/', builder: () => HomePage()),
         QRoute(
@@ -45,17 +51,28 @@ class AppRoutes {
             // ignore: lines_longer_than_80_chars
             'params are: test is${QR.params['test']} and go is ${QR.params['go']}')),
         QRoute.withChild(
+            name: nested,
             path: '/nested',
             builderChild: (r) => NestedRoutePage(r),
             initRoute: '/child',
             children: [
-              QRoute(path: '/child', builder: () => NestedChild('child')),
               QRoute(
+                  name: nestedChild,
+                  path: '/child',
+                  builder: () => NestedChild('child')),
+              QRoute(
+                  name: nestedChild1,
                   path: '/child-1',
                   builder: () => NestedChild('child 1'),
                   pageType: QSlidePage()),
-              QRoute(path: '/child-2', builder: () => NestedChild('child 2')),
-              QRoute(path: '/child-3', builder: () => NestedChild('child 3')),
+              QRoute(
+                  name: nestedChild2,
+                  path: '/child-2',
+                  builder: () => NestedChild('child 2')),
+              QRoute(
+                  name: nestedChild3,
+                  path: '/child-3',
+                  builder: () => NestedChild('child 3')),
             ]),
       ];
 }

@@ -44,7 +44,7 @@ class QRContext {
     return QRouter(controller);
   }
 
-  void removeNavigator(String name) => _manager.removeNavigator(name);
+  bool removeNavigator(String name) => _manager.removeNavigator(name);
 
   /// Update the borwser url
   void updateUrlInfo(String url,
@@ -85,6 +85,12 @@ class QRContext {
     await _toMatch(match);
   }
 
+  Future<void> toName(String name, {Map<String, dynamic>? params}) async {
+    final controller = _manager.withName(rootRouterName);
+    var match = controller.findName(name, params: params);
+    await _toMatch(match);
+  }
+
   Future<void> _toMatch(QRouteInternal match,
       {String forController = QRContext.rootRouterName}) async {
     final controller = _manager.withName(forController);
@@ -99,6 +105,8 @@ class QRContext {
           params: match.params!.asStringMap(),
           navigator: forController,
           addHistory: false);
+    } else if (forController != rootRouterName) {
+      (rootNavigator as QRouterController).update(withParams: false);
     }
   }
 

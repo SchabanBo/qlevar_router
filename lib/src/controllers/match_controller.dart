@@ -13,11 +13,10 @@ class MatchController {
     QR.log('Finding Match for $sPath');
   }
 
-  factory MatchController.fromName(String name, QRouteChildren routes) {
-    final path = QR.treeInfo.namePath[name];
-    if (path == null) {
-      throw Exception('Route with name $name was not found in the tree info');
-    }
+  factory MatchController.fromName(
+      String name, String foundPath, QRouteChildren routes,
+      {Map<String, dynamic>? params}) {
+    final path = findPathFromName(name, params ?? <String, dynamic>{});
     return MatchController(path, '', routes);
   }
 
@@ -87,5 +86,41 @@ class MatchController {
 
     QR.log('[$path] is not child of ${routes.parentKey}');
     return null;
+  }
+
+  static String findPathFromName(String name, Map<String, dynamic> params) {
+    final isPathFound = QR.treeInfo.namePath[name];
+    assert(isPathFound != null, 'Path name not found');
+    var newPath = isPathFound!;
+    final pathParams = <String, dynamic>{};
+
+    // Search for component params
+    for (var _param in params.entries) {
+      if (newPath.contains(':${_param.key}')) {
+        newPath = newPath.replaceAll(':${_param.key}', _param.value.toString());
+      } else {
+        pathParams.addEntries([_param]);
+      }
+    }
+
+    // Replace old component
+    for (var _param in QR.params.asMap.entries) {
+      if (newPath.contains(':${_param.key}')) {
+        newPath = newPath.replaceAll(':${_param.key}', _param.value.value!);
+      }
+    }
+
+    if (pathParams.isNotEmpty) {
+      newPath = '$newPath?';
+      // Build the params
+      for (var i = 0; i < pathParams.length; i++) {
+        final param = pathParams.entries.toList()[i];
+        newPath = '$newPath${param.key}=${param.value}';
+        if (i != pathParams.length - 1) {
+          newPath = '$newPath&';
+        }
+      }
+    }
+    return newPath;
   }
 }

@@ -31,11 +31,12 @@ class ControllerManager {
   bool hasController(String name) =>
       controllers.any((element) => element.key.hasName(name));
 
-  void removeNavigator(String name) {
+  bool removeNavigator(String name) {
     if (!hasController(name)) {
-      return;
+      return false;
     }
     controllers.removeWhere((element) => element.key.hasName(name));
     QR.log('Navigator with name [$name] was removed');
+    return true;
   }
 }

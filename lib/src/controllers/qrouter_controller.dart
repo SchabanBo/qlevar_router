@@ -62,6 +62,12 @@ class QRouterController extends QNavigator {
     return MatchController(path, routes.parentFullPaht, routes).match;
   }
 
+  QRouteInternal findName(String name, {Map<String, dynamic>? params}) {
+    return MatchController.fromName(name, routes.parentFullPaht, routes,
+            params: params)
+        .match;
+  }
+
   @override
   void pushName(String name, {Map<String, dynamic>? params}) {
     // TODO: implement push
@@ -73,7 +79,7 @@ class QRouterController extends QNavigator {
       return false;
     }
     _pagesController.removeLast();
-    _update(withParams: true);
+    update(withParams: true);
     return true;
   }
 
@@ -121,7 +127,7 @@ class QRouterController extends QNavigator {
     }
 
     if (notify && !redirect) {
-      _update();
+      update();
     }
   }
 
@@ -185,10 +191,10 @@ class QRouterController extends QNavigator {
       QR.history.removeLast();
       i--;
     }
-    _update();
+    update();
   }
 
-  void _update({bool withParams = false}) {
+  void update({bool withParams = false}) {
     if (withParams) {
       QR.params.updateParams(QR.history.current.params);
     }
@@ -209,7 +215,7 @@ class QRouterController extends QNavigator {
     _params.addAll(params ?? Uri.parse(url).queryParameters);
     QR.history.add(QHistoryEntry(mKey ?? QKey('Out Route'), url, _params,
         navigator ?? 'Out Route', false));
-    _update();
+    update();
     if (!addHistory) {
       QR.history.removeLast();
     }

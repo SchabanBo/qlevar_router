@@ -29,13 +29,11 @@ class PagesController {
   void removeLast() {
     final route = routes.last; // find the page
     MiddlewareController(route).runOnExit(); // run on exit
-    if (QR.history.hasLast &&
-        QR.history.current.navigator != QR.history.last.navigator) {
-      // Should navigator be removed? if the last path in history is the last
-      // page in the navigator then we need to pop the navigator before it and
-      // colse this one
-      QR.removeNavigator(route.name); // remove navigator if exist
-      QR.history.removeLast();
+
+    if (QR.removeNavigator(route.name)) {
+      // if this route has navigator then remove it to remove this route too.
+      // and remove all histories to this route
+      QR.history.removeWithNavigator(route.name);
     }
     QR.history.removeLast(); // remove history for this route
     routes.removeLast(); // remove from the routes
