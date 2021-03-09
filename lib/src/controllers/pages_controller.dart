@@ -12,7 +12,7 @@ class PagesController {
   final pages = <QPageInternal>[
     QMaterialPageInternal(child: Container(), matchKey: QKey('Init Page'))
   ];
-
+  PagesController();
   bool exist(QRouteInternal route) =>
       routes.any((element) => element.key.isSame(route.key));
 
@@ -27,19 +27,28 @@ class PagesController {
   }
 
   void removeLast() {
-    final route = routes.last;
-    MiddlewareController(route).runOnExit();
-    QR.removeNavigator(route.name);
-    routes.removeLast();
-    pages.removeLast();
+    final route = routes.last; // find the page
+    MiddlewareController(route).runOnExit(); // run on exit
+    if (QR.history.hasLast &&
+        QR.history.current.navigator != QR.history.last.navigator) {
+      // Should navigator be removed? if the last path in history is the last
+      // page in the navigator then we need to pop the navigator before it and
+      // colse this one
+      QR.removeNavigator(route.name); // remove navigator if exist
+      QR.history.removeLast();
+    }
+    QR.history.removeLast(); // remove history for this route
+    routes.removeLast(); // remove from the routes
+    pages.removeLast(); // reomve from the pages
   }
 
   void removeIndex(int index) {
-    final route = routes[index];
-    MiddlewareController(route).runOnExit();
-    QR.removeNavigator(route.name);
-    routes.removeAt(index);
-    pages.removeAt(index);
+    final route = routes[index]; // find the page
+    MiddlewareController(route).runOnExit(); // run on exit
+    QR.removeNavigator(route.name); // remove navigator if exist
+    QR.history.remove(route); // remove history for this route
+    routes.removeAt(index); // remove from the routes
+    pages.removeAt(index); // reomve from the pages
   }
 
   void removeAll() {

@@ -18,14 +18,18 @@ abstract class QNavigator extends ChangeNotifier {
 
   void updateUrl(String url,
       {Map<String, String>? params,
+      QKey? mKey,
       String? navigator = '',
       bool addHistory = true});
 
-  void pushName(String name);
+  void pushName(String name, {Map<String, dynamic>? params});
 
-  void replaceName(String name, String withName);
+  void replaceName(String name, String withName,
+      {Map<String, dynamic>? params});
 
-  void replaceAllWithName(String name);
+  void replaceAllWithName(String name, {Map<String, dynamic>? params});
+
+  void popUnitOrPushName(String name, {Map<String, dynamic>? params});
 
   void push(String path);
 
@@ -35,7 +39,7 @@ abstract class QNavigator extends ChangeNotifier {
 
   void replaceAll(String path);
 
-  void removeLast();
+  bool removeLast();
 }
 
 class QRouterController extends QNavigator {
@@ -43,11 +47,12 @@ class QRouterController extends QNavigator {
 
   final QRouteChildren routes;
 
+  final _pagesController = PagesController();
+
   QRouterController(this.key, this.routes, String initPath) {
     push(initPath);
   }
 
-  final _pagesController = PagesController();
   @override
   bool get canPop => _pagesController.pages.length > 1;
 
@@ -58,27 +63,28 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  void pushName(String name) {
+  void pushName(String name, {Map<String, dynamic>? params}) {
     // TODO: implement push
   }
 
   @override
-  void removeLast() {
+  bool removeLast() {
     if (!canPop) {
-      return;
+      return false;
     }
     _pagesController.removeLast();
-    QR.history.removeLast();
-    _update();
+    _update(withParams: true);
+    return true;
   }
 
   @override
-  void replaceName(String name, String withName) {
+  void replaceName(String name, String withName,
+      {Map<String, dynamic>? params}) {
     // TODO: implement replace
   }
 
   @override
-  void replaceAllWithName(String name) {
+  void replaceAllWithName(String name, {Map<String, dynamic>? params}) {
     // TODO: implement replaceAll
   }
 
@@ -133,7 +139,7 @@ class QRouterController extends QNavigator {
       }
     }
     QR.history.add(QHistoryEntry(
-        route.activePath!, route.params!, key.name, route.hasChild));
+        route.key, route.activePath!, route.params!, key.name, route.hasChild));
     _pagesController.add(route);
     return false;
   }
@@ -142,6 +148,9 @@ class QRouterController extends QNavigator {
   void popUnitOrPush(String path) {
     popUnitOrPushMatch(findPath(path));
   }
+
+  @override
+  void popUnitOrPushName(String name, {Map<String, dynamic>? params}) {}
 
   Future<void> popUnitOrPushMatch(QRouteInternal match,
       {bool checkChild = true}) async {
@@ -175,18 +184,23 @@ class QRouterController extends QNavigator {
       _pagesController.removeIndex(i);
       i--;
     }
-    QR.history.add(QHistoryEntry(_pagesController.routes.last.activePath!,
-        _pagesController.routes.last.params!, key.name, false));
+    final lastRoute = _pagesController.routes.last;
+    QR.history.add(QHistoryEntry(lastRoute.key, lastRoute.activePath!,
+        lastRoute.params!, key.name, false));
     _update();
   }
 
-  void _update() {
+  void _update({bool withParams = false}) {
+    if (withParams) {
+      QR.params.updateParams(QR.history.current.params);
+    }
     notifyListeners();
   }
 
   @override
   void updateUrl(String url,
       {Map<String, String>? params,
+      QKey? mKey,
       String? navigator,
       bool addHistory = true}) {
     if (key.name != QRContext.rootRouterName) {
@@ -195,7 +209,8 @@ class QRouterController extends QNavigator {
     }
     final _params = QParams();
     _params.addAll(params ?? Uri.parse(url).queryParameters);
-    QR.history.add(QHistoryEntry(url, _params, navigator ?? 'From out', false));
+    QR.history.add(QHistoryEntry(mKey ?? QKey('Out Route'), url, _params,
+        navigator ?? 'Out Route', false));
     _update();
     if (!addHistory) {
       QR.history.removeLast();

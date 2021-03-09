@@ -123,7 +123,15 @@ class Products extends StatelessWidget {
             .map((e) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
-                      onTap: () => QR.to('/products/$e'),
+                      onTap: () {
+                        // if the product page was called from the search page
+                        // remove the search page from the stack
+                        if (QR.curremtPath.contains('search')) {
+                          QR.rootNavigator.replaceAll('/products/$e');
+                        } else {
+                          QR.to('/products/$e');
+                        }
+                      },
                       child: Column(
                         children: [
                           Container(

@@ -21,7 +21,13 @@ class DebugHistory extends StatelessWidget {
                                   Text(e.navigator,
                                       style: TextStyle(fontSize: 16)),
                                   const SizedBox(width: 10),
+                                  Text(e.key.toString(),
+                                      style: TextStyle(fontSize: 16)),
+                                  const SizedBox(width: 10),
                                   Text(e.path, style: TextStyle(fontSize: 16)),
+                                  const SizedBox(width: 10),
+                                  Text(e.params.asStringMap().toString(),
+                                      style: TextStyle(fontSize: 16)),
                                 ]),
                               ))
                           .toList()),

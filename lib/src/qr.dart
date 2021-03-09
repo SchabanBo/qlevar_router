@@ -8,6 +8,7 @@ import 'routers/qrouter.dart';
 import 'routes/qroute.dart';
 import 'routes/qroute_internal.dart';
 import 'types/qhistory.dart';
+import 'types/qroute_key.dart';
 
 class QRContext {
   static const rootRouterName = 'Root';
@@ -48,10 +49,14 @@ class QRContext {
   /// Update the borwser url
   void updateUrlInfo(String url,
           {Map<String, String>? params,
+          QKey? mKey,
           String? navigator,
           bool addHistory = true}) =>
       rootNavigator.updateUrl(url,
-          params: params, navigator: navigator, addHistory: addHistory);
+          mKey: mKey,
+          params: params,
+          navigator: navigator,
+          addHistory: addHistory);
 
   /// Add this routes as child for the route with name.
   //void expandRoute(String name, List<QRoute> routes) {}
@@ -74,10 +79,10 @@ class QRContext {
 
   /// Navigate to this path.
   /// The package will try to get the right navigtor to this path
-  void to(String path) {
+  Future<void> to(String path) async {
     final controller = _manager.withName(rootRouterName);
     var match = controller.findPath(path);
-    _toMatch(match);
+    await _toMatch(match);
   }
 
   Future<void> _toMatch(QRouteInternal match,
@@ -90,6 +95,7 @@ class QRContext {
       await _toMatch(match.child!, forController: newControllerName);
     } else if (curremtPath != match.activePath!) {
       updateUrlInfo(match.activePath!,
+          mKey: match.key,
           params: match.params!.asStringMap(),
           navigator: forController,
           addHistory: false);
@@ -100,11 +106,10 @@ class QRContext {
   bool back() {
     var lastNavi = QR.history.current.navigator;
     if (_manager.hasController(lastNavi)) {
-      // Should navigator removed, if the last path in history is the last path
-      // in the navigator then we need to pop the navigator before it and colse
-      // this one
+      // Should navigator be removed? if the last path in history is the last
+      // path in the navigator then we need to pop the navigator before it and
+      // colse this one
       if (history.hasLast && lastNavi != history.last.navigator) {
-        QR.history.removeLast();
         lastNavi = history.last.navigator;
       }
       final controller = navigatorOf(lastNavi);
@@ -133,6 +138,15 @@ class QRContext {
     if (settings.enableLog && (!isDebug || settings.enableDebugLog)) {
       settings.logger('QR: $mes');
     }
+  }
+
+  void reset() {
+    _manager.controllers.clear();
+    params.clear();
+    history.clear();
+    treeInfo.namePath.clear();
+    treeInfo.namePath[rootRouterName] = '/';
+    treeInfo.routeIndexer = -1;
   }
 }
 

@@ -5,6 +5,8 @@ class QParams {
   QParams({Map<String, _ParamValue>? params})
       : _params = params ?? <String, _ParamValue>{};
 
+  QParams copyWith() => QParams(params: Map.from(_params));
+
   /// Get param from key
   _ParamValue? operator [](String key) => _params[key];
 
@@ -24,6 +26,8 @@ class QParams {
 
   /// params count
   int get length => _params.length;
+
+  void clear() => _params.clear();
 
   /// get the params keys
   List<String> get keys => _params.keys.toList();
