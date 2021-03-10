@@ -13,7 +13,7 @@ void main() {
         QRoute(path: '/tow', builder: () => Scaffold(body: WidgetTwo()))
       ]);
       QR.to('/tow?param1=45&param2=not');
-      expect(QR.curremtPath, '/tow?param1=45&param2=not');
+      expect(QR.currentPath, '/tow?param1=45&param2=not');
       expect(QR.params['param1']!.asInt, 45);
       expect(QR.params['param2'].toString(), 'not');
       QR.back();
@@ -27,7 +27,7 @@ void main() {
       ]);
       for (var i = 0; i < 5; i++) {
         QR.to('/$i');
-        expect(QR.curremtPath, '/$i');
+        expect(QR.currentPath, '/$i');
         expect(QR.params['userId']!.asInt, i);
         QR.back();
         expect(QR.params.length, 0);
@@ -48,14 +48,14 @@ void main() {
             ]),
       ]);
       await QR.to('/user/5/info');
-      expect(QR.curremtPath, '/user/5/info');
+      expect(QR.currentPath, '/user/5/info');
       expect(QR.params['userId']!.asInt, 5);
       QR.back(); // /user/5
-      expect(QR.curremtPath, '/user/5');
+      expect(QR.currentPath, '/user/5');
       expect(QR.params['userId']!.asInt, 5);
       expect(QR.params.length, 1);
       QR.back(); // /user
-      expect(QR.curremtPath, '/user');
+      expect(QR.currentPath, '/user');
       expect(QR.params.length, 0);
     });
 
@@ -78,22 +78,22 @@ void main() {
       ]);
 
       await QR.to('/user/5/info/7?hi=tt');
-      expect(QR.curremtPath, '/user/5/info/7?hi=tt');
+      expect(QR.currentPath, '/user/5/info/7?hi=tt');
       expect(QR.params['userId']!.asInt, 5);
       expect(QR.params['companyId']!.asInt, 7);
       expect(QR.params['hi']!.toString(), 'tt');
       QR.back();
-      expect(QR.curremtPath, '/user/5/info');
+      expect(QR.currentPath, '/user/5/info');
       expect(QR.params['userId']!.asInt, 5);
       expect(QR.params.length, 1);
       QR.back();
-      expect(QR.curremtPath, '/user/5');
+      expect(QR.currentPath, '/user/5');
       expect(QR.params.length, 1);
       QR.back();
-      expect(QR.curremtPath, '/user');
+      expect(QR.currentPath, '/user');
       expect(QR.params.length, 0);
       QR.back();
-      expect(QR.curremtPath, '/');
+      expect(QR.currentPath, '/');
       expect(QR.params.length, 0);
     });
   });

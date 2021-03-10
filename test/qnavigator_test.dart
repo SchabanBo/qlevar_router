@@ -13,7 +13,7 @@ void main() {
     QRoute(path: '/three', builder: () => Scaffold(body: WidgetThree())),
   ];
   void printCurrentHistory() => print(QR.history.entries.map((e) => e.path));
-  void expectedPath(String path) => expect(QR.curremtPath, path);
+  void expectedPath(String path) => expect(QR.currentPath, path);
   void expectedStackLength(int lenght) =>
       expect(QR.history.entries.length, lenght);
 

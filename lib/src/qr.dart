@@ -16,7 +16,7 @@ class QRContext {
   final history = QHistory();
 
   /// The cureent route url
-  String get curremtPath => history.isEmpty ? '/' : history.current.path;
+  String get currentPath => history.isEmpty ? '/' : history.current.path;
 
   /// Set the active navigator name to call with [navigator]
   String activeNavigatorName = QRContext.rootRouterName;
@@ -99,7 +99,7 @@ class QRContext {
       final newControllerName =
           _manager.hasController(match.name) ? match.name : forController;
       await _toMatch(match.child!, forController: newControllerName);
-    } else if (curremtPath != match.activePath!) {
+    } else if (currentPath != match.activePath!) {
       updateUrlInfo(match.activePath!,
           mKey: match.key,
           params: match.params!.asStringMap(),
@@ -124,7 +124,7 @@ class QRContext {
       if (controller.canPop) {
         controller.removeLast();
         if (lastNavi != QRContext.rootRouterName) {
-          updateUrlInfo(curremtPath,
+          updateUrlInfo(currentPath,
               navigator: lastNavi,
               params: history.current.params.asStringMap(),
               addHistory: false);

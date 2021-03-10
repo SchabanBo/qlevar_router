@@ -126,7 +126,7 @@ class Products extends StatelessWidget {
                       onTap: () {
                         // if the product page was called from the search page
                         // remove the search page from the stack
-                        if (QR.curremtPath.contains('search')) {
+                        if (QR.currentPath.contains('search')) {
                           QR.rootNavigator.replaceAll('/products/$e');
                         } else {
                           QR.to('/products/$e');
