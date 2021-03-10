@@ -17,6 +17,9 @@ abstract class QNavigator extends ChangeNotifier {
   /// Get if the cureent [QNavigator] can pop or not
   bool get canPop;
 
+  /// Get the cureent route for this navigator
+  QRoute get currentRoute;
+
   /// Set the browser [url]
   void updateUrl(String url,
       {Map<String, String>? params,
@@ -54,6 +57,9 @@ class QRouterController extends QNavigator {
   QRouterController(this.key, this.routes, String initPath) {
     push(initPath);
   }
+
+  @override
+  QRoute get currentRoute => _pagesController.routes.last.route;
 
   @override
   bool get canPop => _pagesController.pages.length > 1;

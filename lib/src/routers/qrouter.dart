@@ -5,6 +5,8 @@ class QRouter extends StatefulWidget {
   final navKey = GlobalKey<NavigatorState>();
   final QRouterController _controller;
   QNavigator get navigator => _controller;
+  String get routeName =>
+      _controller.currentRoute.name ?? _controller.currentRoute.path;
   QRouter(this._controller);
   @override
   _QRouterState createState() => _QRouterState();
