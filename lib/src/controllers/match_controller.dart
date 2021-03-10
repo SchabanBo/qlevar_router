@@ -61,17 +61,20 @@ class MatchController {
       if (routePath.startsWith('/:')) {
         var name = routePath.replaceAll('/:', '');
 
-        if (name.indexOf('(') != -1) {
-          final regexRule = name.substring(name.indexOf('('));
-          name = name.substring(0, name.indexOf('('));
-
-          final regex = RegExp(regexRule);
-
-          if (regex.hasMatch(path)) {
-            params[name] = path;
-            return true;
+        if (name.indexOf('(') != -1 && name.indexOf(')') != -1) {
+          try {
+            final regexRule = name.substring(name.indexOf('('));
+            name = name.substring(0, name.indexOf('('));
+            final regex = RegExp(regexRule);
+            if (regex.hasMatch(path)) {
+              params[name] = path;
+              return true;
+            }
+            return false;
+          } on FormatException catch (e) {
+            print(e);
+            return false;
           }
-          return false;
         }
         params[name] = path;
         return true;

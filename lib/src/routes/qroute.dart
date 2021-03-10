@@ -20,14 +20,16 @@ class QRoute {
   ///'`/products/:id(^[0-9]\$)'` any id with more than one number
   ///Will be directed to the notfound route
   ///
+  /// note that any regex MUST BE added between  parentheses `()`
+  ///
   ///Useful regex:
   ///
   ///
-  /// `^[0-9]*$` none or many numbers only.
+  /// `(^[0-9]*$)` none or many numbers only.
   ///
-  /// `^[0-9]+$` one or more numbers only.
+  /// `(^[0-9]+$)` one or more numbers only.
   ///
-  /// `^[0-9]$`  one numbers only.
+  /// `(^[0-9]$)`  one numbers only.
   ///
   /// `(a | b | c )` one value only  a or b or.
   final String path;
