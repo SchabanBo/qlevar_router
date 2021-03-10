@@ -9,29 +9,28 @@ typedef PageWithChildBuilder = Widget Function(QRouter);
 
 /// Define a route
 class QRoute {
-  ///Set the path to this Route
-  ///then use `QR.to()`to navigate to it.
+  /// Set the path to this Route
+  /// then use `QR.to()`to navigate to it.
   ///
-  ///6ou can add path parmeter easily like this:
-  ///`/products/:id`
-  ///and recive it using `QR.params['id']`
+  /// you can add path parmeter easily like this:
+  /// `/products/:id`
+  /// and recive it using `QR.params['id']`
   ///
-  ///More over you can add Regex to this paramter
-  ///'`/products/:id(^[0-9]\$)'` any id with more than one number
-  ///Will be directed to the notfound route
+  /// More over you can add Regex to this paramter
+  /// '`/products/:id(^[0-9]\$)'` any id with more than one number
+  /// Will be directed to the notfound route
   ///
-  /// note that any regex MUST BE added between  parentheses `()`
+  /// Note that any regex MUST BE added between  parentheses `()`
   ///
-  ///Useful regex:
+  /// Useful regex:
   ///
+  ///  `(^[0-9]*\$)` none or many numbers only.
   ///
-  /// `(^[0-9]*$)` none or many numbers only.
+  ///  `(^[0-9]+\$)` one or more numbers only.
   ///
-  /// `(^[0-9]+$)` one or more numbers only.
+  ///  `(^[0-9]\$)`  one number only.
   ///
-  /// `(^[0-9]$)`  one numbers only.
-  ///
-  /// `(a | b | c )` one value only  a or b or.
+  ///  `(a|b|c)` one value only  a or b or c.
   final String path;
 
   /// The name for this route

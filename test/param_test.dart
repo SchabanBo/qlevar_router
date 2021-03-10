@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
+import 'qnavigator_test.dart';
 import 'test_widgets/test_widgets.dart';
 
 void main() {
@@ -95,6 +96,44 @@ void main() {
       QR.back();
       expect(QR.currentPath, '/');
       expect(QR.params.length, 0);
+    });
+
+    testWidgets('Regex Compoent Test', (tester) async {
+      QR.reset();
+      await tester.pumpWidget(AppWarpper([
+        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute.withChild(
+            path: '/user',
+            builderChild: (c) => Scaffold(body: Container(child: c)),
+            children: [
+              QRoute(path: '/:id(^[0-9]\$)', builder: () => Text('Case 1')),
+              QRoute(path: '/:id(^[0-9]+\$)', builder: () => Text('Case 2')),
+              QRoute(path: '/:id(a|b|c)', builder: () => Text('Case 3'))
+            ]),
+      ]));
+
+      await QR.to('/user/5');
+      await tester.pumpAndSettle();
+      expectedPath('/user/5');
+      expect(QR.params['id']!.asInt, 5);
+      expect(find.text('Case 1'), findsOneWidget);
+
+      await QR.to('/user/665');
+      await tester.pumpAndSettle();
+      expectedPath('/user/665');
+      expect(QR.params['id']!.asInt, 665);
+      expect(find.text('Case 2'), findsOneWidget);
+
+      await QR.to('/user/a');
+      await tester.pumpAndSettle();
+      expectedPath('/user/a');
+      expect(QR.params['id']!.value, 'a');
+      expect(find.text('Case 3'), findsOneWidget);
+
+      await QR.to('/user/w');
+      await tester.pumpAndSettle();
+      expectedPath('/notfound');
+      expect(QR.params['id'], null);
     });
   });
 }

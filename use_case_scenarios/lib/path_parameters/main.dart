@@ -16,10 +16,9 @@ class MyApp extends StatelessWidget {
 }
 
 class AppRoutes {
-  List<QRoute> routes() => <QRoute>[
+  List<QRoute> routes() => [
         QRoute(path: '/', builder: () => HomePage()),
-        //one numbe only
-        QRoute(path: '/:id(^[0-9]\$)', builder: () => ProductPage()),
+        QRoute(path: '/:id(^[0-9]+\$)', builder: () => ProductPage()),
       ];
 }
 

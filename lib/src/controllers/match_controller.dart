@@ -33,7 +33,10 @@ class MatchController {
   QRouteInternal get match {
     var searchIn = routes;
     if (path.pathSegments.isEmpty) {
-      final match = _tryFind(searchIn, '')!;
+      final match = _tryFind(searchIn, '');
+      if (match == null) {
+        return QRouteInternal.notfound();
+      }
       return match;
     }
 
@@ -61,7 +64,7 @@ class MatchController {
       if (routePath.startsWith('/:')) {
         var name = routePath.replaceAll('/:', '');
 
-        if (name.indexOf('(') != -1 && name.indexOf(')') != -1) {
+        if (name.contains('(') && name.contains(')')) {
           try {
             final regexRule = name.substring(name.indexOf('('));
             name = name.substring(0, name.indexOf('('));
