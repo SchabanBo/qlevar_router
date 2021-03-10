@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
+import 'qnavigator_test.dart';
 import 'test_widgets/test_widgets.dart';
 
 void main() {
@@ -18,33 +19,35 @@ void main() {
             QRoute(path: '/child-2', builder: () => Text('child 2')),
             QRoute(path: '/child-3', builder: () => Text('child 3')),
           ]),
+      QRoute(path: '/two', builder: () => Scaffold(body: WidgetTwo())),
+      QRoute(path: '/three', builder: () => Scaffold(body: WidgetThree())),
     ];
     test('Stack with Nested Route With QR.back()', () async {
       QR.reset();
       final _ = QRouterDelegate(routes);
       await QR.to('/nested');
-      expect(QR.curremtPath, '/nested/child');
-      expect(QR.history.length, 3);
+      expectedPath('/nested/child');
+      expectedHistoryLength(3);
 
       await QR.to('/nested/child-1');
-      expect(QR.curremtPath, '/nested/child-1');
-      expect(QR.history.length, 4);
+      expectedPath('/nested/child-1');
+      expectedHistoryLength(4);
 
       await QR.to('/nested/child-3');
-      expect(QR.curremtPath, '/nested/child-3');
-      expect(QR.history.length, 5);
+      expectedPath('/nested/child-3');
+      expectedHistoryLength(5);
 
       QR.back();
-      expect(QR.curremtPath, '/nested/child-1');
-      expect(QR.history.length, 4);
+      expectedPath('/nested/child-1');
+      expectedHistoryLength(4);
 
       QR.back();
-      expect(QR.curremtPath, '/nested/child');
-      expect(QR.history.length, 3);
+      expectedPath('/nested/child');
+      expectedHistoryLength(3);
 
       QR.back();
-      expect(QR.curremtPath, '/');
-      expect(QR.history.length, 1);
+      expectedPath('/');
+      expectedHistoryLength(1);
     });
 
     testWidgets('Stack with Nested Route when parent pop', (tester) async {
@@ -53,26 +56,54 @@ void main() {
 
       await QR.to('/nested');
       await tester.pumpAndSettle();
-      expect(QR.curremtPath, '/nested/child');
       expect(find.text('child'), findsOneWidget);
-      expect(QR.history.length, 3);
+      expectedPath('/nested/child');
+      expectedHistoryLength(3);
 
       await QR.to('/nested/child-1');
       await tester.pumpAndSettle();
-      expect(QR.curremtPath, '/nested/child-1');
       expect(find.text('child 1'), findsOneWidget);
-      expect(QR.history.length, 4);
+      expectedPath('/nested/child-1');
+      expectedHistoryLength(4);
 
       await QR.to('/nested/child-3');
       await tester.pumpAndSettle();
-      expect(QR.curremtPath, '/nested/child-3');
       expect(find.text('child 3'), findsOneWidget);
-      expect(QR.history.length, 5);
+      expectedPath('/nested/child-3');
+      expectedHistoryLength(5);
 
       final backButton = find.byTooltip('Back');
       await tester.tap(backButton);
-      expect(QR.curremtPath, '/');
-      expect(QR.history.length, 1);
+      expectedPath('/');
+      expectedHistoryLength(1);
     });
+
+    // test('Simple Navigation History', () async {
+    //   QR.reset();
+    //   final _ = QRouterDelegate(routes);
+    //   await QR.to('/nested');
+    //   expectedPath('/nested/child');
+    //   expectedHistoryLength(3);
+
+    //   await QR.to('/nested/child-1');
+    //   expectedPath('/nested/child-1');
+    //   expectedHistoryLength(4);
+
+    //   await QR.to('/two');
+    //   expectedPath('/two');
+    //   expectedHistoryLength(2);
+
+    //   //  await QR.to('/nested/child-1');
+    //   //   expectedPath('/nested/child-1');
+    //   //   expectedHistoryLength(4);
+
+    //   //   QR.back();
+    //   //   expectedPath('/nested/child');
+    //   //   expectedHistoryLength(3);
+
+    //   //   QR.back();
+    //   //   expectedPath('/');
+    //   //   expectedHistoryLength(1);
+    // });
   });
 }

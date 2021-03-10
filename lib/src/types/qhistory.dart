@@ -22,7 +22,9 @@ class QHistory {
 
   void removeLast({int count = 1}) {
     for (var i = 0; i < count; i++) {
-      _history.removeLast();
+      if (_history.isNotEmpty) {
+        _history.removeLast();
+      }
     }
   }
 

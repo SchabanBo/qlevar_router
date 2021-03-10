@@ -6,28 +6,50 @@
 
 ```dart
 // Define your routes
-class AppRoutes{
-  static String homePage ='Home Page';
-  static String userPage ='User Page';
-  final routes =<QRouteBase>[
-    QRoute(name: homePage, path:'/', page:(c)=> HomePage()),
-    QRoute(name: userPage, path:'/user/:userId', page:(c)=> UserPage()),
-  ]
+class AppRoutehs {
+  static String homePage = 'Home Page';
+  static String userPage = 'User Page';
+  final routes = [
+    QRoute(name: homePage, path: '/', builder: () => HomePage()),
+    QRoute(
+        name: userPage,
+        path: '/user/:userId',
+        builder: () => HomePage(),
+        children: [
+          QRoute(name: homePage, path: '/settings', builder: () => SettingsPage()),
+          QRoute(name: homePage, path: '/profile', builder: () => ProfilePage()),
+        ]),
+    QRoute.withChild(
+        path: '/nested',
+        builderChild: (r) => NestedRoutePage(r),
+        initRoute: '/child',
+        children: [
+          QRoute(path: '/child', builder: () => NestedChild('child')),
+          QRoute(
+              path: '/child-1',
+              builder: () => NestedChild('child 1'),
+              pageType: QSlidePage()),
+        ]),
+  ];
 }
+
 
 // Create your app
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp.router(
       routeInformationParser: QRouteInformationParser(),
-      routerDelegate: QRouterDelegate(AppRoutes().routes()));
+      routerDelegate: QRouterDelegate(AppRoutes().routes));
 }
+
 
 
 // from anywhere in your code navigate to new page with
 QR.toName(AppRoutes.userPage, param:{'userId':2});
 // or
 QR.to('/user/2');
+
+QR.to('/user/6/profile') // Here the Stack will be HomePage -> ProfilePage()
 ```
 
 ## Demo

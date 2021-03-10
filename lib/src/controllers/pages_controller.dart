@@ -50,8 +50,9 @@ class PagesController {
   }
 
   void removeAll() {
-    for (var i = 0; i < pages.length - 1; i++) {
+    for (var i = 0; i < pages.length; i++) {
       removeLast();
+      i--;
     }
   }
 }

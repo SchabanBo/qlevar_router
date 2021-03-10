@@ -4,6 +4,9 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 import 'test_widgets/test_widgets.dart';
 
+void expectedPath(String path) => expect(QR.currentPath, path);
+void expectedHistoryLength(int lenght) => expect(QR.history.length, lenght);
+
 void main() {
   QR.settings.enableDebugLog = false;
   QR.settings.enableLog = false;
@@ -13,9 +16,6 @@ void main() {
     QRoute(path: '/three', builder: () => Scaffold(body: WidgetThree())),
   ];
   void printCurrentHistory() => print(QR.history.entries.map((e) => e.path));
-  void expectedPath(String path) => expect(QR.currentPath, path);
-  void expectedStackLength(int lenght) =>
-      expect(QR.history.entries.length, lenght);
 
   testWidgets(
     'QNavigator - Push RemoveLast ReplaceAll',
@@ -29,7 +29,7 @@ void main() {
       expect(find.byType(WidgetOne), findsOneWidget);
       expect(find.byType(WidgetTwo), findsNothing);
       expect(find.byType(WidgetThree), findsNothing);
-      expectedStackLength(1);
+      expectedHistoryLength(1);
 
       QR.navigator.push('/two');
       QR.navigator.push('/three');
@@ -39,7 +39,7 @@ void main() {
       expect(find.byType(WidgetOne), findsNothing);
       expect(find.byType(WidgetTwo), findsNothing);
       expect(find.byType(WidgetThree), findsOneWidget);
-      expectedStackLength(3);
+      expectedHistoryLength(3);
 
       QR.navigator.removeLast();
 
@@ -49,12 +49,12 @@ void main() {
       expect(find.byType(WidgetTwo), findsOneWidget);
       expect(find.byType(WidgetThree), findsNothing);
       printCurrentHistory();
-      expectedStackLength(2);
+      expectedHistoryLength(2);
 
       QR.navigator.push('/three');
 
       expectedPath('/three');
-      expectedStackLength(3);
+      expectedHistoryLength(3);
       printCurrentHistory();
 
       //Duplication test
@@ -64,7 +64,7 @@ void main() {
       QR.navigator.push('/three');
       printCurrentHistory();
       expectedPath('/three');
-      expectedStackLength(3);
+      expectedHistoryLength(3);
       await tester.pumpAndSettle();
       expect(find.byType(WidgetOne), findsNothing);
       expect(find.byType(WidgetTwo), findsNothing);
@@ -74,7 +74,7 @@ void main() {
 
       printCurrentHistory();
       expectedPath('/two');
-      expectedStackLength(1);
+      expectedHistoryLength(1);
       await tester.pumpAndSettle();
       expect(find.byType(WidgetOne), findsNothing);
       expect(find.byType(WidgetTwo), findsOneWidget);
@@ -96,7 +96,7 @@ void main() {
     expect(find.byType(WidgetOne), findsNothing);
     expect(find.byType(WidgetTwo), findsOneWidget);
     expect(find.byType(WidgetThree), findsNothing);
-    expectedStackLength(1);
+    expectedHistoryLength(1);
 
     QR.navigator.push('/three');
 
@@ -106,7 +106,7 @@ void main() {
     expect(find.byType(WidgetOne), findsNothing);
     expect(find.byType(WidgetTwo), findsNothing);
     expect(find.byType(WidgetThree), findsOneWidget);
-    expectedStackLength(2);
+    expectedHistoryLength(2);
 
     QR.navigator.replaceAll('/three');
     printCurrentHistory();
@@ -116,7 +116,7 @@ void main() {
     expect(find.byType(WidgetOne), findsNothing);
     expect(find.byType(WidgetTwo), findsNothing);
     expect(find.byType(WidgetThree), findsOneWidget);
-    expectedStackLength(1);
+    expectedHistoryLength(1);
   });
 
   testWidgets('replaceAll with default init route', (tester) async {
@@ -131,7 +131,7 @@ void main() {
     expect(find.byType(WidgetOne), findsNothing);
     expect(find.byType(WidgetTwo), findsOneWidget);
     expect(find.byType(WidgetThree), findsNothing);
-    expectedStackLength(1);
+    expectedHistoryLength(1);
   });
 
   testWidgets('replaceAll with different init route', (tester) async {
@@ -145,6 +145,6 @@ void main() {
     expect(find.byType(WidgetOne), findsNothing);
     expect(find.byType(WidgetTwo), findsOneWidget);
     expect(find.byType(WidgetThree), findsNothing);
-    expectedStackLength(1);
+    expectedHistoryLength(1);
   });
 }

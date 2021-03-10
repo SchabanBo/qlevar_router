@@ -14,8 +14,10 @@ import 'middleware_controller.dart';
 import 'pages_controller.dart';
 
 abstract class QNavigator extends ChangeNotifier {
+  /// Get if the cureent [QNavigator] can pop or not
   bool get canPop;
 
+  /// Set the browser [url]
   void updateUrl(String url,
       {Map<String, String>? params,
       QKey? mKey,
@@ -69,9 +71,8 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  void pushName(String name, {Map<String, dynamic>? params}) {
-    // TODO: implement push
-  }
+  void pushName(String name, {Map<String, dynamic>? params}) =>
+      addRoute(findName(name, params: params));
 
   @override
   bool removeLast() {
@@ -91,7 +92,9 @@ class QRouterController extends QNavigator {
 
   @override
   void replaceAllWithName(String name, {Map<String, dynamic>? params}) {
-    // TODO: implement replaceAll
+    final match = findName(name, params: params);
+    _pagesController.removeAll();
+    addRoute(match);
   }
 
   @override
