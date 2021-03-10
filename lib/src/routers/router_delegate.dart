@@ -18,7 +18,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   }
 
   @override
-  String get currentConfiguration => QR.curremtPath;
+  String get currentConfiguration => QR.currentPath;
 
   @override
   Future<void> setInitialRoutePath(String configuration) {

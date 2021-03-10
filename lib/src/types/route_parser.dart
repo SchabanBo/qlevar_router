@@ -12,5 +12,5 @@ class QRouteInformationParser extends RouteInformationParser<String> {
 
   @override
   RouteInformation restoreRouteInformation(String match) =>
-      RouteInformation(location: QR.curremtPath);
+      RouteInformation(location: QR.currentPath);
 }
