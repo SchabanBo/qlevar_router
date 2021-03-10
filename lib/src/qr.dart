@@ -13,17 +13,23 @@ import 'types/qroute_key.dart';
 class QRContext {
   static const rootRouterName = 'Root';
 
-  final history = QHistory();
-
   /// The cureent route url
   String get currentPath => history.isEmpty ? '/' : history.current.path;
 
   /// Set the active navigator name to call with [navigator]
   String activeNavigatorName = QRContext.rootRouterName;
 
+  /// This history for the navigation. It is internal history to help with
+  /// back method . Modifying it does not affect the Browser history
+  final history = QHistory();
+
   /// The parameter for the cureent route
   final params = QParams();
+
+  /// The Settings for this package
   final settings = _QRSettings();
+
+  /// Info about the cureent route tree
   final treeInfo = _QTreeInfo();
 
   final _manager = ControllerManager();
@@ -44,6 +50,7 @@ class QRContext {
     return QRouter(controller);
   }
 
+  /// Remove a navigator with this name
   bool removeNavigator(String name) => _manager.removeNavigator(name);
 
   /// Update the borwser url
@@ -62,10 +69,6 @@ class QRContext {
   //void expandRoute(String name, List<QRoute> routes) {}
   /// Remove this route from the router
   //void cleanRoute(String routerName, String routeName) {}
-  ///go to the route with given name, and can be has a father with this name
-  // - void toName(String name, {Map params, String parent}):
-  /// a callback that calls that RootDelegate to update the path.
-  ///  That path should only set from the root delegate
 
   /// return the current tree widget
   Widget getActiveTree() {
@@ -85,6 +88,7 @@ class QRContext {
     await _toMatch(match);
   }
 
+  /// Go to a route with given name
   Future<void> toName(String name, {Map<String, dynamic>? params}) async {
     final controller = _manager.withName(rootRouterName);
     var match = controller.findName(name, params: params);
@@ -145,6 +149,7 @@ class QRContext {
     }
   }
 
+  /// Clear everything.
   void reset() {
     _manager.controllers.clear();
     params.clear();
