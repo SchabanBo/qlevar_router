@@ -62,6 +62,7 @@ class QRouteInternal {
         route: route,
         fullPath: route.path,
         isNotFound: true,
+        params: QParams(params: {}),
         activePath: route.path,
         children: route.children == null
             ? null

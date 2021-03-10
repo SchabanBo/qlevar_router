@@ -57,9 +57,22 @@ class MatchController {
     bool find(QRouteInternal route) => '/$path' == route.route.path;
 
     bool findComponent(QRouteInternal route) {
-      var routePath = route.route.path;
+      final routePath = route.route.path;
       if (routePath.startsWith('/:')) {
-        final name = routePath.replaceAll('/:', '');
+        var name = routePath.replaceAll('/:', '');
+
+        if (name.indexOf('(') != -1) {
+          final regexRule = name.substring(name.indexOf('('));
+          name = name.substring(0, name.indexOf('('));
+
+          final regex = RegExp(regexRule);
+
+          if (regex.hasMatch(path)) {
+            params[name] = path;
+            return true;
+          }
+          return false;
+        }
         params[name] = path;
         return true;
       }
@@ -74,7 +87,6 @@ class MatchController {
     else if (routes.routes.any(findComponent)) {
       result = routes.routes.firstWhere(findComponent);
     }
-
     if (result != null) {
       updateFoundPath(path);
       result.clean();

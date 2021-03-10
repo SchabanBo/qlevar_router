@@ -8,6 +8,28 @@ typedef PageBuilder = Widget Function();
 typedef PageWithChildBuilder = Widget Function(QRouter);
 
 class QRoute {
+  ///Set the path to this Route
+  ///then use `QR.to()`to navigate to it.
+  ///
+  ///6ou can add path parmeter easily like this:
+  ///`/products/:id`
+  ///and recive it using `QR.params['id']`
+  ///
+  ///More over you can add Regex to this paramter
+  ///'`/products/:id(^[0-9]\$)'` any id with more than one number
+  ///Will be directed to the notfound route
+  ///
+  ///Useful regex:
+  ///
+  ///
+  /// `^[0-9]*$` none or many numbers only.
+  ///
+  /// `^[0-9]+$` one or more numbers only.
+  ///
+  /// `^[0-9]$`  one numbers only.
+  ///
+  /// `(a | b | c )` one value only  a or b or.
+  ///
   final String path;
   final String? name;
   final PageBuilder? builder;

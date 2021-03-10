@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
 class AppRoutes {
   List<QRoute> routes() => <QRoute>[
         QRoute(path: '/', builder: () => HomePage()),
-        QRoute(path: '/:id', builder: () => ProductPage()),
+        //one numbe only
+        QRoute(path: '/:id(^[0-9]\$)', builder: () => ProductPage()),
       ];
 }
 
@@ -39,7 +40,7 @@ class HomePage extends StatelessWidget {
               color: Colors.grey.shade300,
             ),
             Wrap(
-              children: List.generate(10, (index) => index)
+              children: List.generate(15, (index) => index)
                   .map((e) => TextButton(
                         //Navigate to a specific id
                         onPressed: () => QR.to("/$e"),
