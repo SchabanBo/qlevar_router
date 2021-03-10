@@ -1,7 +1,8 @@
-import 'package:example/helpers/qbutton.dart';
-import 'package:example/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+
+import '../helpers/qbutton.dart';
+import '../routes.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -11,10 +12,7 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'LoginScreen',
-              style: TextStyle(fontSize: 22),
-            ),
+            Text('LoginScreen', style: TextStyle(fontSize: 22)),
             QButton("Login/Home Setting case", () => QR.to('/app')),
           ],
         ),
@@ -23,76 +21,45 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class HomeWidget extends StatelessWidget {
+class AppScreen extends StatefulWidget {
+  final QRouter router;
+  AppScreen(this.router);
+  @override
+  _AppScreenState createState() => _AppScreenState();
+}
+
+class _AppScreenState extends State<AppScreen> {
+  @override
+  void initState() {
+    widget.router.navigator.addListener(() => setState(() {}));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'HomeScreen',
-        style: TextStyle(fontSize: 22),
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(child: widget.router),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings')
+        ],
+        currentIndex: widget.router.routeName == AppRoutes.home ? 0 : 1,
+        onTap: (v) => QR.toName(v == 0 ? AppRoutes.home : AppRoutes.settings),
       ),
     );
   }
+}
+
+class HomeWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+      Center(child: Text('HomeScreen', style: TextStyle(fontSize: 22)));
 }
 
 class SettingsWidget extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'SettingsScreen',
-        style: TextStyle(fontSize: 22),
-      ),
-    );
-  }
-}
-
-class AppScreen extends StatelessWidget {
-  final QRouter router;
-  const AppScreen(this.router);
-
-  @override
-  Widget build(BuildContext context) {
-    var currentIdx = 0;
-    return Scaffold(
-        body: Row(
-      children: [
-        StreamBuilder<int>(
-          stream: idxStream.stream,
-          builder: (_, idx) {
-            currentIdx = idx.data ?? 0;
-            print('Current Index = ${idx.data ?? 0}');
-            return NavigationRail(
-              destinations: [
-                NavigationRailDestination(
-                  icon: Icon(Icons.home),
-                  label: Text('home'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.settings),
-                  label: Text('Settings'),
-                ),
-              ],
-              selectedIndex: idx.data ?? 0,
-              onDestinationSelected: (i) {
-                if (currentIdx == i) {
-                  return;
-                }
-                switch (i) {
-                  case 0:
-                    QR.toName(AppRoutes.home);
-                    break;
-                  case 1:
-                    QR.toName(AppRoutes.settings);
-                    break;
-                  default:
-                }
-              },
-            );
-          },
-        ),
-        Expanded(child: router),
-      ],
-    ));
-  }
+  Widget build(BuildContext context) =>
+      Center(child: Text('SettingsScreen', style: TextStyle(fontSize: 22)));
 }

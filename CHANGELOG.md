@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## [0.4.0]
+## [1.0.0]
+
+I have rewrite the entire library to add more use cases and optimize the Performance and add null safety.
+
+## [0.3.6]
 
 - Optimize pop behaver, now with `QR.back` if the current page can pop it will pop, otherwise it will be created.
 - Finish and test `childOf` NavigationMode.

@@ -1,15 +1,13 @@
 import 'dart:async';
 
-import 'package:example/screens/nested2.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'helpers/database.dart';
 import 'helpers/text_page.dart';
 import 'screens/home_page.dart';
+import 'screens/nested2.dart';
 import 'screens/nested_route.dart';
 import 'screens/parent_page.dart';
-
-final idxStream = StreamController<int>();
 
 class AppRoutes {
   static const nested = 'Nested';
@@ -91,41 +89,13 @@ class AppRoutes {
             path: '/app',
             builderChild: (child) => AppScreen(child),
             initRoute: '/home',
-            middleware: [
-              QMiddlewareBuilder(
-                onExitFunc: () {
-                  print('Exiting AppScreen');
-                  idxStream.close();
-                },
-              )
-            ],
             children: [
+              QRoute(name: home, path: '/home', builder: () => HomeWidget()),
               QRoute(
-                name: home,
-                path: '/home',
-                builder: () => HomeWidget(),
-                pageType: QMaterialPage(),
-                middleware: [
-                  QMiddlewareBuilder(
-                    onEnterFunc: () {
-                      idxStream.add(0);
-                    },
-                  )
-                ],
-              ),
-              QRoute(
-                name: settings,
-                path: '/settings',
-                builder: () => SettingsWidget(),
-                pageType: QSlidePage(),
-                middleware: [
-                  QMiddlewareBuilder(
-                    onEnterFunc: () {
-                      idxStream.add(1);
-                    },
-                  )
-                ],
-              ),
+                  name: settings,
+                  path: '/settings',
+                  builder: () => SettingsWidget(),
+                  pageType: QSlidePage()),
             ]),
       ];
 }
