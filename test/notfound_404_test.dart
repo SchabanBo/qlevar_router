@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
+import 'helpers.dart';
 import 'test_widgets/test_widgets.dart';
-
-void expectedPath(String path) => expect(QR.currentPath, path);
-void expectedHistoryLength(int lenght) => expect(QR.history.length, lenght);
 
 void main() {
   QR.settings.enableDebugLog = false;
