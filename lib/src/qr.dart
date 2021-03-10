@@ -124,10 +124,11 @@ class QRContext {
       if (controller.canPop) {
         controller.removeLast();
         if (lastNavi != QRContext.rootRouterName) {
-          updateUrlInfo(curremtPath,
-              navigator: lastNavi,
-              params: history.current.params.asStringMap(),
-              addHistory: false);
+          // updateUrlInfo(curremtPath,
+          //     navigator: lastNavi,
+          //     params: history.current.params.asStringMap(),
+          //     addHistory: false);
+          (rootNavigator as QRouterController).update(withParams: false);
         }
         return true;
       }
