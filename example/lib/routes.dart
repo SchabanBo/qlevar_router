@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:example/screens/nested2.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'helpers/database.dart';
@@ -6,12 +9,20 @@ import 'screens/home_page.dart';
 import 'screens/nested_route.dart';
 import 'screens/parent_page.dart';
 
+final idxStream = StreamController<int>();
+
 class AppRoutes {
   static const nested = 'Nested';
   static const nestedChild = 'Nested Child';
   static const nestedChild1 = 'Nested Child 1';
   static const nestedChild2 = 'Nested Child 2';
   static const nestedChild3 = 'Nested Child 3';
+
+  ///
+  static const app = 'App';
+  static const home = 'Home';
+  static const settings = 'Settings';
+  static const login = 'Login';
 
   List<QRoute> routes() => [
         QRoute(path: '/', builder: () => HomePage()),
@@ -73,6 +84,48 @@ class AppRoutes {
                   name: nestedChild3,
                   path: '/child-3',
                   builder: () => NestedChild('child 3')),
+            ]),
+        QRoute(path: '/login', builder: () => LoginScreen()),
+        QRoute.withChild(
+            name: app,
+            path: '/app',
+            builderChild: (child) => AppScreen(child),
+            initRoute: '/home',
+            middleware: [
+              QMiddlewareBuilder(
+                onExitFunc: () {
+                  print('Exiting AppScreen');
+                  idxStream.close();
+                },
+              )
+            ],
+            children: [
+              QRoute(
+                name: home,
+                path: '/home',
+                builder: () => HomeWidget(),
+                pageType: QMaterialPage(),
+                middleware: [
+                  QMiddlewareBuilder(
+                    onEnterFunc: () {
+                      idxStream.add(0);
+                    },
+                  )
+                ],
+              ),
+              QRoute(
+                name: settings,
+                path: '/settings',
+                builder: () => SettingsWidget(),
+                pageType: QSlidePage(),
+                middleware: [
+                  QMiddlewareBuilder(
+                    onEnterFunc: () {
+                      idxStream.add(1);
+                    },
+                  )
+                ],
+              ),
             ]),
       ];
 }

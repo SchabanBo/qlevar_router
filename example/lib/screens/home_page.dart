@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:example/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
@@ -27,6 +28,7 @@ class HomePage extends StatelessWidget {
                 QButton("Test not found Page", () => QR.to("/parent/no-child")),
                 QButton("Go to Order Page, Test Nesting Navigation",
                     () => QR.to("/nested")),
+                QButton("Go to Login/Home-Setting Case", () => QR.to('/login')),
               ],
             ))));
   }
