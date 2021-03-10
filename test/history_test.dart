@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
-import 'qnavigator_test.dart';
+import 'helpers.dart';
 import 'test_widgets/test_widgets.dart';
 
 void main() {
