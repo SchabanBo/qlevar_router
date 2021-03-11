@@ -8,6 +8,7 @@ class MatchController {
   final QRouteChildren routes;
   String foundPath;
   final params = QParams();
+  int _searchIndex = 0;
   MatchController(String sPath, this.foundPath, this.routes)
       : path = Uri.parse(sPath) {
     QR.log('Finding Match for $sPath');
@@ -33,21 +34,21 @@ class MatchController {
   QRouteInternal get match {
     var searchIn = routes;
     if (path.pathSegments.isEmpty) {
-      final match = _tryFind(searchIn, '');
+      final match = _tryFind(searchIn, -1);
       if (match == null) {
         return QRouteInternal.notfound();
       }
       return match;
     }
 
-    final result = _tryFind(searchIn, path.pathSegments[0]);
+    final result = _tryFind(searchIn, _searchIndex);
     if (result == null) {
       return QRouteInternal.notfound();
     }
     var match = result;
-    for (var i = 1; i < path.pathSegments.length; i++) {
+    for (_searchIndex; _searchIndex < path.pathSegments.length;) {
       searchIn = match.children!;
-      match.child = _tryFind(searchIn, path.pathSegments[i]);
+      match.child = _tryFind(searchIn, _searchIndex);
       if (match.child == null) {
         return QRouteInternal.notfound();
       }
@@ -56,21 +57,21 @@ class MatchController {
     return result;
   }
 
-  QRouteInternal? _tryFind(QRouteChildren routes, String path) {
-    bool find(QRouteInternal route) => '/$path' == route.route.path;
-
-    bool findComponent(QRouteInternal route) {
-      final routePath = route.route.path;
-      if (routePath.startsWith('/:')) {
-        var name = routePath.replaceAll('/:', '');
-
+  QRouteInternal? _tryFind(QRouteChildren routes, int index) {
+    bool isSameSegment(String routeSegment, String segment) {
+      if (routeSegment == segment) {
+        return true;
+      }
+      // try find component
+      if (routeSegment.startsWith(':')) {
+        var name = routeSegment.replaceAll(':', '');
         if (name.contains('(') && name.contains(')')) {
           try {
             final regexRule = name.substring(name.indexOf('('));
             name = name.substring(0, name.indexOf('('));
             final regex = RegExp(regexRule);
-            if (regex.hasMatch(path)) {
-              params[name] = path;
+            if (regex.hasMatch(segment)) {
+              params[name] = segment;
               return true;
             }
             return false;
@@ -79,22 +80,50 @@ class MatchController {
             return false;
           }
         }
-        params[name] = path;
+        params[name] = segment;
         return true;
       }
       return false;
+    }
+
+    var path = index == -1 ? '' : this.path.pathSegments[index];
+
+    var isFind = true;
+
+    bool find(QRouteInternal route) {
+      final routeUri = Uri.parse(route.route.path);
+      if (routeUri.pathSegments.isEmpty) {
+        return path == '';
+      }
+      if (routeUri.pathSegments.length == 1) {
+        return isSameSegment(routeUri.pathSegments.first, path);
+      }
+      var found = true;
+      for (var i = 0; i < routeUri.pathSegments.length; i++) {
+        found = found &&
+            isSameSegment(
+                routeUri.pathSegments[i], this.path.pathSegments[i + index]);
+      }
+      // if the route was found update the foundpath and the search indexs
+      if (found && isFind) {
+        for (var i = 0; i < routeUri.pathSegments.length; i++) {
+          _searchIndex++;
+          updateFoundPath(this.path.pathSegments[i + index]);
+        }
+        isFind = false;
+      }
+      return found;
     }
 
     QRouteInternal? result;
     if (routes.routes.any(find)) {
       result = routes.routes.firstWhere(find);
     }
-    // try find component
-    else if (routes.routes.any(findComponent)) {
-      result = routes.routes.firstWhere(findComponent);
-    }
     if (result != null) {
-      updateFoundPath(path);
+      if (index == -1 || _searchIndex == index) {
+        updateFoundPath(path);
+        _searchIndex++;
+      }
       result.clean();
       result.activePath = foundPath;
       result.params = params.copyWith();

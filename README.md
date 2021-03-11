@@ -6,11 +6,11 @@
 
 ```dart
 // Define your routes
-class AppRoutehs {
+class AppRoutes {
   static String homePage = 'Home Page';
   static String userPage = 'User Page';
   final routes = [
-    QRoute(name: homePage, path: '/', builder: () => HomePage()),
+    QRoute(name: homePage, path: '/', builder: () => HomePage()),   
     QRoute(
         name: userPage,
         path: '/user/:userId',
@@ -19,6 +19,8 @@ class AppRoutehs {
           QRoute(name: homePage, path: '/settings', builder: () => SettingsPage()),
           QRoute(name: homePage, path: '/profile', builder: () => ProfilePage()),
         ]),
+    QRoute(path: '/products/:category(\w)', builder: () => ProductCategory()),
+    QRoute(path: '/products/:id((^[0-9]\$))', builder: () => ProductDetails()),
     QRoute.withChild(
         path: '/nested',
         builderChild: (r) => NestedRoutePage(r),
@@ -28,11 +30,10 @@ class AppRoutehs {
           QRoute(
               path: '/child-1',
               builder: () => NestedChild('child 1'),
-              pageType: QSlidePage()),
+              pageType: QSlidePage()), // Will add slide animation to the page transaction
         ]),
   ];
 }
-
 
 // Create your app
 class MyApp extends StatelessWidget {
@@ -42,14 +43,24 @@ class MyApp extends StatelessWidget {
       routerDelegate: QRouterDelegate(AppRoutes().routes));
 }
 
-
-
 // from anywhere in your code navigate to new page with
 QR.toName(AppRoutes.userPage, param:{'userId':2});
 // or
 QR.to('/user/2');
 
-QR.to('/user/6/profile') // Here the Stack will be HomePage -> ProfilePage()
+QR.to('/user/6/profile')  // Here the Stack will be HomePage -> ProfilePage()
+QR.to('products/456')     // Will call ProductDetails page
+QR.to('products/garden')  // Will call ProductCategory page
+QR.back()                 // Go back to the last page(in this case 'products/456')
+QR.currentPath            // will show the current path 
+```
+
+Got lost with the many levels and nested navigator in your project
+as debug widgets i have added
+
+```dart
+QR.getActiveTree() // Will show you a dialog contains the tree of the active navigator and pages
+QR.history.debug() // will show the history stack for your current page.
 ```
 
 ## Demo

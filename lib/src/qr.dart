@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../qlevar_router.dart';
 import 'controllers/controller_manager.dart';
 import 'controllers/qrouter_controller.dart';
+import 'helpers/platform/configure_web.dart'
+    if (dart.library.io) 'helpers/platform/configure_nonweb.dart';
 import 'helpers/widgets/stack_tree.dart';
 import 'routers/qrouter.dart';
 import 'routes/qroute.dart';
@@ -12,12 +14,6 @@ import 'types/qroute_key.dart';
 
 class QRContext {
   static const rootRouterName = 'Root';
-
-  /// The cureent route url
-  String get currentPath => history.isEmpty ? '/' : history.current.path;
-
-  /// Set the active navigator name to call with [navigator]
-  String activeNavigatorName = QRContext.rootRouterName;
 
   /// This history for the navigation. It is internal history to help with
   /// back method . Modifying it does not affect the Browser history
@@ -33,6 +29,17 @@ class QRContext {
   final treeInfo = _QTreeInfo();
 
   final _manager = ControllerManager();
+
+  /// The cureent route url
+  String get currentPath => history.isEmpty ? '/' : history.current.path;
+
+  /// Set the active navigator name to call with [navigator]
+  /// by default it is the root navigator
+  /// For example if you work on a dashboard and you want to do your changes
+  /// from now on olny on the dashboard Navi. Then set this value
+  /// to the Dashboard Navi name and every time you call [QR.navigator]
+  /// the Dashboard navigator will be called instade of root navigator
+  String activeNavigatorName = QRContext.rootRouterName;
 
   /// Get the root navigator
   QNavigator get rootNavigator => navigatorOf(QRContext.rootRouterName);
@@ -52,6 +59,14 @@ class QRContext {
 
   /// Remove a navigator with this name
   bool removeNavigator(String name) => _manager.removeNavigator(name);
+
+  /// Remove the hastag from url,
+  /// call this function before running your app,
+  /// Somewhere before calling `runApp()` do:
+  ///```dart
+  /// QR.setUrlStrategy();
+  /// ```
+  void setUrlStrategy() => configureApp();
 
   /// Update the borwser url
   void updateUrlInfo(String url,
@@ -81,7 +96,7 @@ class QRContext {
       _manager.createController(name, routes, initPath);
 
   /// Navigate to this path.
-  /// The package will try to get the right navigtor to this path
+  /// The package will try to get the right navigtor to this path.
   Future<void> to(String path) async {
     final controller = _manager.withName(rootRouterName);
     var match = controller.findPath(path);

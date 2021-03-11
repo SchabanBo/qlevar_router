@@ -78,32 +78,32 @@ void main() {
       expectedHistoryLength(1);
     });
 
-    // test('Simple Navigation History', () async {
-    //   QR.reset();
-    //   final _ = QRouterDelegate(routes);
-    //   await QR.to('/nested');
-    //   expectedPath('/nested/child');
-    //   expectedHistoryLength(3);
+    test('Simple Navigation History', () async {
+      QR.reset();
+      final _ = QRouterDelegate(routes);
+      await QR.to('/nested');
+      expectedPath('/nested/child');
+      expectedHistoryLength(3);
 
-    //   await QR.to('/nested/child-1');
-    //   expectedPath('/nested/child-1');
-    //   expectedHistoryLength(4);
+      await QR.to('/nested/child-1');
+      expectedPath('/nested/child-1');
+      expectedHistoryLength(4);
 
-    //   await QR.to('/two');
-    //   expectedPath('/two');
-    //   expectedHistoryLength(2);
+      await QR.to('/two');
+      expectedPath('/two');
+      expectedHistoryLength(5);
 
-    //   //  await QR.to('/nested/child-1');
-    //   //   expectedPath('/nested/child-1');
-    //   //   expectedHistoryLength(4);
+      await QR.to('/nested/child-1');
+      expectedPath('/nested/child-1');
+      expectedHistoryLength(4);
 
-    //   //   QR.back();
-    //   //   expectedPath('/nested/child');
-    //   //   expectedHistoryLength(3);
+      QR.back();
+      expectedPath('/nested/child');
+      expectedHistoryLength(3);
 
-    //   //   QR.back();
-    //   //   expectedPath('/');
-    //   //   expectedHistoryLength(1);
-    // });
+      // QR.back();
+      // expectedPath('/two');
+      // expectedHistoryLength(1);
+    });
   });
 }

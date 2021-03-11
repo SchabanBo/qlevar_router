@@ -6,7 +6,6 @@ import 'helpers.dart';
 import 'test_widgets/test_widgets.dart';
 
 void main() {
-  QR.settings.enableDebugLog = false;
   QR.settings.enableLog = false;
   final pages = [
     QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
