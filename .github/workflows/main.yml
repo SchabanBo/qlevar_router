@@ -13,5 +13,5 @@ jobs:
     - run: flutter pub get
     - run: flutter format .
     - run: flutter analyze
-    - run: flutter test --coverage coverage
+    - run: flutter test --coverage
     - uses: codecov/codecov-action@v1
