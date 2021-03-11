@@ -13,12 +13,12 @@ class QRoute {
   /// then use `QR.to()`to navigate to it.
   ///
   /// you can add path parmeter easily like this:
-  /// `/products/:id`
+  /// `/:id`
   /// and recive it using `QR.params['id']`
   ///
-  /// More over you can add Regex to this paramter
-  /// '`/products/:id(^[0-9]\$)'` any id with more than one number
-  /// Will be directed to the notfound route
+  /// More over you can add **Regex** to this paramter
+  /// '`/:id(^[0-9]\$)'` any id with more than one number
+  /// Will be directed to the `notfound` route
   ///
   /// Note that any regex MUST BE added between  parentheses `()`
   ///
@@ -30,7 +30,7 @@ class QRoute {
   ///
   ///  `(^[0-9]\$)`  one number only.
   ///
-  ///  `(a|b|c)` one value only  a or b or c.
+  ///  `(foo|bar)` one value only  foo or bar.
   final String path;
 
   /// The name for this route
