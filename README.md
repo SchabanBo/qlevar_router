@@ -48,7 +48,6 @@ QR.to('/user/6/profile')  // Here the Stack will be HomePage -> ProfilePage()
 QR.to('products/456')     // Will call ProductDetails page
 QR.to('products/garden')  // Will call ProductCategory page
 QR.back()                 // Go back to the last page(in this case 'products/456')
-QR.setUrlStrategy()       // Remove the hashtag from the URL
 QR.currentPath            // will show the current path 
 ```
 
