@@ -3,28 +3,15 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 class AppWarpper extends StatelessWidget {
   final List<QRoute> pages;
-  AppWarpper(this.pages);
+  final String? initPath;
+  AppWarpper(this.pages, {this.initPath});
 
   @override
   Widget build(BuildContext context) {
     QR.settings.enableDebugLog = true;
     return MaterialApp.router(
-        routeInformationParser: QR.routeParser(),
-        routerDelegate: QR.router(pages));
-  }
-}
-
-class AppWarpperWithInit extends StatelessWidget {
-  final List<QRoute> pages;
-  final String initRoute;
-  AppWarpperWithInit(this.pages, {this.initRoute});
-
-  @override
-  Widget build(BuildContext context) {
-    QR.settings.enableDebugLog = true;
-    return MaterialApp.router(
-        routeInformationParser: QR.routeParser(),
-        routerDelegate: QR.router(pages, initRoute: initRoute));
+        routeInformationParser: QRouteInformationParser(),
+        routerDelegate: QRouterDelegate(pages, initPath: initPath));
   }
 }
 

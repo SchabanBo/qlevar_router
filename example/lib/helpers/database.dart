@@ -1,5 +1,6 @@
 class Database {
-  final items = [
+  static bool canChildNavigate = true;
+  static final items = [
     StoreItem(
         id: 1,
         name: 'Lettuce',
@@ -47,7 +48,7 @@ class Database {
         image: 'assets/images/eggplant.png',
         price: 2.1),
   ];
-  final orders = [
+  static final orders = [
     Order(id: 1, from: 'USA', createdAt: DateTime(2020, 5, 14), items: [
       OrderItem(itemId: 1, count: 3),
       OrderItem(itemId: 2, count: 6),
@@ -99,14 +100,22 @@ class Order {
   String from;
   DateTime createdAt;
   List<OrderItem> items;
-  Order({this.id, this.from, this.createdAt, this.items});
+  Order({
+    required this.id,
+    required this.from,
+    required this.createdAt,
+    required this.items,
+  });
 }
 
 class OrderItem {
   int itemId;
   int count;
-  StoreItem item;
-  OrderItem({this.itemId, this.count});
+  StoreItem? item;
+  OrderItem({
+    required this.itemId,
+    required this.count,
+  });
 }
 
 class StoreItem {
@@ -114,5 +123,10 @@ class StoreItem {
   String name;
   String image;
   double price;
-  StoreItem({this.id, this.name, this.image, this.price});
+  StoreItem({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.price,
+  });
 }

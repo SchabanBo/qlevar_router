@@ -1,178 +1,191 @@
+import 'package:flutter/material.dart';
+
+import '../qlevar_router.dart';
+import 'controllers/controller_manager.dart';
+import 'controllers/qrouter_controller.dart';
+import 'helpers/platform/configure_web.dart'
+    if (dart.library.io) 'helpers/platform/configure_nonweb.dart';
 import 'helpers/widgets/stack_tree.dart';
-import 'navigator/navigation_mode.dart';
-import 'navigator/navigation_request.dart';
-import 'navigator/navigation_type.dart';
-import 'navigator/router_controller.dart';
-import 'qparams.dart';
-import 'qr_controller.dart';
-import 'route_parser.dart';
-import 'router_delegate.dart';
-import 'types.dart';
+import 'routers/qrouter.dart';
+import 'routes/qroute.dart';
+import 'routes/qroute_internal.dart';
+import 'types/qhistory.dart';
+import 'types/qroute_key.dart';
 
-/// Qlevar Router.
-// ignore: non_constant_identifier_names
-final QR = _QRContext();
+class QRContext {
+  static const rootRouterName = 'Root';
 
-/// The main class of qlevar-router
-class _QRContext {
-  /// Settings for the package
-  final settings = QrSettings();
+  /// This history for the navigation. It is internal history to help with
+  /// back method . Modifying it does not affect the Browser history
+  final history = QHistory();
 
-  /// list of string for the paths that has been called.
-  final history = <NavigatioRequest>[];
+  /// The parameter for the cureent route
+  final params = QParams();
 
-  /// The information for the current route
-  /// here you can find the params for the current route
-  /// or even the fullpath
-  final _QCurrentRoute currentRoute = _QCurrentRoute();
+  /// The Settings for this package
+  final settings = _QRSettings();
 
-  /// The route params
-  QParams get params => currentRoute.params;
+  /// Info about the cureent route tree
+  final treeInfo = _QTreeInfo();
 
-  final _controller = QRController();
+  final _manager = ControllerManager();
 
-  /// Get the router for the app.
-  QRouterDelegate router(List<QRouteBase> routes, {String initRoute = ''}) {
-    _controller.setTree(routes);
-    return _controller.createDelegate(initRoute);
+  /// The cureent route url
+  String get currentPath => history.isEmpty ? '/' : history.current.path;
+
+  /// Set the active navigator name to call with [navigator]
+  /// by default it is the root navigator
+  /// For example if you work on a dashboard and you want to do your changes
+  /// from now on olny on the dashboard Navi. Then set this value
+  /// to the Dashboard Navi name and every time you call [QR.navigator]
+  /// the Dashboard navigator will be called instade of root navigator
+  String activeNavigatorName = QRContext.rootRouterName;
+
+  /// Get the root navigator
+  QNavigator get rootNavigator => navigatorOf(QRContext.rootRouterName);
+
+  /// Get the active navigator
+  QNavigator get navigator => navigatorOf(activeNavigatorName);
+
+  /// return router for a name
+  QNavigator navigatorOf(String name) => _manager.withName(name);
+
+  ///  return a router [QRouter] for the given routes
+  QRouter createNavigator(String name, List<QRoute> routes,
+      {String? initPath}) {
+    final controller = createRouterController(name, routes, initPath: initPath);
+    return QRouter(controller);
   }
 
-  /// Log the project tree structure
-  void logTree() => _controller.logTree();
+  /// Remove a navigator with this name
+  bool removeNavigator(String name) => _manager.removeNavigator(name);
 
-  /// Get the RouteInformationParser
-  QRouteInformationParser routeParser() => const QRouteInformationParser();
+  /// Remove the hastag from url,
+  /// call this function before running your app,
+  /// Somewhere before calling `runApp()` do:
+  ///```dart
+  /// QR.setUrlStrategy();
+  /// ```
+  void setUrlStrategy() => configureApp();
 
-  /// Navigate to new page with [path]
-  void to(
-    String path, {
-    NavigationType type,
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      _controller.toPath(NavigatioRequest(path, null, justUrl, mode, type));
-
-  void push(
-    String path, {
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      to(path, justUrl: justUrl, mode: mode, type: NavigationType.Push);
-
-  void replaceAll(
-    String path, {
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      to(path, justUrl: justUrl, mode: mode, type: NavigationType.ReplaceAll);
-
-  void replaceLast(
-    String path, {
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      to(path, justUrl: justUrl, mode: mode, type: NavigationType.ReplaceLast);
-
-  void popUntilOrPush(
-    String path, {
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      to(path,
-          justUrl: justUrl, mode: mode, type: NavigationType.PopUntilOrPush);
-
-  /// Navigate to new page with [Name]
-  /// Give the name of the route and the [params] to apply
-  void toName(
-    String name, {
-    Map<String, dynamic> params,
-    NavigationType type,
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      _controller.toName(NavigatioRequest(null, name, justUrl, mode, type),
-          params ?? <String, dynamic>{});
-
-  void pushName(
-    String name, {
-    Map<String, dynamic> params,
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      toName(name,
+  /// Update the borwser url
+  void updateUrlInfo(String url,
+          {Map<String, String>? params,
+          QKey? mKey,
+          String? navigator,
+          bool addHistory = true}) =>
+      rootNavigator.updateUrl(url,
+          mKey: mKey,
           params: params,
-          justUrl: justUrl,
-          mode: mode,
-          type: NavigationType.Push);
+          navigator: navigator,
+          addHistory: addHistory);
 
-  void replaceAllName(
-    String name, {
-    Map<String, dynamic> params,
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      toName(name,
-          params: params,
-          justUrl: justUrl,
-          mode: mode,
-          type: NavigationType.ReplaceAll);
+  /// Add this routes as child for the route with name.
+  //void expandRoute(String name, List<QRoute> routes) {}
+  /// Remove this route from the router
+  //void cleanRoute(String routerName, String routeName) {}
 
-  void replaceLastName(
-    String name, {
-    Map<String, dynamic> params,
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      toName(name,
-          params: params,
-          justUrl: justUrl,
-          mode: mode,
-          type: NavigationType.ReplaceLast);
+  /// return the current tree widget
+  Widget getActiveTree() {
+    return DebugStackTree(_manager.controllers);
+  }
 
-  void popUntilOrPushName(
-    String name, {
-    Map<String, dynamic> params,
-    bool justUrl = false,
-    QNaviagtionMode mode,
-  }) =>
-      toName(name,
-          params: params,
-          justUrl: justUrl,
-          mode: mode,
-          type: NavigationType.PopUntilOrPush);
+  /// create a controller to use with a Navigator
+  QRouterController createRouterController(String name, List<QRoute> routes,
+          {String? initPath}) =>
+      _manager.createController(name, routes, initPath);
 
-  // back to previous page
-  bool back() => _controller.navigatorController.back();
+  /// Navigate to this path.
+  /// The package will try to get the right navigtor to this path.
+  Future<void> to(String path) async {
+    final controller = _manager.withName(rootRouterName);
+    var match = controller.findPath(path);
+    await _toMatch(match);
+  }
 
-  RouterController routerOf(String name) =>
-      _controller.navigatorController.routerOf(name);
+  /// Go to a route with given name
+  Future<void> toName(String name, {Map<String, dynamic>? params}) async {
+    final controller = _manager.withName(rootRouterName);
+    var match = controller.findName(name, params: params);
+    await _toMatch(match);
+  }
 
-  DebugStackTree getStackTreeWidget() =>
-      _controller.navigatorController.getStackTreeWidget();
-
-  /// wirte log
-  void log(String mes, {bool isDebug = false}) {
-    if (settings.enableLog && (!isDebug || settings.enableDebugLog)) {
-      settings.logger('Qlevar-Route: $mes');
+  Future<void> _toMatch(QRouteInternal match,
+      {String forController = QRContext.rootRouterName}) async {
+    final controller = _manager.withName(forController);
+    await controller.popUnitOrPushMatch(match, checkChild: false);
+    if (match.hasChild) {
+      final newControllerName =
+          _manager.hasController(match.name) ? match.name : forController;
+      await _toMatch(match.child!, forController: newControllerName);
+    } else if (currentPath != match.activePath!) {
+      updateUrlInfo(match.activePath!,
+          mKey: match.key,
+          params: match.params!.asStringMap(),
+          navigator: forController,
+          addHistory: false);
+    } else if (forController != rootRouterName) {
+      (rootNavigator as QRouterController).update(withParams: false);
     }
   }
+
+  /// try to pop the last active navigator or go to last path in the history
+  bool back() {
+    var lastNavi = QR.history.current.navigator;
+    if (_manager.hasController(lastNavi)) {
+      // Should navigator be removed? if the last path in history is the last
+      // path in the navigator then we need to pop the navigator before it and
+      // colse this one
+      if (history.hasLast && lastNavi != history.last.navigator) {
+        lastNavi = history.last.navigator;
+      }
+      final controller = navigatorOf(lastNavi);
+      if (controller.canPop) {
+        controller.removeLast();
+        if (lastNavi != QRContext.rootRouterName) {
+          (rootNavigator as QRouterController).update(withParams: false);
+        }
+        return true;
+      }
+    }
+
+    if (!history.hasLast) {
+      return false;
+    }
+    to(history.last.path);
+    QR.history.removeLast(count: 2);
+    return true;
+  }
+
+  /// Print a message from the package
+  void log(String mes, {bool isDebug = false}) {
+    if (settings.enableLog && (!isDebug || settings.enableDebugLog)) {
+      settings.logger('QR: $mes');
+    }
+  }
+
+  /// Clear everything.
+  void reset() {
+    _manager.controllers.clear();
+    params.clear();
+    history.clear();
+    treeInfo.namePath.clear();
+    treeInfo.namePath[rootRouterName] = '/';
+    treeInfo.routeIndexer = -1;
+  }
 }
 
-/// The cureent route inforamtion
-class _QCurrentRoute {
-  /// The current full path
-  String fullPath = '';
-
-  /// The params for the current route
-  final params = QParams();
-}
-
-/// The package settings
-class QrSettings {
+class _QRSettings {
   bool enableLog = true;
   bool enableDebugLog = false;
   // Add the default not found page path without slash.
-  String notFoundPagePath = 'notfound';
-  QNaviagtionMode defaultNavigationMode = QNaviagtionMode.asChild();
+  QRoute notFoundPage = QRoute(
+      path: '/notfound',
+      builder: () => Material(child: Center(child: Text('Page Not Found'))));
   Function(String) logger = print;
+}
+
+class _QTreeInfo {
+  final Map<String, String> namePath = {QRContext.rootRouterName: '/'};
+  int routeIndexer = -1;
 }
