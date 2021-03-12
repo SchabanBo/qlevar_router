@@ -149,7 +149,7 @@ class QRouterController extends QNavigator {
     if (route.hasMiddlewares) {
       final result = await MiddlewareController(route).runRedirect();
       if (result != null) {
-        QR.to(result);
+        await QR.to(result);
         return true;
       }
     }

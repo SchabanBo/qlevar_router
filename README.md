@@ -4,6 +4,13 @@
 [![popularity](https://badges.bar/qlevar_router/popularity)](https://pub.dev/packages/qlevar_router)
 [![pub points](https://badges.bar/qlevar_router/pub%20points)](https://pub.dev/packages/qlevar_router)
 
+- [Qlevar Router (QR)](#qlevar-router-qr)
+  - [Demo](#demo)
+  - [Nested Navigation](#nested-navigation)
+
+Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
+With Navigator 2.0 Manage your project routes and create nested routes. Change only one widget on your page when navigating to the new route. Navigate without context from anywhere to anywhere.
+
 ```dart
 // Define your routes
 class AppRoutes {
@@ -63,7 +70,6 @@ you want to work with the basic functions from the navigator just set which navi
 
 or just call the navigator `QR.navigatorOf('Dashboard')`
 
-
 Use this functions to see your navigators and Stack history and active pages in your project for better understanding on where you are in your project and how to order you pages.
 
 ```dart
@@ -75,11 +81,13 @@ QR.history.debug() // will show the history stack for your current page.
 
 [Show Demo](https://qlevar-router.netlify.app)
 
+You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
+
 ## Nested Navigation
 
 Lets say we have want to develop a website with this structure
 
-![Dashboard](assets/dashboard.svg)
+![Dashboard](assets/dashboard.png)
 
 The Routes definitions for this website will be
 
@@ -101,7 +109,8 @@ class AppRoutes {
         builderChild: (c) => DashboardPage(c),
         initRoute: '/info',
         middleware: [
-          // Add middleware with redirection guard to make sure only the authorized users can enter this page or it children
+          // Add middleware with redirection guard to make sure
+          // that only the authorized users can enter this page or it children
           QMiddlewareBuilder(redirectGuardFunc: () async {
             return await AuthService().isLogged ? null : '/login';
           })
@@ -134,10 +143,3 @@ class Dashboard extends StatelessWidget {
 ```
 
 And now from anywhere from your code (Without any need to the BuildContext) you can call `QR.toName(AppRoutes.infoPage)` and if the user logged in, then the info page in the dashboard will be opened
-
-## Learn more
-
-[Wiki](https://github.com/SchabanBo/qlevar_router/wiki)
-
-Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
-With Navigator 2.0 Manage your project routes and create nested routes. Change only one widget on your page when navigating to the new route. Navigate without context from anywhere to anywhere.
