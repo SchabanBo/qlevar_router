@@ -79,7 +79,7 @@ QR.history.debug() // will show the history stack for your current page.
 
 ## Demo
 
-[Show Demo](https://qlevar-router.netlify.app)
+[Show Demo](https://https://routerexample.qlevar.de)
 
 You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
 
