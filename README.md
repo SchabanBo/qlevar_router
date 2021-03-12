@@ -79,7 +79,7 @@ QR.history.debug() // will show the history stack for your current page.
 
 ## Demo
 
-[Show Demo](https://https://routerexample.qlevar.de)
+<a href="https://routerexample.qlevar.de/" target="_blank">Show Demo</a>
 
 You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
 
