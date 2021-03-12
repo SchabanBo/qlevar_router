@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Flutter",
+            "name": "Example",
             "type": "dart",
             "request": "launch",
             "program": "example/lib/main.dart"

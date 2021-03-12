@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../navigator/page_types.dart';
-import '../../navigator/router_controller.dart';
+
+import '../../controllers/qrouter_controller.dart';
+import '../../pages/qpage_internal.dart';
 
 class DebugStackTree extends StatelessWidget {
-  final List<RouterController> _controllers;
+  final List<QRouterController> _controllers;
   DebugStackTree(this._controllers);
   @override
   Widget build(BuildContext context) {
@@ -19,13 +20,13 @@ class DebugStackTree extends StatelessWidget {
                         child: Text('Close'))
                   ],
                 )),
-        child: Text('Debug Stack Tree', style: TextStyle(fontSize: 16)));
+        child: Text('Show Active Tree', style: TextStyle(fontSize: 16)));
   }
 }
 
 class _StackTree extends StatelessWidget {
   final List<_ControllerInfo> _controllers = [];
-  _StackTree(List<RouterController> controllers) {
+  _StackTree(List<QRouterController> controllers) {
     final cons = controllers.map((e) => _ControllerInfo(e)).toList();
     for (var con in cons) {
       if (cons
@@ -48,15 +49,11 @@ class _StackTree extends StatelessWidget {
 }
 
 class _ControllerInfo {
-  final String name;
   final String key;
-  final String navKey;
   final List<_ControllerInfo> children = [];
   final List<_PageInfo> pages;
-  _ControllerInfo(RouterController controller)
-      : name = controller.name,
-        key = controller.key.toString(),
-        navKey = controller.navKey.toString(),
+  _ControllerInfo(QRouterController controller)
+      : key = controller.key.toString(),
         pages = controller.pages.map((e) => _PageInfo(e)).toList();
 
   Widget getWidget() {
@@ -70,11 +67,8 @@ class _ControllerInfo {
           const SizedBox(height: 10),
           Row(children: [
             const SizedBox(width: 10),
-            Text('Name: $name'),
+            Text('$key'),
             const SizedBox(width: 5),
-            Text('Key: $key'),
-            const SizedBox(width: 5),
-            Text('NavKey : $navKey'),
           ])
         ]
               ..addAll(pages.map((page) => Padding(
@@ -85,9 +79,7 @@ class _ControllerInfo {
                       child: Row(
                         children: [
                           const SizedBox(width: 10),
-                          Text('Name : ${page.name}'),
-                          const SizedBox(width: 5),
-                          Text('LocalKey: ${page.key}'),
+                          Text('${page.key}'),
                         ],
                       )))))
               ..addAll(children.map((e) => Padding(
@@ -100,9 +92,6 @@ class _ControllerInfo {
 }
 
 class _PageInfo {
-  final String name;
   final String key;
-  _PageInfo(QPage<dynamic> page)
-      : name = page.name,
-        key = page.matchKey.toString();
+  _PageInfo(QPageInternal page) : key = page.matchKey.toString();
 }

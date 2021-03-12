@@ -1,102 +1,99 @@
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:qlevar_router/qlevar_router.dart';
-
-import 'screens/dashboard/items.dart';
-import 'screens/dashboard/orders.dart';
-import 'screens/home.dart';
-import 'screens/store/bottom_nav_bar.dart';
-import 'screens/store/navigation_mode.dart';
-import 'screens/store/store.dart';
-import 'screens/tests_screens/test_routes.dart';
+import 'helpers/database.dart';
+import 'helpers/text_page.dart';
+import 'screens/home_page.dart';
+import 'screens/nested2.dart';
+import 'screens/nested_route.dart';
+import 'screens/parent_page.dart';
 
 class AppRoutes {
-  // Dashboard
-  static String home = 'Home';
-  static String homeMain = 'Home Main';
-  static String items = 'Items';
+  static const nested = 'Nested';
+  static const nestedChild = 'Nested Child';
+  static const nestedChild1 = 'Nested Child 1';
+  static const nestedChild2 = 'Nested Child 2';
+  static const nestedChild3 = 'Nested Child 3';
 
-  // Items
-  static String itemsMain = 'Items Main';
-  static String itemsDetails = 'Items Details';
+  ///
+  static const app = 'App';
+  static const home = 'Home';
+  static const settings = 'Settings';
+  static const login = 'Login';
 
-  // Store
-  static String store = 'Store';
-
-  //Other
-  static String redirect = 'Redirect';
-
-  final routes = <QRouteBase>[
-    QRoute(
-        name: home,
-        path: '/home',
-        page: (childRouter) => HomeScreen(childRouter),
-        children: [
-          QRoute(
-              name: homeMain, path: '/', page: (child) => HomeScreenContent()),
-          QRoute(
-              name: items,
-              path: '/items',
-              onInit: () => print('onInit Items'),
-              onDispose: () => print('onDispose Items'),
-              page: (child) => ItemsScreen(child),
-              children: [
-                QRoute(
-                    name: itemsMain,
-                    path: '/',
-                    onInit: () => print('onInit Items Main'),
-                    onDispose: () => print('onDispose Items Main'),
-                    page: (child) => Container()),
-                QRoute(
-                    name: itemsDetails,
-                    path: '/details',
-                    pageType: QRCupertinoPage(),
-                    onInit: () => print('onInit Items Details'),
-                    onDispose: () => print('onDispose Items Details'),
-                    page: (c) => ItemDetailsScreen())
-              ]),
-          OrdersRoutes(),
-          TestRoutes(),
-        ]),
-    QRoute(
-        name: store,
-        path: '/store',
-        page: (childRouter) => StoreScreen(childRouter),
-        children: [
-          QRoute(
-            path: '/',
-            name: 'StoreInit',
-            page: (c) => StoreInitPage(),
-          ),
-          BottomNavigationBarExampleRoutes(),
-          NavigationModeRoutes(),
-        ]),
-    QRoute(
-        name: redirect,
-        path: '/redirect',
-        redirectGuard: (path) => '/home/items'),
-  ];
-}
-
-class OrdersRoutes extends QRouteBuilder {
-  static String orders = 'Orders';
-  static String ordersMain = 'Orders Main';
-  static String ordersDetails = 'Orders Details';
-
-  @override
-  QRoute createRoute() => QRoute(
-          name: orders,
-          path: '/orders',
-          page: (child) => OrdersScreen(child),
-          children: [
-            QRoute(
-                name: ordersDetails,
-                path: '/:orderId',
-                pageType: QRSlidePage(
-                  transitionDurationmilliseconds: 500,
-                  offset: Offset(1, 0),
-                ),
-                page: (child) => OrderDetails()),
-          ]);
+  List<QRoute> routes() => [
+        QRoute(path: '/', builder: () => HomePage()),
+        QRoute(
+            path: '/parent',
+            builder: () {
+              print('-- Build Parent page --');
+              return ParentPage();
+            },
+            middleware: [
+              QMiddlewareBuilder(
+                  onEnterFunc: () => print('-- Enter Parent page --'),
+                  onExitFunc: () => print('-- Exit Parent page --'),
+                  onMatchFunc: () => print('-- Parent page Matched --'))
+            ],
+            children: [
+              QRoute(path: '/child', builder: () => TextPage('Hi child')),
+              QRoute(path: '/child-1', builder: () => TextPage('Hi child 1')),
+              QRoute(path: '/child-2', builder: () => TextPage('Hi child 2')),
+              QRoute(path: '/child-3', builder: () => TextPage('Hi child 3')),
+              QRoute(
+                  path: '/child-4',
+                  middleware: [
+                    QMiddlewareBuilder(
+                        redirectGuardFunc: () => Future.delayed(
+                            Duration(milliseconds: 100),
+                            () => Database.canChildNavigate
+                                ? null
+                                : '/parent/child-2'))
+                  ],
+                  builder: () => TextPage('Hi child 4')),
+            ]),
+        QRoute(
+            path: '/:id',
+            builder: () => TextPage('the id is ${QR.params['id']}')),
+        QRoute(path: '/params', builder: () => TextPage(
+            // ignore: lines_longer_than_80_chars
+            'params are: test is${QR.params['test']} and go is ${QR.params['go']}')),
+        QRoute.withChild(
+            name: nested,
+            path: '/nested',
+            builderChild: (r) => NestedRoutePage(r),
+            initRoute: '/child',
+            children: [
+              QRoute(
+                  name: nestedChild,
+                  path: '/child',
+                  builder: () => NestedChild('child')),
+              QRoute(
+                  name: nestedChild1,
+                  path: '/child-1',
+                  builder: () => NestedChild('child 1'),
+                  pageType: QSlidePage()),
+              QRoute(
+                  name: nestedChild2,
+                  path: '/child-2',
+                  builder: () => NestedChild('child 2')),
+              QRoute(
+                  name: nestedChild3,
+                  path: '/child-3',
+                  builder: () => NestedChild('child 3')),
+            ]),
+        QRoute(path: '/login', builder: () => LoginScreen()),
+        QRoute.withChild(
+            name: app,
+            path: '/app',
+            builderChild: (child) => AppScreen(child),
+            initRoute: '/home',
+            children: [
+              QRoute(name: home, path: '/home', builder: () => HomeWidget()),
+              QRoute(
+                  name: settings,
+                  path: '/settings',
+                  builder: () => SettingsWidget(),
+                  pageType: QSlidePage()),
+            ]),
+      ];
 }
