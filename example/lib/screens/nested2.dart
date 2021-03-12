@@ -8,11 +8,13 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('LoginScreen', style: TextStyle(fontSize: 22)),
+            QButton("Home Page", () => QR.to('/')),
             QButton("Login/Home Setting case", () => QR.to('/app')),
           ],
         ),

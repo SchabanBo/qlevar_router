@@ -17,7 +17,7 @@ abstract class QNavigator extends ChangeNotifier {
   /// Get if the cureent [QNavigator] can pop or not
   bool get canPop;
 
-  /// Get the cureent route for this navigator
+  /// Get the current route for this navigator
   QRoute get currentRoute;
 
   /// Set the browser [url]

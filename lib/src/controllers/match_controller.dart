@@ -57,54 +57,81 @@ class MatchController {
     return result;
   }
 
-  QRouteInternal? _tryFind(QRouteChildren routes, int index) {
-    bool isSameSegment(String routeSegment, String segment) {
-      if (routeSegment == segment) {
-        return true;
-      }
-      // try find component
-      if (routeSegment.startsWith(':')) {
-        var name = routeSegment.replaceAll(':', '');
-        if (name.contains('(') && name.contains(')')) {
-          try {
-            final regexRule = name.substring(name.indexOf('('));
-            name = name.substring(0, name.indexOf('('));
-            final regex = RegExp(regexRule);
-            if (regex.hasMatch(segment)) {
-              params[name] = segment;
-              return true;
-            }
-            return false;
-          } on FormatException catch (e) {
-            print(e);
-            return false;
-          }
-        }
-        params[name] = segment;
-        return true;
-      }
-      return false;
+  bool isSameSegment(String routeSegment, String segment) {
+    if (routeSegment == segment) {
+      return true;
     }
+    // try find component
+    if (routeSegment.startsWith(':')) {
+      var name = routeSegment.replaceAll(':', '');
+      if (name.contains('(') && name.contains(')')) {
+        try {
+          final regexRule = name.substring(name.indexOf('('));
+          name = name.substring(0, name.indexOf('('));
+          final regex = RegExp(regexRule);
+          if (regex.hasMatch(segment)) {
+            params[name] = segment;
+            return true;
+          }
+          return false;
+        } on FormatException catch (e) {
+          print(e);
+          return false;
+        }
+      }
+      params[name] = segment;
+      return true;
+    }
+    return false;
+  }
 
+  bool isSameComponent(String routeSegment, String segment) {
+    if (routeSegment.startsWith('/:')) {
+      var name = routeSegment.replaceAll('/:', '');
+      if (name.contains('(') && name.contains(')')) {
+        try {
+          final regexRule = name.substring(name.indexOf('('));
+          name = name.substring(0, name.indexOf('('));
+          final regex = RegExp(regexRule);
+          if (regex.hasMatch(segment)) {
+            params[name] = segment;
+            return true;
+          }
+          return false;
+        } on FormatException catch (e) {
+          print(e);
+          return false;
+        }
+      }
+      params[name] = segment;
+      return true;
+    }
+    return false;
+  }
+
+  QRouteInternal? _tryFind(QRouteChildren routes, int index) {
     var path = index == -1 ? '' : this.path.pathSegments[index];
 
-    var isFind = true;
+    bool isSamePath(QRouteInternal route) => route.route.path == '/$path';
 
-    bool find(QRouteInternal route) {
+    bool isComponent(QRouteInternal route) {
+      final routePath = route.route.path;
+      return isSameComponent(routePath, path);
+    }
+
+    var isFind = true;
+    bool findMulti(QRouteInternal route) {
       final routeUri = Uri.parse(route.route.path);
-      if (routeUri.pathSegments.isEmpty) {
-        return path == '';
-      }
-      if (routeUri.pathSegments.length == 1) {
-        return isSameSegment(routeUri.pathSegments.first, path);
+      if (routeUri.pathSegments.length <= 1) {
+        return false;
       }
       var found = true;
       for (var i = 0; i < routeUri.pathSegments.length; i++) {
         found = found &&
-            isSameSegment(
-                routeUri.pathSegments[i], this.path.pathSegments[i + index]);
+            (routeUri.pathSegments[i] == this.path.pathSegments[i + index] ||
+                isSameComponent('/${routeUri.pathSegments[i]}',
+                    this.path.pathSegments[i + index]));
       }
-      // if the route was found update the foundpath and the search indexs
       if (found && isFind) {
         for (var i = 0; i < routeUri.pathSegments.length; i++) {
           _searchIndex++;
@@ -116,9 +143,17 @@ class MatchController {
     }
 
     QRouteInternal? result;
-    if (routes.routes.any(find)) {
-      result = routes.routes.firstWhere(find);
+    if (routes.routes.any(isSamePath)) {
+      // Try to find matching path
+      result = routes.routes.firstWhere(isSamePath);
+    } else if (routes.routes.any(isComponent)) {
+      // if no matching path found try component
+      result = routes.routes.firstWhere(isComponent);
+    } else if (routes.routes.any(findMulti)) {
+      // or multi pathes
+      result = routes.routes.firstWhere(findMulti);
     }
+
     if (result != null) {
       if (index == -1 || _searchIndex == index) {
         updateFoundPath(path);
