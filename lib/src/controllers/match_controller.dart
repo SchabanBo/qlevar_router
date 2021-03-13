@@ -23,8 +23,9 @@ class MatchController {
 
   void updateFoundPath(String segment) {
     foundPath += "/$segment";
-    if (path.pathSegments.isNotEmpty &&
-        path.pathSegments.last == segment &&
+    if ((path.pathSegments.isEmpty ||
+            (path.pathSegments.isNotEmpty &&
+                path.pathSegments.last == segment)) &&
         path.hasQuery) {
       foundPath += '?${path.query}';
       params.addAll(path.queryParameters);

@@ -73,12 +73,12 @@ Use this functions to see your navigators and Stack history and active pages in 
 
 ```dart
 QR.getActiveTree() // Will show you a dialog contains the tree of the active navigator and pages
-QR.history.debug() // will show the history stack for your current page.
+QR.history.debug() // will show you a dialog contains the history stack for your current page.
 ```
 
 ## Demo
 
-<a href="https://routerexample.qlevar.de/" target="_blank">Show Demo</a>
+[Show Demo](https://qlevar-router.netlify.app){:target="_blank"}
 
 You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
 
