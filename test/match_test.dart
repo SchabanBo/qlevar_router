@@ -24,6 +24,14 @@ void main() {
             QRoute(
                 path: '/three', builder: () => Scaffold(body: WidgetThree())),
           ]),
+      QRoute.withChild(
+          path: '/this/extra',
+          builderChild: (child) => Scaffold(body: child),
+          children: [
+            QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+            QRoute(
+                path: '/slash', builder: () => Scaffold(body: WidgetThree())),
+          ]),
     ];
 
     testWidgets('Find Multi component', (tester) async {
@@ -63,6 +71,69 @@ void main() {
       await QR.to('/two/7/three');
       await tester.pumpAndSettle();
       expectedPath('/two/7/three');
+      expect(find.byType(WidgetThree), findsOneWidget);
+    });
+
+    testWidgets('No Extra Slash at the end', (tester) async {
+      QR.reset();
+      await tester.pumpWidget(AppWarpper(routes));
+
+      await QR.to('/this/extra');
+      await tester.pumpAndSettle();
+      expectedPath('/this/extra');
+      expect(find.byType(WidgetOne), findsOneWidget);
+
+      await QR.to('/this/extra/slash');
+      await tester.pumpAndSettle();
+      expectedPath('/this/extra/slash');
+      expect(find.byType(WidgetThree), findsOneWidget);
+
+      QR.back();
+      await tester.pumpAndSettle();
+      expectedPath('/this/extra');
+      expect(find.byType(WidgetOne), findsOneWidget);
+    });
+
+    testWidgets('Multi path init route', (tester) async {
+      QR.reset();
+      await tester.pumpWidget(AppWarpper(
+        [
+          QRoute(path: '/', builder: () => Container()),
+          QRoute(path: '/zero', builder: () => Scaffold(body: Container())),
+          QRoute(
+              path: '/two/one',
+              builder: () => Scaffold(body: WidgetTwo()),
+              children: [
+                QRoute(
+                    path: '/three',
+                    builder: () => Scaffold(body: WidgetThree())),
+              ])
+        ],
+        initPath: '/two/one',
+      ));
+      expectedPath('/two/one');
+      expect(find.byType(WidgetTwo), findsOneWidget);
+    });
+
+    testWidgets('Multi path with child init route', (tester) async {
+      QR.reset();
+      await tester.pumpWidget(AppWarpper(
+        [
+          QRoute(path: '/', builder: () => Container()),
+          QRoute(path: '/zero', builder: () => Scaffold(body: Container())),
+          QRoute.withChild(
+              path: '/this/extra',
+              builderChild: (child) => Scaffold(body: child),
+              children: [
+                QRoute(path: '/', builder: () => Scaffold()),
+                QRoute(
+                    path: '/slash',
+                    builder: () => Scaffold(body: WidgetThree())),
+              ]),
+        ],
+        initPath: '/this/extra/slash',
+      ));
+      expectedPath('/this/extra/slash');
       expect(find.byType(WidgetThree), findsOneWidget);
     });
   });

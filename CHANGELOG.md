@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.0.1]
+
+- Fix Extra Slash at the end of Url
+- Remove Url Strategy
+- Fix init Route with child
+
 ## [1.0.0]
 
 I have rewrite the entire library to add more use cases and optimize the Performance and add null safety.

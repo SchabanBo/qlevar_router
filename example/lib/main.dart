@@ -17,5 +17,6 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.blueGrey.shade800,
       ),
       routeInformationParser: QRouteInformationParser(),
-      routerDelegate: QRouterDelegate(AppRoutes().routes()));
+      routerDelegate:
+          QRouterDelegate(AppRoutes().routes(), initPath: '/nested/child-1'));
 }
