@@ -3,6 +3,7 @@
 [![likes](https://badges.bar/qlevar_router/likes)](https://pub.dev/packages/qlevar_router)
 [![popularity](https://badges.bar/qlevar_router/popularity)](https://pub.dev/packages/qlevar_router)
 [![pub points](https://badges.bar/qlevar_router/pub%20points)](https://pub.dev/packages/qlevar_router)
+[![codecov](https://codecov.io/gh/SchabanBo/qlevar_router/branch/master/graph/badge.svg?token=WF1RBRWTN1)](https://codecov.io/gh/SchabanBo/qlevar_router)
 
 - [Qlevar Router (QR)](#qlevar-router-qr)
   - [Demo](#demo)
@@ -84,7 +85,7 @@ You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_
 
 ## Nested Navigation
 
-Lets say we have want to develop a website with this structure
+Lets say we want to develop a website with this structure
 
 ![Dashboard](assets/dashboard.png)
 

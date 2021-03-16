@@ -11,7 +11,7 @@ class MatchController {
   int _searchIndex = 0;
   MatchController(String sPath, this.foundPath, this.routes)
       : path = Uri.parse(sPath) {
-    QR.log('Finding Match for $sPath');
+    QR.log('Finding Match for $sPath under path $foundPath');
   }
 
   factory MatchController.fromName(
@@ -23,6 +23,11 @@ class MatchController {
 
   void updateFoundPath(String segment) {
     foundPath += "/$segment";
+    // If the path is just init path '/' and the found path is
+    // not empty then remove the extra slash at the end
+    if (path.pathSegments.isEmpty && foundPath.length > 2) {
+      foundPath = foundPath.substring(0, foundPath.length - 1);
+    }
     if ((path.pathSegments.isEmpty ||
             (path.pathSegments.isNotEmpty &&
                 path.pathSegments.last == segment)) &&
@@ -56,34 +61,6 @@ class MatchController {
       match = match.child!;
     }
     return result;
-  }
-
-  bool isSameSegment(String routeSegment, String segment) {
-    if (routeSegment == segment) {
-      return true;
-    }
-    // try find component
-    if (routeSegment.startsWith(':')) {
-      var name = routeSegment.replaceAll(':', '');
-      if (name.contains('(') && name.contains(')')) {
-        try {
-          final regexRule = name.substring(name.indexOf('('));
-          name = name.substring(0, name.indexOf('('));
-          final regex = RegExp(regexRule);
-          if (regex.hasMatch(segment)) {
-            params[name] = segment;
-            return true;
-          }
-          return false;
-        } on FormatException catch (e) {
-          print(e);
-          return false;
-        }
-      }
-      params[name] = segment;
-      return true;
-    }
-    return false;
   }
 
   bool isSameComponent(String routeSegment, String segment) {

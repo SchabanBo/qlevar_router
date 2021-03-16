@@ -54,8 +54,13 @@ class QRouterController extends QNavigator {
 
   final _pagesController = PagesController();
 
-  QRouterController(this.key, this.routes, String initPath) {
-    push(initPath);
+  QRouterController(this.key, this.routes,
+      {String? initPath, QRouteInternal? initRoute}) {
+    if (initRoute != null) {
+      addRoute(initRoute);
+    } else {
+      push(initPath!);
+    }
   }
 
   @override
@@ -130,7 +135,10 @@ class QRouterController extends QNavigator {
   Future<void> addRouteAsync(QRouteInternal route,
       {bool notify = true, bool checkChild = true}) async {
     var redirect = await _addRoute(route);
-    while (checkChild && route.hasChild && !redirect) {
+    while (checkChild &&
+        route.hasChild &&
+        !route.route.withChildRouter &&
+        !redirect) {
       redirect = await _addRoute(route.child!);
       route = route.child!;
     }

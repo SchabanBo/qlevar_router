@@ -51,9 +51,11 @@ class QRContext {
   QNavigator navigatorOf(String name) => _manager.withName(name);
 
   ///  return a router [QRouter] for the given routes
+  /// you do not need to give the [initRoute]
   QRouter createNavigator(String name, List<QRoute> routes,
-      {String? initPath}) {
-    final controller = createRouterController(name, routes, initPath: initPath);
+      {String? initPath, QRouteInternal? initRoute}) {
+    final controller = createRouterController(name, routes,
+        initPath: initPath, initRoute: initRoute);
     return QRouter(controller);
   }
 
@@ -81,8 +83,8 @@ class QRContext {
           addHistory: addHistory);
 
   /// Add this routes as child for the route with name.
-  //void expandRoute(String name, List<QRoute> routes) {}
-  /// Remove this route from the router
+  // void expandRoute(String name, List<QRoute> routes) {}
+  // Remove this route from the router
   //void cleanRoute(String routerName, String routeName) {}
 
   /// return the current tree widget
@@ -92,8 +94,8 @@ class QRContext {
 
   /// create a controller to use with a Navigator
   QRouterController createRouterController(String name, List<QRoute> routes,
-          {String? initPath}) =>
-      _manager.createController(name, routes, initPath);
+          {String? initPath, QRouteInternal? initRoute}) =>
+      _manager.createController(name, routes, initPath, initRoute);
 
   /// Navigate to this path.
   /// The package will try to get the right navigtor to this path.
