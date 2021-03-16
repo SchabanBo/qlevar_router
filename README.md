@@ -48,7 +48,6 @@ QR.to('/user/6/profile')  // Here the Stack will be HomePage -> ProfilePage()
 QR.to('products/456')     // Will call ProductDetails page
 QR.to('products/garden')  // Will call ProductCategory page
 QR.back()                 // Go back to the last page(in this case 'products/456')
-QR.setUrlStrategy()       // Remove the hashtag from the URL
 QR.currentPath            // will show the current path 
 ```
 
@@ -74,12 +73,12 @@ Use this functions to see your navigators and Stack history and active pages in 
 
 ```dart
 QR.getActiveTree() // Will show you a dialog contains the tree of the active navigator and pages
-QR.history.debug() // will show the history stack for your current page.
+QR.history.debug() // will show you a dialog contains the history stack for your current page.
 ```
 
 ## Demo
 
-<a href="https://routerexample.qlevar.de/" target="_blank">Show Demo</a>
+[Show Demo](https://qlevar-router.netlify.app){:target="_blank"}
 
 You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
 
