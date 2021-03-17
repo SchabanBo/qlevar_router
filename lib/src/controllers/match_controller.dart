@@ -166,7 +166,7 @@ class MatchController {
     // Replace old component
     for (var _param in QR.params.asMap.entries) {
       if (newPath.contains(':${_param.key}')) {
-        newPath = newPath.replaceAll(':${_param.key}', _param.value.value!);
+        newPath = newPath.replaceAll(':${_param.key}', _param.value.toString());
       }
     }
 

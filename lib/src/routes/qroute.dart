@@ -55,8 +55,12 @@ class QRoute {
   /// Set the initPath for the route, used with [QRoute.withChild]
   final String? initRoute;
 
+  /// is this route declarative route
+  final bool isDeclarative;
+
   /// The childrens for this route
   final List<QRoute>? children;
+
   const QRoute({
     required this.path,
     required this.builder,
@@ -66,6 +70,7 @@ class QRoute {
     this.children,
   })  : assert(builder != null),
         initRoute = null,
+        isDeclarative = false,
         builderChild = null;
 
   /// Call this function to get a [QRouter] to use it for Nested Navigation
@@ -78,6 +83,20 @@ class QRoute {
     this.middleware,
     this.children,
   })  : assert(builderChild != null),
+        isDeclarative = false,
+        builder = null;
+
+  /// Call this function to get a [QRouter] to use it for Nested Navigation
+  const QRoute.declarative({
+    required this.path,
+    required this.builderChild,
+    this.name,
+    this.pageType,
+    this.middleware,
+    this.children,
+  })  : assert(builderChild != null),
+        initRoute = null,
+        isDeclarative = true,
         builder = null;
 
   /// does this route use [QRouter]
