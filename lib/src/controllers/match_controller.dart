@@ -94,6 +94,9 @@ class MatchController {
 
     bool isComponent(QRouteInternal route) {
       final routePath = route.route.path;
+      if (Uri.parse(routePath).pathSegments.length > 1) {
+        return false;
+      }
       return isSameComponent(routePath, path);
     }
 

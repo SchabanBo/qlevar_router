@@ -5,6 +5,8 @@
 - Fix Extra Slash at the end of Url
 - Remove Url Strategy
 - Fix init Route with child
+- Make QParamValue as object instated of string
+- Fix multi path case '/:userId/settings' (Component and then normal path)
 
 ## [1.0.0]
 
