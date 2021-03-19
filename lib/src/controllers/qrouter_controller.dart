@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import '../../qlevar_router.dart';
 import '../pages/qpage_internal.dart';
 import '../qr.dart';
+import '../routes/qroute_builder.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
 import '../types/qhistory.dart';
@@ -16,6 +17,8 @@ import 'pages_controller.dart';
 abstract class QNavigator extends ChangeNotifier {
   /// Get if the cureent [QNavigator] can pop or not
   bool get canPop;
+
+  bool get isDeclarative;
 
   /// Get the current route for this navigator
   QRoute get currentRoute;
@@ -52,11 +55,26 @@ class QRouterController extends QNavigator {
 
   final QRouteChildren routes;
 
+  final PagesBuilder? declarativePagesBuilder;
+
   final _pagesController = PagesController();
 
-  QRouterController(this.key, this.routes, String initPath) {
-    push(initPath);
+  QRouterController(
+    this.key,
+    this.routes, {
+    String? initPath,
+    QRouteInternal? initRoute,
+    this.declarativePagesBuilder,
+  }) {
+    if (initRoute != null) {
+      addRoute(initRoute);
+    } else {
+      push(initPath!);
+    }
   }
+
+  @override
+  bool get isDeclarative => declarativePagesBuilder != null;
 
   @override
   QRoute get currentRoute => _pagesController.routes.last.route;
@@ -85,9 +103,11 @@ class QRouterController extends QNavigator {
     if (!canPop) {
       return false;
     }
-    _pagesController.removeLast();
-    update(withParams: true);
-    return true;
+    final isPoped = _pagesController.removeLast();
+    if (isPoped) {
+      update(withParams: true);
+    }
+    return isPoped;
   }
 
   @override
@@ -130,7 +150,10 @@ class QRouterController extends QNavigator {
   Future<void> addRouteAsync(QRouteInternal route,
       {bool notify = true, bool checkChild = true}) async {
     var redirect = await _addRoute(route);
-    while (checkChild && route.hasChild && !redirect) {
+    while (checkChild &&
+        route.hasChild &&
+        !route.route.withChildRouter &&
+        !redirect) {
       redirect = await _addRoute(route.child!);
       route = route.child!;
     }
@@ -229,4 +252,6 @@ class QRouterController extends QNavigator {
       QR.history.removeLast();
     }
   }
+
+  void updateDeclarative({QRouteInternal? match}) {}
 }

@@ -11,15 +11,17 @@ class QParams {
   _ParamValue? operator [](String key) => _params[key];
 
   /// set new param
-  void operator []=(String key, String value) =>
+  void operator []=(String key, Object value) =>
       _params[key] = _ParamValue(value);
 
   /// get the params as map
   Map<String, _ParamValue> get asMap => _params;
+
+  /// Get the params as Map<String,String>
   Map<String, String> asStringMap() {
     final result = <String, String>{};
     for (var item in _params.entries) {
-      result[item.key] = item.value._value!;
+      result[item.key] = item.value.toString();
     }
     return result;
   }
@@ -27,6 +29,7 @@ class QParams {
   /// params count
   int get length => _params.length;
 
+  /// remove all params
   void clear() => _params.clear();
 
   /// get the params keys
@@ -76,17 +79,17 @@ class QParams {
 
 /// Class represent the param value
 class _ParamValue {
-  final String? _value;
+  final Object? _value;
   bool keepAlive;
-  Function(String, String)? onChange;
+  Function(Object, Object)? onChange;
   Function()? onDelete;
 
   _ParamValue(this._value,
       {this.keepAlive = false, this.onChange, this.onDelete});
 
   _ParamValue copyWith({
-    String? value,
-    Function(String, String)? onChange,
+    Object? value,
+    Function(Object, Object)? onChange,
     Function()? onDelete,
   }) {
     return _ParamValue(
@@ -102,14 +105,16 @@ class _ParamValue {
   bool get hasValue => _value != null;
 
   /// Get the param value as String
-  String? get value => _value;
+  Object? get value => _value;
+
+  T? valueAs<T>() => value as T;
 
   /// Get the param as int
-  int? get asInt => hasValue ? int.parse(value!) : null;
+  int? get asInt => hasValue ? int.parse(toString()) : null;
 
   /// Get the param as double
-  double? get asDouble => hasValue ? double.parse(value!) : null;
+  double? get asDouble => hasValue ? double.parse(toString()) : null;
 
   @override
-  String toString() => hasValue ? value! : 'null';
+  String toString() => hasValue ? value!.toString() : 'null';
 }

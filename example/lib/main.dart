@@ -4,7 +4,6 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'routes.dart';
 
 void main() {
-  //QR.setUrlStrategy();
   QR.settings.enableDebugLog = true;
   runApp(MyApp());
 }

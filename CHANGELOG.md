@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [1.0.1]
+
+- Fix Extra Slash at the end of Url
+- Remove Url Strategy
+- Fix init Route with child
+- Make QParamValue as object instated of string
+- Fix multi path case '/:userId/settings' (Component and then normal path)
+- Add canPop for the Middleware
+- Give the path in middleware redirect guard
+- Add ignoreSamePath to `to` and `toName`
+
 ## [1.0.0]
 
 I have rewrite the entire library to add more use cases and optimize the Performance and add null safety.

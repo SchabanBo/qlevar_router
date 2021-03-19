@@ -1,30 +1,35 @@
-abstract class QMiddleware {
+class QMiddleware {
   /// This function will be called before [onEnter] and after [onMatch]
   /// if the result from this page is null the page will be created
   /// or the result should be the path to redirect to.
-  Future<String?> redirectGuard();
+  Future<String?> redirectGuard(String path) async => null;
 
-  /// This method will be called ervery time a path match it.
-  void onMatch();
+  /// can this route pop, called when trying to remove the page.
+  bool canPop() => true;
+
+  /// This method will be called every time a path match it.
+  void onMatch() {}
 
   /// This method will be called before adding the page to the stack
   ///  and before the page building
-  void onEnter();
+  void onEnter() {}
 
-  /// This method will be called before removeimg the page from the stack
-  void onExit();
+  /// This method will be called before removing the page from the stack
+  void onExit() {}
 }
 
 class QMiddlewareBuilder extends QMiddleware {
-  final Future<String?> Function()? redirectGuardFunc;
+  final Future<String?> Function(String)? redirectGuardFunc;
   final Function? onMatchFunc;
   final Function? onEnterFunc;
   final Function? onExitFunc;
+  final bool Function()? canPopFunc;
 
   QMiddlewareBuilder(
       {this.redirectGuardFunc,
       this.onMatchFunc,
       this.onEnterFunc,
+      this.canPopFunc,
       this.onExitFunc});
 
   @override
@@ -49,10 +54,18 @@ class QMiddlewareBuilder extends QMiddleware {
   }
 
   @override
-  Future<String?> redirectGuard() async {
+  Future<String?> redirectGuard(String path) async {
     if (redirectGuardFunc != null) {
-      return redirectGuardFunc!();
+      return redirectGuardFunc!(path);
     }
     return null;
+  }
+
+  @override
+  bool canPop() {
+    if (canPopFunc != null) {
+      return canPopFunc!();
+    }
+    return true;
   }
 }

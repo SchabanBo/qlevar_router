@@ -10,8 +10,12 @@ void main() {
   QR.settings.enableLog = false;
   final pages = [
     QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
-    QRoute(path: '/two', builder: () => Scaffold(body: WidgetTwo())),
-    QRoute(path: '/three', builder: () => Scaffold(body: WidgetThree())),
+    QRoute(
+        name: 'two', path: '/two', builder: () => Scaffold(body: WidgetTwo())),
+    QRoute(
+        name: 'three',
+        path: '/three',
+        builder: () => Scaffold(body: WidgetThree())),
   ];
 
   testWidgets(
@@ -143,5 +147,21 @@ void main() {
     expect(find.byType(WidgetTwo), findsOneWidget);
     expect(find.byType(WidgetThree), findsNothing);
     expectedHistoryLength(1);
+  });
+
+  testWidgets('Navigate with name', (tester) async {
+    print('ــــــــــــــــــــــــــــــــــــــــ');
+    QR.reset();
+    await tester.pumpWidget(AppWarpper(pages));
+    await QR.toName('two');
+    expectedPath('/two');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetTwo), findsOneWidget);
+
+    await QR.toName('three');
+    expectedPath('/three');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetThree), findsOneWidget);
+    expectedHistoryLength(3);
   });
 }

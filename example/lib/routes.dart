@@ -43,7 +43,7 @@ class AppRoutes {
                   path: '/child-4',
                   middleware: [
                     QMiddlewareBuilder(
-                        redirectGuardFunc: () => Future.delayed(
+                        redirectGuardFunc: (s) => Future.delayed(
                             Duration(milliseconds: 100),
                             () => Database.canChildNavigate
                                 ? null

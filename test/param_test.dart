@@ -76,6 +76,7 @@ void main() {
                 ]),
               ]),
             ]),
+        QRoute(path: '/:categoryId/items', builder: () => Container())
       ]);
 
       await QR.to('/user/5/info/7?hi=tt');
@@ -96,6 +97,18 @@ void main() {
       QR.back();
       expect(QR.currentPath, '/');
       expect(QR.params.length, 0);
+    });
+
+    test('Multi path Test', () async {
+      QR.reset();
+      final _ = QRouterDelegate([
+        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute(path: '/:categoryId/items', builder: () => Container())
+      ]);
+
+      await QR.to('/4/items');
+      expectedPath('/4/items');
+      expect(QR.params['categoryId']!.asInt, 4);
     });
 
     testWidgets('Regex Compoent Test', (tester) async {
