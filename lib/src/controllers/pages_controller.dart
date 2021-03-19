@@ -26,10 +26,13 @@ class PagesController {
     }
   }
 
-  void removeLast() {
+  bool removeLast() {
     final route = routes.last; // find the page
-    MiddlewareController(route).runOnExit(); // run on exit
-
+    final middleware = MiddlewareController(route);
+    if (!middleware.runCanPop()) {
+      return false;
+    }
+    middleware.runOnExit(); // run on exit
     if (QR.removeNavigator(route.name)) {
       // if this route has navigator then remove it to remove this route too.
       // and remove all histories to this route
@@ -38,6 +41,7 @@ class PagesController {
     QR.history.removeLast(); // remove history for this route
     routes.removeLast(); // remove from the routes
     pages.removeLast(); // reomve from the pages
+    return true;
   }
 
   void removeIndex(int index) {

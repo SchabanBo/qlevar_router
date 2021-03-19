@@ -8,9 +8,7 @@ class QRouter extends StatefulWidget {
 
   final QRouterController _controller;
 
-  final bool isDeclarative;
-
-  QRouter(this._controller, {this.isDeclarative = false});
+  QRouter(this._controller);
 
   /// Get the name for the current child
   /// This is the name whih define in [QRoute.name] if it is null [QRoute.path]
@@ -33,20 +31,24 @@ class _QRouterState extends State<QRouter> {
   }
 
   @override
-  Widget build(BuildContext context) => Navigator(
-        key: widget.navKey,
-        pages: widget._controller.pages,
-        onPopPage: (route, result) {
-          if (!route.didPop(result)) {
-            return false;
-          }
-          if (widget._controller.canPop) {
-            widget._controller.removeLast();
-            return true;
-          }
+  void didChangeDependencies() {
+    widget._controller.updateDeclarative();
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: widget.navKey,
+      pages: widget._controller.pages,
+      onPopPage: (route, result) {
+        if (!route.didPop(result)) {
           return false;
-        },
-      );
+        }
+        return widget._controller.removeLast();
+      },
+    );
+  }
 
   @override
   void dispose() {

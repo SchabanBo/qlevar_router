@@ -16,7 +16,8 @@ void main() {
           builderChild: (r) => Scaffold(appBar: AppBar(), body: r),
           initRoute: '/child',
           middleware: [
-            QMiddlewareBuilder(redirectGuardFunc: () async {
+            QMiddlewareBuilder(redirectGuardFunc: (s) async {
+              print('From redirect guard: $s');
               return await Future.delayed(
                   Duration(milliseconds: 500), () => isAuthed ? null : '/two');
             }),

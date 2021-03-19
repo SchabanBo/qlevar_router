@@ -7,6 +7,9 @@
 - Fix init Route with child
 - Make QParamValue as object instated of string
 - Fix multi path case '/:userId/settings' (Component and then normal path)
+- Add canPop for the Middleware
+- Give the path in middleware redirect guard
+- Add ignoreSamePath to `to` and `toName`
 
 ## [1.0.0]
 

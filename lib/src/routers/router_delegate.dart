@@ -54,11 +54,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
           if (!route.didPop(result)) {
             return false;
           }
-          if (_controller.canPop) {
-            _controller.removeLast();
-            return true;
-          }
-          return false;
+          return _controller.removeLast();
         },
       );
 

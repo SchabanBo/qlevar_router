@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../qlevar_router.dart';
 import 'controllers/controller_manager.dart';
+import 'controllers/match_controller.dart';
 import 'controllers/qrouter_controller.dart';
 import 'helpers/platform/configure_web.dart'
     if (dart.library.io) 'helpers/platform/configure_nonweb.dart';
@@ -99,14 +100,24 @@ class QRContext {
 
   /// Navigate to this path.
   /// The package will try to get the right navigtor to this path.
-  Future<void> to(String path) async {
+  Future<void> to(String path, {bool ignoreSamePath = true}) async {
+    if (ignoreSamePath && currentPath == path) {
+      return;
+    }
     final controller = _manager.withName(rootRouterName);
     var match = controller.findPath(path);
     await _toMatch(match);
   }
 
   /// Go to a route with given name
-  Future<void> toName(String name, {Map<String, dynamic>? params}) async {
+  Future<void> toName(String name,
+      {Map<String, dynamic>? params, bool ignoreSamePath = true}) async {
+    if (ignoreSamePath &&
+        currentPath ==
+            MatchController.findPathFromName(
+                name, params ?? <String, dynamic>{})) {
+      return;
+    }
     final controller = _manager.withName(rootRouterName);
     var match = controller.findName(name, params: params);
     await _toMatch(match);
@@ -115,6 +126,10 @@ class QRContext {
   Future<void> _toMatch(QRouteInternal match,
       {String forController = QRContext.rootRouterName}) async {
     final controller = _manager.withName(forController);
+    // if (controller.isDeclarative) {
+    //   controller.updateDeclarative(match: match);
+    //   return;
+    // }
     await controller.popUnitOrPushMatch(match, checkChild: false);
     if (match.hasChild) {
       final newControllerName =

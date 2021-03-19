@@ -8,6 +8,17 @@
 - [Qlevar Router (QR)](#qlevar-router-qr)
   - [Demo](#demo)
   - [Nested Navigation](#nested-navigation)
+  - [Params](#params)
+    - [Route Component](#route-component)
+    - [Query Param](#query-param)
+    - [Params features](#params-features)
+  - [Middleware](#middleware)
+    - [redirectGuard](#redirectguard)
+    - [canPop](#canpop)
+    - [onMatch](#onmatch)
+    - [onEnter](#onenter)
+    - [onExit](#onexit)
+  - [Not found page](#not-found-page)
 
 Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
 With Navigator 2.0 Manage your project routes and create nested routes. Change only one widget on your page when navigating to the new route. Navigate without context from anywhere to anywhere.
@@ -143,3 +154,95 @@ class Dashboard extends StatelessWidget {
 ```
 
 And now from anywhere from your code (Without any need to the BuildContext) you can call `QR.toName(AppRoutes.infoPage)` and if the user logged in, then the info page in the dashboard will be opened
+
+
+## Params
+
+send your params with the route, or set them before routing and call them from the next page. The params could be any object type.
+
+### Route Component
+
+```dart
+QRoute(path: '/:orderId',page: (child) => OrderDetails()),
+
+// and this receive it in your page
+final orderId = QR.params['orderId'].toString()
+```
+
+### Query Param
+
+```dart
+ QR.to('/home/items/details?itemName=${e.name}&numbers=[2,6,7]')
+
+// and this receive it in your page
+final itemName = QR.params['itemName'].toString()
+final numbers = QR.params['numbers']
+```
+
+### Params features
+
+- **keepAlive**: by default the param will be deleted when navigating to new route that does not contains it, so if you don't what to deleted it in this case set this property to true and *the package will not deleted **as long as** this property is true*
+- **onChange**: set function to be called when this param will be changed it give the current value and the new value
+- **onDelete**: set function to be called when this param will be deleted
+- **asInt**: Will return the value as int?
+- **asDouble**: Will return the value as double
+- **valueAs<T>**: Will return the value as the given type
+
+## Middleware
+
+with middleware you can set a custom actions to run with different event when you navigate
+to define them add `QMiddlewareBuilder` or a custom class that extends 'QMiddleware' them in you route, they will be called in the same order they are defined in.
+
+```dart
+ QRoute(
+    path: '/home',
+    builder: () {
+      return HomePage();
+    },
+    middleware: [
+      QMiddlewareBuilder(
+          onEnterFunc: () => print('-- Enter Parent page --'),
+          onExitFunc: () => print('-- Exit Parent page --'),
+          onMatchFunc: () => print('-- Parent page Matched --')),
+      AuthMiddleware(),
+    ])
+
+class AuthMiddleware extends QMiddleware{
+  final dataStorage = // Get you Data storage
+  @override
+  bool canPop() => dataStorage.canLeave;
+  @override
+  Future<String?> redirectGuard(String path) async => dataStorage.isLoggedIn ? null: '/parent/child-2';
+}
+```
+
+### redirectGuard
+
+you can redirect to new page whenever a page is called using the `redirectGuard`.
+
+The `redirectGuard` give the path als parameter and takes the new path to redirect to.
+or it takes `null` so the page can be accessed.
+
+### canPop
+
+can this route pop, called when trying to remove the page.
+
+### onMatch
+
+This method will be called *every time* a path match it.
+  
+### onEnter
+
+This method will be called before adding the page to the stack and before the page building
+
+### onExit
+
+This method will be called before removing the page from the stack
+
+## Not found page
+
+you can set your custom not found page to show it whenever page was not found, or a default one will be set.
+
+```dart
+  QR.settings.notFoundPage = QRoute(path: '/404', builder: ()=> NotFoundPage())
+```

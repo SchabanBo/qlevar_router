@@ -4,7 +4,6 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'routes.dart';
 
 void main() {
-  //QR.setUrlStrategy();
   QR.settings.enableDebugLog = true;
   runApp(MyApp());
 }
@@ -17,6 +16,5 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.blueGrey.shade800,
       ),
       routeInformationParser: QRouteInformationParser(),
-      routerDelegate:
-          QRouterDelegate(AppRoutes().routes(), initPath: '/nested/child-1'));
+      routerDelegate: QRouterDelegate(AppRoutes().routes()));
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
+typedef PagesBuilder = List<QRouteBuilder> Function();
+
 class QRouteBuilder {
   /// The [QRoute.name] for the defined route.
   /// The route must defined as a child for this current route
@@ -12,9 +14,12 @@ class QRouteBuilder {
   /// leave `null` if you dont want to update the path
   final String? path;
 
-  const QRouteBuilder.fromName(this.name)
+  final Map<String, Object>? params;
+
+  const QRouteBuilder.fromName(this.name, {this.params})
       : widget = null,
         path = null;
 
-  const QRouteBuilder.custom(this.path, this.widget) : name = null;
+  const QRouteBuilder.custom(this.path, this.widget, {this.params})
+      : name = null;
 }

@@ -86,4 +86,11 @@ class QRouteInternal {
 
   bool get hasMiddlewares =>
       route.middleware != null && route.middleware!.isNotEmpty;
+
+  String getLastActivePath() {
+    if (child != null) {
+      return child!.getLastActivePath();
+    }
+    return activePath!;
+  }
 }
