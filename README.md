@@ -19,6 +19,7 @@
     - [onEnter](#onenter)
     - [onExit](#onexit)
   - [Not found page](#not-found-page)
+  - [Remove Url Hashtag](#remove-url-hashtag)
 
 Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
 With Navigator 2.0 Manage your project routes and create nested routes. Change only one widget on your page when navigating to the new route. Navigate without context from anywhere to anywhere.
@@ -246,3 +247,16 @@ you can set your custom not found page to show it whenever page was not found, o
 ```dart
   QR.settings.notFoundPage = QRoute(path: '/404', builder: ()=> NotFoundPage())
 ```
+
+## Remove Url Hashtag
+
+If you what to remove the hashtag from the url place in you main method
+
+```dart
+void main() {
+  QR.setUrlStrategy();
+  runApp(MyApp());
+}
+```
+
+*Note:* sometimes in release mode you could get error when you remove the hashtag, to fix it please see [this](https://github.com/SchabanBo/qlevar_router/issues/10)
