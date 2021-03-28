@@ -14,6 +14,8 @@ class QHistory {
 
   QHistoryEntry get last => _history[_history.length - 2];
 
+  QHistoryEntry get beforelast => _history[_history.length - 3];
+
   bool get hasLast => _history.length > 1;
 
   bool get isEmpty => _history.isEmpty;

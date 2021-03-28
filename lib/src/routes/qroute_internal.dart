@@ -54,7 +54,7 @@ class QRouteInternal {
             : QRouteChildren.from(route.children!, key, fullPath));
   }
 
-  factory QRouteInternal.notfound() {
+  factory QRouteInternal.notfound(String notFoundPath) {
     final route = QR.settings.notFoundPage;
     final key = QKey(route.name ?? route.path);
     return QRouteInternal(
@@ -63,7 +63,7 @@ class QRouteInternal {
         fullPath: route.path,
         isNotFound: true,
         params: QParams(params: {}),
-        activePath: route.path,
+        activePath: notFoundPath,
         children: route.children == null
             ? null
             : QRouteChildren.from(route.children!, key, route.path));

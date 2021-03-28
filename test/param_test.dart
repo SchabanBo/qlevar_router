@@ -145,7 +145,7 @@ void main() {
 
       await QR.to('/user/w');
       await tester.pumpAndSettle();
-      expectedPath('/notfound');
+      expectedPath('/user/w');
       expect(QR.params['id'], null);
     });
   });

@@ -1,6 +1,11 @@
 # CHANGELOG
 
-## [1.0.1]
+## [1.1.1]
+
+- Fix [#11](https://github.com/SchabanBo/qlevar_router/issues/11)
+- Fix back button on not found page.
+
+## [1.1.0]
 
 - Fix Extra Slash at the end of Url
 - Remove Url Strategy

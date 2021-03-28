@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+
+import '../../qlevar_router.dart';
 import '../controllers/qrouter_controller.dart';
 
 /// A Router used with Nested Navigation to show the child for the navigation
@@ -48,11 +50,5 @@ class _QRouterState extends State<QRouter> {
         return widget._controller.removeLast();
       },
     );
-  }
-
-  @override
-  void dispose() {
-    widget._controller.dispose();
-    super.dispose();
   }
 }
