@@ -59,6 +59,8 @@ class QRouterController extends QNavigator {
 
   final _pagesController = PagesController();
 
+  bool _isDisposed = false;
+
   QRouterController(
     this.key,
     this.routes, {
@@ -158,7 +160,7 @@ class QRouterController extends QNavigator {
       route = route.child!;
     }
 
-    if (notify && !redirect) {
+    if (notify && !redirect && !_isDisposed) {
       update();
     }
   }
@@ -251,6 +253,12 @@ class QRouterController extends QNavigator {
     if (!addHistory) {
       QR.history.removeLast();
     }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 
   void updateDeclarative({QRouteInternal? match}) {}

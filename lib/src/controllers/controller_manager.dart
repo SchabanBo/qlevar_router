@@ -35,7 +35,9 @@ class ControllerManager {
     if (!hasController(name)) {
       return false;
     }
-    controllers.removeWhere((element) => element.key.hasName(name));
+    final controller = withName(name);
+    controller.dispose();
+    controllers.remove(controller);
     QR.log('Navigator with name [$name] was removed');
     return true;
   }

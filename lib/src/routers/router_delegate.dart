@@ -31,11 +31,18 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(String route) {
+    if (QR.history.hasLast &&
+        QR.history.last.path == QR.settings.notFoundPage.path) {
+      if (QR.history.length > 2 && route == QR.history.beforelast.path) {
+        QR.history.removeLast();
+      }
+    }
     if (QR.history.hasLast && route == QR.history.last.path) {
       QR.log(
           // ignore: lines_longer_than_80_chars
           'New route reported that was last visited. Useing QR.back() to response',
           isDebug: true);
+
       QR.back();
       return SynchronousFuture(null);
     }
