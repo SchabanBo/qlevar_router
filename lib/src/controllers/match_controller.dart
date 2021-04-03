@@ -11,7 +11,9 @@ class MatchController {
   int _searchIndex = 0;
   MatchController(String sPath, this.foundPath, this.routes)
       : path = Uri.parse(sPath) {
-    QR.log('Finding Match for $sPath under path $foundPath');
+    QR.log(
+        // ignore: lines_longer_than_80_chars
+        '${'Finding Match for $sPath under '}${foundPath.isEmpty ? 'root' : 'path $foundPath'}');
   }
 
   factory MatchController.fromName(
