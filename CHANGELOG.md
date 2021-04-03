@@ -1,11 +1,16 @@
 # CHANGELOG
 
-## [1.1.1]
+## [1.1.2] 03.04.2021
+
+- Fix [#16](https://github.com/SchabanBo/qlevar_router/issues/16)
+- Fix Problem when using Middleware with nested child.
+
+## [1.1.1] 28.03.2021
 
 - Fix [#11](https://github.com/SchabanBo/qlevar_router/issues/11)
 - Fix back button on not found page.
 
-## [1.1.0]
+## [1.1.0] 19.03.2021
 
 - Fix Extra Slash at the end of Url
 - Remove Url Strategy
@@ -16,11 +21,11 @@
 - Give the path in middleware redirect guard
 - Add ignoreSamePath to `to` and `toName`
 
-## [1.0.0]
+## [1.0.0] 13.03.2021
 
 I have rewrite the entire library to add more use cases and optimize the Performance and add null safety.
 
-## [0.3.6]
+## [0.3.5+2] 28.02.2021
 
 - Optimize pop behaver, now with `QR.back` if the current page can pop it will pop, otherwise it will be created.
 - Finish and test `childOf` NavigationMode.

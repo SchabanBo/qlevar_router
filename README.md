@@ -7,7 +7,8 @@
 
 - [Qlevar Router (QR)](#qlevar-router-qr)
   - [Demo](#demo)
-  - [Nested Navigation](#nested-navigation)
+    - [The example Projects](#the-example-projects)
+    - [The Sample Project](#the-sample-project)
   - [Params](#params)
     - [Route Component](#route-component)
     - [Query Param](#query-param)
@@ -91,71 +92,15 @@ QR.history.debug() // will show you a dialog contains the history stack for your
 
 ## Demo
 
-[Show Demo](https://qlevar-router.netlify.app){:target="_blank"}
+### The example Projects
+
+[Show Demo](https://qlevar-router.netlify.app)
 
 You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
 
-## Nested Navigation
+### The Sample Project
 
-Lets say we want to develop a website with this structure
-
-![Dashboard](assets/dashboard.png)
-
-The Routes definitions for this website will be
-
-```dart
-class AppRoutes {
-  static String landingPage = 'Landing Page';
-  static String loginPage = 'Login Page';
-  static String dashboardPage = 'Dashboard Page';
-  static String infoPage = 'Info Page';
-  static String ordersPage = 'Orders Page';
-  static String itemsPage = 'Items Page';
-
-  final routes = [
-    QRoute(name: landingPage, path: '/', builder: () => LandingPage()),
-    QRoute(name: loginPage, path: '/login', builder: () => LoginPage()),
-    QRoute.withChild(
-        name: dashboardPage,
-        path: '/dashboard',
-        builderChild: (c) => DashboardPage(c),
-        initRoute: '/info',
-        middleware: [
-          // Add middleware with redirection guard to make sure
-          // that only the authorized users can enter this page or it children
-          QMiddlewareBuilder(redirectGuardFunc: () async {
-            return await AuthService().isLogged ? null : '/login';
-          })
-        ],
-        children: [
-          QRoute(name: infoPage, path: '/info', builder: () => InfoPage()),
-          QRoute(name: ordersPage, path: '/orders', builder: () => OrdersPage()),
-          QRoute(name: itemsPage, path: '/items', builder: () => ItemsPage()),
-        ]),
-  ];
-}
-
-// The dashboard page can look like this
-class Dashboard extends StatelessWidget {
-  final QRouter child;
-  Dashboard(this.child);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          Sidebar(),
-          Expanded(child: child),
-        ],
-      ),
-    );
-  }
-}
-
-```
-
-And now from anywhere from your code (Without any need to the BuildContext) you can call `QR.toName(AppRoutes.infoPage)` and if the user logged in, then the info page in the dashboard will be opened
-
+You can checkout the [sample project](https://github.com/SchabanBo/qr_samples) for more samples and to test some use case
 
 ## Params
 

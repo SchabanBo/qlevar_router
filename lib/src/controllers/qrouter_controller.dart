@@ -151,37 +151,38 @@ class QRouterController extends QNavigator {
 
   Future<void> addRouteAsync(QRouteInternal route,
       {bool notify = true, bool checkChild = true}) async {
-    var redirect = await _addRoute(route);
+    await _addRoute(route);
     while (checkChild &&
         route.hasChild &&
         !route.route.withChildRouter &&
-        !redirect) {
-      redirect = await _addRoute(route.child!);
+        !route.isProcessed) {
+      await _addRoute(route.child!);
       route = route.child!;
     }
 
-    if (notify && !redirect && !_isDisposed) {
+    if (notify && !route.isProcessed && !_isDisposed) {
       update();
     }
   }
 
-  Future<bool> _addRoute(QRouteInternal route) async {
+  Future<void> _addRoute(QRouteInternal route) async {
     if (_pagesController.exist(route) && route.hasChild) {
       // if page already exsit, and has a child, that means the child need
       // to be added, so do not run the middleware for it or add it again
-      return false;
+      return;
     }
     if (route.hasMiddlewares) {
       final result = await MiddlewareController(route).runRedirect();
       if (result != null) {
+        QR.log('redirect from [${route.activePath}] to [$result]');
         await QR.to(result);
-        return true;
+        route.isProcessed = true;
+        return;
       }
     }
     QR.history.add(QHistoryEntry(
         route.key, route.activePath!, route.params!, key.name, route.hasChild));
     _pagesController.add(route);
-    return false;
   }
 
   @override
@@ -221,9 +222,7 @@ class QRouterController extends QNavigator {
     }
     // page exist remove unit it
     for (var i = index + 1; i < _pagesController.pages.length; i++) {
-      _pagesController.removeIndex(i);
-      QR.history.removeLast();
-      i--;
+      _pagesController.removeLast();
     }
     update();
   }

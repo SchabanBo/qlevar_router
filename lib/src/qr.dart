@@ -131,7 +131,7 @@ class QRContext {
     //   return;
     // }
     await controller.popUnitOrPushMatch(match, checkChild: false);
-    if (match.hasChild) {
+    if (match.hasChild && !match.isProcessed) {
       final newControllerName =
           _manager.hasController(match.name) ? match.name : forController;
       await _toMatch(match.child!, forController: newControllerName);

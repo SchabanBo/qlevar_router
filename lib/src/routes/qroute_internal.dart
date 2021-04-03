@@ -15,6 +15,8 @@ class QRouteInternal {
 
   final bool isNotFound;
 
+  bool isProcessed = false;
+
   String? activePath;
 
   QParams? params;
@@ -73,6 +75,7 @@ class QRouteInternal {
     child = null;
     activePath = null;
     params = null;
+    isProcessed = false;
   }
 
   bool isSame(QRouteInternal other) => key.isSame(other.key);
