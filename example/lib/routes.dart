@@ -1,11 +1,14 @@
 import 'dart:async';
+
 import 'package:qlevar_router/qlevar_router.dart';
+
 import 'helpers/database.dart';
 import 'helpers/text_page.dart';
 import 'screens/home_page.dart';
 import 'screens/nested2.dart';
 import 'screens/nested_route.dart';
 import 'screens/parent_page.dart';
+import 'screens/sitemap_page.dart';
 
 class AppRoutes {
   static const nested = 'Nested';
@@ -57,6 +60,7 @@ class AppRoutes {
         QRoute(path: '/params', builder: () => TextPage(
             // ignore: lines_longer_than_80_chars
             'params are: test is${QR.params['test']} and go is ${QR.params['go']}')),
+        QRoute(path: '/sitemap', builder: () => SiteMap()),
         QRoute.withChild(
             name: nested,
             path: '/nested',

@@ -25,6 +25,7 @@ class HomePage extends StatelessWidget {
                     () => QR.to(
                         "/params?test=${Random().nextInt(1000)}&go=${Random().nextInt(1000)}")),
                 QButton("Test not found Page", () => QR.to("/parent/no-child")),
+                QButton("Site Map", () => QR.to("/sitemap")),
                 QButton("Test Nested Navigation", () => QR.to("/nested")),
                 QButton("Go to Login/Home-Setting Case", () => QR.to('/login')),
               ],

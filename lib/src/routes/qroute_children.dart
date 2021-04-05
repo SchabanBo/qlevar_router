@@ -6,12 +6,12 @@ import 'qroute_internal.dart';
 
 class QRouteChildren {
   final QKey parentKey;
-  final String parentFullPaht;
+  final String parentFullPath;
   final List<QRouteInternal> _routes;
 
   List<QRouteInternal> get routes => _routes;
 
-  QRouteChildren(this._routes, this.parentKey, this.parentFullPaht)
+  QRouteChildren(this._routes, this.parentKey, this.parentFullPath)
       : assert(_routes.isNotEmpty);
 
   factory QRouteChildren.from(
@@ -26,7 +26,7 @@ class QRouteChildren {
 
   void add(List<QRoute> routes) {
     for (var route in routes) {
-      final internal = QRouteInternal.from(route, parentFullPaht);
+      final internal = QRouteInternal.from(route, parentFullPath);
       _routes.add(internal);
       QR.log('$internal was add to $parentKey', isDebug: true);
     }

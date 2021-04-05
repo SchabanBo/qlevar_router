@@ -34,7 +34,7 @@ class _QRouterState extends State<QRouter> {
 
   @override
   void didChangeDependencies() {
-    widget._controller.updateDeclarative();
+    //widget._controller.updateDeclarative();
     super.didChangeDependencies();
   }
 

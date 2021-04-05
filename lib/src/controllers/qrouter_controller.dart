@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
+import '../helpers/widgets/routes_tree.dart';
 import '../pages/qpage_internal.dart';
 import '../qr.dart';
 import '../routes/qroute_builder.dart';
@@ -23,6 +24,8 @@ abstract class QNavigator extends ChangeNotifier {
   /// Get the current route for this navigator
   QRoute get currentRoute;
 
+  RoutesChildren get getRoutesWidget;
+
   /// Set the browser [url]
   void updateUrl(String url,
       {Map<String, String>? params,
@@ -30,22 +33,22 @@ abstract class QNavigator extends ChangeNotifier {
       String? navigator = '',
       bool addHistory = true});
 
-  void pushName(String name, {Map<String, dynamic>? params});
+  Future<void> pushName(String name, {Map<String, dynamic>? params});
 
-  void replaceName(String name, String withName,
+  Future<void> replaceName(String name, String withName,
       {Map<String, dynamic>? params});
 
-  void replaceAllWithName(String name, {Map<String, dynamic>? params});
+  Future<void> replaceAllWithName(String name, {Map<String, dynamic>? params});
 
-  void popUnitOrPushName(String name, {Map<String, dynamic>? params});
+  Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params});
 
-  void push(String path);
+  Future<void> push(String path);
 
-  void popUnitOrPush(String path);
+  Future<void> popUnitOrPush(String path);
 
-  void replace(String path, String withPath);
+  Future<void> replace(String path, String withPath);
 
-  void replaceAll(String path);
+  Future<void> replaceAll(String path);
 
   bool removeLast();
 }
@@ -69,7 +72,7 @@ class QRouterController extends QNavigator {
     this.declarativePagesBuilder,
   }) {
     if (initRoute != null) {
-      addRoute(initRoute);
+      addRouteAsync(initRoute);
     } else {
       push(initPath!);
     }
@@ -82,23 +85,26 @@ class QRouterController extends QNavigator {
   QRoute get currentRoute => _pagesController.routes.last.route;
 
   @override
+  RoutesChildren get getRoutesWidget => RoutesChildren(routes);
+
+  @override
   bool get canPop => _pagesController.pages.length > 1;
 
   List<QPageInternal> get pages => List.unmodifiable(_pagesController.pages);
 
   QRouteInternal findPath(String path) {
-    return MatchController(path, routes.parentFullPaht, routes).match;
+    return MatchController(path, routes.parentFullPath, routes).match;
   }
 
   QRouteInternal findName(String name, {Map<String, dynamic>? params}) {
-    return MatchController.fromName(name, routes.parentFullPaht, routes,
+    return MatchController.fromName(name, routes.parentFullPath, routes,
             params: params)
         .match;
   }
 
   @override
-  void pushName(String name, {Map<String, dynamic>? params}) =>
-      addRoute(findName(name, params: params));
+  Future<void> pushName(String name, {Map<String, dynamic>? params}) async =>
+      await addRouteAsync(findName(name, params: params));
 
   @override
   bool removeLast() {
@@ -113,44 +119,41 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  void replaceName(String name, String withName,
-      {Map<String, dynamic>? params}) {
+  Future<void> replaceName(String name, String withName,
+      {Map<String, dynamic>? params}) async {
     // TODO: implement replace
   }
 
   @override
-  void replaceAllWithName(String name, {Map<String, dynamic>? params}) {
+  Future<void> replaceAllWithName(String name,
+      {Map<String, dynamic>? params}) async {
     final match = findName(name, params: params);
     _pagesController.removeAll();
-    addRoute(match);
+    await addRouteAsync(match);
   }
 
   @override
-  void push(String path) {
+  Future<void> push(String path) async {
     final match = findPath(path);
-    addRoute(match);
+    await addRouteAsync(match);
   }
 
   @override
-  void replaceAll(String path) {
+  Future<void> replaceAll(String path) async {
     final match = findPath(path);
     _pagesController.removeAll();
-    addRoute(match);
+    await addRouteAsync(match);
   }
 
   @override
-  void replace(String path, String withPath) {
+  Future<void> replace(String path, String withPath) async {
     // TODO: implement replacePath
-  }
-
-  void addRoute(QRouteInternal route,
-      {bool notify = true, bool checkChild = true}) {
-    addRouteAsync(route, notify: notify, checkChild: checkChild);
-    QR.log('$route added to the navigator with $key');
   }
 
   Future<void> addRouteAsync(QRouteInternal route,
       {bool notify = true, bool checkChild = true}) async {
+    QR.log('adding $route to the navigator with $key');
+    QR.params.updateParams(route.params!);
     await _addRoute(route);
     while (checkChild &&
         route.hasChild &&
@@ -186,12 +189,17 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  void popUnitOrPush(String path) {
-    popUnitOrPushMatch(findPath(path));
+  Future<void> popUnitOrPush(String path) async {
+    await popUnitOrPushMatch(findPath(path));
   }
 
   @override
-  void popUnitOrPushName(String name, {Map<String, dynamic>? params}) {}
+  Future<void> popUnitOrPushName(String name,
+      {Map<String, dynamic>? params}) async {
+    final match =
+        MatchController.fromName(name, routes.parentFullPath, routes).match;
+    await popUnitOrPushMatch(match);
+  }
 
   Future<void> popUnitOrPushMatch(QRouteInternal match,
       {bool checkChild = true}) async {
@@ -260,5 +268,5 @@ class QRouterController extends QNavigator {
     super.dispose();
   }
 
-  void updateDeclarative({QRouteInternal? match}) {}
+  //void updateDeclarative({QRouteInternal? match}) {}
 }

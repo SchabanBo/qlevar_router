@@ -8,7 +8,7 @@
 - [Qlevar Router (QR)](#qlevar-router-qr)
   - [Demo](#demo)
     - [The example Projects](#the-example-projects)
-    - [The Sample Project](#the-sample-project)
+    - [The Samples Project](#the-samples-project)
   - [Params](#params)
     - [Route Component](#route-component)
     - [Query Param](#query-param)
@@ -20,6 +20,7 @@
     - [onEnter](#onenter)
     - [onExit](#onexit)
   - [Not found page](#not-found-page)
+  - [Page Transition](#page-transition)
   - [Remove Url Hashtag](#remove-url-hashtag)
 
 Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
@@ -98,9 +99,9 @@ QR.history.debug() // will show you a dialog contains the history stack for your
 
 You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
 
-### The Sample Project
+### The Samples Project
 
-You can checkout the [sample project](https://github.com/SchabanBo/qr_samples) for more samples and to test some use case
+You can checkout the [samples project](https://github.com/SchabanBo/qr_samples) for more samples and to test some use case
 
 ## Params
 
@@ -192,6 +193,16 @@ you can set your custom not found page to show it whenever page was not found, o
 ```dart
   QR.settings.notFoundPage = QRoute(path: '/404', builder: ()=> NotFoundPage())
 ```
+
+## Page Transition
+
+To chose the Transition for you page set the `QRoute.pageType` to the of the types:
+
+- **QPlatformPage**: This type will be set as *QCupertinoPage* on IOS devises otherwise it will be *QMaterialPage*.
+- **QMaterialPage**: It will use the default MaterialRouteTransition
+- **QCupertinoPage**: It will use the default CupertinoRouteTransition
+- **QCustomPage**: to define a custom transition for your page.
+- **QSlidePage**: a predefined slide transition
 
 ## Remove Url Hashtag
 

@@ -59,5 +59,34 @@ void main() {
       QR.navigator.replaceAll('/three');
       expect(counter, 7); // Nested onExite + Two onExite
     });
+
+    test('Redirectguard has the right path and param', () async {
+      QR.reset();
+      var pathFromGuard = '';
+      var paramFromGuard = '';
+      final _ = QRouterDelegate([
+        QRoute(
+            path: '/:doaminId/dashboard',
+            builder: () => Container(),
+            middleware: [
+              QMiddlewareBuilder(redirectGuardFunc: (s) async {
+                pathFromGuard = s;
+                print(s);
+                paramFromGuard = QR.params['doaminId'].toString();
+                return null;
+              })
+            ])
+      ], initPath: '/domain1/dashboard');
+      // wait init page to load
+      await Future.delayed(Duration(microseconds: 300));
+      expect(pathFromGuard, '/domain1/dashboard');
+      expect(paramFromGuard, 'domain1');
+
+      for (var i = 0; i < 5; i++) {
+        await QR.to('/dd$i/dashboard');
+        expect(pathFromGuard, '/dd$i/dashboard');
+        expect(paramFromGuard, 'dd$i');
+      }
+    });
   });
 }
