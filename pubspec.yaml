@@ -1,8 +1,8 @@
 name: qlevar_router
-description: Use a clever router. Manage your project routes. Create nested routes. navigation without context to your pages. Change only one sub widget on your page when navigating to the new route.
+description: A router that helps you to manage your project routes. Create nested routes. navigation without context between your pages.
 
 
-version: 1.1.2
+version: 1.1.3
 repository: https://github.com/SchabanBo/qlevar_router
 
 environment:

@@ -86,18 +86,18 @@ class QRoute {
         isDeclarative = false,
         builder = null;
 
-  /// Call this function to get a [QRouter] to use it for Nested Navigation
-  const QRoute.declarative({
-    required this.path,
-    required this.builderChild,
-    this.name,
-    this.pageType,
-    this.middleware,
-    this.children,
-  })  : assert(builderChild != null),
-        initRoute = null,
-        isDeclarative = true,
-        builder = null;
+  // /// Call this function to get a [QRouter] to use it for Nested Navigation
+  // const QRoute.declarative({
+  //   required this.path,
+  //   required this.builderChild,
+  //   this.name,
+  //   this.pageType,
+  //   this.middleware,
+  //   this.children,
+  // })  : assert(builderChild != null),
+  //       initRoute = null,
+  //       isDeclarative = true,
+  //       builder = null;
 
   /// does this route use [QRouter]
   bool get withChildRouter => builderChild != null;

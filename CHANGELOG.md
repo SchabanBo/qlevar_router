@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.1.3] 05.04.2021
+
+- code cleanup
+- Make route params available in redirectGuard
+- Add Route Tree widget
+
 ## [1.1.2] 03.04.2021
 
 - Fix [#16](https://github.com/SchabanBo/qlevar_router/issues/16)

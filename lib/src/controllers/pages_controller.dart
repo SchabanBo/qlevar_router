@@ -18,7 +18,6 @@ class PagesController {
 
   void add(QRouteInternal route) {
     routes.add(route);
-    QR.params.updateParams(route.params!);
     MiddlewareController(route).runOnEnter();
     pages.add(PageCreator(route).create());
     if (pages.any((element) => element.matchKey.hasName('Init Page'))) {

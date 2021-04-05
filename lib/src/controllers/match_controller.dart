@@ -54,7 +54,7 @@ class MatchController {
       return QRouteInternal.notfound(path.toString());
     }
     var match = result;
-    for (_searchIndex; _searchIndex < path.pathSegments.length;) {
+    for (; _searchIndex < path.pathSegments.length;) {
       searchIn = match.children!;
       match.child = _tryFind(searchIn, _searchIndex);
       if (match.child == null) {
