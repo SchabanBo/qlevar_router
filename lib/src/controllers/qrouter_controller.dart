@@ -229,7 +229,8 @@ class QRouterController extends QNavigator {
       return;
     }
     // page exist remove unit it
-    for (var i = index + 1; i < _pagesController.pages.length; i++) {
+    final pagesLength = _pagesController.pages.length;
+    for (var i = index + 1; i < pagesLength; i++) {
       _pagesController.removeLast();
     }
     update();
