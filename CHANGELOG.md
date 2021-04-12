@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.1.4] 12.04.2021
+
+- Fix [#17](https://github.com/SchabanBo/qlevar_router/issues/17)
+
 ## [1.1.3] 05.04.2021
 
 - code cleanup
