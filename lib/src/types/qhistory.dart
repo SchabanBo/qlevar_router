@@ -45,7 +45,7 @@ class QHistory {
       if (current.isSame(entry)) {
         removeLast();
       }
-      if (last.isSame(entry)) {
+      if (hasLast && last.isSame(entry)) {
         _history.removeAt(_history.length - 2);
       }
     }

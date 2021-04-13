@@ -145,26 +145,36 @@ class QRouterController extends QNavigator {
     await addRouteAsync(match);
   }
 
+  void updatePathIfNeeded(QRouteInternal match) {
+    if (key.name != QRContext.rootRouterName) {
+      QR.updateUrlInfo(match.activePath!,
+          mKey: match.key,
+          params: match.params!.asStringMap(),
+          navigator: key.name);
+    }
+  }
+
   @override
   Future<void> replace(String path, String withPath) async {
     // TODO: implement replacePath
   }
 
-  Future<void> addRouteAsync(QRouteInternal route,
+  Future<void> addRouteAsync(QRouteInternal match,
       {bool notify = true, bool checkChild = true}) async {
-    QR.log('adding $route to the navigator with $key');
-    QR.params.updateParams(route.params!);
-    await _addRoute(route);
+    QR.log('adding $match to the navigator with $key');
+    QR.params.updateParams(match.params!);
+    await _addRoute(match);
     while (checkChild &&
-        route.hasChild &&
-        !route.route.withChildRouter &&
-        !route.isProcessed) {
-      await _addRoute(route.child!);
-      route = route.child!;
+        match.hasChild &&
+        !match.route.withChildRouter &&
+        !match.isProcessed) {
+      await _addRoute(match.child!);
+      match = match.child!;
     }
 
-    if (notify && !route.isProcessed && !_isDisposed) {
+    if (notify && !match.isProcessed && !_isDisposed) {
       update();
+      updatePathIfNeeded(match);
     }
   }
 
