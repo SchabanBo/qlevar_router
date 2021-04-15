@@ -21,6 +21,7 @@
     - [onExit](#onexit)
   - [Not found page](#not-found-page)
   - [Page Transition](#page-transition)
+  - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
   - [Remove Url Hashtag](#remove-url-hashtag)
 
 Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
@@ -203,6 +204,20 @@ To chose the Transition for you page set the `QRoute.pageType` to the of the typ
 - **QCupertinoPage**: It will use the default CupertinoRouteTransition
 - **QCustomPage**: to define a custom transition for your page.
 - **QSlidePage**: a predefined slide transition
+
+## Add or remove routes in run Time
+
+You can add new routes or delete existing route from the route tree dynamically while the app is running.
+Just chose which navigator you want to add the routes to and then call
+
+```dart
+final navigator = QR.rootNavigator; // to add routes to the root navigator
+final navigator = QR.navigatorOf('/dashboard') // or add the routes to the dashboard navigator
+navigator.addRoutes([QRoute(path: '/payrolls', builder:()=> PayrollsPage()]);
+// now the use can navigate to the payrolls page
+navigator.removeRoutes(['/payrolls']);
+// now if the use navigate to the payrolls page he will get not found page
+```
 
 ## Remove Url Hashtag
 

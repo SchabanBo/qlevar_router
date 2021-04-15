@@ -51,6 +51,15 @@ abstract class QNavigator extends ChangeNotifier {
   Future<void> replaceAll(String path);
 
   bool removeLast();
+
+  /// Add Routes to this Navigator
+  /// You can extand the definded routes for this navigator.
+  /// The path of this navigtor will be added to all given routes
+  void addRoutes(List<QRoute> routes);
+
+  /// Remove definded routes from this navigator.
+  /// you should give the route name or path to remove
+  void removeRoutes(List<String> routesNames);
 }
 
 class QRouterController extends QNavigator {
@@ -85,7 +94,8 @@ class QRouterController extends QNavigator {
   QRoute get currentRoute => _pagesController.routes.last.route;
 
   @override
-  RoutesChildren get getRoutesWidget => RoutesChildren(routes);
+  RoutesChildren get getRoutesWidget =>
+      RoutesChildren(routes, parentPath: routes.parentFullPath);
 
   @override
   bool get canPop => _pagesController.pages.length > 1;
@@ -278,6 +288,12 @@ class QRouterController extends QNavigator {
     _isDisposed = true;
     super.dispose();
   }
+
+  @override
+  void addRoutes(List<QRoute> routes) => this.routes.add(routes);
+
+  @override
+  void removeRoutes(List<String> routesNames) => routes.remove(routesNames);
 
   //void updateDeclarative({QRouteInternal? match}) {}
 }

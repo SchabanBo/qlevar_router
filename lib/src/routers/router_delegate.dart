@@ -11,9 +11,8 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   final key = GlobalKey<NavigatorState>();
   final QRouterController _controller;
   QRouterDelegate(List<QRoute> routes, {String? initPath, QRoute? notFoundPage})
-      : _controller = QR.createRouterController(
-            QRContext.rootRouterName, routes,
-            initPath: initPath) {
+      : _controller = QR.createRouterController(QRContext.rootRouterName,
+            routes: routes, initPath: initPath) {
     _controller.addListener(notifyListeners);
   }
 

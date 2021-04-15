@@ -161,4 +161,76 @@ void main() {
     expect(find.byType(WidgetThree), findsOneWidget);
     expectedHistoryLength(3);
   });
+
+  testWidgets('Add and remove nested routes', (tester) async {
+    await prepareTest(tester);
+    await tester.pumpAndSettle();
+    final routePath = '/new-route';
+    final routeText = 'new route';
+    expect(find.text('login'), findsOneWidget);
+    // Make sure route not exist
+    await QR.to('/dashboard$routePath');
+    await tester.pumpAndSettle();
+    expect(find.text('Page Not Found'), findsOneWidget);
+    // We need to call it with QR.to first so the dashboard navigator will
+    // got created
+    await QR.to('/dashboard/child-1');
+    await tester.pumpAndSettle();
+    expect(find.text('child-1'), findsOneWidget);
+    expectedPath('/dashboard/child-1');
+    // Add Route
+    final dashboardNavi = QR.navigatorOf('/dashboard');
+    final newRoute = QRoute(path: routePath, builder: () => Text(routeText));
+    dashboardNavi.addRoutes([newRoute]);
+    await QR.to('/dashboard$routePath');
+    await tester.pumpAndSettle();
+    expect(find.text(routeText), findsOneWidget);
+
+    // Go back
+    QR.back();
+    await tester.pumpAndSettle();
+    expect(find.text('child-1'), findsOneWidget);
+    expectedPath('/dashboard/child-1');
+
+    //Remove route
+    dashboardNavi.removeRoutes([routePath]);
+    // Make sure route not exist
+    await QR.to('/dashboard$routePath');
+    await tester.pumpAndSettle();
+    expect(find.text('Page Not Found'), findsOneWidget);
+  });
+
+  testWidgets('Add and remove routes', (tester) async {
+    await prepareTest(tester);
+    await tester.pumpAndSettle();
+    final routePath = '/new-route';
+    final routeText = 'new route';
+    expect(find.text('login'), findsOneWidget);
+    // Make sure route not exist
+    await QR.to(routePath);
+    await tester.pumpAndSettle();
+    expect(find.text('Page Not Found'), findsOneWidget);
+    // go back
+    QR.back();
+    await tester.pumpAndSettle();
+    expect(find.text('login'), findsOneWidget);
+    expectedPath('/login');
+    // Add Route
+    final newRoute = QRoute(path: routePath, builder: () => Text(routeText));
+    QR.navigator.addRoutes([newRoute]);
+    await QR.to(routePath);
+    await tester.pumpAndSettle();
+    expect(find.text(routeText), findsOneWidget);
+    // Go back
+    QR.back();
+    await tester.pumpAndSettle();
+    expect(find.text('login'), findsOneWidget);
+    expectedPath('/login');
+    //Remove route
+    QR.navigator.removeRoutes([routePath]);
+    // Make sure route not exist
+    await QR.to(routePath);
+    await tester.pumpAndSettle();
+    expect(find.text('Page Not Found'), findsOneWidget);
+  });
 }

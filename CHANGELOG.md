@@ -1,6 +1,8 @@
 # CHANGELOG
 
 - Fix [#17], Path not updated with `QR.navigatorOf().replaceAll`
+- Fix notFoundPage path in nested navigator
+- Add `AddRoutes` and `RemoveRoute`
 
 ## [1.1.4] 12.04.2021
 

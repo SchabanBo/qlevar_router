@@ -26,18 +26,26 @@ class QRouteChildren {
 
   void add(List<QRoute> routes) {
     for (var route in routes) {
+      if (_routes.any((element) => element.route.path == route.path)) {
+        QR.log('Path ${route.path} already exist, connt add');
+        continue;
+      }
       final internal = QRouteInternal.from(route, parentFullPath);
       _routes.add(internal);
-      QR.log('$internal was add to $parentKey', isDebug: true);
+      QR.log('$internal was add to $parentKey');
     }
   }
 
-  void remove(String name) {
-    bool finder(QRouteInternal element) => element.key.hasName(name);
-    if (!_routes.any(finder)) {
-      print('$name is not child of from $parentKey. Can not remove it');
+  void remove(List<String> routesNames) {
+    for (var name in routesNames) {
+      bool finder(QRouteInternal element) => element.key.hasName(name);
+      if (_routes.any(finder)) {
+        _routes.removeWhere(finder);
+        QR.log('$name is removed from $parentKey');
+        return;
+      }
+      QR.log('$name is not child of from $parentKey. Can not remove it');
     }
-    _routes.remove(finder);
   }
 
   QRouteInternal? findName(String name) =>

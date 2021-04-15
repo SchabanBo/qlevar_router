@@ -44,7 +44,7 @@ class QRouteInternal {
 
   factory QRouteInternal.from(QRoute route, String cureentPath) {
     final key = QKey(route.name ?? route.path);
-    final fullPath = '${cureentPath == '' ? '' : '$cureentPath'}${route.path}';
+    final fullPath = '$cureentPath${route.path}';
     QR.treeInfo.namePath[route.name ?? route.path] = fullPath;
     return QRouteInternal(
         key: key,
