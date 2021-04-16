@@ -3,6 +3,7 @@
 - Fix [#17], Path not updated with `QR.navigatorOf().replaceAll`
 - Fix notFoundPage path in nested navigator
 - Add `AddRoutes` and `RemoveRoute`
+- Route.path can be without slash at the start.
 
 ## [1.1.4] 12.04.2021
 

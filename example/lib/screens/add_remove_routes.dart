@@ -31,8 +31,7 @@ class _AddRemoveRoutesState extends State<AddRemoveRoutes> {
                         '''Add or remove routes by typing the route path in the text field.
 You can find the routes under [/add-remove-routes] path
 Type the url you want in the browser or the text field to navigate to it.
-In the right section you can find all routes under [/add-remove-routes] so you can see the changes,
-** Don't forget to add the slash / to the routes **''',
+In the right section you can find all routes under [/add-remove-routes] so you can see the changes''',
                         style: TextStyle(fontSize: 18)),
                   ),
                   Divider(),
