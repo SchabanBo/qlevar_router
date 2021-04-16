@@ -7,6 +7,7 @@ import 'helpers/text_page.dart';
 import 'screens/add_remove_routes.dart';
 import 'screens/home_page.dart';
 import 'screens/nested_route.dart';
+import 'screens/overlays_page.dart';
 import 'screens/parent_page.dart';
 
 class AppRoutes {
@@ -24,6 +25,7 @@ class AppRoutes {
 
   List<QRoute> routes() => [
         QRoute(path: '/', builder: () => HomePage()),
+        QRoute(path: '/overlays', builder: () => OverlaysPage()),
         QRoute(
             path: '/parent',
             builder: () {

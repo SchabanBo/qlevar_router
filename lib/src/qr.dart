@@ -7,6 +7,7 @@ import 'controllers/qrouter_controller.dart';
 import 'helpers/platform/configure_web.dart'
     if (dart.library.io) 'helpers/platform/configure_nonweb.dart';
 import 'helpers/widgets/stack_tree.dart';
+import 'overlays/qoverlay.dart';
 import 'routers/qrouter.dart';
 import 'routes/qroute.dart';
 import 'routes/qroute_children.dart';
@@ -99,6 +100,8 @@ class QRContext {
   Widget getActiveTree() {
     return DebugStackTree(_manager.controllers);
   }
+
+  Future<T?> show<T>(QOverlay overlay) => overlay.show();
 
   /// create a controller to use with a Navigator
   QRouterController createRouterController(String name,

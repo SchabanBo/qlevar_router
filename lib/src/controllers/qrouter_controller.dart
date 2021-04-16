@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
 import '../helpers/widgets/routes_tree.dart';
+import '../overlays/qoverlay.dart';
 import '../pages/qpage_internal.dart';
 import '../qr.dart';
 import '../routes/qroute_builder.dart';
@@ -60,6 +62,8 @@ abstract class QNavigator extends ChangeNotifier {
   /// Remove definded routes from this navigator.
   /// you should give the route name or path to remove
   void removeRoutes(List<String> routesNames);
+
+  Future<T?> show<T>(QOverlay overlay);
 }
 
 class QRouterController extends QNavigator {
@@ -72,6 +76,8 @@ class QRouterController extends QNavigator {
   final _pagesController = PagesController();
 
   bool _isDisposed = false;
+
+  late GlobalKey<NavigatorState> navKey;
 
   QRouterController(
     this.key,
@@ -294,6 +300,13 @@ class QRouterController extends QNavigator {
 
   @override
   void removeRoutes(List<String> routesNames) => routes.remove(routesNames);
+
+  @override
+  Future<T?> show<T>(QOverlay overlay) {
+    assert(navKey.currentState != null);
+    return overlay.show(
+        state: navKey.currentState!, context: navKey.currentContext!);
+  }
 
   //void updateDeclarative({QRouteInternal? match}) {}
 }

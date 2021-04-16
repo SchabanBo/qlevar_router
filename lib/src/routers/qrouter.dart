@@ -30,6 +30,7 @@ class _QRouterState extends State<QRouter> {
   void initState() {
     super.initState();
     widget._controller.addListener(() => setState(() {}));
+    widget._controller.navKey = widget.navKey;
   }
 
   @override

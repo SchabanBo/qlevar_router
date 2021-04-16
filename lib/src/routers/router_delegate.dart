@@ -14,6 +14,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       : _controller = QR.createRouterController(QRContext.rootRouterName,
             routes: routes, initPath: initPath) {
     _controller.addListener(notifyListeners);
+    _controller.navKey = key;
   }
 
   @override
