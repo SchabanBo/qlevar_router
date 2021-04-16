@@ -22,6 +22,7 @@
   - [Not found page](#not-found-page)
   - [Page Transition](#page-transition)
   - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
+  - [Clean Structure](#clean-structure)
   - [Remove Url Hashtag](#remove-url-hashtag)
 
 Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
@@ -217,6 +218,62 @@ navigator.addRoutes([QRoute(path: '/payrolls', builder:()=> PayrollsPage()]);
 // now the use can navigate to the payrolls page
 navigator.removeRoutes(['/payrolls']);
 // now if the use navigate to the payrolls page he will get not found page
+```
+
+## Clean Structure
+
+You can split your routes definition in multiple files so the route tree doesn't get too messy, or if you work with multiple Teams so each team can have his owen tree definition.
+
+```dart
+class StoreRoutes {
+  static const store = 'Store';
+  static const orders = 'Orders';
+  static const items = 'Items';
+
+  QRoute routes() => QRoute.withChild(
+          name: store,
+          path: '/store',
+          builderChild: (child) => StorePage(child),
+          initRoute: '/orders',
+          children: [
+            QRoute(name: items, path: '/items', builder: () => ItemsPage()),
+            QRoute(name: orders, path: '/orders', builder: () => OrderPage()),
+          ]);
+}
+
+class HomeRoutes {
+  static const home = 'Home';
+  static const info = 'Info';
+  static const settings = 'Settings';
+
+  QRoute routes() => QRoute.withChild(
+          name: home,
+          path: '/store',
+          builderChild: (child) => StorePage(child),
+          initRoute: '/info',
+          children: [
+            QRoute(name: info, path: '/info', builder: () => InfoPage()),
+            QRoute(
+                name: settings,
+                path: '/settings',
+                builder: () => SettingsPage()),
+          ]);
+}
+
+class AppRoutes {
+  static const app = 'App';
+  List<QRoute> routes() => [
+        QRoute.withChild(
+            name: app,
+            path: '/',
+            builderChild: (child) => AppPage(child),
+            initRoute: '/store',
+            children: [
+              StoreRoutes().routes(), // Add the Store routes to the app
+              HomeRoutes().routes(), // Add the Home routes to the app
+            ]),
+      ];
+}
 ```
 
 ## Remove Url Hashtag
