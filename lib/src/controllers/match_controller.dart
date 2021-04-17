@@ -8,9 +8,11 @@ class MatchController {
   final QRouteChildren routes;
   String foundPath;
   final params = QParams();
+  final String parentPath;
   int _searchIndex = 0;
   MatchController(String sPath, this.foundPath, this.routes)
-      : path = Uri.parse(sPath) {
+      : path = Uri.parse(sPath),
+        parentPath = foundPath {
     QR.log(
         // ignore: lines_longer_than_80_chars
         '${'Finding Match for $sPath under '}${foundPath.isEmpty ? 'root' : 'path $foundPath'}');
@@ -44,21 +46,21 @@ class MatchController {
     if (path.pathSegments.isEmpty) {
       final match = _tryFind(searchIn, -1);
       if (match == null) {
-        return QRouteInternal.notfound(path.toString());
+        return QRouteInternal.notfound(parentPath + path.toString());
       }
       return match;
     }
 
     final result = _tryFind(searchIn, _searchIndex);
     if (result == null) {
-      return QRouteInternal.notfound(path.toString());
+      return QRouteInternal.notfound(parentPath + path.toString());
     }
     var match = result;
     for (; _searchIndex < path.pathSegments.length;) {
       searchIn = match.children!;
       match.child = _tryFind(searchIn, _searchIndex);
       if (match.child == null) {
-        return QRouteInternal.notfound(path.toString());
+        return QRouteInternal.notfound(parentPath + path.toString());
       }
       match = match.child!;
     }

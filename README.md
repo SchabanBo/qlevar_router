@@ -21,6 +21,10 @@
     - [onExit](#onexit)
   - [Not found page](#not-found-page)
   - [Page Transition](#page-transition)
+  - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
+  - [Clean Structure](#clean-structure)
+  - [Overlays](#overlays)
+    - [Dialog](#dialog)
   - [Remove Url Hashtag](#remove-url-hashtag)
 
 Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
@@ -203,6 +207,93 @@ To chose the Transition for you page set the `QRoute.pageType` to the of the typ
 - **QCupertinoPage**: It will use the default CupertinoRouteTransition
 - **QCustomPage**: to define a custom transition for your page.
 - **QSlidePage**: a predefined slide transition
+
+## Add or remove routes in run Time
+
+You can add new routes or delete existing route from the route tree dynamically while the app is running.
+Just chose which navigator you want to add the routes to and then call
+
+```dart
+final navigator = QR.rootNavigator; // to add routes to the root navigator
+final navigator = QR.navigatorOf('/dashboard') // or add the routes to the dashboard navigator
+navigator.addRoutes([QRoute(path: '/payrolls', builder:()=> PayrollsPage()]);
+// now the use can navigate to the payrolls page
+navigator.removeRoutes(['/payrolls']);
+// now if the use navigate to the payrolls page he will get not found page
+```
+
+## Clean Structure
+
+You can split your routes definition in multiple files so the route tree doesn't get too messy, or if you work with multiple Teams so each team can have his owen tree definition.
+
+```dart
+class StoreRoutes {
+  static const store = 'Store';
+  static const orders = 'Orders';
+  static const items = 'Items';
+
+  QRoute routes() => QRoute.withChild(
+          name: store,
+          path: '/store',
+          builderChild: (child) => StorePage(child),
+          initRoute: '/orders',
+          children: [
+            QRoute(name: items, path: '/items', builder: () => ItemsPage()),
+            QRoute(name: orders, path: '/orders', builder: () => OrderPage()),
+          ]);
+}
+
+class HomeRoutes {
+  static const home = 'Home';
+  static const info = 'Info';
+  static const settings = 'Settings';
+
+  QRoute routes() => QRoute.withChild(
+          name: home,
+          path: '/store',
+          builderChild: (child) => StorePage(child),
+          initRoute: '/info',
+          children: [
+            QRoute(name: info, path: '/info', builder: () => InfoPage()),
+            QRoute(
+                name: settings,
+                path: '/settings',
+                builder: () => SettingsPage()),
+          ]);
+}
+
+class AppRoutes {
+  static const app = 'App';
+  List<QRoute> routes() => [
+        QRoute.withChild(
+            name: app,
+            path: '/',
+            builderChild: (child) => AppPage(child),
+            initRoute: '/store',
+            children: [
+              StoreRoutes().routes(), // Add the Store routes to the app
+              HomeRoutes().routes(), // Add the Home routes to the app
+            ]),
+      ];
+}
+```
+
+## Overlays
+
+### Dialog
+
+To open a dialog with `QR` you can do so in simle two ways
+
+```dart
+// Call QR.show and give it the QDialog object
+QR.show(QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog')))
+
+// Or you can just call the QDialog 
+QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog')).show()
+
+// you want just to show a simple text
+QDialog.text(text: Text('Simple Text'), title: Text('Info')).show()
+```
 
 ## Remove Url Hashtag
 

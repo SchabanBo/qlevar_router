@@ -14,8 +14,7 @@ void main() {
           path: '/two/one',
           builder: () => Scaffold(body: WidgetTwo()),
           children: [
-            QRoute(
-                path: '/three', builder: () => Scaffold(body: WidgetThree())),
+            QRoute(path: 'three', builder: () => Scaffold(body: WidgetThree())),
           ]),
       QRoute(
           path: '/two/:id',
@@ -25,7 +24,7 @@ void main() {
                 path: '/three', builder: () => Scaffold(body: WidgetThree())),
           ]),
       QRoute.withChild(
-          path: '/this/extra',
+          path: 'this/extra',
           builderChild: (child) => Scaffold(body: child),
           children: [
             QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),

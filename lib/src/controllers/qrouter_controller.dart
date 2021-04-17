@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
 import '../helpers/widgets/routes_tree.dart';
+import '../overlays/qoverlay.dart';
 import '../pages/qpage_internal.dart';
 import '../qr.dart';
 import '../routes/qroute_builder.dart';
@@ -51,6 +53,17 @@ abstract class QNavigator extends ChangeNotifier {
   Future<void> replaceAll(String path);
 
   bool removeLast();
+
+  /// Add Routes to this Navigator
+  /// You can extand the definded routes for this navigator.
+  /// The path of this navigtor will be added to all given routes
+  void addRoutes(List<QRoute> routes);
+
+  /// Remove definded routes from this navigator.
+  /// you should give the route name or path to remove
+  void removeRoutes(List<String> routesNames);
+
+  Future<T?> show<T>(QOverlay overlay);
 }
 
 class QRouterController extends QNavigator {
@@ -63,6 +76,8 @@ class QRouterController extends QNavigator {
   final _pagesController = PagesController();
 
   bool _isDisposed = false;
+
+  late GlobalKey<NavigatorState> navKey;
 
   QRouterController(
     this.key,
@@ -85,7 +100,8 @@ class QRouterController extends QNavigator {
   QRoute get currentRoute => _pagesController.routes.last.route;
 
   @override
-  RoutesChildren get getRoutesWidget => RoutesChildren(routes);
+  RoutesChildren get getRoutesWidget =>
+      RoutesChildren(routes, parentPath: routes.parentFullPath);
 
   @override
   bool get canPop => _pagesController.pages.length > 1;
@@ -145,26 +161,36 @@ class QRouterController extends QNavigator {
     await addRouteAsync(match);
   }
 
+  void updatePathIfNeeded(QRouteInternal match) {
+    if (key.name != QRContext.rootRouterName) {
+      QR.updateUrlInfo(match.activePath!,
+          mKey: match.key,
+          params: match.params!.asStringMap(),
+          navigator: key.name);
+    }
+  }
+
   @override
   Future<void> replace(String path, String withPath) async {
     // TODO: implement replacePath
   }
 
-  Future<void> addRouteAsync(QRouteInternal route,
+  Future<void> addRouteAsync(QRouteInternal match,
       {bool notify = true, bool checkChild = true}) async {
-    QR.log('adding $route to the navigator with $key');
-    QR.params.updateParams(route.params!);
-    await _addRoute(route);
+    QR.log('adding $match to the navigator with $key');
+    QR.params.updateParams(match.params!);
+    await _addRoute(match);
     while (checkChild &&
-        route.hasChild &&
-        !route.route.withChildRouter &&
-        !route.isProcessed) {
-      await _addRoute(route.child!);
-      route = route.child!;
+        match.hasChild &&
+        !match.route.withChildRouter &&
+        !match.isProcessed) {
+      await _addRoute(match.child!);
+      match = match.child!;
     }
 
-    if (notify && !route.isProcessed && !_isDisposed) {
+    if (notify && !match.isProcessed && !_isDisposed) {
       update();
+      updatePathIfNeeded(match);
     }
   }
 
@@ -267,6 +293,19 @@ class QRouterController extends QNavigator {
   void dispose() {
     _isDisposed = true;
     super.dispose();
+  }
+
+  @override
+  void addRoutes(List<QRoute> routes) => this.routes.add(routes);
+
+  @override
+  void removeRoutes(List<String> routesNames) => routes.remove(routesNames);
+
+  @override
+  Future<T?> show<T>(QOverlay overlay) {
+    assert(navKey.currentState != null);
+    return overlay.show(
+        state: navKey.currentState!, context: navKey.currentContext!);
   }
 
   //void updateDeclarative({QRouteInternal? match}) {}

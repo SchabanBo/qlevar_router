@@ -1,5 +1,11 @@
 # CHANGELOG
 
+- Fix [#17], Path not updated with `QR.navigatorOf().replaceAll`
+- Fix notFoundPage path in nested navigator
+- Add `AddRoutes` and `RemoveRoute`
+- Route.path can be without slash at the start.
+- Add `QDialog`, so user can open dialogs.
+
 ## [1.1.4] 12.04.2021
 
 - Fix [#17](https://github.com/SchabanBo/qlevar_router/issues/17)

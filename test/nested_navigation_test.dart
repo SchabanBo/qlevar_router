@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'helpers.dart';
+import 'test_widgets/test_widgets.dart';
 
 void main() {
   group('Nested navigation', () {
@@ -24,7 +25,7 @@ void main() {
               QMiddlewareBuilder(
                   redirectGuardFunc: (s) async => isAuthed ? null : '/login'),
             ],
-            builderChild: (c) => _Dashboard(c),
+            builderChild: (c) => TestDashboard(c),
             initRoute: '/orders',
             children: [QRoute(path: '/orders', builder: () => Text('Orders'))])
       ];
@@ -45,35 +46,14 @@ void main() {
       expect(find.text('Dashboard'), findsOneWidget);
       expect(find.text('Sidebar'), findsOneWidget);
       expect(find.text('Orders'), findsOneWidget);
+      // try to go back
+      await delegate.popRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('login'), findsOneWidget);
     });
 
     testWidgets('Random Nested Navigation', (tester) async {
-      QR.reset();
-      final routes = [
-        QRoute(
-            path: '/login',
-            builder: () => Scaffold(
-                    body: Container(
-                  child: Text('login'),
-                ))),
-        QRoute.withChild(
-            path: '/dashboard',
-            builderChild: (c) => _Dashboard(c),
-            initRoute: '/child-1',
-            children: [
-              QRoute(path: '/child-1', builder: () => Text('child-1')),
-              QRoute(path: '/child-2', builder: () => Text('child-2')),
-              QRoute(path: '/child-3', builder: () => Text('child-3')),
-              QRoute(path: '/child-4', builder: () => Text('child-4')),
-              QRoute(path: '/child-5', builder: () => Text('child-5')),
-              QRoute(path: '/child-6', builder: () => Text('child-6')),
-            ])
-      ];
-      final delegate = QRouterDelegate(routes, initPath: '/login');
-      await tester.pumpWidget(MaterialApp.router(
-        routeInformationParser: QRouteInformationParser(),
-        routerDelegate: delegate,
-      ));
+      await prepareTest(tester);
       await tester.pumpAndSettle();
       expect(find.text('login'), findsOneWidget);
       // Navigate to all children two times
@@ -97,26 +77,26 @@ void main() {
         expectedPath('/dashboard/child-$i');
       }
     });
-  });
-}
 
-class _Dashboard extends StatelessWidget {
-  final QRouter router;
-  _Dashboard(this.router);
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text('Dashboard'),
-          centerTitle: true,
-        ),
-        body: Row(
-          children: [
-            Flexible(
-                child: Container(
-              child: Text('Sidebar'),
-            )),
-            Expanded(flex: 4, child: router)
-          ],
-        ),
-      );
+    testWidgets('ReplaceAll child Navigation', (tester) async {
+      await prepareTest(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('login'), findsOneWidget);
+      // We need to call it with QR.to first so the dashboard navigator will
+      // got created
+      await QR.to('/dashboard/child-1');
+      await tester.pumpAndSettle();
+      expect(find.text('child-1'), findsOneWidget);
+      expectedPath('/dashboard/child-1');
+
+      for (var z = 0; z < 10; z++) {
+        final i = Random().nextInt(5) + 1;
+        QR.navigatorOf('/dashboard').replaceAll('/child-$i');
+        await tester.pumpAndSettle();
+        expect(find.text('login'), findsNothing);
+        expect(find.text('child-$i'), findsOneWidget);
+        expectedPath('/dashboard/child-$i');
+      }
+    });
+  });
 }

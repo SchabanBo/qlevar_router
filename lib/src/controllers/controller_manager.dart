@@ -7,8 +7,8 @@ import 'qrouter_controller.dart';
 class ControllerManager {
   final controllers = <QRouterController>[];
 
-  QRouterController createController(String name, List<QRoute> routes,
-      String? initPath, QRouteInternal? initRoute) {
+  QRouterController createController(String name, List<QRoute>? routes,
+      QRouteChildren? cRoutes, String? initPath, QRouteInternal? initRoute) {
     if (hasController(name)) {
       QR.log('A navigator with name [$name] already exist', isDebug: true);
       return controllers.firstWhere((element) => element.key.hasName(name));
@@ -18,8 +18,13 @@ class ControllerManager {
       throw Exception('Route with name $name was not found in the tree info');
     }
     final key = QKey(name);
-    final controller = QRouterController(key,
-        QRouteChildren.from(routes, key, routePath == '/' ? '' : routePath),
+
+    if (cRoutes == null) {
+      assert(routes != null, 'List<QRoute> or QRouteChildren must be given');
+      cRoutes =
+          QRouteChildren.from(routes!, key, routePath == '/' ? '' : routePath);
+    }
+    final controller = QRouterController(key, cRoutes,
         initPath: initPath ?? '/', initRoute: initRoute);
     controllers.add(controller);
     return controller;

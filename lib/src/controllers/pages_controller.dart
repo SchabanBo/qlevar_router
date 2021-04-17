@@ -12,7 +12,7 @@ class PagesController {
   final pages = <QPageInternal>[
     QMaterialPageInternal(child: Container(), matchKey: QKey('Init Page'))
   ];
-  PagesController();
+
   bool exist(QRouteInternal route) =>
       routes.any((element) => element.key.isSame(route.key));
 

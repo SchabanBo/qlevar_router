@@ -4,11 +4,11 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 import 'helpers/database.dart';
 import 'helpers/text_page.dart';
+import 'screens/add_remove_routes.dart';
 import 'screens/home_page.dart';
-import 'screens/nested2.dart';
 import 'screens/nested_route.dart';
+import 'screens/overlays_page.dart';
 import 'screens/parent_page.dart';
-import 'screens/sitemap_page.dart';
 
 class AppRoutes {
   static const nested = 'Nested';
@@ -25,6 +25,7 @@ class AppRoutes {
 
   List<QRoute> routes() => [
         QRoute(path: '/', builder: () => HomePage()),
+        QRoute(path: '/overlays', builder: () => OverlaysPage()),
         QRoute(
             path: '/parent',
             builder: () {
@@ -60,7 +61,22 @@ class AppRoutes {
         QRoute(path: '/params', builder: () => TextPage(
             // ignore: lines_longer_than_80_chars
             'params are: test is${QR.params['test']} and go is ${QR.params['go']}')),
-        QRoute(path: '/sitemap', builder: () => SiteMap()),
+        QRoute.withChild(
+            path: '/add-remove-routes',
+            builderChild: (child) => AddRemoveRoutes(child),
+            initRoute: '/child',
+            children: [
+              QRoute(path: '/child', builder: () => AddRemoveChild('Hi child')),
+              QRoute(
+                  path: '/child-1',
+                  builder: () => AddRemoveChild('Hi child 1')),
+              QRoute(
+                  path: '/child-2',
+                  builder: () => AddRemoveChild('Hi child 2')),
+              QRoute(
+                  path: '/child-3',
+                  builder: () => AddRemoveChild('Hi child 3')),
+            ]),
         QRoute.withChild(
             name: nested,
             path: '/nested',
@@ -84,20 +100,6 @@ class AppRoutes {
                   name: nestedChild3,
                   path: '/child-3',
                   builder: () => NestedChild('child 3')),
-            ]),
-        QRoute(path: '/login', builder: () => LoginScreen()),
-        QRoute.withChild(
-            name: app,
-            path: '/app',
-            builderChild: (child) => AppScreen(child),
-            initRoute: '/home',
-            children: [
-              QRoute(name: home, path: '/home', builder: () => HomeWidget()),
-              QRoute(
-                  name: settings,
-                  path: '/settings',
-                  builder: () => SettingsWidget(),
-                  pageType: QSlidePage()),
             ]),
       ];
 }

@@ -56,7 +56,7 @@ class QRoute {
   final String? initRoute;
 
   /// is this route declarative route
-  final bool isDeclarative;
+  //final bool isDeclarative;
 
   /// The childrens for this route
   final List<QRoute>? children;
@@ -70,7 +70,7 @@ class QRoute {
     this.children,
   })  : assert(builder != null),
         initRoute = null,
-        isDeclarative = false,
+        //isDeclarative = false,
         builderChild = null;
 
   /// Call this function to get a [QRouter] to use it for Nested Navigation
@@ -83,7 +83,7 @@ class QRoute {
     this.middleware,
     this.children,
   })  : assert(builderChild != null),
-        isDeclarative = false,
+        //isDeclarative = false,
         builder = null;
 
   // /// Call this function to get a [QRouter] to use it for Nested Navigation
@@ -101,4 +101,37 @@ class QRoute {
 
   /// does this route use [QRouter]
   bool get withChildRouter => builderChild != null;
+
+  QRoute copyWith({
+    String? path,
+    String? name,
+    PageBuilder? builder,
+    PageWithChildBuilder? builderChild,
+    QPage? pageType,
+    List<QMiddleware>? middleware,
+    String? initRoute,
+    bool? isDeclarative,
+    List<QRoute>? children,
+  }) {
+    if (withChildRouter) {
+      return QRoute.withChild(
+        path: path ?? this.path,
+        name: name ?? this.name,
+        builderChild: builderChild ?? this.builderChild,
+        pageType: pageType ?? this.pageType,
+        middleware: middleware ?? this.middleware,
+        initRoute: initRoute ?? this.initRoute,
+        children: children ?? this.children,
+      );
+    }
+
+    return QRoute(
+      path: path ?? this.path,
+      name: name ?? this.name,
+      builder: builder ?? this.builder,
+      pageType: pageType ?? this.pageType,
+      middleware: middleware ?? this.middleware,
+      children: children ?? this.children,
+    );
+  }
 }

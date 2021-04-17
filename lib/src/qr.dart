@@ -7,8 +7,10 @@ import 'controllers/qrouter_controller.dart';
 import 'helpers/platform/configure_web.dart'
     if (dart.library.io) 'helpers/platform/configure_nonweb.dart';
 import 'helpers/widgets/stack_tree.dart';
+import 'overlays/qoverlay.dart';
 import 'routers/qrouter.dart';
 import 'routes/qroute.dart';
+import 'routes/qroute_children.dart';
 import 'routes/qroute_internal.dart';
 import 'types/qhistory.dart';
 import 'types/qroute_key.dart';
@@ -53,10 +55,16 @@ class QRContext {
 
   ///  return a router [QRouter] for the given routes
   /// you do not need to give the [initRoute]
-  QRouter createNavigator(String name, List<QRoute> routes,
-      {String? initPath, QRouteInternal? initRoute}) {
-    final controller = createRouterController(name, routes,
-        initPath: initPath, initRoute: initRoute);
+  QRouter createNavigator(String name,
+      {List<QRoute>? routes,
+      QRouteChildren? cRoutes,
+      String? initPath,
+      QRouteInternal? initRoute}) {
+    final controller = createRouterController(name,
+        routes: routes,
+        cRoutes: cRoutes,
+        initPath: initPath,
+        initRoute: initRoute);
     return QRouter(controller);
   }
 
@@ -93,10 +101,15 @@ class QRContext {
     return DebugStackTree(_manager.controllers);
   }
 
+  Future<T?> show<T>(QOverlay overlay) => overlay.show();
+
   /// create a controller to use with a Navigator
-  QRouterController createRouterController(String name, List<QRoute> routes,
-          {String? initPath, QRouteInternal? initRoute}) =>
-      _manager.createController(name, routes, initPath, initRoute);
+  QRouterController createRouterController(String name,
+          {List<QRoute>? routes,
+          QRouteChildren? cRoutes,
+          String? initPath,
+          QRouteInternal? initRoute}) =>
+      _manager.createController(name, routes, cRoutes, initPath, initRoute);
 
   /// Navigate to this path.
   /// The package will try to get the right navigtor to this path.
