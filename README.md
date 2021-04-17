@@ -23,6 +23,8 @@
   - [Page Transition](#page-transition)
   - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
   - [Clean Structure](#clean-structure)
+  - [Overlays](#overlays)
+    - [Dialog](#dialog)
   - [Remove Url Hashtag](#remove-url-hashtag)
 
 Qlevar router is flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
@@ -274,6 +276,23 @@ class AppRoutes {
             ]),
       ];
 }
+```
+
+## Overlays
+
+### Dialog
+
+To open a dialog with `QR` you can do so in simle two ways
+
+```dart
+// Call QR.show and give it the QDialog object
+QR.show(QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog')))
+
+// Or you can just call the QDialog 
+QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog')).show()
+
+// you want just to show a simple text
+QDialog.text(text: Text('Simple Text'), title: Text('Info')).show()
 ```
 
 ## Remove Url Hashtag
