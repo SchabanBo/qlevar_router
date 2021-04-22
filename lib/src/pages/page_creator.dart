@@ -6,61 +6,62 @@ import '../../qlevar_router.dart';
 import '../helpers/platform/platform_web.dart'
     if (dart.library.io) '../helpers/platform/platform_io.dart';
 import '../routes/qroute_internal.dart';
+import '../types/qroute_key.dart';
 import 'qpage_internal.dart';
 
-class PageCreator {
-  final QRouteInternal route;
+abstract class _PageConverter {
+  final String? pageName;
+  final QKey matchKey;
   final key = ValueKey<int>(Random().nextInt(1000));
-  QRoute get qRoute => route.route;
   final QPage pageType;
-  PageCreator(this.route) : pageType = route.route.pageType ?? QPlatformPage();
+  _PageConverter(this.pageName, this.matchKey, this.pageType);
 
-  QPageInternal create() {
+  QPageInternal createWithChild(Widget child) {
     if (pageType is QPlatformPage) {
       if (!QPlatform.isWeb && QPlatform.isIOS) {
-        return _getCupertinoPage(qRoute.name);
+        return _getCupertinoPage(pageName, child);
       }
-      return _getMaterialPage();
+      return _getMaterialPage(child);
     }
     if (pageType is QCupertinoPage) {
-      return _getCupertinoPage((pageType as QCupertinoPage).title);
+      return _getCupertinoPage((pageType as QCupertinoPage).title, child);
     }
     if (pageType is QCustomPage) {
-      return _getCustomPage();
+      return _getCustomPage(child);
     }
-    return _getMaterialPage();
+    return _getMaterialPage(child);
   }
 
-  QMaterialPageInternal _getMaterialPage() => QMaterialPageInternal(
-      name: qRoute.name,
-      child: build(),
+  QMaterialPageInternal _getMaterialPage(Widget child) => QMaterialPageInternal(
+      name: pageName,
+      child: child,
       maintainState: pageType.maintainState,
       fullscreenDialog: pageType.fullscreenDialog,
       restorationId: pageType.restorationId,
       key: key,
-      matchKey: route.key);
+      matchKey: matchKey);
 
-  QCupertinoPageInternal _getCupertinoPage(String? title) =>
+  QCupertinoPageInternal _getCupertinoPage(String? title, Widget child) =>
       QCupertinoPageInternal(
-          name: qRoute.name,
-          child: build(),
+          name: pageName,
+          child: child,
           maintainState: pageType.maintainState,
           fullscreenDialog: pageType.fullscreenDialog,
           restorationId: pageType.restorationId,
           title: title,
           key: key,
-          matchKey: route.key);
+          matchKey: matchKey);
 
-  QCustomPageInternal _getCustomPage() {
+  QCustomPageInternal _getCustomPage(Widget child) {
     final page = pageType as QCustomPage;
     return QCustomPageInternal(
-        name: qRoute.name,
-        child: build(),
+        name: pageName,
+        child: child,
         maintainState: pageType.maintainState,
         fullscreenDialog: pageType.fullscreenDialog,
         restorationId: pageType.restorationId,
         key: key,
-        matchKey: route.key,
+        matchKey: matchKey,
         barrierColor: page.barrierColor,
         barrierDismissible: page.barrierDismissible,
         barrierLabel: page.barrierLabel,
@@ -83,22 +84,42 @@ class PageCreator {
     }
     return child;
   }
+}
+
+class PageCreator extends _PageConverter {
+  final QRouteInternal route;
+  QRoute get qRoute => route.route;
+  PageCreator(this.route)
+      : super(route.route.name, route.key,
+            route.route.pageType ?? QPlatformPage());
+
+  QPageInternal create() => super.createWithChild(build());
 
   Widget build() {
-    if (!qRoute.withChildRouter) {
-      return qRoute.builder!();
+    if (qRoute.withChildRouter) {
+      assert(qRoute.children != null,
+          'Can not create a navigator to a route without children. $route');
+      final router = QR.createNavigator(
+        qRoute.name ?? qRoute.path,
+        cRoutes: route.children,
+        initPath: qRoute.initRoute,
+        initRoute: route.child,
+      );
+      if (qRoute.initRoute != null && route.child == null) {
+        route.activePath = '${route.activePath}${qRoute.initRoute}';
+      }
+      return qRoute.builderChild!(router);
     }
-    assert(qRoute.children != null,
-        'Can not create a navigator to a route without children. $route');
-    final router = QR.createNavigator(
-      qRoute.name ?? qRoute.path,
-      cRoutes: route.children,
-      initPath: qRoute.initRoute,
-      initRoute: route.child,
-    );
-    if (qRoute.initRoute != null && route.child == null) {
-      route.activePath = '${route.activePath}${qRoute.initRoute}';
+
+    if (qRoute.isDeclarative) {
+      return qRoute.declarativeBuilder!(route.key);
     }
-    return qRoute.builderChild!(router);
+
+    return qRoute.builder!();
   }
+}
+
+class DeclarativePageCreator extends _PageConverter {
+  DeclarativePageCreator(String? pageName, QKey key, QPage? type)
+      : super(pageName, key, type ?? QPlatformPage());
 }

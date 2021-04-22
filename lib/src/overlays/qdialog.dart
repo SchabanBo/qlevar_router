@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../qlevar_router.dart';
 
-import '../routers/qdialog_route.dart';
+import '../routes/qdialog_route.dart';
 import 'qoverlay.dart';
 
 // Create a dialog to use with [QR]

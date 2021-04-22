@@ -27,6 +27,7 @@ class HomePage extends StatelessWidget {
                 QButton("Test not found Page", () => QR.to("/parent/no-child")),
                 QButton("Add Remove Routes", () => QR.to("/add-remove-routes")),
                 QButton("Nested Navigation", () => QR.to("/nested")),
+                QButton("Declarative", () => QR.to("/declarative")),
                 QButton("Overlays", () => QR.to("/overlays")),
               ],
             ))));

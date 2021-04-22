@@ -34,12 +34,6 @@ class _QRouterState extends State<QRouter> {
   }
 
   @override
-  void didChangeDependencies() {
-    //widget._controller.updateDeclarative();
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Navigator(
       key: widget.navKey,

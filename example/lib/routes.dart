@@ -5,6 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'helpers/database.dart';
 import 'helpers/text_page.dart';
 import 'screens/add_remove_routes.dart';
+import 'screens/declarative_page.dart';
 import 'screens/home_page.dart';
 import 'screens/nested_route.dart';
 import 'screens/overlays_page.dart';
@@ -26,6 +27,9 @@ class AppRoutes {
   List<QRoute> routes() => [
         QRoute(path: '/', builder: () => HomePage()),
         QRoute(path: '/overlays', builder: () => OverlaysPage()),
+        QRoute.declarative(
+            path: '/declarative',
+            declarativeBuilder: (k) => DeclarativePage(k)),
         QRoute(
             path: '/parent',
             builder: () {

@@ -8,6 +8,7 @@ import 'helpers/platform/configure_web.dart'
     if (dart.library.io) 'helpers/platform/configure_nonweb.dart';
 import 'helpers/widgets/stack_tree.dart';
 import 'overlays/qoverlay.dart';
+import 'routers/qdeclarative._router.dart';
 import 'routers/qrouter.dart';
 import 'routes/qroute.dart';
 import 'routes/qroute_children.dart';
@@ -91,11 +92,6 @@ class QRContext {
           navigator: navigator,
           addHistory: addHistory);
 
-  /// Add this routes as child for the route with name.
-  // void expandRoute(String name, List<QRoute> routes) {}
-  // Remove this route from the router
-  //void cleanRoute(String routerName, String routeName) {}
-
   /// return the current tree widget
   Widget getActiveTree() {
     return DebugStackTree(_manager.controllers);
@@ -110,6 +106,10 @@ class QRContext {
           String? initPath,
           QRouteInternal? initRoute}) =>
       _manager.createController(name, routes, cRoutes, initPath, initRoute);
+
+  /// create a state to use with a declarative router
+  QDeclarativeController createDeclarativeRouterController(QKey key) =>
+      _manager.createDeclarativeRouterController(key);
 
   /// Navigate to this path.
   /// The package will try to get the right navigtor to this path.
