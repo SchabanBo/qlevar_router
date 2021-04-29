@@ -2,10 +2,12 @@ import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
 import '../routers/qrouter.dart';
+import '../types/qroute_key.dart';
 import 'qmiddleware.dart';
 
 typedef PageBuilder = Widget Function();
 typedef PageWithChildBuilder = Widget Function(QRouter);
+typedef PageWithDeclarativeBuilder = Widget Function(QKey);
 
 /// Define a route
 class QRoute {
@@ -43,6 +45,9 @@ class QRoute {
   /// use it with [QRoute.withChild]
   final PageWithChildBuilder? builderChild;
 
+  /// used when you wnat to use declarative router
+  final PageWithDeclarativeBuilder? declarativeBuilder;
+
   /// Set the page type for this route
   /// you can use [QMaterialPage], [QCupertinoPage] or [QPlatformPage]
   /// The default is [QPlatformPage]
@@ -55,9 +60,6 @@ class QRoute {
   /// Set the initPath for the route, used with [QRoute.withChild]
   final String? initRoute;
 
-  /// is this route declarative route
-  //final bool isDeclarative;
-
   /// The childrens for this route
   final List<QRoute>? children;
 
@@ -69,8 +71,8 @@ class QRoute {
     this.middleware,
     this.children,
   })  : assert(builder != null),
+        declarativeBuilder = null,
         initRoute = null,
-        //isDeclarative = false,
         builderChild = null;
 
   /// Call this function to get a [QRouter] to use it for Nested Navigation
@@ -83,24 +85,27 @@ class QRoute {
     this.middleware,
     this.children,
   })  : assert(builderChild != null),
-        //isDeclarative = false,
+        declarativeBuilder = null,
         builder = null;
 
-  // /// Call this function to get a [QRouter] to use it for Nested Navigation
-  // const QRoute.declarative({
-  //   required this.path,
-  //   required this.builderChild,
-  //   this.name,
-  //   this.pageType,
-  //   this.middleware,
-  //   this.children,
-  // })  : assert(builderChild != null),
-  //       initRoute = null,
-  //       isDeclarative = true,
-  //       builder = null;
+  /// Define a declarative router
+  const QRoute.declarative({
+    required this.path,
+    required this.declarativeBuilder,
+    this.name,
+    this.pageType,
+    this.middleware,
+  })  : assert(declarativeBuilder != null),
+        initRoute = null,
+        builderChild = null,
+        builder = null,
+        children = null;
 
   /// does this route use [QRouter]
   bool get withChildRouter => builderChild != null;
+
+  // is this route declarative route
+  bool get isDeclarative => declarativeBuilder != null;
 
   QRoute copyWith({
     String? path,
@@ -110,7 +115,6 @@ class QRoute {
     QPage? pageType,
     List<QMiddleware>? middleware,
     String? initRoute,
-    bool? isDeclarative,
     List<QRoute>? children,
   }) {
     if (withChildRouter) {

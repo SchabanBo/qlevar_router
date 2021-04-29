@@ -29,14 +29,12 @@ class _QRouterState extends State<QRouter> {
   @override
   void initState() {
     super.initState();
-    widget._controller.addListener(() => setState(() {}));
+    widget._controller.addListener(update);
     widget._controller.navKey = widget.navKey;
   }
 
-  @override
-  void didChangeDependencies() {
-    //widget._controller.updateDeclarative();
-    super.didChangeDependencies();
+  void update() {
+    setState(() {});
   }
 
   @override
@@ -51,5 +49,13 @@ class _QRouterState extends State<QRouter> {
         return widget._controller.removeLast();
       },
     );
+  }
+
+  @override
+  void dispose() {
+    if (!widget._controller.isDisposed) {
+      widget._controller.removeListener(update);
+    }
+    super.dispose();
   }
 }

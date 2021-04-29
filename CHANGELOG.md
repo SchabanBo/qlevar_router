@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [1.3.0] 29.04.2021
+
+- Fix `QR.params.ensureExist` [#18]
+- Add `QDeclarative` declarative Router
+- Add `cleanupAfter` to `QParam`
+- Add `Fake BrowserAddressBar`
+
+## [1.2.0] 17.04.2021
+
 - Fix [#17], Path not updated with `QR.navigatorOf().replaceAll`
 - Fix notFoundPage path in nested navigator
 - Add `AddRoutes` and `RemoveRoute`

@@ -8,7 +8,6 @@ import '../helpers/widgets/routes_tree.dart';
 import '../overlays/qoverlay.dart';
 import '../pages/qpage_internal.dart';
 import '../qr.dart';
-import '../routes/qroute_builder.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
 import '../types/qhistory.dart';
@@ -20,8 +19,6 @@ import 'pages_controller.dart';
 abstract class QNavigator extends ChangeNotifier {
   /// Get if the cureent [QNavigator] can pop or not
   bool get canPop;
-
-  bool get isDeclarative;
 
   /// Get the current route for this navigator
   QRoute get currentRoute;
@@ -71,11 +68,9 @@ class QRouterController extends QNavigator {
 
   final QRouteChildren routes;
 
-  final PagesBuilder? declarativePagesBuilder;
-
   final _pagesController = PagesController();
 
-  bool _isDisposed = false;
+  bool isDisposed = false;
 
   late GlobalKey<NavigatorState> navKey;
 
@@ -84,7 +79,6 @@ class QRouterController extends QNavigator {
     this.routes, {
     String? initPath,
     QRouteInternal? initRoute,
-    this.declarativePagesBuilder,
   }) {
     if (initRoute != null) {
       addRouteAsync(initRoute);
@@ -92,9 +86,6 @@ class QRouterController extends QNavigator {
       push(initPath!);
     }
   }
-
-  @override
-  bool get isDeclarative => declarativePagesBuilder != null;
 
   @override
   QRoute get currentRoute => _pagesController.routes.last.route;
@@ -188,7 +179,7 @@ class QRouterController extends QNavigator {
       match = match.child!;
     }
 
-    if (notify && !match.isProcessed && !_isDisposed) {
+    if (notify && !match.isProcessed && !isDisposed) {
       update();
       updatePathIfNeeded(match);
     }
@@ -291,7 +282,7 @@ class QRouterController extends QNavigator {
 
   @override
   void dispose() {
-    _isDisposed = true;
+    isDisposed = true;
     super.dispose();
   }
 
@@ -307,6 +298,4 @@ class QRouterController extends QNavigator {
     return overlay.show(
         state: navKey.currentState!, context: navKey.currentContext!);
   }
-
-  //void updateDeclarative({QRouteInternal? match}) {}
 }

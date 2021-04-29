@@ -39,11 +39,23 @@ class QParams {
   void addAll(Map<String, String> other) => _params
       .addAll(other.map((key, value) => MapEntry(key, _ParamValue(value))));
 
-  /// See if a parameter is Exist, if not create it
-  void ensureExist(String name, {String? initValue, bool keepAlive = false}) {
+  /// See if a parameter is Exist, if not create it with this `initValue`.
+  /// if you set `keepAlive` to true then the package will not remove this param
+  /// or you can set `cleanupAfter` so the package will clean up this param
+  /// after X callas, where x is the number you set in `cleanupAfter`
+  void ensureExist(
+    String name, {
+    Object? initValue,
+    int? cleanupAfter,
+    bool keepAlive = false,
+  }) {
     final param = _params[name];
     if (param == null) {
-      _params[name] = _ParamValue(initValue, keepAlive: keepAlive);
+      _params[name] = _ParamValue(
+        initValue,
+        keepAlive: keepAlive || cleanupAfter != null,
+        cleanupAfter: cleanupAfter,
+      );
     }
   }
 
@@ -58,6 +70,12 @@ class QParams {
         }
         if (!_params[key]!.keepAlive) {
           _params.remove(key);
+        } else if (_params[key]!.cleanupAfter != null) {
+          if (_params[key]!.cleanupAfter! <= 0) {
+            _params.remove(key);
+          } else {
+            _params[key]!.cleanupAfter = _params[key]!.cleanupAfter! - 1;
+          }
         }
       }
     }
@@ -81,11 +99,17 @@ class QParams {
 class _ParamValue {
   final Object? _value;
   bool keepAlive;
+  int? cleanupAfter;
   Function(Object, Object)? onChange;
   Function()? onDelete;
 
-  _ParamValue(this._value,
-      {this.keepAlive = false, this.onChange, this.onDelete});
+  _ParamValue(
+    this._value, {
+    this.keepAlive = false,
+    this.cleanupAfter,
+    this.onChange,
+    this.onDelete,
+  });
 
   _ParamValue copyWith({
     Object? value,

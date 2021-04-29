@@ -1,4 +1,5 @@
 import '../../qlevar_router.dart';
+import '../routers/qdeclarative._router.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
 import '../types/qroute_key.dart';
@@ -6,6 +7,7 @@ import 'qrouter_controller.dart';
 
 class ControllerManager {
   final controllers = <QRouterController>[];
+  final dControllers = <QDeclarativeController>[];
 
   QRouterController createController(String name, List<QRoute>? routes,
       QRouteChildren? cRoutes, String? initPath, QRouteInternal? initRoute) {
@@ -29,6 +31,21 @@ class ControllerManager {
     controllers.add(controller);
     return controller;
   }
+
+  QDeclarativeController createDeclarativeRouterController(QKey key) {
+    if (dControllers.any((e) => e.widget.routeKey.hasName(key.name))) {
+      dControllers.removeWhere((e) => e.widget.routeKey.hasName(key.name));
+    }
+    final state = QDeclarativeController();
+    dControllers.add(state);
+    return state;
+  }
+
+  bool isDeclarative(int key) =>
+      dControllers.any((element) => element.widget.routeKey.haskey(key));
+
+  QDeclarativeController getDeclarative(int key) =>
+      dControllers.firstWhere((element) => element.widget.routeKey.haskey(key));
 
   QRouterController withName(String name) =>
       controllers.firstWhere((element) => element.key.hasName(name));
