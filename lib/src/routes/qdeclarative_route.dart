@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import '../../qlevar_router.dart';
 
 /// Define declarative route
@@ -20,7 +18,7 @@ class QDRoute {
   final bool Function() when;
 
   /// what should happen when user try to pop the page
-  final VoidCallback? onPop;
+  final bool? Function()? onPop;
 
   const QDRoute({
     required this.name,

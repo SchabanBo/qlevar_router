@@ -70,7 +70,7 @@ class QRouterController extends QNavigator {
 
   final _pagesController = PagesController();
 
-  bool _isDisposed = false;
+  bool isDisposed = false;
 
   late GlobalKey<NavigatorState> navKey;
 
@@ -179,7 +179,7 @@ class QRouterController extends QNavigator {
       match = match.child!;
     }
 
-    if (notify && !match.isProcessed && !_isDisposed) {
+    if (notify && !match.isProcessed && !isDisposed) {
       update();
       updatePathIfNeeded(match);
     }
@@ -282,7 +282,7 @@ class QRouterController extends QNavigator {
 
   @override
   void dispose() {
-    _isDisposed = true;
+    isDisposed = true;
     super.dispose();
   }
 

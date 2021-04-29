@@ -97,7 +97,8 @@ class QRContext {
     return DebugStackTree(_manager.controllers);
   }
 
-  Future<T?> show<T>(QOverlay overlay) => overlay.show();
+  Future<T?> show<T>(QOverlay overlay, {String? name}) async =>
+      await overlay.show(name: name);
 
   /// create a controller to use with a Navigator
   QRouterController createRouterController(String name,
@@ -161,6 +162,14 @@ class QRContext {
 
   /// try to pop the last active navigator or go to last path in the history
   bool back() {
+    // is proccesed by declerative
+    if (_manager.isDeclarative(QR.history.current.key.key)) {
+      final dCon = _manager.getDeclarative(QR.history.current.key.key);
+      if (dCon.pop()) {
+        return true;
+      }
+    }
+
     var lastNavi = QR.history.current.navigator;
     if (_manager.hasController(lastNavi)) {
       // Should navigator be removed? if the last path in history is the last

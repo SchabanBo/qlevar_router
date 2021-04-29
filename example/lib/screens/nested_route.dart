@@ -19,6 +19,31 @@ class NestedRoutePage extends StatelessWidget {
           QButton("child 2", () => QR.toName(AppRoutes.nestedChild2)),
           QButton("child 3", () => QR.toName(AppRoutes.nestedChild3)),
         ])),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Text('Check the defrrint between showDialog() and QDialog'),
+                TextButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: Text('Hi'),
+                              ));
+                    },
+                    child: Text('Normal show dialog function')),
+                TextButton(
+                    onPressed: () {
+                      router.navigator.show(QDialog(
+                          widget: (onPop) => AlertDialog(title: Text('Hi'))));
+                    },
+                    child: Text('Show QDialog')),
+              ],
+            ),
+          ),
+        ),
         Expanded(child: router),
       ],
     ));

@@ -52,16 +52,21 @@ class QDialog extends QOverlay {
   }
 
   @override
-  Future<T?> show<T>({NavigatorState? state, BuildContext? context}) {
+  Future<T?> show<T>(
+      {String? name, NavigatorState? state, BuildContext? context}) async {
     if (state == null || context == null) {
-      QR.rootNavigator.show(this);
+      if (name == null) {
+        return await QR.rootNavigator.show(this);
+      } else {
+        return await QR.navigatorOf(name).show(this);
+      }
     }
 
-    return state!.push<T>(QDialogRoute(
+    return state.push<T>(QDialogRoute(
       pageBuilder: (buildContext, animation, secondaryAnimation) =>
           useSafeArea ? SafeArea(child: widget(state.pop)) : widget(state.pop),
       barrierDismissible: barrierDismissible,
-      barrierLabel: MaterialLocalizations.of(context!).modalBarrierDismissLabel,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: barrierColor ?? Colors.black54,
       transitionDuration:
           transitionDuration ?? const Duration(milliseconds: 300),

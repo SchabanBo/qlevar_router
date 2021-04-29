@@ -41,6 +41,12 @@ class ControllerManager {
     return state;
   }
 
+  bool isDeclarative(int key) =>
+      dControllers.any((element) => element.widget.routeKey.haskey(key));
+
+  QDeclarativeController getDeclarative(int key) =>
+      dControllers.firstWhere((element) => element.widget.routeKey.haskey(key));
+
   QRouterController withName(String name) =>
       controllers.firstWhere((element) => element.key.hasName(name));
 

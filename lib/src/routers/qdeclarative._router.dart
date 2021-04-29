@@ -15,6 +15,7 @@ class QDeclarative extends StatefulWidget {
   /// The key you got from the `QRoute.declarativeBuilder`.
   final QKey routeKey;
 
+  /// The pages to build with the declarative
   final DeclarativeBuilder builder;
 
   QDeclarative({
@@ -31,28 +32,25 @@ class QDeclarativeController extends State<QDeclarative> {
   /// the Navigation key for this [Navigator]
   final navKey = GlobalKey<NavigatorState>();
 
-  List<QDRoute>? routes;
+  final List<QDRoute>? routes = [];
+
   final _pages = <QPageInternal>[];
 
   void update() {
     setState(() {});
   }
 
+  /// Did the pop procceed
   bool pop() {
-    if (_pages.length <= 1 || routes!.last.onPop == null) {
-      return false;
-    }
-    routes!.last.onPop!();
+    final pop = routes!.last.onPop!();
     update();
-    return true;
+    return pop ?? true;
   }
 
   @override
   Widget build(BuildContext context) {
     updatePages();
     assert(_pages.isNotEmpty);
-    print(_pages);
-    print(navKey);
     return Navigator(
       key: navKey,
       pages: List.unmodifiable(_pages),
@@ -66,47 +64,25 @@ class QDeclarativeController extends State<QDeclarative> {
   }
 
   void updatePages() {
-    final newRoutes = widget.builder().where((e) => e.when()).toList();
+    final _routes = widget.builder();
+    assert(
+        _routes.any((e) => e.when()),
+        // ignore: lines_longer_than_80_chars
+        'No route has returend true as [when] result from QDeclarative.builder');
+    final newRoute = widget.builder().firstWhere((e) => e.when());
+    final index = _pages.indexWhere((e) => e.matchKey.hasName(newRoute.name));
 
-    // for (var i = 0; i < newRoutes.length; i++) {
-    //   // if (newRoutes[i].when() &&
-    //   //     (i < newRoutes.length && !newRoutes[i + 1].when())) {
-    //   //   newRoutes.removeRange(i, newRoutes.length - 1);
-    //   //   break;
-    //   // }
-    //   if (!newRoutes[i].when()) {
-    //     newRoutes.removeAt(i);
-    //     i--;
-    //   }
-    // }
-
-    // for (var i = newRoutes.length - 1; i >= 0; i--) {
-    //   if (newRoutes[i].when()) {
-    //     break;
-    //   } else {
-    //     newRoutes.removeAt(i);
-    //   }
-    // }
-
-    // Remove old Pages
-    for (var i = 0; i < _pages.length; i++) {
-      if (i >= _pages.length) {
-        break;
-      }
-      if (!newRoutes.any((e) => e.name == _pages[i].matchKey.name)) {
-        _pages.removeAt(i);
-        i--;
+    if (index == -1) {
+      final r = newRoute;
+      _pages.add(DeclarativePageCreator(r.name, QKey(r.name), r.pageType)
+          .createWithChild(r.builder()));
+    } else {
+      final length = _pages.length;
+      for (var i = index + 1; i < length; i++) {
+        _pages.removeLast();
       }
     }
 
-    // Add new pages
-    for (var i = 0; i < newRoutes.length; i++) {
-      if (!_pages.any((e) => e.matchKey.hasName(newRoutes[i].name))) {
-        final r = newRoutes[i];
-        _pages.add(DeclarativePageCreator(r.name, QKey(r.name), r.pageType)
-            .createWithChild(r.builder()));
-      }
-    }
-    routes = newRoutes;
+    routes!.add(newRoute);
   }
 }

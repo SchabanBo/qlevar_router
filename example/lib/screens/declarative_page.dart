@@ -17,50 +17,43 @@ class _DeclarativePageState extends State<DeclarativePage> {
       routeKey: widget.dkey,
       builder: () => [
             QDRoute(
-                name: 'Hungry',
-                builder: () =>
-                    getQuestion((v) => state.isHungry = v, 'Are you hungry?'),
-                when: () {
-                  print(state.isHungry);
-                  return state.isHungry == null;
-                }),
+              name: 'Hungry',
+              builder: () => getQuestion(
+                  (v) => state.loveCoffee = v, 'Do you love coffee?'),
+              when: () => state.loveCoffee == null,
+              // when this route pop, if you want to get out of the declarative
+              // router give false as result so the router know that this
+              // function didn't processed the pop and process it
+              onPop: () => false,
+            ),
             QDRoute(
                 name: 'Burger',
                 builder: () => getQuestion(
-                    (v) => state.loveBuger = v, 'Do you love burger?'),
-                onPop: () => state.isHungry = null,
+                    (v) => state.loveBurger = v, 'Do you love burger?'),
+                onPop: () => state.loveCoffee = null,
+                when: () => state.loveBurger == null,
                 pageType: QSlidePage(
                     curve: Curves.easeInOutCubic,
                     offset: Offset(-1, 0),
-                    transitionDurationmilliseconds: 500),
-                when: () => state.isHungry == true && state.loveBuger == null),
+                    transitionDurationmilliseconds: 500)),
             QDRoute(
                 name: 'Pizza',
                 builder: () => getQuestion(
                     (v) => state.lovePizza = v, 'Do you love Pizza?'),
-                onPop: () => state.loveBuger = null,
-                pageType: QSlidePage(
-                    curve: Curves.easeInExpo,
-                    offset: Offset(0, 1),
-                    transitionDurationmilliseconds: 600),
-                when: () =>
-                    state.isHungry == true &&
-                    state.loveBuger != null &&
-                    state.lovePizza == null),
+                onPop: () => state.loveBurger = null,
+                when: () => state.lovePizza == null,
+                pageType: QSlidePage(offset: Offset(-1, 1))),
             QDRoute(
                 name: 'Result',
                 builder: result,
                 onPop: () => state.lovePizza = null,
-                when: () =>
-                    state.isHungry == false ||
-                    (state.isHungry == true &&
-                        state.loveBuger != null &&
-                        state.lovePizza != null))
+                when: () => state.allSet)
           ]));
 
-  Widget getQuestion(void Function(bool) value, String text) =>
-      _DeclerativeChild(
-          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+  Widget getQuestion(void Function(bool) value, String text) => Scaffold(
+          body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        back,
+        SizedBox(height: 50),
         Text(text, style: TextStyle(fontSize: 18)),
         SizedBox(height: 25),
         yesNo(value),
@@ -80,19 +73,24 @@ class _DeclarativePageState extends State<DeclarativePage> {
                 value(false);
                 setState(() {});
               },
-              child: Text('No', style: TextStyle(fontSize: 18)))
+              child: Text('No', style: TextStyle(fontSize: 18))),
         ],
       );
 
-  Widget result() => _DeclerativeChild(Column(
+  Widget result() => Scaffold(
+          body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          back,
+          SizedBox(height: 25),
+          Text('Your answers: $state'),
+          SizedBox(height: 50),
           Text(getResult(), style: TextStyle(fontSize: 25)),
           Divider(),
           ElevatedButton(
               onPressed: () {
-                state.isHungry = null;
-                state.loveBuger = null;
+                state.loveCoffee = null;
+                state.loveBurger = null;
                 state.lovePizza = null;
                 setState(() {});
               },
@@ -100,12 +98,17 @@ class _DeclarativePageState extends State<DeclarativePage> {
         ],
       ));
 
+  Widget back = ElevatedButton(onPressed: QR.back, child: Text('Back'));
+
   String getResult() {
-    print(state.isHungry);
-    if (state.isHungry == false) {
-      return "Lets go to starbucks :(";
+    if (state.loveCoffee == true && state.loveBurger == false) {
+      // ignore: lines_longer_than_80_chars
+      return "Lets go to burger king, you can order coffe and will get a burger :)";
     }
-    if (state.loveBuger == true) {
+    if (state.loveCoffee == true) {
+      return "Lets go to burger king, you can order coffe :)";
+    }
+    if (state.loveBurger == true) {
       return "Lets go to burger king :)";
     }
     return " I want burger, lets go to burger king :D";
@@ -113,24 +116,14 @@ class _DeclarativePageState extends State<DeclarativePage> {
 }
 
 class _Info {
-  bool? isHungry;
-  bool? loveBuger;
+  bool? loveCoffee;
+  bool? loveBurger;
   bool? lovePizza;
-}
 
-class _DeclerativeChild extends StatelessWidget {
-  final Widget child;
-  _DeclerativeChild(this.child);
+  bool get allSet =>
+      loveBurger != null && loveCoffee != null && lovePizza != null;
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Declerative Router'),
-        centerTitle: true,
-      ),
-      body: Container(
-        child: child,
-      ),
-    );
-  }
+  String toString() =>
+      'loveCoffe: $loveCoffee, loveBurger: $loveBurger, lovePizza: $lovePizza';
 }
