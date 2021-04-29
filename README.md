@@ -412,4 +412,4 @@ class MyApp extends StatelessWidget {
 
 and so will have something like this when you run as windows application
 
-![BrowserAddressBar](example/assets/images/BrowserAddressBar.gif)
+![BrowserAddressBar](https://github.com/SchabanBo/qlevar_router/blob/master/example/assets/images/BrowserAddressBar.gif)
