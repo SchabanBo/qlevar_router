@@ -25,6 +25,7 @@
   - [Clean Structure](#clean-structure)
   - [Overlays](#overlays)
     - [Dialog](#dialog)
+    - [Notifications](#notifications)
   - [Declarative routing](#declarative-routing)
     - [QDRoute](#qdroute)
     - [How Declarative router works](#how-declarative-router-works)
@@ -301,7 +302,7 @@ QR.show(QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog') ,name:'/da
 
 ### Dialog
 
-To open a dialog with `QR` you can do so in simple two ways
+To open a dialog with `QR` you can do so
 
 ```dart
 // Call QR.show and give it the QDialog object
@@ -313,6 +314,31 @@ QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog')).show()
 // you want just to show a simple text
 QDialog.text(text: Text('Simple Text'), title: Text('Info')).show()
 ```
+
+### Notifications
+
+To show Notifications to the user [Example](https://qlevar-router.netlify.app/#/nested/child)
+
+```dart
+// Call QR.show and give it the QNotification object
+ QR.show(QNotification(child: notificationChild));
+
+// Or you can just call the QNotification 
+QNotification(child: notificationChild).show()
+
+```
+
+you can set the notification position on the router with the `position` property. The options are:
+
+- LeftTop
+- Top
+- RightTop
+- LeftCenter
+- Center
+- RightCenter
+- LeftBottom
+- Bottom
+- RightBottom
 
 ## Declarative routing
 
