@@ -15,7 +15,6 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   QRouterDelegate(
     List<QRoute> routes, {
     String? initPath,
-    QRoute? notFoundPage,
     this.withWebBar = false,
   }) : _controller = QR.createRouterController(QRContext.rootRouterName,
             routes: routes, initPath: initPath) {

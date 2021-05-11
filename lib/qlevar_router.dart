@@ -1,6 +1,7 @@
 import 'src/qr.dart';
 
 export 'src/overlays/qdialog.dart';
+export 'src/overlays/qnotification.dart';
 export 'src/pages/qpages.dart';
 export 'src/routers/qdeclarative._router.dart';
 export 'src/routers/qrouter.dart';

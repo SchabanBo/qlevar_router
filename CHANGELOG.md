@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.4.0] 11.05.2021
+
+- Fix [#20](https://github.com/SchabanBo/qlevar_router/issues/20)
+- Add `QNotification`
+
 ## [1.3.0] 29.04.2021
 
 - Fix `QR.params.ensureExist` [#18]
