@@ -4,6 +4,7 @@ import '../../qlevar_router.dart';
 import 'qoverlay.dart';
 
 /// Show a notification in any router you have in your project
+// ignore: must_be_immutable
 class QNotification extends StatefulWidget with QOverlay {
   /// The Position where the notification should displayed
   /// LeftTop___________Top____________RightTop

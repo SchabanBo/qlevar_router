@@ -21,6 +21,8 @@
     - [onExit](#onexit)
   - [Not found page](#not-found-page)
   - [Page Transition](#page-transition)
+    - [Mix it up](#mix-it-up)
+    - [App Page Transition](#app-page-transition)
   - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
   - [Clean Structure](#clean-structure)
   - [Overlays](#overlays)
@@ -213,6 +215,32 @@ To chose the Transition for your page set the `QRoute.pageType` to the of the ty
 - **QCupertinoPage**: It will use the default CupertinoRouteTransition
 - **QCustomPage**: to define a custom transition for your page.
 - **QSlidePage**: a predefined slide transition
+- **QFadePage**: a predefined fade transition
+
+### Mix it up
+
+you can mix the transition animation by setting the property `withType`
+so if you want to show slide and fade transition you can do
+
+```dart
+QRoute(
+      path: '/child',
+      pageType: QFadePage(
+          transitionDurationmilliseconds: 1000,
+          withType: QSlidePage(transitionDurationmilliseconds: 5000), // set the type to mix with
+          ),
+      builder: () => TextPage('Hi child 4')),
+]),
+```
+
+please note that when you mix transitions the only the first transition duration will be used
+in this case `QFadePage.transitionDurationmilliseconds (1000)` will be used and `QSlidePage.transitionDurationmilliseconds (5000)` will be ignored
+
+**QPlatformPage**, **QMaterialPage** and **QCupertinoPage** CANNOT be mixed.
+
+### App Page Transition
+
+you can define the Transition for all pages in the app with setting the page type in `QR.settings.pagesType`
 
 ## Add or remove routes in run Time
 

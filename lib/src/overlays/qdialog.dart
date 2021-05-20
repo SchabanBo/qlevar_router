@@ -5,7 +5,7 @@ import '../routes/qdialog_route.dart';
 import 'qoverlay.dart';
 
 // Create a dialog to use with [QR]
-class QDialog extends QOverlay {
+class QDialog with QOverlay {
   /// It gives the pop action to close the dialog and takes the widget to show
   final Widget Function(VoidCallback pop) widget;
   final bool barrierDismissible = true;

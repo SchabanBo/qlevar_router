@@ -72,17 +72,35 @@ abstract class _PageConverter {
   }
 
   Widget _buildTransaction(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    if (pageType is QSlidePage) {
-      final slide = pageType as QSlidePage;
-      return SlideTransition(
+          Animation<double> secondaryAnimation, Widget child) =>
+      _getTransaction(pageType as QCustomPage, child, animation);
+
+  Widget _getTransaction(
+      QCustomPage type, Widget child, Animation<double> animation) {
+    switch (type.runtimeType) {
+      case QSlidePage:
+        final slide = type as QSlidePage;
+        child = SlideTransition(
+            child: child,
+            position: CurvedAnimation(
+                    parent: animation, curve: slide.curve ?? Curves.easeIn)
+                .drive(Tween<Offset>(
+                    end: Offset.zero, begin: slide.offset ?? Offset(1, 0))));
+        break;
+      case QFadePage:
+        child = FadeTransition(
+          opacity: CurvedAnimation(
+                  parent: animation,
+                  curve: (type as QFadePage).curve ?? Curves.easeIn)
+              .drive(Tween<double>(end: 1, begin: 0)),
           child: child,
-          position: CurvedAnimation(
-                  parent: animation, curve: slide.curve ?? Curves.easeIn)
-              .drive(Tween<Offset>(
-                  end: Offset.zero, begin: slide.offset ?? Offset(1, 0))));
+        );
+        break;
     }
-    return child;
+
+    return type.withType == null
+        ? child
+        : _getTransaction(type.withType!, child, animation);
   }
 }
 
@@ -91,7 +109,7 @@ class PageCreator extends _PageConverter {
   QRoute get qRoute => route.route;
   PageCreator(this.route)
       : super(route.route.name, route.key,
-            route.route.pageType ?? QPlatformPage());
+            route.route.pageType ?? QR.settings.pagesType);
 
   QPageInternal create() => super.createWithChild(build());
 
@@ -121,5 +139,5 @@ class PageCreator extends _PageConverter {
 
 class DeclarativePageCreator extends _PageConverter {
   DeclarativePageCreator(String? pageName, QKey key, QPage? type)
-      : super(pageName, key, type ?? QPlatformPage());
+      : super(pageName, key, type ?? QR.settings.pagesType);
 }
