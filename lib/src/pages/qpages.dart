@@ -49,6 +49,7 @@ class QCustomPage extends QPage {
   final Color? barrierColor;
   final String? barrierLabel;
   final RouteTransitionsBuilder? transitionsBuilder;
+  final QCustomPage? withType;
 
   const QCustomPage({
     bool fullscreenDialog = false,
@@ -61,6 +62,7 @@ class QCustomPage extends QPage {
     int? transitionDurationmilliseconds,
     this.transitionsBuilder,
     String? restorationId,
+    this.withType,
   })  : reverseTransitionDurationmilliseconds =
             reverseTransitionDurationmilliseconds ?? 300,
         transitionDurationmilliseconds = transitionDurationmilliseconds ?? 300,
@@ -80,6 +82,7 @@ class QSlidePage extends QCustomPage {
     int? reverseTransitionDurationmilliseconds,
     int? transitionDurationmilliseconds,
     String? restorationId,
+    QCustomPage? withType,
     this.curve,
     this.offset,
   }) : super(
@@ -93,5 +96,34 @@ class QSlidePage extends QCustomPage {
               reverseTransitionDurationmilliseconds,
           transitionDurationmilliseconds: transitionDurationmilliseconds,
           restorationId: restorationId,
+          withType: withType,
         );
+}
+
+class QFadePage extends QCustomPage {
+  final Curve? curve;
+  const QFadePage({
+    bool fullscreenDialog = false,
+    bool maintainState = true,
+    Color? barrierColor,
+    bool? barrierDismissible,
+    String? barrierLabel,
+    bool? opaque,
+    int? reverseTransitionDurationmilliseconds,
+    int? transitionDurationmilliseconds,
+    String? restorationId,
+    QCustomPage? withType,
+    this.curve,
+  }) : super(
+            barrierColor: barrierColor,
+            barrierDismissible: barrierDismissible,
+            barrierLabel: barrierLabel,
+            fullscreenDialog: fullscreenDialog,
+            maintainState: maintainState,
+            opaque: opaque,
+            reverseTransitionDurationmilliseconds:
+                reverseTransitionDurationmilliseconds,
+            transitionDurationmilliseconds: transitionDurationmilliseconds,
+            restorationId: restorationId,
+            withType: withType);
 }

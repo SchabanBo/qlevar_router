@@ -150,6 +150,12 @@ class QRContext {
           _manager.hasController(match.name) ? match.name : forController;
       await _toMatch(match.child!, forController: newControllerName);
     } else if (currentPath != match.activePath!) {
+      // See [#18]
+      if (match.route.withChildRouter &&
+          match.route.initRoute != null &&
+          currentPath == (match.activePath! + match.route.initRoute!)) {
+        return;
+      }
       updateUrlInfo(match.activePath!,
           mKey: match.key,
           params: match.params!.asStringMap(),
@@ -222,6 +228,7 @@ class _QRSettings {
       path: '/notfound',
       builder: () => Material(child: Center(child: Text('Page Not Found'))));
   Function(String) logger = print;
+  QPage pagesType = QPlatformPage();
 }
 
 class _QTreeInfo {

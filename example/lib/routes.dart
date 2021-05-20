@@ -61,6 +61,7 @@ class AppRoutes {
             ]),
         QRoute(
             path: '/:id',
+            pageType: QFadePage(),
             builder: () => TextPage('the id is ${QR.params['id']}')),
         QRoute(path: '/params', builder: () => TextPage(
             // ignore: lines_longer_than_80_chars
