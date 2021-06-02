@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Dev
+
+- Add `redirectGuardName` [#24]
+- Implement `Replace`, `ReplaceName`, `replaceLastName` and `replaceLast`
+
 ## [1.4.1] 20.05.2021
 
 - Add `QR.settings.pagesType`

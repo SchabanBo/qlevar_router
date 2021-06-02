@@ -1,3 +1,4 @@
+import '../../qlevar_router.dart';
 import '../routes/qroute_internal.dart';
 
 class MiddlewareController {
@@ -8,6 +9,17 @@ class MiddlewareController {
     final path = route.getLastActivePath();
     for (var middle in route.route.middleware!) {
       final result = await middle.redirectGuard(path);
+      if (result != null) {
+        return result;
+      }
+    }
+    return null;
+  }
+
+  Future<QNameRedirect?> runRedirectName() async {
+    final path = route.getLastActivePath();
+    for (var middle in route.route.middleware!) {
+      final result = await middle.redirectGuardToName(path);
       if (result != null) {
         return result;
       }

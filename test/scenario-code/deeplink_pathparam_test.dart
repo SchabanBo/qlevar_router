@@ -13,7 +13,7 @@ final books = [
 void main() {
   testWidgets('Deeplink Pathparam', (tester) async {
     await tester.pumpWidget(AppWarpper([
-      QRoute(path: '/', builder: () => BooksListScreen()),
+      QRoute(path: '/', builder: () => const BooksListScreen()),
       QRoute(path: '/books/:id', builder: () => BookDetailsScreen()),
     ]));
 
@@ -40,6 +40,7 @@ class Book {
 }
 
 class BooksListScreen extends StatelessWidget {
+  const BooksListScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +59,7 @@ class BooksListScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
+  BookDetailsScreen({Key? key}) : super(key: key);
   final Book book = books[QR.params['id']!.asInt!];
 
   @override
@@ -79,11 +81,13 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 class UnknownScreen extends StatelessWidget {
+  const UnknownScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Center(
+      body: const Center(
         child: Text('404!'),
       ),
     );
