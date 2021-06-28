@@ -38,6 +38,9 @@ class PagesController {
       QR.history.removeWithNavigator(route.name);
     }
     QR.history.removeLast(); // remove history for this route
+    if (QR.history.hasLast && QR.history.current.path == route.fullPath) {
+      QR.history.removeLast();
+    }
     routes.removeLast(); // remove from the routes
     pages.removeLast(); // reomve from the pages
     return true;
