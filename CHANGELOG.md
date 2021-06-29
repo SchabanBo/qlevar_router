@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## Dev
+## dev
+
+## [1.4.2] 29.06.2021
 
 - Add `redirectGuardName` [#24]
 - Implement `Replace`, `ReplaceName`, `replaceLastName` and `replaceLast`
