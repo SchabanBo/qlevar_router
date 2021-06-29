@@ -4,6 +4,9 @@
 
 - Add `redirectGuardName` [#24]
 - Implement `Replace`, `ReplaceName`, `replaceLastName` and `replaceLast`
+- Add `.QNotification.widgetBuilder` so the notification can be remove programmlcly.
+- Fix [#26]
+- Fix routing problem with child router.
 
 ## [1.4.1] 20.05.2021
 

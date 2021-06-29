@@ -32,6 +32,12 @@ class MatchController {
     if (path.pathSegments.isEmpty && foundPath.length > 2) {
       foundPath = foundPath.substring(0, foundPath.length - 1);
     }
+    // See [#26]
+    if (foundPath.length > 1 &&
+        foundPath[foundPath.length - 1] == '/' &&
+        foundPath[foundPath.length - 2] == '/') {
+      foundPath = foundPath.substring(0, foundPath.length - 1);
+    }
     if ((path.pathSegments.isEmpty ||
             (path.pathSegments.isNotEmpty &&
                 path.pathSegments.last == segment)) &&

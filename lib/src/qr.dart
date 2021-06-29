@@ -140,10 +140,6 @@ class QRContext {
   Future<void> _toMatch(QRouteInternal match,
       {String forController = QRContext.rootRouterName}) async {
     final controller = _manager.withName(forController);
-    // if (controller.isDeclarative) {
-    //   controller.updateDeclarative(match: match);
-    //   return;
-    // }
     await controller.popUnitOrPushMatch(match, checkChild: false);
     if (match.hasChild && !match.isProcessed) {
       final newControllerName =
@@ -152,6 +148,7 @@ class QRContext {
       return;
     }
 
+    if (match.isProcessed) return;
     if (currentPath != match.activePath!) {
       // See [#18]
       final samePathFromInit = match.route.withChildRouter &&

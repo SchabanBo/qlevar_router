@@ -163,6 +163,7 @@ void main() {
   });
 
   testWidgets('Add and remove nested routes', (tester) async {
+    QR.reset();
     await prepareTest(tester);
     await tester.pumpAndSettle();
     final routePath = '/new-route';
