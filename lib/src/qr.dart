@@ -140,28 +140,31 @@ class QRContext {
   Future<void> _toMatch(QRouteInternal match,
       {String forController = QRContext.rootRouterName}) async {
     final controller = _manager.withName(forController);
-    // if (controller.isDeclarative) {
-    //   controller.updateDeclarative(match: match);
-    //   return;
-    // }
     await controller.popUnitOrPushMatch(match, checkChild: false);
     if (match.hasChild && !match.isProcessed) {
       final newControllerName =
           _manager.hasController(match.name) ? match.name : forController;
       await _toMatch(match.child!, forController: newControllerName);
-    } else if (currentPath != match.activePath!) {
+      return;
+    }
+
+    if (match.isProcessed) return;
+    if (currentPath != match.activePath!) {
       // See [#18]
-      if (match.route.withChildRouter &&
+      final samePathFromInit = match.route.withChildRouter &&
           match.route.initRoute != null &&
-          currentPath == (match.activePath! + match.route.initRoute!)) {
+          currentPath == (match.activePath! + match.route.initRoute!);
+      if (!samePathFromInit) {
+        updateUrlInfo(match.activePath!,
+            mKey: match.key,
+            params: match.params!.asStringMap(),
+            navigator: forController,
+            // Add history so currentPath become like activePath
+            addHistory: true);
         return;
       }
-      updateUrlInfo(match.activePath!,
-          mKey: match.key,
-          params: match.params!.asStringMap(),
-          navigator: forController,
-          addHistory: false);
-    } else if (forController != rootRouterName) {
+    }
+    if (forController != rootRouterName) {
       (rootNavigator as QRouterController).update(withParams: false);
     }
   }

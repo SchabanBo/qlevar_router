@@ -4,6 +4,11 @@ class QMiddleware {
   /// or the result should be the path to redirect to.
   Future<String?> redirectGuard(String path) async => null;
 
+  /// This function will be called before [onEnter] and after [onMatch]
+  /// if the result from this page is null the page will be created
+  /// or the result should be the name of the page to redirect to.
+  Future<QNameRedirect?> redirectGuardToName(String path) async => null;
+
   /// can this route pop, called when trying to remove the page.
   bool canPop() => true;
 
@@ -20,6 +25,7 @@ class QMiddleware {
 
 class QMiddlewareBuilder extends QMiddleware {
   final Future<String?> Function(String)? redirectGuardFunc;
+  final Future<QNameRedirect?> Function(String)? redirectGuardNameFunc;
   final Function? onMatchFunc;
   final Function? onEnterFunc;
   final Function? onExitFunc;
@@ -27,6 +33,7 @@ class QMiddlewareBuilder extends QMiddleware {
 
   QMiddlewareBuilder(
       {this.redirectGuardFunc,
+      this.redirectGuardNameFunc,
       this.onMatchFunc,
       this.onEnterFunc,
       this.canPopFunc,
@@ -62,10 +69,26 @@ class QMiddlewareBuilder extends QMiddleware {
   }
 
   @override
+  Future<QNameRedirect?> redirectGuardToName(String path) async {
+    if (redirectGuardNameFunc != null) {
+      return redirectGuardNameFunc!(path);
+    }
+    return null;
+  }
+
+  @override
   bool canPop() {
     if (canPopFunc != null) {
       return canPopFunc!();
     }
     return true;
   }
+}
+
+/// use this object with `QMiddleware.redirectGuardToName`
+/// to redirect to page with name and params
+class QNameRedirect {
+  final String name;
+  final Map<String, Object>? params;
+  const QNameRedirect({required this.name, this.params});
 }

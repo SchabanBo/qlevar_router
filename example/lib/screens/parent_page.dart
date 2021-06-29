@@ -43,7 +43,30 @@ class _ParentPageState extends State<ParentPage> {
                   QButton("child 4", () => QR.to("/parent/child-4")),
                 ],
               ),
-            )
+            ),
+            Card(
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  Text('Test Redirect Gaurd To name'),
+                  Text('This will redirect to [/nested]'),
+                  QButton("redirectGuardName", () => QR.to("/parent/child-5")),
+                ],
+              ),
+            ),
+            Card(
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  Text('Replace this page with [/overlays] pages'),
+                  QButton(
+                      "QR.navigator.replace",
+                      // ignore: lines_longer_than_80_chars
+                      //() =>QR.navigator.replaceName('Parent', AppRoutes.nested)),
+                      () => QR.navigator.replace('/parent', '/overlays')),
+                ],
+              ),
+            ),
           ],
         ),
       ],

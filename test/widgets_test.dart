@@ -12,17 +12,19 @@ void main() {
       QRoute(path: '/zero', builder: () => Scaffold(body: Container())),
       QRoute(
           path: '/two/one',
-          builder: () => Scaffold(body: WidgetTwo()),
+          builder: () => const Scaffold(body: WidgetTwo()),
           children: [
             QRoute(
-                path: '/three', builder: () => Scaffold(body: WidgetThree())),
+                path: '/three',
+                builder: () => const Scaffold(body: WidgetThree())),
           ]),
       QRoute(
           path: '/two/:id',
-          builder: () => Scaffold(body: WidgetTwo()),
+          builder: () => const Scaffold(body: WidgetTwo()),
           children: [
             QRoute(
-                path: '/three', builder: () => Scaffold(body: WidgetThree())),
+                path: '/three',
+                builder: () => const Scaffold(body: WidgetThree())),
           ]),
       QRoute.withChild(
           path: '/this/extra',
@@ -33,13 +35,14 @@ void main() {
                 builder: () => Scaffold(
                         body: Column(
                       children: [
-                        SizedBox(),
+                        const SizedBox(),
                         QR.history.debug(),
                         QR.getActiveTree(),
                       ],
                     ))),
             QRoute(
-                path: '/slash', builder: () => Scaffold(body: WidgetThree())),
+                path: '/slash',
+                builder: () => const Scaffold(body: WidgetThree())),
           ]),
     ];
 

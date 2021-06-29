@@ -32,6 +32,7 @@ abstract class QNavigator extends ChangeNotifier {
       String? navigator = '',
       bool addHistory = true});
 
+  /// Push tha page with this [name] and this [params] on the top of the stack
   Future<void> pushName(String name, {Map<String, dynamic>? params});
 
   Future<void> replaceName(String name, String withName,
@@ -41,14 +42,24 @@ abstract class QNavigator extends ChangeNotifier {
 
   Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params});
 
+  /// Push this [Path] on the top of the stack
   Future<void> push(String path);
 
   Future<void> popUnitOrPush(String path);
 
+  /// Replace this [path] with this [withPath]
   Future<void> replace(String path, String withPath);
 
+  /// Remove the last page in the stack and add the one with this [path]
+  Future<void> replaceLast(String path);
+
+  /// Remove the last page in the stack and add the one with this [name]
+  Future<void> replaceLastName(String name);
+
+  /// Remove all pages and add the page with [path]
   Future<void> replaceAll(String path);
 
+  /// remove the last page in the stack
   bool removeLast();
 
   /// Add Routes to this Navigator
@@ -128,7 +139,12 @@ class QRouterController extends QNavigator {
   @override
   Future<void> replaceName(String name, String withName,
       {Map<String, dynamic>? params}) async {
-    // TODO: implement replace
+    final index =
+        _pagesController.routes.indexWhere((e) => e.route.name == name);
+    assert(index != -1, 'Path with name $name was not found in the stack');
+    _pagesController.removeIndex(index);
+    QR.history.removeLast();
+    await pushName(withName, params: params);
   }
 
   @override
@@ -163,7 +179,12 @@ class QRouterController extends QNavigator {
 
   @override
   Future<void> replace(String path, String withPath) async {
-    // TODO: implement replacePath
+    final index =
+        _pagesController.routes.indexWhere((e) => e.route.path == path);
+    assert(index != -1, 'Path $path was not found in the stack');
+    _pagesController.removeIndex(index);
+    QR.history.removeLast();
+    await push(withPath);
   }
 
   Future<void> addRouteAsync(QRouteInternal match,
@@ -192,10 +213,18 @@ class QRouterController extends QNavigator {
       return;
     }
     if (route.hasMiddlewares) {
-      final result = await MiddlewareController(route).runRedirect();
+      final medCont = MiddlewareController(route);
+      final result = await medCont.runRedirect();
       if (result != null) {
         QR.log('redirect from [${route.activePath}] to [$result]');
         await QR.to(result);
+        route.isProcessed = true;
+        return;
+      }
+      final resultName = await medCont.runRedirectName();
+      if (resultName != null) {
+        QR.log('redirect from [${route.activePath}] to name [$resultName]');
+        await QR.toName(resultName.name, params: resultName.params);
         route.isProcessed = true;
         return;
       }
@@ -297,5 +326,17 @@ class QRouterController extends QNavigator {
     assert(navKey.currentState != null);
     return overlay.show(
         state: navKey.currentState!, context: navKey.currentContext!);
+  }
+
+  @override
+  Future<void> replaceLast(String path) {
+    removeLast();
+    return push(path);
+  }
+
+  @override
+  Future<void> replaceLastName(String name) {
+    removeLast();
+    return pushName(name);
   }
 }

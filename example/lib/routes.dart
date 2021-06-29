@@ -31,6 +31,7 @@ class AppRoutes {
             path: '/declarative',
             declarativeBuilder: (k) => DeclarativePage(k)),
         QRoute(
+            name: 'Parent',
             path: '/parent',
             builder: () {
               print('-- Build Parent page --');
@@ -56,6 +57,15 @@ class AppRoutes {
                             () => Database.canChildNavigate
                                 ? null
                                 : '/parent/child-2'))
+                  ],
+                  builder: () => TextPage('Hi child 4')),
+              QRoute(
+                  path: '/child-5',
+                  middleware: [
+                    QMiddlewareBuilder(
+                        redirectGuardNameFunc: (s) => Future.delayed(
+                            Duration(milliseconds: 100),
+                            () => QNameRedirect(name: nested)))
                   ],
                   builder: () => TextPage('Hi child 4')),
             ]),

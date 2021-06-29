@@ -39,8 +39,11 @@ class QNotification extends StatefulWidget with QOverlay {
   /// The animation curve for the notification when closes
   final Curve? animationReverseCurve;
 
-  /// The context of your notification
-  final Widget child;
+  /// The content of your notification
+  final Widget? child;
+
+  /// The content builder of your notification, gives remove VoidCallback.
+  final Widget Function(VoidCallback)? widgetBuilder;
 
   /// The duration to keep the notification open
   /// if this value was null the notification will not close, you have to call
@@ -57,7 +60,8 @@ class QNotification extends StatefulWidget with QOverlay {
   final Color? color;
 
   QNotification({
-    required this.child,
+    this.child,
+    this.widgetBuilder,
     this.position = QNotificationPosition.Top,
     this.offset = Offset.zero,
     this.height = 100,
@@ -70,7 +74,7 @@ class QNotification extends StatefulWidget with QOverlay {
     this.onClosed,
     this.onOpened,
     this.color,
-  });
+  }) : assert(child != null && widgetBuilder != null);
 
   _NotificationState? _state;
 
@@ -233,7 +237,9 @@ class _NotificationState extends State<QNotification>
   Widget build(BuildContext context) {
     return SlideTransition(
       position: _offsetAnimation,
-      child: Card(color: widget.color, child: widget.child),
+      child: Card(
+          color: widget.color,
+          child: widget.child ?? widget.widgetBuilder!(widget.remove)),
     );
   }
 }
