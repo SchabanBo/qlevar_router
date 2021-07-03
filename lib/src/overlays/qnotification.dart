@@ -74,7 +74,7 @@ class QNotification extends StatefulWidget with QOverlay {
     this.onClosed,
     this.onOpened,
     this.color,
-  }) : assert(child != null && widgetBuilder != null);
+  }) : assert(child != null || widgetBuilder != null);
 
   _NotificationState? _state;
 
