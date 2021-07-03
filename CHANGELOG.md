@@ -1,7 +1,9 @@
 # CHANGELOG
 
-## dev
+## [1.4.3] 03.07.2021
 
+- Fix notification assert
+  
 ## [1.4.2] 29.06.2021
 
 - Add `redirectGuardName` [#24]

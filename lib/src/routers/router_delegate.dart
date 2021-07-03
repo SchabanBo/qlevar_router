@@ -26,16 +26,16 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   String get currentConfiguration => QR.currentPath;
 
   @override
-  Future<void> setInitialRoutePath(String configuration) {
+  Future<void> setInitialRoutePath(String configuration) async {
     if (configuration != '/') {
       QR.log('setInitialRoutePath $configuration', isDebug: true);
-      QR.to(configuration);
+      await QR.to(configuration);
     }
-    return SynchronousFuture(null);
+    return;
   }
 
   @override
-  Future<void> setNewRoutePath(String route) {
+  Future<void> setNewRoutePath(String route) async {
     if (QR.history.hasLast &&
         QR.history.last.path == QR.settings.notFoundPage.path) {
       if (QR.history.length > 2 && route == QR.history.beforelast.path) {
@@ -49,10 +49,10 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
           isDebug: true);
 
       QR.back();
-      return SynchronousFuture(null);
+      return;
     }
-    QR.to(route);
-    return SynchronousFuture(null);
+    await QR.to(route);
+    return;
   }
 
   @override
