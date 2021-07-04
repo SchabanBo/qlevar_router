@@ -27,7 +27,7 @@ class ControllerManager {
           QRouteChildren.from(routes!, key, routePath == '/' ? '' : routePath);
     }
     final controller = QRouterController(key, cRoutes,
-        initPath: initPath ?? '/', initRoute: initRoute);
+        initPath: initPath, initRoute: initRoute);
     controllers.add(controller);
     return controller;
   }

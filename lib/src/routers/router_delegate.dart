@@ -12,12 +12,15 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   final key = GlobalKey<NavigatorState>();
   final QRouterController _controller;
   final bool withWebBar;
+  final bool alwaysAddInitPath;
+  final String? initPath;
   QRouterDelegate(
     List<QRoute> routes, {
-    String? initPath,
+    this.initPath,
     this.withWebBar = false,
+    this.alwaysAddInitPath = false,
   }) : _controller = QR.createRouterController(QRContext.rootRouterName,
-            routes: routes, initPath: initPath) {
+            routes: routes) {
     _controller.addListener(notifyListeners);
     _controller.navKey = key;
   }
@@ -27,11 +30,15 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setInitialRoutePath(String configuration) async {
-    if (configuration != '/') {
-      QR.log('setInitialRoutePath $configuration', isDebug: true);
-      await QR.to(configuration);
+    if (alwaysAddInitPath) {
+      await _controller.push(initPath ?? '/');
     }
-    return;
+    if (configuration != '/') {
+      QR.log('incomming init path $configuration', isDebug: true);
+      await _controller.push(configuration);
+      return;
+    }
+    await _controller.push(initPath ?? configuration);
   }
 
   @override

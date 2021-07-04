@@ -110,7 +110,7 @@ class MatchController {
       return isSameComponent(routePath, path);
     }
 
-    var isFind = true;
+    var isFound = true;
     bool findMulti(QRouteInternal route) {
       final routeUri = Uri.parse(route.route.path);
       if (routeUri.pathSegments.length <= 1) {
@@ -123,12 +123,12 @@ class MatchController {
                 isSameComponent('/${routeUri.pathSegments[i]}',
                     this.path.pathSegments[i + index]));
       }
-      if (found && isFind) {
+      if (found && isFound) {
         for (var i = 0; i < routeUri.pathSegments.length; i++) {
           _searchIndex++;
           updateFoundPath(this.path.pathSegments[i + index]);
         }
-        isFind = false;
+        isFound = false;
       }
       return found;
     }

@@ -10,7 +10,8 @@ import 'middleware_controller.dart';
 class PagesController {
   final routes = <QRouteInternal>[];
   final pages = <QPageInternal>[
-    QMaterialPageInternal(child: Container(), matchKey: QKey('Init Page'))
+    QMaterialPageInternal(
+        child: QR.settings.iniPage, matchKey: QKey('Init Page'))
   ];
 
   bool exist(QRouteInternal route) =>

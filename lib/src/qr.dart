@@ -230,6 +230,9 @@ class _QRSettings {
   QRoute notFoundPage = QRoute(
       path: '/notfound',
       builder: () => Material(child: Center(child: Text('Page Not Found'))));
+
+  Widget iniPage =
+      Material(child: Container(child: Center(child: Text('Loading'))));
   Function(String) logger = print;
   QPage pagesType = QPlatformPage();
 }

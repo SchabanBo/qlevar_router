@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## dev
+
+- Fix Init Path shown first when opening the website to a specific path
+- Add iniPage in settings
+- Add `QRouterDelegate.alwaysAddInitPath`
+
 ## [1.4.3] 03.07.2021
 
 - Fix notification assert
