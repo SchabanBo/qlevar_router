@@ -120,7 +120,7 @@ class PageCreator extends _PageConverter {
       final router = QR.createNavigator(
         qRoute.name ?? qRoute.path,
         cRoutes: route.children,
-        initPath: qRoute.initRoute,
+        initPath: qRoute.initRoute ?? '/',
         initRoute: route.child,
       );
       if (qRoute.initRoute != null && route.child == null) {

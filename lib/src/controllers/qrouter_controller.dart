@@ -93,8 +93,8 @@ class QRouterController extends QNavigator {
   }) {
     if (initRoute != null) {
       addRouteAsync(initRoute);
-    } else {
-      push(initPath!);
+    } else if (initPath != null) {
+      push(initPath);
     }
   }
 
