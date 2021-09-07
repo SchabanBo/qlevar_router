@@ -68,4 +68,7 @@ class QHistoryEntry {
 
   bool isSame(QHistoryEntry other) =>
       path == other.path && navigator == other.navigator;
+
+  @override
+  String toString() => 'key: $key, path: $path, navigator: $navigator';
 }

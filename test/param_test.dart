@@ -7,30 +7,32 @@ import 'test_widgets/test_widgets.dart';
 
 void main() {
   group('Params', () {
-    test('Query Params', () {
+    test('Query Params', () async {
       QR.reset();
       final _ = QRouterDelegate([
         QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
         QRoute(path: '/tow', builder: () => Scaffold(body: WidgetTwo()))
       ]);
-      QR.to('/tow?param1=45&param2=not');
+      await _.setInitialRoutePath('/');
+      await QR.to('/tow?param1=45&param2=not');
       expect(QR.currentPath, '/tow?param1=45&param2=not');
       expect(QR.params['param1']!.asInt, 45);
       expect(QR.params['param2'].toString(), 'not');
-      QR.back();
+      await QR.back();
       expect(QR.params.length, 0);
     });
-    test('Path Params', () {
+    test('Path Params', () async {
       QR.reset();
       final _ = QRouterDelegate([
         QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
         QRoute(path: '/:userId', builder: () => Scaffold(body: WidgetTwo()))
       ]);
+      await _.setInitialRoutePath('/');
       for (var i = 0; i < 5; i++) {
-        QR.to('/$i');
+        await QR.to('/$i');
         expect(QR.currentPath, '/$i');
         expect(QR.params['userId']!.asInt, i);
-        QR.back();
+        await QR.back();
         expect(QR.params.length, 0);
       }
     });
@@ -51,11 +53,11 @@ void main() {
       await QR.to('/user/5/info');
       expect(QR.currentPath, '/user/5/info');
       expect(QR.params['userId']!.asInt, 5);
-      QR.back(); // /user/5
+      await QR.back(); // /user/5
       expect(QR.currentPath, '/user/5');
       expect(QR.params['userId']!.asInt, 5);
       expect(QR.params.length, 1);
-      QR.back(); // /user
+      await QR.back(); // /user
       expect(QR.currentPath, '/user');
       expect(QR.params.length, 0);
     });
@@ -78,23 +80,23 @@ void main() {
             ]),
         QRoute(path: '/:categoryId/items', builder: () => Container())
       ]);
-
+      await _.setInitialRoutePath('/');
       await QR.to('/user/5/info/7?hi=tt');
       expect(QR.currentPath, '/user/5/info/7?hi=tt');
       expect(QR.params['userId']!.asInt, 5);
       expect(QR.params['companyId']!.asInt, 7);
       expect(QR.params['hi']!.toString(), 'tt');
-      QR.back();
+      await QR.back();
       expect(QR.currentPath, '/user/5/info');
       expect(QR.params['userId']!.asInt, 5);
       expect(QR.params.length, 1);
-      QR.back();
+      await QR.back();
       expect(QR.currentPath, '/user/5');
       expect(QR.params.length, 1);
-      QR.back();
+      await QR.back();
       expect(QR.currentPath, '/user');
       expect(QR.params.length, 0);
-      QR.back();
+      await QR.back();
       expect(QR.currentPath, '/');
       expect(QR.params.length, 0);
     });

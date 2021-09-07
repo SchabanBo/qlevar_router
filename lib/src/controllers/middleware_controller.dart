@@ -27,39 +27,39 @@ class MiddlewareController {
     return null;
   }
 
-  void runOnEnter() {
+  Future runOnEnter() async {
     if (!route.hasMiddlewares) {
       return;
     }
     for (var middle in route.route.middleware!) {
-      middle.onEnter();
+      await middle.onEnter();
     }
   }
 
-  void runOnExit() {
+  Future runOnExit() async {
     if (!route.hasMiddlewares) {
       return;
     }
     for (var middle in route.route.middleware!) {
-      middle.onExit();
+      await middle.onExit();
     }
   }
 
-  void runOnMatch() {
+  Future runOnMatch() async {
     if (!route.hasMiddlewares) {
       return;
     }
     for (var middle in route.route.middleware!) {
-      middle.onMatch();
+      await middle.onMatch();
     }
   }
 
-  bool runCanPop() {
+  Future<bool> runCanPop() async {
     if (!route.hasMiddlewares) {
       return true;
     }
     for (var middle in route.route.middleware!) {
-      if (!middle.canPop()) {
+      if (!await middle.canPop()) {
         return false;
       }
     }

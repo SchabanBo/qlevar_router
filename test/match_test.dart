@@ -87,7 +87,7 @@ void main() {
       expectedPath('/this/extra/slash');
       expect(find.byType(WidgetThree), findsOneWidget);
 
-      QR.back();
+      await QR.back();
       await tester.pumpAndSettle();
       expectedPath('/this/extra');
       expect(find.byType(WidgetOne), findsOneWidget);
@@ -110,6 +110,7 @@ void main() {
         ],
         initPath: '/two/one',
       ));
+      await tester.pumpAndSettle();
       expectedPath('/two/one');
       expect(find.byType(WidgetTwo), findsOneWidget);
     });
@@ -132,6 +133,7 @@ void main() {
         ],
         initPath: '/this/extra/slash',
       ));
+      await tester.pumpAndSettle();
       expectedPath('/this/extra/slash');
       expect(find.byType(WidgetThree), findsOneWidget);
     });

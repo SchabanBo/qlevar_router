@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import '../../qlevar_router.dart';
 import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
@@ -17,22 +15,25 @@ class PagesController {
   bool exist(QRouteInternal route) =>
       routes.any((element) => element.key.isSame(route.key));
 
-  void add(QRouteInternal route) {
+  Future<void> add(QRouteInternal route) async {
     routes.add(route);
-    MiddlewareController(route).runOnEnter();
+    await MiddlewareController(route).runOnEnter();
     pages.add(PageCreator(route).create());
     if (pages.any((element) => element.matchKey.hasName('Init Page'))) {
       pages.removeWhere((element) => element.matchKey.hasName('Init Page'));
     }
   }
 
-  bool removeLast() {
-    final route = routes.last; // find the page
-    final middleware = MiddlewareController(route);
-    if (!middleware.runCanPop()) {
+  Future<bool> removeLast() async {
+    if (routes.isEmpty) {
       return false;
     }
-    middleware.runOnExit(); // run on exit
+    final route = routes.last; // find the page
+    final middleware = MiddlewareController(route);
+    if (!await middleware.runCanPop()) {
+      return false;
+    }
+    await middleware.runOnExit(); // run on exit
     if (QR.removeNavigator(route.name)) {
       // if this route has navigator then remove it to remove this route too.
       // and remove all histories to this route
@@ -47,18 +48,18 @@ class PagesController {
     return true;
   }
 
-  void removeIndex(int index) {
+  Future<void> removeIndex(int index) async {
     final route = routes[index]; // find the page
-    MiddlewareController(route).runOnExit(); // run on exit
+    await MiddlewareController(route).runOnExit(); // run on exit
     QR.removeNavigator(route.name); // remove navigator if exist
     QR.history.remove(route); // remove history for this route
     routes.removeAt(index); // remove from the routes
     pages.removeAt(index); // reomve from the pages
   }
 
-  void removeAll() {
+  Future<void> removeAll() async {
     for (var i = 0; i < pages.length; i++) {
-      removeLast();
+      await removeLast();
       i--;
     }
   }

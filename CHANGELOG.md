@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [1.5.0] 07.09.2021
+
+- Convert `QMiddleware.canPop` ,`QMiddleware.onMatch` ,`QMiddleware.onEnter` and `QMiddleware.onExit` to accept Async.
+- `QR.back()` will close the dialog if one is open
+
+### Breaking changes
+
+- `QR.back()` is awaitable.
+
 ## [1.4.4] 06.07.2021
 
 - Fix Init Path shown first when opening the website to a specific path

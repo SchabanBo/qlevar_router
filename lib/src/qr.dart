@@ -34,6 +34,8 @@ class QRContext {
 
   final _manager = ControllerManager();
 
+  bool isShowingDialog = false;
+
   /// The cureent route url
   String get currentPath => history.isEmpty ? '/' : history.current.path;
 
@@ -119,7 +121,7 @@ class QRContext {
       return;
     }
     final controller = _manager.withName(rootRouterName);
-    var match = controller.findPath(path);
+    var match = await controller.findPath(path);
     await _toMatch(match);
   }
 
@@ -133,7 +135,7 @@ class QRContext {
       return;
     }
     final controller = _manager.withName(rootRouterName);
-    var match = controller.findName(name, params: params);
+    var match = await controller.findName(name, params: params);
     await _toMatch(match);
   }
 
@@ -158,7 +160,9 @@ class QRContext {
         updateUrlInfo(match.activePath!,
             mKey: match.key,
             params: match.params!.asStringMap(),
-            navigator: forController,
+            // The history should be added for the child init route
+            // so use the parent name as navigator
+            navigator: match.route.name ?? match.route.path,
             // Add history so currentPath become like activePath
             addHistory: true);
         return;
@@ -170,7 +174,7 @@ class QRContext {
   }
 
   /// try to pop the last active navigator or go to last path in the history
-  bool back() {
+  Future<bool> back() async {
     // is proccesed by declerative
     if (_manager.isDeclarative(QR.history.current.key.key)) {
       final dCon = _manager.getDeclarative(QR.history.current.key.key);
@@ -189,7 +193,7 @@ class QRContext {
       }
       final controller = navigatorOf(lastNavi);
       if (controller.canPop) {
-        controller.removeLast();
+        await controller.removeLast();
         if (lastNavi != QRContext.rootRouterName) {
           (rootNavigator as QRouterController).update(withParams: false);
         }

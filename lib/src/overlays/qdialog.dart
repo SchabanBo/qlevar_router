@@ -7,7 +7,7 @@ import 'qoverlay.dart';
 // Create a dialog to use with [QR]
 class QDialog with QOverlay {
   /// It gives the pop action to close the dialog and takes the widget to show
-  final Widget Function(VoidCallback pop) widget;
+  final Widget Function(void Function<T>([T]) pop) widget;
   final bool barrierDismissible = true;
   final Color? barrierColor;
   final bool useSafeArea = true;
@@ -46,7 +46,7 @@ class QDialog with QOverlay {
         widget: (pop) => AlertDialog(
               title: title,
               content: text,
-              actions: [TextButton(onPressed: pop, child: Text('Ok'))],
+              actions: [TextButton(onPressed: () => pop(), child: Text('Ok'))],
             ));
   }
 
@@ -61,25 +61,34 @@ class QDialog with QOverlay {
       }
     }
 
-    return state.push<T>(QDialogRoute(
-      pageBuilder: (buildContext, animation, secondaryAnimation) =>
-          useSafeArea ? SafeArea(child: widget(state.pop)) : widget(state.pop),
-      barrierDismissible: barrierDismissible,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: barrierColor ?? Colors.black54,
-      transitionDuration:
-          transitionDuration ?? const Duration(milliseconds: 300),
-      transitionBuilder: transitionBuilder ??
-          (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: CurvedAnimation(
-                parent: animation,
-                curve: transitionCurve ?? Curves.easeOutQuad,
-              ),
-              child: child,
-            );
-          },
-      settings: routeSettings,
-    ));
+    QR.isShowingDialog = true;
+    final result = await Future.delayed(
+        Duration.zero,
+        () => state.push<T>(QDialogRoute(
+              pageBuilder: (buildContext, animation, secondaryAnimation) =>
+                  useSafeArea
+                      ? SafeArea(child: widget(state.pop))
+                      : widget(state.pop),
+              barrierDismissible: barrierDismissible,
+              barrierLabel:
+                  MaterialLocalizations.of(context).modalBarrierDismissLabel,
+              barrierColor: barrierColor ?? Colors.black54,
+              transitionDuration:
+                  transitionDuration ?? const Duration(milliseconds: 300),
+              transitionBuilder: transitionBuilder ??
+                  (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurvedAnimation(
+                        parent: animation,
+                        curve: transitionCurve ?? Curves.easeOutQuad,
+                      ),
+                      child: child,
+                    );
+                  },
+              settings: routeSettings,
+            )));
+    QR.isShowingDialog = false;
+
+    return result;
   }
 }

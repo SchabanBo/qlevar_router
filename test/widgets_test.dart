@@ -64,7 +64,7 @@ void main() {
     testWidgets('Show Navigation History', (tester) async {
       QR.reset();
       await tester.pumpWidget(AppWarpper(routes));
-
+      await tester.pumpAndSettle();
       await QR.to('/two/one');
       await tester.pumpAndSettle();
       await QR.to('/this/extra');

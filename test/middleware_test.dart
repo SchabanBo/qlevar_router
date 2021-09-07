@@ -22,9 +22,9 @@ void main() {
                   Duration(milliseconds: 500), () => isAuthed ? null : '/two');
             }),
             QMiddlewareBuilder(
-              onEnterFunc: () => counter++,
-              onExitFunc: () => counter++,
-              onMatchFunc: () => counter++,
+              onEnterFunc: () async => counter++,
+              onExitFunc: () async => counter++,
+              onMatchFunc: () async => counter++,
             )
           ],
           children: [
@@ -37,9 +37,9 @@ void main() {
           path: '/two',
           middleware: [
             QMiddlewareBuilder(
-              onEnterFunc: () => counter++,
-              onExitFunc: () => counter++,
-              onMatchFunc: () => counter++,
+              onEnterFunc: () async => counter++,
+              onExitFunc: () async => counter++,
+              onMatchFunc: () async => counter++,
             )
           ],
           builder: () => Scaffold(body: WidgetTwo())),
@@ -56,7 +56,7 @@ void main() {
           '/nested'); // Here to() is used then the Two onExit will not be called
       expect(counter, 5); // Nested onMatch + Nested onEnter
       expectedPath('/nested/child');
-      QR.navigator.replaceAll('/three');
+      await QR.navigator.replaceAll('/three');
       expect(counter, 7); // Nested onExite + Two onExite
     });
 
@@ -77,6 +77,7 @@ void main() {
               })
             ])
       ], initPath: '/domain1/dashboard');
+      await _.setInitialRoutePath('/');
       // wait init page to load
       await Future.delayed(Duration(microseconds: 300));
       expect(pathFromGuard, '/domain1/dashboard');

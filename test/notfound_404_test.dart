@@ -16,7 +16,8 @@ void main() {
 
   testWidgets('Check Not Found Route AKA 404', (tester) async {
     await tester.pumpWidget(AppWarpper(pages));
-    QR.to('/something');
+    await tester.pumpAndSettle();
+    await QR.to('/something');
     expectedPath('/something');
     printCurrentHistory();
     await tester.pumpAndSettle();
@@ -24,7 +25,7 @@ void main() {
     expect(find.byType(WidgetTwo), findsNothing);
     expect(find.byType(WidgetThree), findsNothing);
     expectedHistoryLength(2);
-    QR.to('/two');
+    await QR.to('/two');
     expectedPath('/two');
     printCurrentHistory();
     await tester.pumpAndSettle();

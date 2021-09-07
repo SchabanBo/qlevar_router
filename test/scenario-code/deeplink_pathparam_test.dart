@@ -16,6 +16,7 @@ void main() {
       QRoute(path: '/', builder: () => const BooksListScreen()),
       QRoute(path: '/books/:id', builder: () => BookDetailsScreen()),
     ]));
+    await tester.pumpAndSettle();
 
     for (var book in books) {
       final title = find.text(book.title);
