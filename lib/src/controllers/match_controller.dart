@@ -47,24 +47,24 @@ class MatchController {
     }
   }
 
-  QRouteInternal get match {
+  Future<QRouteInternal> get match async {
     var searchIn = routes;
     if (path.pathSegments.isEmpty) {
-      final match = _tryFind(searchIn, -1);
+      final match = await _tryFind(searchIn, -1);
       if (match == null) {
         return QRouteInternal.notfound(parentPath + path.toString());
       }
       return match;
     }
 
-    final result = _tryFind(searchIn, _searchIndex);
+    final result = await _tryFind(searchIn, _searchIndex);
     if (result == null) {
       return QRouteInternal.notfound(parentPath + path.toString());
     }
     var match = result;
     for (; _searchIndex < path.pathSegments.length;) {
       searchIn = match.children!;
-      match.child = _tryFind(searchIn, _searchIndex);
+      match.child = await _tryFind(searchIn, _searchIndex);
       if (match.child == null) {
         return QRouteInternal.notfound(parentPath + path.toString());
       }
@@ -97,7 +97,7 @@ class MatchController {
     return false;
   }
 
-  QRouteInternal? _tryFind(QRouteChildren routes, int index) {
+  Future<QRouteInternal?> _tryFind(QRouteChildren routes, int index) async {
     var path = index == -1 ? '' : this.path.pathSegments[index];
 
     bool isSamePath(QRouteInternal route) => route.route.path == '/$path';
@@ -153,7 +153,7 @@ class MatchController {
       result.clean();
       result.activePath = foundPath;
       result.params = params.copyWith();
-      MiddlewareController(result).runOnMatch();
+      await MiddlewareController(result).runOnMatch();
       return result;
     }
 

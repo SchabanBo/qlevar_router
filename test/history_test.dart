@@ -25,6 +25,7 @@ void main() {
     test('Stack with Nested Route With QR.back()', () async {
       QR.reset();
       final _ = QRouterDelegate(routes);
+      await _.setInitialRoutePath('/');
       await QR.to('/nested');
       expectedPath('/nested/child');
       expectedHistoryLength(3);
@@ -37,17 +38,18 @@ void main() {
       expectedPath('/nested/child-3');
       expectedHistoryLength(5);
 
-      QR.back();
+      await QR.back();
       expectedPath('/nested/child-1');
       expectedHistoryLength(4);
 
-      QR.back();
+      await QR.back();
       expectedPath('/nested/child');
       expectedHistoryLength(3);
 
-      QR.back();
+      await QR.back();
       expectedPath('/');
       expectedHistoryLength(1);
+      _.dispose();
     });
 
     testWidgets('Stack with Nested Route when parent pop', (tester) async {
@@ -81,6 +83,7 @@ void main() {
     test('Simple Navigation History', () async {
       QR.reset();
       final _ = QRouterDelegate(routes);
+      await _.setInitialRoutePath('/');
       await QR.to('/nested');
       expectedPath('/nested/child');
       expectedHistoryLength(3);
@@ -97,7 +100,7 @@ void main() {
       expectedPath('/nested/child-1');
       expectedHistoryLength(4);
 
-      QR.back();
+      await QR.back();
       expectedPath('/nested/child');
       expectedHistoryLength(3);
 

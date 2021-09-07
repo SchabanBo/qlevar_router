@@ -10,26 +10,26 @@ class QMiddleware {
   Future<QNameRedirect?> redirectGuardToName(String path) async => null;
 
   /// can this route pop, called when trying to remove the page.
-  bool canPop() => true;
+  Future<bool> canPop() async => true;
 
   /// This method will be called every time a path match it.
-  void onMatch() {}
+  Future onMatch() async {}
 
   /// This method will be called before adding the page to the stack
   ///  and before the page building
-  void onEnter() {}
+  Future onEnter() async {}
 
   /// This method will be called before removing the page from the stack
-  void onExit() {}
+  Future onExit() async {}
 }
 
 class QMiddlewareBuilder extends QMiddleware {
   final Future<String?> Function(String)? redirectGuardFunc;
   final Future<QNameRedirect?> Function(String)? redirectGuardNameFunc;
-  final Function? onMatchFunc;
-  final Function? onEnterFunc;
-  final Function? onExitFunc;
-  final bool Function()? canPopFunc;
+  final Future Function()? onMatchFunc;
+  final Future Function()? onEnterFunc;
+  final Future Function()? onExitFunc;
+  final Future<bool> Function()? canPopFunc;
 
   QMiddlewareBuilder(
       {this.redirectGuardFunc,
@@ -40,23 +40,23 @@ class QMiddlewareBuilder extends QMiddleware {
       this.onExitFunc});
 
   @override
-  void onEnter() {
+  Future onEnter() async {
     if (onEnterFunc != null) {
-      onEnterFunc!();
+      await onEnterFunc!();
     }
   }
 
   @override
-  void onExit() {
+  Future onExit() async {
     if (onExitFunc != null) {
-      onExitFunc!();
+      await onExitFunc!();
     }
   }
 
   @override
-  void onMatch() {
+  Future onMatch() async {
     if (onMatchFunc != null) {
-      onMatchFunc!();
+      await onMatchFunc!();
     }
   }
 
@@ -77,9 +77,9 @@ class QMiddlewareBuilder extends QMiddleware {
   }
 
   @override
-  bool canPop() {
+  Future<bool> canPop() async {
     if (canPopFunc != null) {
-      return canPopFunc!();
+      return await canPopFunc!();
     }
     return true;
   }

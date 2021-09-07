@@ -24,8 +24,10 @@ void main() {
       QR.reset();
       await tester.pumpWidget(AppWarpper(pages));
 
-      QR.navigator.removeLast();
-      QR.navigator.removeLast();
+      await QR.navigator.removeLast();
+      await QR.navigator.removeLast();
+
+      await tester.pumpAndSettle();
 
       expectedPath('/');
       expect(find.byType(WidgetOne), findsOneWidget);
@@ -33,8 +35,8 @@ void main() {
       expect(find.byType(WidgetThree), findsNothing);
       expectedHistoryLength(1);
 
-      QR.navigator.push('/two');
-      QR.navigator.push('/three');
+      await QR.navigator.push('/two');
+      await QR.navigator.push('/three');
 
       expectedPath('/three');
       await tester.pumpAndSettle();
@@ -43,7 +45,7 @@ void main() {
       expect(find.byType(WidgetThree), findsOneWidget);
       expectedHistoryLength(3);
 
-      QR.navigator.removeLast();
+      await QR.navigator.removeLast();
 
       expectedPath('/two');
       await tester.pumpAndSettle();
@@ -53,17 +55,17 @@ void main() {
       printCurrentHistory();
       expectedHistoryLength(2);
 
-      QR.navigator.push('/three');
+      await QR.navigator.push('/three');
 
       expectedPath('/three');
       expectedHistoryLength(3);
       printCurrentHistory();
 
       //Duplication test
-      QR.navigator.push('/three');
-      QR.navigator.push('/three');
-      QR.navigator.push('/three');
-      QR.navigator.push('/three');
+      await QR.navigator.push('/three');
+      await QR.navigator.push('/three');
+      await QR.navigator.push('/three');
+      await QR.navigator.push('/three');
       printCurrentHistory();
       expectedPath('/three');
       expectedHistoryLength(3);
@@ -72,7 +74,7 @@ void main() {
       expect(find.byType(WidgetTwo), findsNothing);
       expect(find.byType(WidgetThree), findsOneWidget);
 
-      QR.navigator.replaceAll('/two');
+      await QR.navigator.replaceAll('/two');
 
       printCurrentHistory();
       expectedPath('/two');
@@ -88,8 +90,8 @@ void main() {
     QR.reset();
     await tester.pumpWidget(AppWarpper(pages, initPath: '/two'));
     printCurrentHistory();
-    QR.navigator.removeLast();
-    QR.navigator.removeLast();
+    await QR.navigator.removeLast();
+    await QR.navigator.removeLast();
 
     printCurrentHistory();
     expectedPath('/two');
@@ -99,7 +101,7 @@ void main() {
     expect(find.byType(WidgetThree), findsNothing);
     expectedHistoryLength(1);
 
-    QR.navigator.push('/three');
+    await QR.navigator.push('/three');
 
     printCurrentHistory();
     expectedPath('/three');
@@ -109,7 +111,7 @@ void main() {
     expect(find.byType(WidgetThree), findsOneWidget);
     expectedHistoryLength(2);
 
-    QR.navigator.replaceAll('/three');
+    await QR.navigator.replaceAll('/three');
     printCurrentHistory();
 
     expectedPath('/three');
@@ -124,7 +126,7 @@ void main() {
     QR.reset();
     await tester.pumpWidget(AppWarpper(pages));
     printCurrentHistory();
-    QR.navigator.replaceAll('/two');
+    await QR.navigator.replaceAll('/two');
     printCurrentHistory();
     expectedPath('/two');
     await tester.pumpAndSettle();
@@ -137,7 +139,7 @@ void main() {
   testWidgets('replaceAll with different init route', (tester) async {
     QR.reset();
     await tester.pumpWidget(AppWarpper(pages, initPath: '/three'));
-    QR.navigator.replaceAll('/two');
+    await QR.navigator.replaceAll('/two');
     printCurrentHistory();
     expectedPath('/two');
     await tester.pumpAndSettle();
@@ -188,7 +190,7 @@ void main() {
     expect(find.text(routeText), findsOneWidget);
 
     // Go back
-    QR.back();
+    await QR.back();
     await tester.pumpAndSettle();
     expect(find.text('child-1'), findsOneWidget);
     expectedPath('/dashboard/child-1');
@@ -212,7 +214,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Page Not Found'), findsOneWidget);
     // go back
-    QR.back();
+    await QR.back();
     await tester.pumpAndSettle();
     expect(find.text('login'), findsOneWidget);
     expectedPath('/login');
@@ -223,7 +225,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(routeText), findsOneWidget);
     // Go back
-    QR.back();
+    await QR.back();
     await tester.pumpAndSettle();
     expect(find.text('login'), findsOneWidget);
     expectedPath('/login');

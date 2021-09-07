@@ -43,10 +43,8 @@ class _QRouterState extends State<QRouter> {
       key: widget.navKey,
       pages: widget._controller.pages,
       onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
-        }
-        return widget._controller.removeLast();
+        widget._controller.removeLast();
+        return false;
       },
     );
   }

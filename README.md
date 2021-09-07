@@ -33,6 +33,7 @@
     - [How Declarative router works](#how-declarative-router-works)
   - [Remove Url Hashtag](#remove-url-hashtag)
   - [Web hot reload](#web-hot-reload)
+  - [Contribute](#contribute)
 
 Qlevar router is a flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
 With Navigator 2.0 Manage your project routes and create nested routes. Change only one widget on your page when navigating to the new route. Navigate without context from anywhere to anywhere.
@@ -467,3 +468,7 @@ class MyApp extends StatelessWidget {
 and so will have something like this when you run as windows application
 
 ![BrowserAddressBar](https://github.com/SchabanBo/qlevar_router/blob/master/example/assets/images/BrowserAddressBar.gif)
+
+## Contribute
+
+Any Contributing is welcome, You could help with writing test. More example, or any new ideas to the package

@@ -11,7 +11,7 @@ void main() {
     await tester.pumpWidget(AppWarpper([
       QRoute(path: '/', builder: () => BooksListScreen()),
     ]));
-
+    await tester.pumpAndSettle();
     final tests = {'f': 2, '4': 1, '': 3, 'qlevar': 0, 'h': 1};
     expectedPath('/');
     for (var test in tests.entries) {

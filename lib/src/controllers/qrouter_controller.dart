@@ -60,7 +60,7 @@ abstract class QNavigator extends ChangeNotifier {
   Future<void> replaceAll(String path);
 
   /// remove the last page in the stack
-  bool removeLast();
+  Future<bool> removeLast();
 
   /// Add Routes to this Navigator
   /// You can extand the definded routes for this navigator.
@@ -110,26 +110,29 @@ class QRouterController extends QNavigator {
 
   List<QPageInternal> get pages => List.unmodifiable(_pagesController.pages);
 
-  QRouteInternal findPath(String path) {
-    return MatchController(path, routes.parentFullPath, routes).match;
-  }
+  Future<QRouteInternal> findPath(String path) =>
+      MatchController(path, routes.parentFullPath, routes).match;
 
-  QRouteInternal findName(String name, {Map<String, dynamic>? params}) {
-    return MatchController.fromName(name, routes.parentFullPath, routes,
-            params: params)
-        .match;
-  }
+  Future<QRouteInternal> findName(String name,
+          {Map<String, dynamic>? params}) =>
+      MatchController.fromName(name, routes.parentFullPath, routes,
+              params: params)
+          .match;
 
   @override
   Future<void> pushName(String name, {Map<String, dynamic>? params}) async =>
-      await addRouteAsync(findName(name, params: params));
+      await addRouteAsync(await findName(name, params: params));
 
   @override
-  bool removeLast() {
+  Future<bool> removeLast() async {
     if (!canPop) {
       return false;
     }
-    final isPoped = _pagesController.removeLast();
+    if (QR.isShowingDialog) {
+      navKey.currentState!.pop();
+      return true;
+    }
+    final isPoped = await _pagesController.removeLast();
     if (isPoped) {
       update(withParams: true);
     }
@@ -142,7 +145,7 @@ class QRouterController extends QNavigator {
     final index =
         _pagesController.routes.indexWhere((e) => e.route.name == name);
     assert(index != -1, 'Path with name $name was not found in the stack');
-    _pagesController.removeIndex(index);
+    await _pagesController.removeIndex(index);
     QR.history.removeLast();
     await pushName(withName, params: params);
   }
@@ -150,21 +153,21 @@ class QRouterController extends QNavigator {
   @override
   Future<void> replaceAllWithName(String name,
       {Map<String, dynamic>? params}) async {
-    final match = findName(name, params: params);
-    _pagesController.removeAll();
+    final match = await findName(name, params: params);
+    await _pagesController.removeAll();
     await addRouteAsync(match);
   }
 
   @override
   Future<void> push(String path) async {
-    final match = findPath(path);
+    final match = await findPath(path);
     await addRouteAsync(match);
   }
 
   @override
   Future<void> replaceAll(String path) async {
-    final match = findPath(path);
-    _pagesController.removeAll();
+    final match = await findPath(path);
+    await _pagesController.removeAll();
     await addRouteAsync(match);
   }
 
@@ -182,7 +185,7 @@ class QRouterController extends QNavigator {
     final index =
         _pagesController.routes.indexWhere((e) => e.route.path == path);
     assert(index != -1, 'Path $path was not found in the stack');
-    _pagesController.removeIndex(index);
+    await _pagesController.removeIndex(index);
     QR.history.removeLast();
     await push(withPath);
   }
@@ -231,19 +234,20 @@ class QRouterController extends QNavigator {
     }
     QR.history.add(QHistoryEntry(
         route.key, route.activePath!, route.params!, key.name, route.hasChild));
-    _pagesController.add(route);
+    await _pagesController.add(route);
   }
 
   @override
   Future<void> popUnitOrPush(String path) async {
-    await popUnitOrPushMatch(findPath(path));
+    await popUnitOrPushMatch(await findPath(path));
   }
 
   @override
   Future<void> popUnitOrPushName(String name,
       {Map<String, dynamic>? params}) async {
     final match =
-        MatchController.fromName(name, routes.parentFullPath, routes).match;
+        await MatchController.fromName(name, routes.parentFullPath, routes)
+            .match;
     await popUnitOrPushMatch(match);
   }
 
@@ -270,14 +274,14 @@ class QRouterController extends QNavigator {
     if (index == _pagesController.pages.length - 1) {
       // if the same page is on the top, then replace it.
       // remove it from the top and add it again
-      _pagesController.removeLast();
+      await _pagesController.removeLast();
       await addRouteAsync(match, checkChild: checkChild);
       return;
     }
     // page exist remove unit it
     final pagesLength = _pagesController.pages.length;
     for (var i = index + 1; i < pagesLength; i++) {
-      _pagesController.removeLast();
+      await _pagesController.removeLast();
     }
     update();
   }
@@ -329,14 +333,14 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  Future<void> replaceLast(String path) {
-    removeLast();
+  Future<void> replaceLast(String path) async {
+    await removeLast();
     return push(path);
   }
 
   @override
-  Future<void> replaceLastName(String name) {
-    removeLast();
+  Future<void> replaceLastName(String name) async {
+    await removeLast();
     return pushName(name);
   }
 }

@@ -1,15 +1,12 @@
-import 'dart:async';
-
 import 'package:qlevar_router/qlevar_router.dart';
 
-import 'helpers/database.dart';
 import 'helpers/text_page.dart';
+import 'routes/parent.dart';
 import 'screens/add_remove_routes.dart';
 import 'screens/declarative_page.dart';
 import 'screens/home_page.dart';
 import 'screens/nested_route.dart';
 import 'screens/overlays_page.dart';
-import 'screens/parent_page.dart';
 
 class AppRoutes {
   static const nested = 'Nested';
@@ -30,45 +27,7 @@ class AppRoutes {
         QRoute.declarative(
             path: '/declarative',
             declarativeBuilder: (k) => DeclarativePage(k)),
-        QRoute(
-            name: 'Parent',
-            path: '/parent',
-            builder: () {
-              print('-- Build Parent page --');
-              return ParentPage();
-            },
-            middleware: [
-              QMiddlewareBuilder(
-                  onEnterFunc: () => print('-- Enter Parent page --'),
-                  onExitFunc: () => print('-- Exit Parent page --'),
-                  onMatchFunc: () => print('-- Parent page Matched --'))
-            ],
-            children: [
-              QRoute(path: '/child', builder: () => TextPage('Hi child')),
-              QRoute(path: '/child-1', builder: () => TextPage('Hi child 1')),
-              QRoute(path: '/child-2', builder: () => TextPage('Hi child 2')),
-              QRoute(path: '/child-3', builder: () => TextPage('Hi child 3')),
-              QRoute(
-                  path: '/child-4',
-                  middleware: [
-                    QMiddlewareBuilder(
-                        redirectGuardFunc: (s) => Future.delayed(
-                            Duration(milliseconds: 100),
-                            () => Database.canChildNavigate
-                                ? null
-                                : '/parent/child-2'))
-                  ],
-                  builder: () => TextPage('Hi child 4')),
-              QRoute(
-                  path: '/child-5',
-                  middleware: [
-                    QMiddlewareBuilder(
-                        redirectGuardNameFunc: (s) => Future.delayed(
-                            Duration(milliseconds: 100),
-                            () => QNameRedirect(name: nested)))
-                  ],
-                  builder: () => TextPage('Hi child 4')),
-            ]),
+        ParentRoutes().route(),
         QRoute(
             path: '/:id',
             pageType: QFadePage(),

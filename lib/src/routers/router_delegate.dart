@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -80,10 +82,8 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
         key: key,
         pages: _controller.pages,
         onPopPage: (route, result) {
-          if (!route.didPop(result)) {
-            return false;
-          }
-          return _controller.removeLast();
+          _controller.removeLast();
+          return false;
         },
       );
 

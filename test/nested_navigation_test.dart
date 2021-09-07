@@ -91,7 +91,7 @@ void main() {
 
       for (var z = 0; z < 10; z++) {
         final i = Random().nextInt(5) + 1;
-        QR.navigatorOf('/dashboard').replaceAll('/child-$i');
+        await QR.navigatorOf('/dashboard').replaceAll('/child-$i');
         await tester.pumpAndSettle();
         expect(find.text('login'), findsNothing);
         expect(find.text('child-$i'), findsOneWidget);

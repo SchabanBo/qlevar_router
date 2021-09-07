@@ -41,9 +41,9 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
           children: [
             IconButton(
               icon: Icon(Icons.arrow_back),
-              onPressed: () {
+              onPressed: () async {
                 final path = QR.currentPath;
-                if (QR.back()) {
+                if (await QR.back()) {
                   _paths.add(path);
                 }
               },
