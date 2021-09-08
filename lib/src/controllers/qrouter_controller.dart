@@ -145,7 +145,7 @@ class QRouterController extends QNavigator {
     final index =
         _pagesController.routes.indexWhere((e) => e.route.name == name);
     assert(index != -1, 'Path with name $name was not found in the stack');
-    await _pagesController.removeIndex(index);
+    if (!await _pagesController.removeIndex(index)) return;
     QR.history.removeLast();
     await pushName(withName, params: params);
   }
@@ -154,7 +154,7 @@ class QRouterController extends QNavigator {
   Future<void> replaceAllWithName(String name,
       {Map<String, dynamic>? params}) async {
     final match = await findName(name, params: params);
-    await _pagesController.removeAll();
+    if (!await _pagesController.removeAll()) return;
     await addRouteAsync(match);
   }
 
@@ -167,7 +167,7 @@ class QRouterController extends QNavigator {
   @override
   Future<void> replaceAll(String path) async {
     final match = await findPath(path);
-    await _pagesController.removeAll();
+    if (!await _pagesController.removeAll()) return;
     await addRouteAsync(match);
   }
 
@@ -185,7 +185,7 @@ class QRouterController extends QNavigator {
     final index =
         _pagesController.routes.indexWhere((e) => e.route.path == path);
     assert(index != -1, 'Path $path was not found in the stack');
-    await _pagesController.removeIndex(index);
+    if (!await _pagesController.removeIndex(index)) return;
     QR.history.removeLast();
     await push(withPath);
   }
@@ -274,14 +274,14 @@ class QRouterController extends QNavigator {
     if (index == _pagesController.pages.length - 1) {
       // if the same page is on the top, then replace it.
       // remove it from the top and add it again
-      await _pagesController.removeLast();
+      if (!await _pagesController.removeLast()) return;
       await addRouteAsync(match, checkChild: checkChild);
       return;
     }
     // page exist remove unit it
     final pagesLength = _pagesController.pages.length;
     for (var i = index + 1; i < pagesLength; i++) {
-      await _pagesController.removeLast();
+      if (!await _pagesController.removeLast()) return;
     }
     update();
   }
