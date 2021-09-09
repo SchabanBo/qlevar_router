@@ -13,6 +13,7 @@ import 'routers/qrouter.dart';
 import 'routes/qroute.dart';
 import 'routes/qroute_children.dart';
 import 'routes/qroute_internal.dart';
+import 'types/pop_result.dart';
 import 'types/qhistory.dart';
 import 'types/qroute_key.dart';
 
@@ -174,12 +175,12 @@ class QRContext {
   }
 
   /// try to pop the last active navigator or go to last path in the history
-  Future<bool> back() async {
+  Future<PopResult> back() async {
     // is proccesed by declerative
     if (_manager.isDeclarative(QR.history.current.key.key)) {
       final dCon = _manager.getDeclarative(QR.history.current.key.key);
       if (dCon.pop()) {
-        return true;
+        return PopResult.Poped;
       }
     }
 
@@ -193,20 +194,21 @@ class QRContext {
       }
       final controller = navigatorOf(lastNavi);
       if (controller.canPop) {
-        if (!await controller.removeLast()) return false;
+        final popResult = await controller.removeLast();
+        if (popResult != PopResult.Poped) return popResult;
         if (lastNavi != QRContext.rootRouterName) {
           (rootNavigator as QRouterController).update(withParams: false);
         }
-        return true;
+        return PopResult.Poped;
       }
     }
 
     if (!history.hasLast) {
-      return false;
+      return PopResult.NotPoped;
     }
     to(history.last.path);
     QR.history.removeLast(count: 2);
-    return true;
+    return PopResult.Poped;
   }
 
   /// Print a message from the package

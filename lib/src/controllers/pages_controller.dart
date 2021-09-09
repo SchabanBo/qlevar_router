@@ -2,6 +2,7 @@ import '../../qlevar_router.dart';
 import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
 import '../routes/qroute_internal.dart';
+import '../types/pop_result.dart';
 import '../types/qroute_key.dart';
 import 'middleware_controller.dart';
 
@@ -24,13 +25,13 @@ class PagesController {
     }
   }
 
-  Future<bool> removeLast() async {
+  Future<PopResult> removeLast() async {
     if (routes.isEmpty) {
-      return false;
+      return PopResult.NotPoped;
     }
     final route = routes.last; // find the page
     final middleware = MiddlewareController(route);
-    if (!await middleware.runCanPop()) return false;
+    if (!await middleware.runCanPop()) return PopResult.NotAllowedToPop;
 
     await middleware.runOnExit(); // run on exit
     if (QR.removeNavigator(route.name)) {
@@ -44,7 +45,7 @@ class PagesController {
     }
     routes.removeLast(); // remove from the routes
     pages.removeLast(); // reomve from the pages
-    return true;
+    return PopResult.Poped;
   }
 
   Future<bool> removeIndex(int index) async {
@@ -61,11 +62,12 @@ class PagesController {
     return true;
   }
 
-  Future<bool> removeAll() async {
+  Future<PopResult> removeAll() async {
     for (var i = 0; i < pages.length; i++) {
-      if (!await removeLast()) return false;
+      final result = await removeLast();
+      if (result != PopResult.Poped) return result;
       i--;
     }
-    return true;
+    return PopResult.Poped;
   }
 }
