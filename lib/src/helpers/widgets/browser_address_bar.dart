@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../qlevar_router.dart';
 import '../../controllers/qrouter_controller.dart';
+import '../../types/pop_result.dart';
 
 class BrowserAddressBar extends StatefulWidget {
   static bool get isNeeded => (kReleaseMode || kIsWeb) ? false : true;
@@ -43,7 +44,7 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
               icon: Icon(Icons.arrow_back),
               onPressed: () async {
                 final path = QR.currentPath;
-                if (await QR.back()) {
+                if (await QR.back() == PopResult.Poped) {
                   _paths.add(path);
                 }
               },

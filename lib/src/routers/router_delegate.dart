@@ -7,6 +7,7 @@ import '../../qlevar_router.dart';
 import '../controllers/qrouter_controller.dart';
 import '../helpers/widgets/browser_address_bar.dart';
 import '../qr.dart';
+import '../types/pop_result.dart';
 
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
@@ -65,7 +66,15 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   }
 
   @override
-  Future<bool> popRoute() async => QR.back();
+  Future<bool> popRoute() async {
+    final result = await QR.back();
+    switch (result) {
+      case PopResult.NotPoped:
+        return false;
+      default:
+        return true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) =>

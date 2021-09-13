@@ -1,7 +1,7 @@
 name: qlevar_router
 description: A router that helps you to manage your project routes. Create nested routes. navigation without context between your pages.
 
-version: 1.5.0
+version: 1.5.1
 repository: https://github.com/SchabanBo/qlevar_router
 
 environment:

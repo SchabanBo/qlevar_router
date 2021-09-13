@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.5.1] 13.09.2021
+
+- Change pop result to PopResult
+- Fix CanPop not working on first page
+
 ## [1.5.0] 07.09.2021
 
 - Convert `QMiddleware.canPop` ,`QMiddleware.onMatch` ,`QMiddleware.onEnter` and `QMiddleware.onExit` to accept Async.

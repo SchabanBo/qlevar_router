@@ -78,8 +78,6 @@ void main() {
             ])
       ], initPath: '/domain1/dashboard');
       await _.setInitialRoutePath('/');
-      // wait init page to load
-      await Future.delayed(Duration(microseconds: 300));
       expect(pathFromGuard, '/domain1/dashboard');
       expect(paramFromGuard, 'domain1');
 
@@ -88,6 +86,67 @@ void main() {
         expect(pathFromGuard, '/dd$i/dashboard');
         expect(paramFromGuard, 'dd$i');
       }
+    });
+
+    testWidgets('Can Pop with dialog', (widgetTester) async {
+      QR.reset();
+      final routes = [
+        QRoute(
+            path: '/',
+            builder: () => Scaffold(appBar: AppBar(), body: WidgetOne())),
+        QRoute(path: '/two', builder: () => WidgetTwo(), middleware: [
+          QMiddlewareBuilder(canPopFunc: () async {
+            final result = await QR.show<bool>(QDialog(
+                widget: (pop) => AlertDialog(
+                      title: Text('Do you want to go back?'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => pop(true), child: Text('Yes')),
+                        TextButton(
+                            onPressed: () => pop(false), child: Text('No'))
+                      ],
+                    )));
+
+            return result ?? false;
+          })
+        ])
+      ];
+      final delegate = QRouterDelegate(routes);
+      await widgetTester.pumpWidget(MaterialApp.router(
+          routeInformationParser: const QRouteInformationParser(),
+          routerDelegate: delegate));
+      await widgetTester.pumpAndSettle();
+      expectedPath('/');
+      expect(find.byType(WidgetOne), findsOneWidget);
+      await QR.to('/two');
+      await widgetTester.pumpAndSettle();
+      expectedPath('/two');
+      expect(find.byType(WidgetTwo), findsOneWidget);
+      var firstDialogDone = false;
+      delegate.popRoute().whenComplete(() {
+        firstDialogDone = true;
+      });
+      await widgetTester.pumpAndSettle();
+      expect(find.text('No'), findsOneWidget);
+      await widgetTester.tap(find.text('No'));
+      await widgetTester.pumpAndSettle();
+      expectedPath('/two');
+      expect(find.byType(WidgetTwo), findsOneWidget);
+      expect(find.text('No'), findsNothing);
+      expect(true, firstDialogDone);
+
+      var secondDialogDone = false;
+      delegate.popRoute().whenComplete(() {
+        secondDialogDone = true;
+      });
+      await widgetTester.pumpAndSettle();
+      expect(find.text('Yes'), findsOneWidget);
+      await widgetTester.tap(find.text('Yes'));
+      await widgetTester.pumpAndSettle();
+      expect(find.text('Yes'), findsNothing);
+      expectedPath('/');
+      expect(find.byType(WidgetOne), findsOneWidget);
+      expect(true, secondDialogDone);
     });
   });
 }

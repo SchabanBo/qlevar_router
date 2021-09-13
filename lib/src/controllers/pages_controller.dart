@@ -2,6 +2,7 @@ import '../../qlevar_router.dart';
 import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
 import '../routes/qroute_internal.dart';
+import '../types/pop_result.dart';
 import '../types/qroute_key.dart';
 import 'middleware_controller.dart';
 
@@ -24,15 +25,18 @@ class PagesController {
     }
   }
 
-  Future<bool> removeLast() async {
+  Future<PopResult> removeLast({bool allowEmptyPages = false}) async {
     if (routes.isEmpty) {
-      return false;
+      return PopResult.NotPoped;
     }
     final route = routes.last; // find the page
     final middleware = MiddlewareController(route);
-    if (!await middleware.runCanPop()) {
-      return false;
+    if (!await middleware.runCanPop()) return PopResult.NotAllowedToPop;
+
+    if (allowEmptyPages == false && routes.length == 1) {
+      return PopResult.NotPoped;
     }
+
     await middleware.runOnExit(); // run on exit
     if (QR.removeNavigator(route.name)) {
       // if this route has navigator then remove it to remove this route too.
@@ -45,22 +49,29 @@ class PagesController {
     }
     routes.removeLast(); // remove from the routes
     pages.removeLast(); // reomve from the pages
-    return true;
+    return PopResult.Poped;
   }
 
-  Future<void> removeIndex(int index) async {
+  Future<bool> removeIndex(int index) async {
     final route = routes[index]; // find the page
-    await MiddlewareController(route).runOnExit(); // run on exit
+
+    final middleware = MiddlewareController(route);
+    if (!await middleware.runCanPop()) return false;
+    await middleware.runOnExit(); // run on exit
+
     QR.removeNavigator(route.name); // remove navigator if exist
     QR.history.remove(route); // remove history for this route
     routes.removeAt(index); // remove from the routes
     pages.removeAt(index); // reomve from the pages
+    return true;
   }
 
-  Future<void> removeAll() async {
+  Future<PopResult> removeAll() async {
     for (var i = 0; i < pages.length; i++) {
-      await removeLast();
+      final result = await removeLast(allowEmptyPages: true);
+      if (result != PopResult.Poped) return result;
       i--;
     }
+    return PopResult.Poped;
   }
 }
