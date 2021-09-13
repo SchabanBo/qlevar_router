@@ -25,13 +25,17 @@ class PagesController {
     }
   }
 
-  Future<PopResult> removeLast() async {
+  Future<PopResult> removeLast({bool allowEmptyPages = false}) async {
     if (routes.isEmpty) {
       return PopResult.NotPoped;
     }
     final route = routes.last; // find the page
     final middleware = MiddlewareController(route);
     if (!await middleware.runCanPop()) return PopResult.NotAllowedToPop;
+
+    if (allowEmptyPages == false && routes.length == 1) {
+      return PopResult.NotPoped;
+    }
 
     await middleware.runOnExit(); // run on exit
     if (QR.removeNavigator(route.name)) {
@@ -64,7 +68,7 @@ class PagesController {
 
   Future<PopResult> removeAll() async {
     for (var i = 0; i < pages.length; i++) {
-      final result = await removeLast();
+      final result = await removeLast(allowEmptyPages: true);
       if (result != PopResult.Poped) return result;
       i--;
     }

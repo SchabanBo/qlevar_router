@@ -126,9 +126,6 @@ class QRouterController extends QNavigator {
 
   @override
   Future<PopResult> removeLast() async {
-    if (!canPop) {
-      return PopResult.NotPoped;
-    }
     if (QR.isShowingDialog) {
       navKey.currentState!.pop();
       return PopResult.DialogClosed;
@@ -275,7 +272,8 @@ class QRouterController extends QNavigator {
     if (index == _pagesController.pages.length - 1) {
       // if the same page is on the top, then replace it.
       // remove it from the top and add it again
-      if (await _pagesController.removeLast() != PopResult.Poped) return;
+      if (await _pagesController.removeLast(allowEmptyPages: true) !=
+          PopResult.Poped) return;
       await addRouteAsync(match, checkChild: checkChild);
       return;
     }

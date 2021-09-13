@@ -193,8 +193,9 @@ class QRContext {
         lastNavi = history.last.navigator;
       }
       final controller = navigatorOf(lastNavi);
-      if (controller.canPop) {
-        final popResult = await controller.removeLast();
+
+      final popResult = await controller.removeLast();
+      if (popResult != PopResult.NotPoped) {
         if (popResult != PopResult.Poped) return popResult;
         if (lastNavi != QRContext.rootRouterName) {
           (rootNavigator as QRouterController).update(withParams: false);
