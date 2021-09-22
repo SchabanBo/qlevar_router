@@ -37,7 +37,7 @@ void main() {
       QR.reset();
       await tester.pumpWidget(AppWarpper(routes));
 
-      await QR.to('/two/one');
+      await QR.to('/two/one/');
       await tester.pumpAndSettle();
       expectedPath('/two/one');
       expect(find.byType(WidgetTwo), findsOneWidget);
