@@ -14,7 +14,8 @@ class Description extends StatefulWidget {
   _DescriptionState createState() => _DescriptionState();
 }
 
-class _DescriptionState extends State<Description> {
+class _DescriptionState extends State<Description>
+    with TickerProviderStateMixin {
   bool open = false;
   @override
   Widget build(BuildContext context) {
@@ -36,6 +37,7 @@ class _DescriptionState extends State<Description> {
           QButton(widget.text, widget.onPress),
           AnimatedSize(
               duration: Duration(milliseconds: 300),
+              vsync: this,
               child: open
                   ? Text(
                       widget.descriptions,
