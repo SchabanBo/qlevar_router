@@ -11,7 +11,7 @@ class MatchController {
   final String parentPath;
   int _searchIndex = 0;
   MatchController(String sPath, this.foundPath, this.routes)
-      : path = Uri.parse(sPath),
+      : path = _fixedPathUri(sPath),
         parentPath = foundPath {
     QR.log(
         // ignore: lines_longer_than_80_chars
@@ -195,5 +195,19 @@ class MatchController {
       }
     }
     return newPath;
+  }
+
+  static Uri _fixedPathUri(String path) {
+    var _fixedPath = Uri.parse(path);
+
+    /// if the path ended with extra slash /
+    /// remove it and continue
+    if (_fixedPath.pathSegments.isNotEmpty &&
+        _fixedPath.pathSegments.last.isEmpty) {
+      _fixedPath = _fixedPath.replace(
+        pathSegments: ([..._fixedPath.pathSegments])..removeLast(),
+      );
+    }
+    return _fixedPath;
   }
 }

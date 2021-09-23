@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.5.2] 23.09.2021
+
+- Fix #37
+- Fix exception if the URL ended with extra /
+
 ## [1.5.1] 13.09.2021
 
 - Change pop result to PopResult
