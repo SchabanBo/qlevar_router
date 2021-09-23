@@ -333,13 +333,13 @@ class QRouterController extends QNavigator {
 
   @override
   Future<void> replaceLast(String path) async {
-    if (await _pagesController.removeAll() != PopResult.Poped) return;
+    if (await _pagesController.removeLast() != PopResult.Poped) return;
     return push(path);
   }
 
   @override
   Future<void> replaceLastName(String name) async {
-    if (await _pagesController.removeAll() != PopResult.Poped) return;
+    if (await _pagesController.removeLast() != PopResult.Poped) return;
     return pushName(name);
   }
 }
