@@ -46,6 +46,15 @@ void main() {
       expectedPath('/nested/child');
       expectedHistoryLength(3);
 
+      // navigate to route belongs to a different navigator
+      await QR.to('/two');
+      expectedPath('/two');
+      expectedHistoryLength(4);
+
+      await QR.back();
+      expectedPath('/nested/child');
+      expectedHistoryLength(3);
+
       await QR.back();
       expectedPath('/');
       expectedHistoryLength(1);
