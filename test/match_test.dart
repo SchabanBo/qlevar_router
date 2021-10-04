@@ -137,5 +137,29 @@ void main() {
       expectedPath('/this/extra/slash');
       expect(find.byType(WidgetThree), findsOneWidget);
     });
+
+    testWidgets('Path query should only append to the last match',
+        (tester) async {
+      QR.reset();
+      await tester.pumpWidget(AppWarpper(
+        [
+          QRoute(path: '/', builder: () => Container()),
+          QRoute(path: '/zero', builder: () => Scaffold(body: Container())),
+          QRoute.withChild(
+              path: '/this/extra',
+              builderChild: (child) => Scaffold(body: child),
+              children: [
+                QRoute(path: '/', builder: () => Scaffold()),
+                QRoute(
+                    path: '/slash/extra',
+                    builder: () => Scaffold(body: WidgetThree())),
+              ]),
+        ],
+        initPath: '/this/extra/slash/extra?id=200',
+      ));
+      await tester.pumpAndSettle();
+      expectedPath('/this/extra/slash/extra?id=200');
+      expect(QR.history.entries[0].path, '/this/extra');
+    });
   });
 }

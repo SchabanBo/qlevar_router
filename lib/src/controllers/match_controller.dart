@@ -38,13 +38,12 @@ class MatchController {
         foundPath[foundPath.length - 2] == '/') {
       foundPath = foundPath.substring(0, foundPath.length - 1);
     }
-    if ((path.pathSegments.isEmpty ||
-            (path.pathSegments.isNotEmpty &&
-                path.pathSegments.last == segment)) &&
-        path.hasQuery) {
+    if (_searchIndex + 1 == path.pathSegments.length && path.hasQuery) {
       foundPath += '?${path.query}';
       params.addAll(path.queryParameters);
     }
+    // update searchIndex after we updated foundPath
+    _searchIndex++;
   }
 
   Future<QRouteInternal> get match async {
@@ -125,7 +124,6 @@ class MatchController {
       }
       if (found && isFound) {
         for (var i = 0; i < routeUri.pathSegments.length; i++) {
-          _searchIndex++;
           updateFoundPath(this.path.pathSegments[i + index]);
         }
         isFound = false;
@@ -148,7 +146,6 @@ class MatchController {
     if (result != null) {
       if (index == -1 || _searchIndex == index) {
         updateFoundPath(path);
-        _searchIndex++;
       }
       result.clean();
       result.activePath = foundPath;
