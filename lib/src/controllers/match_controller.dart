@@ -9,6 +9,7 @@ class MatchController {
   String foundPath;
   final params = QParams();
   final String parentPath;
+
   /// index of the path segment we are searching for
   int _searchIndex = -1;
   MatchController(String sPath, this.foundPath, this.routes)
@@ -147,7 +148,8 @@ class MatchController {
     // or multi pathes
     if (foundIndex == -1 &&
         index != -1 &&
-    // if the length of remaining segments is not greater than 1, skip searching
+        // if the length of remaining segments isn't
+        // greater than 1, skip searching
         this.path.pathSegments.length - index > 1) {
       foundIndex = routes.routes.indexWhere(findMulti);
     }
