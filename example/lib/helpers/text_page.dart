@@ -6,7 +6,8 @@ import 'page.dart';
 
 class TextPage extends StatelessWidget {
   final String text;
-  TextPage(this.text);
+  final List<Widget>? extra;
+  TextPage(this.text, {this.extra});
   @override
   Widget build(BuildContext context) {
     return PageContainer(Column(
@@ -15,7 +16,7 @@ class TextPage extends StatelessWidget {
         Center(child: Text(text)),
         Center(child: Text(now)),
         Center(child: TextButton(onPressed: QR.back, child: Text('Back'))),
-      ],
+      ]..addAll(extra ?? []),
     ));
   }
 }

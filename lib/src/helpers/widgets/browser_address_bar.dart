@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../../qlevar_router.dart';
 import '../../controllers/qrouter_controller.dart';
-import '../../types/pop_result.dart';
 
 class BrowserAddressBar extends StatefulWidget {
   static bool get isNeeded => (kReleaseMode || kIsWeb) ? false : true;

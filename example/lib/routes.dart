@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'helpers/text_page.dart';
@@ -32,9 +35,22 @@ class AppRoutes {
             path: '/:id',
             pageType: QFadePage(),
             builder: () => TextPage('the id is ${QR.params['id']}')),
-        QRoute(path: '/params', builder: () => TextPage(
-            // ignore: lines_longer_than_80_chars
-            'params are: test is${QR.params['test']} and go is ${QR.params['go']}')),
+        QRoute(
+            path: '/params',
+            builder: () => TextPage(
+                  // ignore: lines_longer_than_80_chars
+                  'params are: test is${QR.params['test']} and go is ${QR.params['go']}',
+                  extra: [
+                    TextButton(
+                        onPressed: () => QR.to(
+                            "/params?test=${Random().nextInt(1000)}&go=${Random().nextInt(1000)}"),
+                        child: Text('New param')),
+                    TextButton(
+                        onPressed: () =>
+                            QR.to(QR.currentPath, ignoreSamePath: false),
+                        child: Text('Refresh'))
+                  ],
+                )),
         QRoute.withChild(
             path: '/add-remove-routes',
             builderChild: (child) => AddRemoveRoutes(child),

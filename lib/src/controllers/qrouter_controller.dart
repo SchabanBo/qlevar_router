@@ -10,9 +10,7 @@ import '../pages/qpage_internal.dart';
 import '../qr.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
-import '../types/pop_result.dart';
 import '../types/qhistory.dart';
-import '../types/qroute_key.dart';
 import 'match_controller.dart';
 import 'middleware_controller.dart';
 import 'pages_controller.dart';
@@ -41,12 +39,18 @@ abstract class QNavigator extends ChangeNotifier {
 
   Future<void> replaceAllWithName(String name, {Map<String, dynamic>? params});
 
+  @Deprecated('Use popUntilOrPushName instead')
   Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params});
+
+  Future<void> popUntilOrPushName(String name, {Map<String, dynamic>? params});
 
   /// Push this [Path] on the top of the stack
   Future<void> push(String path);
 
+  @Deprecated('Use popUntilOrPush instead')
   Future<void> popUnitOrPush(String path);
+
+  Future<void> popUntilOrPush(String path);
 
   /// Replace this [path] with this [withPath]
   Future<void> replace(String path, String withPath);
@@ -55,7 +59,7 @@ abstract class QNavigator extends ChangeNotifier {
   Future<void> replaceLast(String path);
 
   /// Remove the last page in the stack and add the one with this [name]
-  Future<void> replaceLastName(String name);
+  Future<void> replaceLastName(String name, {Map<String, dynamic>? params});
 
   /// Remove all pages and add the page with [path]
   Future<void> replaceAll(String path);
@@ -236,23 +240,30 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  Future<void> popUnitOrPush(String path) async {
-    await popUnitOrPushMatch(await findPath(path));
+  Future<void> popUntilOrPush(String path) async {
+    await popUntilOrPushMatch(await findPath(path));
   }
 
   @override
-  Future<void> popUnitOrPushName(String name,
+  Future<void> popUnitOrPush(String path) => popUntilOrPush(path);
+
+  @override
+  Future<void> popUntilOrPushName(String name,
       {Map<String, dynamic>? params}) async {
     final match =
         await MatchController.fromName(name, routes.parentFullPath, routes)
             .match;
-    await popUnitOrPushMatch(match);
+    await popUntilOrPushMatch(match);
   }
 
-  Future<void> popUnitOrPushMatch(QRouteInternal match,
+  @override
+  Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params}) =>
+      popUntilOrPushName(name, params: params);
+
+  Future<void> popUntilOrPushMatch(QRouteInternal match,
       {bool checkChild = true}) async {
-    final index = _pagesController.routes
-        .indexWhere((element) => element.key.isSame(match.key));
+    final index =
+        _pagesController.routes.indexWhere((element) => element.isSame(match));
     if (index == -1) {
       // Page not exist add it.
       await addRouteAsync(match, checkChild: checkChild);
@@ -262,7 +273,7 @@ class QRouterController extends QNavigator {
     if (match.hasChild) {
       // page exist and has children
       if (checkChild) {
-        await popUnitOrPushMatch(match.child!);
+        await popUntilOrPushMatch(match.child!);
       }
       return;
     }
@@ -334,12 +345,13 @@ class QRouterController extends QNavigator {
   @override
   Future<void> replaceLast(String path) async {
     if (await _pagesController.removeAll() != PopResult.Poped) return;
-    return push(path);
+    return await push(path);
   }
 
   @override
-  Future<void> replaceLastName(String name) async {
+  Future<void> replaceLastName(String name,
+      {Map<String, dynamic>? params}) async {
     if (await _pagesController.removeAll() != PopResult.Poped) return;
-    return pushName(name);
+    return await pushName(name, params: params);
   }
 }

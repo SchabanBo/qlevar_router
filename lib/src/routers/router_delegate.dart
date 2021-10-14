@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../qlevar_router.dart';
 import '../controllers/qrouter_controller.dart';
 import '../helpers/widgets/browser_address_bar.dart';
 import '../qr.dart';
-import '../types/pop_result.dart';
 
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
@@ -46,6 +44,8 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(String route) async {
+    // fix route encoding (order%20home => order home)
+    route = Uri.decodeFull(route).toString();
     if (QR.history.hasLast &&
         QR.history.last.path == QR.settings.notFoundPage.path) {
       if (QR.history.length > 2 && route == QR.history.beforelast.path) {

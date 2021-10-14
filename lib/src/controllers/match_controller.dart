@@ -150,11 +150,10 @@ class MatchController {
         updateFoundPath(path);
         _searchIndex++;
       }
-      result.clean();
-      result.activePath = foundPath;
-      result.params = params.copyWith();
-      await MiddlewareController(result).runOnMatch();
-      return result;
+      var newMatch =
+          result.asNewMatch(result, foundPath, newParams: params.copyWith());
+      await MiddlewareController(newMatch).runOnMatch();
+      return newMatch;
     }
 
     QR.log('[$path] is not child of ${routes.parentKey}');
