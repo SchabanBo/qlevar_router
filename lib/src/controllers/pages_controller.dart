@@ -2,8 +2,6 @@ import '../../qlevar_router.dart';
 import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
 import '../routes/qroute_internal.dart';
-import '../types/pop_result.dart';
-import '../types/qroute_key.dart';
 import 'middleware_controller.dart';
 
 class PagesController {

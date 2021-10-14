@@ -8,14 +8,9 @@ import 'helpers/platform/configure_web.dart'
     if (dart.library.io) 'helpers/platform/configure_nonweb.dart';
 import 'helpers/widgets/stack_tree.dart';
 import 'overlays/qoverlay.dart';
-import 'routers/qdeclarative._router.dart';
-import 'routers/qrouter.dart';
-import 'routes/qroute.dart';
 import 'routes/qroute_children.dart';
 import 'routes/qroute_internal.dart';
-import 'types/pop_result.dart';
 import 'types/qhistory.dart';
-import 'types/qroute_key.dart';
 
 class QRContext {
   static const rootRouterName = 'Root';
@@ -143,7 +138,7 @@ class QRContext {
   Future<void> _toMatch(QRouteInternal match,
       {String forController = QRContext.rootRouterName}) async {
     final controller = _manager.withName(forController);
-    await controller.popUnitOrPushMatch(match, checkChild: false);
+    await controller.popUntilOrPushMatch(match, checkChild: false);
     if (match.hasChild && !match.isProcessed) {
       final newControllerName =
           _manager.hasController(match.name) ? match.name : forController;

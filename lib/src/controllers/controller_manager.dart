@@ -1,8 +1,6 @@
 import '../../qlevar_router.dart';
-import '../routers/qdeclarative._router.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
-import '../types/qroute_key.dart';
 import 'qrouter_controller.dart';
 
 class ControllerManager {

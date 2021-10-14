@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import '../../qlevar_router.dart';
 import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
-import '../routes/qdeclarative_route.dart';
 
 /// The dcelatarive page builder
 /// it gives you the state and take the pages to show
