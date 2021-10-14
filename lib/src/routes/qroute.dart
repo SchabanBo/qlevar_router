@@ -1,9 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
-import '../routers/qrouter.dart';
-import '../types/qroute_key.dart';
-import 'qmiddleware.dart';
 
 typedef PageBuilder = Widget Function();
 typedef PageWithChildBuilder = Widget Function(QRouter);

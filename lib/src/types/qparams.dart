@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// The params for the route
 class QParams {
   final Map<String, _ParamValue> _params;
@@ -28,6 +30,12 @@ class QParams {
 
   /// params count
   int get length => _params.length;
+
+  /// Whether there is no params.
+  bool get isEmpty => _params.isEmpty;
+
+  /// Whether there is at least one param.
+  bool get isNotEmpty => _params.isNotEmpty;
 
   /// remove all params
   void clear() => _params.clear();
@@ -93,6 +101,9 @@ class QParams {
       }
     }
   }
+
+  bool isSame(QParams other) =>
+      length == other.length && mapEquals(asStringMap(), other.asStringMap());
 }
 
 /// Class represent the param value

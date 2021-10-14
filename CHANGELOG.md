@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.5.3] 14.10.2021
+
+- Fix #40 @Sociosarbis
+- Fix url encoding when there is white space in the url
+- #42
+
 ## [1.5.2] 23.09.2021
 
 - Fix #37

@@ -8,9 +8,10 @@ class QRouteInformationParser extends RouteInformationParser<String> {
   @override
   Future<String> parseRouteInformation(
           RouteInformation routeInformation) async =>
-      SynchronousFuture(routeInformation.location ?? '/');
+      SynchronousFuture(
+          Uri.decodeFull(routeInformation.location ?? '/').toString());
 
   @override
   RouteInformation restoreRouteInformation(String match) =>
-      RouteInformation(location: QR.currentPath);
+      RouteInformation(location: Uri.encodeFull(QR.currentPath).toString());
 }

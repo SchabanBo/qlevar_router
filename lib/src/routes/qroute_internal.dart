@@ -1,6 +1,4 @@
 import '../../qlevar_router.dart';
-import '../types/qroute_key.dart';
-import 'qroute.dart';
 import 'qroute_children.dart';
 
 class QRouteInternal {
@@ -42,6 +40,18 @@ class QRouteInternal {
     this.child,
   });
 
+  QRouteInternal asNewMatch(QRouteInternal other, String path,
+          {QParams? newParams}) =>
+      QRouteInternal(
+          key: key,
+          fullPath: fullPath,
+          route: route,
+          isNotFound: isNotFound,
+          children: children,
+          parent: parent,
+          activePath: path,
+          params: newParams);
+
   factory QRouteInternal.from(QRoute route, String cureentPath) {
     final key = QKey(route.name ?? route.path);
     if (!route.path.startsWith('/')) {
@@ -81,7 +91,9 @@ class QRouteInternal {
     isProcessed = false;
   }
 
-  bool isSame(QRouteInternal other) => key.isSame(other.key);
+  bool isSame(QRouteInternal other) =>
+      key.isSame(other.key) &&
+      (params != null && other.params != null && params!.isSame(other.params!));
 
   bool get hasChild => child != null;
 
