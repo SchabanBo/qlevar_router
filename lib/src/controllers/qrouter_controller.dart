@@ -279,7 +279,7 @@ class QRouterController extends QNavigator {
     }
 
     // page is exist and has no children
-    // then pop unit it or replace it
+    // then pop until it or replace it
     if (index == _pagesController.pages.length - 1) {
       // if the same page is on the top, then replace it.
       // remove it from the top and add it again
