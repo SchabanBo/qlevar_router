@@ -5,7 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'test_widgets/test_widgets.dart';
 
 void expectedPath(String path) => expect(QR.currentPath, path);
-void expectedHistoryLength(int lenght) => expect(QR.history.length, lenght);
+void expectedHistoryLength(int length) => expect(QR.history.length, length);
 void printCurrentHistory() => print(QR.history.entries.map((e) => e.path));
 
 Future<void> prepareTest(WidgetTester tester) async {

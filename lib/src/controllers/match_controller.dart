@@ -9,7 +9,9 @@ class MatchController {
   String foundPath;
   final params = QParams();
   final String parentPath;
-  int _searchIndex = 0;
+
+  /// index of the path segment we are searching for
+  int _searchIndex = -1;
   MatchController(String sPath, this.foundPath, this.routes)
       : path = _fixedPathUri(sPath),
         parentPath = foundPath {
@@ -38,31 +40,33 @@ class MatchController {
         foundPath[foundPath.length - 2] == '/') {
       foundPath = foundPath.substring(0, foundPath.length - 1);
     }
-    if ((path.pathSegments.isEmpty ||
-            (path.pathSegments.isNotEmpty &&
-                path.pathSegments.last == segment)) &&
-        path.hasQuery) {
+    if (_searchIndex + 1 == path.pathSegments.length && path.hasQuery) {
       foundPath += '?${path.query}';
       params.addAll(path.queryParameters);
     }
+    // update searchIndex after we updated foundPath
+    _searchIndex++;
   }
 
   Future<QRouteInternal> get match async {
     var searchIn = routes;
     if (path.pathSegments.isEmpty) {
-      final match = await _tryFind(searchIn, -1);
+      final match = await _tryFind(searchIn, _searchIndex);
       if (match == null) {
         return QRouteInternal.notfound(parentPath + path.toString());
       }
       return match;
     }
 
+    // search from the first segment
+    _searchIndex = 0;
+
     final result = await _tryFind(searchIn, _searchIndex);
     if (result == null) {
       return QRouteInternal.notfound(parentPath + path.toString());
     }
     var match = result;
-    for (; _searchIndex < path.pathSegments.length;) {
+    while (_searchIndex < path.pathSegments.length) {
       searchIn = match.children!;
       match.child = await _tryFind(searchIn, _searchIndex);
       if (match.child == null) {
@@ -98,7 +102,7 @@ class MatchController {
   }
 
   Future<QRouteInternal?> _tryFind(QRouteChildren routes, int index) async {
-    var path = index == -1 ? '' : this.path.pathSegments[index];
+    final path = index == -1 ? '' : this.path.pathSegments[index];
 
     bool isSamePath(QRouteInternal route) => route.route.path == '/$path';
 
@@ -110,45 +114,51 @@ class MatchController {
       return isSameComponent(routePath, path);
     }
 
-    var isFound = true;
     bool findMulti(QRouteInternal route) {
       final routeUri = Uri.parse(route.route.path);
-      if (routeUri.pathSegments.length <= 1) {
+      // fast path
+      if (routeUri.pathSegments.length <= 1 ||
+          routeUri.pathSegments.length >
+              this.path.pathSegments.length - index) {
         return false;
       }
       var found = true;
       for (var i = 0; i < routeUri.pathSegments.length; i++) {
-        found = found &&
-            (routeUri.pathSegments[i] == this.path.pathSegments[i + index] ||
-                isSameComponent('/${routeUri.pathSegments[i]}',
-                    this.path.pathSegments[i + index]));
+        if (!(routeUri.pathSegments[i] == this.path.pathSegments[i + index] ||
+            isSameComponent('/${routeUri.pathSegments[i]}',
+                this.path.pathSegments[i + index]))) {
+          found = false;
+          break;
+        }
       }
-      if (found && isFound) {
+      if (found) {
         for (var i = 0; i < routeUri.pathSegments.length; i++) {
-          _searchIndex++;
           updateFoundPath(this.path.pathSegments[i + index]);
         }
-        isFound = false;
       }
       return found;
     }
 
-    QRouteInternal? result;
-    if (routes.routes.any(isSamePath)) {
-      // Try to find matching path
-      result = routes.routes.firstWhere(isSamePath);
-    } else if (routes.routes.any(isComponent)) {
-      // if no matching path found try component
-      result = routes.routes.firstWhere(isComponent);
-    } else if (routes.routes.any(findMulti)) {
-      // or multi pathes
-      result = routes.routes.firstWhere(findMulti);
+    // Try to find matching path
+    var foundIndex = routes.routes.indexWhere(isSamePath);
+    // if no matching path found try component
+    if (foundIndex == -1) {
+      foundIndex = routes.routes.indexWhere(isComponent);
+    }
+    // or multi pathes
+    if (foundIndex == -1 &&
+        index != -1 &&
+        // if the length of remaining segments isn't
+        // greater than 1, skip searching
+        this.path.pathSegments.length - index > 1) {
+      foundIndex = routes.routes.indexWhere(findMulti);
     }
 
+    final result = foundIndex == -1 ? null : routes.routes[foundIndex];
+
     if (result != null) {
-      if (index == -1 || _searchIndex == index) {
+      if (_searchIndex == index) {
         updateFoundPath(path);
-        _searchIndex++;
       }
       result.clean();
       result.activePath = foundPath;

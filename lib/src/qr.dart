@@ -184,23 +184,27 @@ class QRContext {
       }
     }
 
-    var lastNavi = QR.history.current.navigator;
+    final lastNavi = QR.history.current.navigator;
     if (_manager.hasController(lastNavi)) {
+      final popNaviOptions = [lastNavi];
       // Should navigator be removed? if the last path in history is the last
       // path in the navigator then we need to pop the navigator before it and
-      // colse this one
+      // close this one
       if (history.hasLast && lastNavi != history.last.navigator) {
-        lastNavi = history.last.navigator;
+        popNaviOptions.add(history.last.navigator);
       }
-      final controller = navigatorOf(lastNavi);
 
-      final popResult = await controller.removeLast();
-      if (popResult != PopResult.NotPoped) {
-        if (popResult != PopResult.Poped) return popResult;
-        if (lastNavi != QRContext.rootRouterName) {
-          (rootNavigator as QRouterController).update(withParams: false);
+      for (final navi in popNaviOptions) {
+        final controller = navigatorOf(navi);
+
+        final popResult = await controller.removeLast();
+        if (popResult != PopResult.NotPoped) {
+          if (popResult != PopResult.Poped) return popResult;
+          if (navi != QRContext.rootRouterName) {
+            (rootNavigator as QRouterController).update(withParams: false);
+          }
+          return PopResult.Poped;
         }
-        return PopResult.Poped;
       }
     }
 
