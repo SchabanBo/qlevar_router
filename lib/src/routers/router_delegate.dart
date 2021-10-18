@@ -15,11 +15,14 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   final bool withWebBar;
   final bool alwaysAddInitPath;
   final String? initPath;
+  final List<NavigatorObserver> observers;
+
   QRouterDelegate(
     List<QRoute> routes, {
     this.initPath,
     this.withWebBar = false,
     this.alwaysAddInitPath = false,
+    this.observers = const [],
   }) : _controller = QR.createRouterController(QRContext.rootRouterName,
             routes: routes) {
     _controller.addListener(notifyListeners);
@@ -90,6 +93,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   Navigator get navigator => Navigator(
         key: key,
         pages: _controller.pages,
+        observers: observers,
         onPopPage: (route, result) {
           _controller.removeLast();
           return false;
