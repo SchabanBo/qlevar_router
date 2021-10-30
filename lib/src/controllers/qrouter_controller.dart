@@ -35,7 +35,7 @@ abstract class QNavigator extends ChangeNotifier {
   Future<void> pushName(String name, {Map<String, dynamic>? params});
 
   Future<void> replaceName(String name, String withName,
-      {Map<String, dynamic>? params});
+      {Map<String, dynamic>? params, Map<String, dynamic>? withParams});
 
   Future<void> replaceAllWithName(String name, {Map<String, dynamic>? params});
 
@@ -103,6 +103,8 @@ class QRouterController extends QNavigator {
     }
   }
 
+  bool get hasRoutes => _pagesController.routes.isNotEmpty;
+
   @override
   QRoute get currentRoute => _pagesController.routes.last.route;
 
@@ -143,13 +145,13 @@ class QRouterController extends QNavigator {
 
   @override
   Future<void> replaceName(String name, String withName,
-      {Map<String, dynamic>? params}) async {
-    final index =
-        _pagesController.routes.indexWhere((e) => e.route.name == name);
+      {Map<String, dynamic>? params, Map<String, dynamic>? withParams}) async {
+    final match = await findName(name, params: params);
+    final index = _pagesController.routes.indexWhere((e) => e.isSame(match));
     assert(index != -1, 'Path with name $name was not found in the stack');
     if (!await _pagesController.removeIndex(index)) return;
     QR.history.removeLast();
-    await pushName(withName, params: params);
+    await pushName(withName, params: withParams);
   }
 
   @override
@@ -184,18 +186,17 @@ class QRouterController extends QNavigator {
 
   @override
   Future<void> replace(String path, String withPath) async {
-    final index =
-        _pagesController.routes.indexWhere((e) => e.route.path == path);
+    final match = await findPath(path);
+    final index = _pagesController.routes.indexWhere((e) => e.isSame(match));
     assert(index != -1, 'Path $path was not found in the stack');
     if (!await _pagesController.removeIndex(index)) return;
-    QR.history.removeLast();
     await push(withPath);
   }
 
   Future<void> addRouteAsync(QRouteInternal match,
       {bool notify = true, bool checkChild = true}) async {
     QR.log('adding $match to the navigator with $key');
-    QR.params.updateParams(match.params!);
+    QR.params.updateParams(match.getAllParams());
     await _addRoute(match);
     while (checkChild &&
         match.hasChild &&
@@ -264,8 +265,16 @@ class QRouterController extends QNavigator {
       {bool checkChild = true}) async {
     final index =
         _pagesController.routes.indexWhere((element) => element.isSame(match));
+    // Page not exist add it.
     if (index == -1) {
-      // Page not exist add it.
+      if (QR.settings.oneRouteInstancePerStack) {
+        final sameRouteIndex = _pagesController.routes
+            .indexWhere((element) => element.key.isSame(match.key));
+        if (sameRouteIndex != -1) {
+          await _pagesController.removeIndex(sameRouteIndex);
+        }
+      }
+
       await addRouteAsync(match, checkChild: checkChild);
       return;
     }

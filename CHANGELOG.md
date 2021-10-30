@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [1.5.4] 30.10.2021
+
+- Fix navigating with name under a navigator
+- Add '/!' to ignore the segment in the path
+- Add `QR.settings.oneRouteInstancePerStack`
+- Add `QR.observer` to add listeners to every new route will be added or old route will be deleted [#42]
+- [#42] Fix `QR.navigator.replace`
+- [#43] Support for navigator observers @basmilius
+
 ## [1.5.3] 14.10.2021
 
 - Fix #40 @Sociosarbis

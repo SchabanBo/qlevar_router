@@ -23,8 +23,11 @@ class MatchController {
   factory MatchController.fromName(
       String name, String foundPath, QRouteChildren routes,
       {Map<String, dynamic>? params}) {
-    final path = findPathFromName(name, params ?? <String, dynamic>{});
-    return MatchController(path, '', routes);
+    var path = findPathFromName(name, params ?? <String, dynamic>{});
+    if (foundPath != '/' && path.startsWith(foundPath)) {
+      path = path.replaceAll(foundPath, '');
+    }
+    return MatchController(path, foundPath, routes);
   }
 
   void updateFoundPath(String segment) {
@@ -139,8 +142,11 @@ class MatchController {
       return found;
     }
 
+    bool findNoPath(QRouteInternal route) => route.route.path == '/!';
+
     // Try to find matching path
     var foundIndex = routes.routes.indexWhere(isSamePath);
+
     // if no matching path found try component
     if (foundIndex == -1) {
       foundIndex = routes.routes.indexWhere(isComponent);
@@ -154,10 +160,14 @@ class MatchController {
       foundIndex = routes.routes.indexWhere(findMulti);
     }
 
+    if (foundIndex == -1) {
+      foundIndex = routes.routes.indexWhere(findNoPath);
+    }
+
     final result = foundIndex == -1 ? null : routes.routes[foundIndex];
 
     if (result != null) {
-      if (_searchIndex == index) {
+      if (_searchIndex == index && result.route.path != '/!') {
         updateFoundPath(path);
       }
       var newMatch =

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
@@ -11,7 +9,7 @@ import 'qpage_internal.dart';
 abstract class _PageConverter {
   final String? pageName;
   final QKey matchKey;
-  final key = ValueKey<int>(Random().nextInt(1000));
+  late final key = ValueKey<int>(hashCode);
   final QPage pageType;
   _PageConverter(this.pageName, this.matchKey, this.pageType);
 

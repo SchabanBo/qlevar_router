@@ -11,6 +11,7 @@ import 'overlays/qoverlay.dart';
 import 'routes/qroute_children.dart';
 import 'routes/qroute_internal.dart';
 import 'types/qhistory.dart';
+import 'types/qobserver.dart';
 
 class QRContext {
   static const rootRouterName = 'Root';
@@ -27,6 +28,9 @@ class QRContext {
 
   /// Info about the cureent route tree
   final treeInfo = _QTreeInfo();
+
+  /// Add observer for the navigation or pop
+  final observer = QObserver();
 
   final _manager = ControllerManager();
 
@@ -146,6 +150,14 @@ class QRContext {
       return;
     }
 
+    if (!match.hasChild && _manager.hasController(match.name)) {
+      final _navigator = navigatorOf(match.name) as QRouterController;
+      if (_navigator.hasRoutes) {
+        match.activePath =
+            match.activePath! + navigatorOf(match.name).currentRoute.path;
+      }
+    }
+
     if (match.isProcessed) return;
     if (currentPath != match.activePath!) {
       // See [#18]
@@ -224,6 +236,8 @@ class QRContext {
     params.clear();
     history.clear();
     treeInfo.namePath.clear();
+    observer.onNavigate.clear();
+    observer.onPop.clear();
     treeInfo.namePath[rootRouterName] = '/';
     treeInfo.routeIndexer = -1;
   }
@@ -241,6 +255,14 @@ class _QRSettings {
       Material(child: Container(child: Center(child: Text('Loading'))));
   Function(String) logger = print;
   QPage pagesType = QPlatformPage();
+
+  /// Set this to true if you want only one route instance in the stack
+  /// e.x. if you have in the stack a route `home/store/2` and then navigate to
+  /// `home/store/4`, if this setting is true then the old `home/store/2` will
+  /// be deleted and the new  `home/store/4` will be added.
+  /// if this setting is false the new  `home/store/4` will be added
+  /// and the stack will have two routes but with different params
+  bool oneRouteInstancePerStack = false;
 }
 
 class _QTreeInfo {
