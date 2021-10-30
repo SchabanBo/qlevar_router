@@ -36,7 +36,7 @@ class QHistory {
   void remove(QRouteInternal route) {
     final entry =
         _history.lastIndexWhere((element) => element.key.isSame((route.key)));
-    _history.remove(entry);
+    _history.removeAt(entry);
   }
 
   void add(QHistoryEntry entry) {

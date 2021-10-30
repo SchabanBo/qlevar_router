@@ -17,6 +17,7 @@ class PagesController {
   Future<void> add(QRouteInternal route) async {
     routes.add(route);
     await MiddlewareController(route).runOnEnter();
+    await _notifyObserverOnNavigation(route);
     pages.add(PageCreator(route).create());
     if (pages.any((element) => element.matchKey.hasName('Init Page'))) {
       pages.removeWhere((element) => element.matchKey.hasName('Init Page'));
@@ -45,6 +46,7 @@ class PagesController {
     if (QR.history.hasLast && QR.history.current.path == route.fullPath) {
       QR.history.removeLast();
     }
+    await _notifyObserverOnPop(route);
     routes.removeLast(); // remove from the routes
     pages.removeLast(); // reomve from the pages
     return PopResult.Poped;
@@ -59,6 +61,7 @@ class PagesController {
 
     QR.removeNavigator(route.name); // remove navigator if exist
     QR.history.remove(route); // remove history for this route
+    await _notifyObserverOnPop(route);
     routes.removeAt(index); // remove from the routes
     pages.removeAt(index); // reomve from the pages
     return true;
@@ -71,5 +74,17 @@ class PagesController {
       i--;
     }
     return PopResult.Poped;
+  }
+
+  Future _notifyObserverOnNavigation(QRouteInternal route) async {
+    for (var onNavigate in QR.observer.onNavigate) {
+      await onNavigate(route.activePath!, route.route);
+    }
+  }
+
+  Future _notifyObserverOnPop(QRouteInternal route) async {
+    for (var onPop in QR.observer.onPop) {
+      await onPop(route.activePath!, route.route);
+    }
   }
 }

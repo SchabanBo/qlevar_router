@@ -57,6 +57,9 @@ class QRouteInternal {
     if (!route.path.startsWith('/')) {
       route = route.copyWith(path: '/${route.path}');
     }
+    if (cureentPath == '/!') {
+      cureentPath = '';
+    }
     final fullPath = '$cureentPath${route.path}';
     QR.treeInfo.namePath[route.name ?? route.path] = fullPath;
     return QRouteInternal(
@@ -110,5 +113,17 @@ class QRouteInternal {
       return child!.getLastActivePath();
     }
     return activePath!;
+  }
+
+  QParams getAllParams() {
+    QRouteInternal? childRoute = this;
+    final result = QParams();
+    while (childRoute != null) {
+      if (childRoute.params != null) {
+        result.addAll(childRoute.params!.asStringMap());
+      }
+      childRoute = childRoute.child;
+    }
+    return result;
   }
 }
