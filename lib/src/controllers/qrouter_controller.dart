@@ -29,6 +29,7 @@ abstract class QNavigator extends ChangeNotifier {
       {Map<String, String>? params,
       QKey? mKey,
       String? navigator = '',
+      bool updateParams = false,
       bool addHistory = true});
 
   /// Push tha page with this [name] and this [params] on the top of the stack
@@ -317,6 +318,7 @@ class QRouterController extends QNavigator {
       {Map<String, String>? params,
       QKey? mKey,
       String? navigator,
+      bool updateParams = false,
       bool addHistory = true}) {
     if (key.name != QRContext.rootRouterName) {
       QR.log('Only ${QRContext.rootRouterName} can update the url');
@@ -326,7 +328,7 @@ class QRouterController extends QNavigator {
     _params.addAll(params ?? Uri.parse(url).queryParameters);
     QR.history.add(QHistoryEntry(mKey ?? QKey('Out Route'), url, _params,
         navigator ?? 'Out Route', false));
-    update();
+    update(withParams: updateParams);
     if (!addHistory) {
       QR.history.removeLast();
     }

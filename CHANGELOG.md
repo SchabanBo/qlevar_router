@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [1.5.6] 21.11.2021
+
+- Add update params options to updateUrl
+
+## [1.5.5] 31.10.2021
+
+- Fix init route when ignoring the path.
+
 ## [1.5.4] 30.10.2021
 
 - Fix navigating with name under a navigator

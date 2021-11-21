@@ -170,8 +170,9 @@ class MatchController {
       if (_searchIndex == index && result.route.path != '/!') {
         updateFoundPath(path);
       }
-      var newMatch =
-          result.asNewMatch(result, foundPath, newParams: params.copyWith());
+      var newMatch = result.asNewMatch(
+          result, foundPath.isEmpty ? '/' : foundPath,
+          newParams: params.copyWith());
       await MiddlewareController(newMatch).runOnMatch();
       return newMatch;
     }
