@@ -120,7 +120,7 @@ class QRouteInternal {
     final result = QParams();
     while (childRoute != null) {
       if (childRoute.params != null) {
-        result.addAll(childRoute.params!.asStringMap());
+        result.addAll(childRoute.params!.asValueMap);
       }
       childRoute = childRoute.child;
     }

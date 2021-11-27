@@ -29,6 +29,15 @@ class QHistory {
     }
   }
 
+  QHistoryEntry? findLastForNavigator(String navigator) {
+    for (var i = _history.length - 1; i >= 0; i--) {
+      if (_history[i].navigator == navigator) {
+        return _history[i];
+      }
+    }
+    return null;
+  }
+
   void removeWithNavigator(String navi) {
     _history.removeWhere((element) => element.navigator == navi);
   }

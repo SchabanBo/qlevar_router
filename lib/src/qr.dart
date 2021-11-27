@@ -84,7 +84,7 @@ class QRContext {
 
   /// Update the borwser url
   void updateUrlInfo(String url,
-          {Map<String, String>? params,
+          {Map<String, dynamic>? params,
           QKey? mKey,
           String? navigator,
           bool addHistory = true}) =>
@@ -116,18 +116,32 @@ class QRContext {
 
   /// Navigate to this path.
   /// The package will try to get the right navigtor to this path.
-  Future<void> to(String path, {bool ignoreSamePath = true}) async {
+  /// Set [ignoreSamePath] to true to ignore the navigation if the current path
+  /// is the same as the route path
+  /// Use [pageAlreadyExistAction] to define what to do when
+  /// page already is in the stack you can remove the page
+  /// or just bring it to the top
+  Future<void> to(String path,
+      {bool ignoreSamePath = true,
+      PageAlreadyExistAction? pageAlreadyExistAction}) async {
     if (ignoreSamePath && currentPath == path) {
       return;
     }
     final controller = _manager.withName(rootRouterName);
     var match = await controller.findPath(path);
-    await _toMatch(match);
+    await _toMatch(match, pageAlreadyExistAction: pageAlreadyExistAction);
   }
 
-  /// Go to a route with given name
+  /// Go to a route with given [name] and [params]
+  /// Set [ignoreSamePath] to true to ignore the navigation if the current path
+  /// is the same as the route path
+  /// Use [pageAlreadyExistAction] to define what to do when
+  /// page already is in the stack you can remove the page
+  /// or just bring it to the top
   Future<void> toName(String name,
-      {Map<String, dynamic>? params, bool ignoreSamePath = true}) async {
+      {Map<String, dynamic>? params,
+      bool ignoreSamePath = true,
+      PageAlreadyExistAction? pageAlreadyExistAction}) async {
     if (ignoreSamePath &&
         currentPath ==
             MatchController.findPathFromName(
@@ -136,17 +150,23 @@ class QRContext {
     }
     final controller = _manager.withName(rootRouterName);
     var match = await controller.findName(name, params: params);
-    await _toMatch(match);
+    await _toMatch(match, pageAlreadyExistAction: pageAlreadyExistAction);
   }
 
   Future<void> _toMatch(QRouteInternal match,
-      {String forController = QRContext.rootRouterName}) async {
+      {String forController = QRContext.rootRouterName,
+      PageAlreadyExistAction? pageAlreadyExistAction}) async {
     final controller = _manager.withName(forController);
-    await controller.popUntilOrPushMatch(match, checkChild: false);
+    await controller.popUntilOrPushMatch(match,
+        checkChild: false,
+        pageAlreadyExistAction:
+            pageAlreadyExistAction ?? PageAlreadyExistAction.Remove);
     if (match.hasChild && !match.isProcessed) {
       final newControllerName =
           _manager.hasController(match.name) ? match.name : forController;
-      await _toMatch(match.child!, forController: newControllerName);
+      await _toMatch(match.child!,
+          forController: newControllerName,
+          pageAlreadyExistAction: pageAlreadyExistAction);
       return;
     }
 
@@ -167,7 +187,7 @@ class QRContext {
       if (!samePathFromInit) {
         updateUrlInfo(match.activePath!,
             mKey: match.key,
-            params: match.params!.asStringMap(),
+            params: match.params!.asValueMap,
             // The history should be added for the child init route
             // so use the parent name as navigator
             navigator: match.route.name ?? match.route.path,

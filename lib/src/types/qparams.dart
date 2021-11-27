@@ -19,6 +19,14 @@ class QParams {
   /// get the params as map
   Map<String, _ParamValue> get asMap => _params;
 
+  Map<String, dynamic> get asValueMap {
+    final result = <String, dynamic>{};
+    for (var item in _params.entries) {
+      result[item.key] = item.value;
+    }
+    return result;
+  }
+
   /// Get the params as Map<String,String>
   Map<String, String> asStringMap() {
     final result = <String, String>{};
@@ -44,7 +52,7 @@ class QParams {
   List<String> get keys => _params.keys.toList();
 
   /// Add prarms
-  void addAll(Map<String, String> other) => _params
+  void addAll(Map<String, dynamic> other) => _params
       .addAll(other.map((key, value) => MapEntry(key, _ParamValue(value))));
 
   /// See if a parameter is Exist, if not create it with this `initValue`.
@@ -103,7 +111,7 @@ class QParams {
   }
 
   bool isSame(QParams other) =>
-      length == other.length && mapEquals(asStringMap(), other.asStringMap());
+      length == other.length && mapEquals(asValueMap, other.asValueMap);
 }
 
 /// Class represent the param value
