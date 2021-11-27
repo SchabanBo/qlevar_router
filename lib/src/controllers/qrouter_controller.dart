@@ -26,7 +26,7 @@ abstract class QNavigator extends ChangeNotifier {
 
   /// Set the browser [url]
   void updateUrl(String url,
-      {Map<String, String>? params,
+      {Map<String, dynamic>? params,
       QKey? mKey,
       String? navigator = '',
       bool updateParams = false,
@@ -51,7 +51,21 @@ abstract class QNavigator extends ChangeNotifier {
   @Deprecated('Use popUntilOrPush instead')
   Future<void> popUnitOrPush(String path);
 
+  /// Push this [Path] on the top of the stack, or pop unit it if it's already
+  /// on the stack
   Future<void> popUntilOrPush(String path);
+
+  /// Push this path on the top of the stack if not already on the stack
+  /// or bring it to top if already on the stack
+  /// This is usefull to switch between pages without lossing the states of them
+  /// the deffirnce between this and [popUntilOrPush] is that no page will
+  /// be poped
+  Future<void> switchTo(String path);
+
+  /// Push this route name on the top of the stack if not already on the stack
+  /// or bring it to top if already on the stack
+  /// This is usefull to switch between pages without lossing the states of them
+  Future<void> switchToName(String name, {Map<String, dynamic>? params});
 
   /// Replace this [path] with this [withPath]
   Future<void> replace(String path, String withPath);
@@ -180,7 +194,7 @@ class QRouterController extends QNavigator {
     if (key.name != QRContext.rootRouterName) {
       QR.updateUrlInfo(match.activePath!,
           mKey: match.key,
-          params: match.params!.asStringMap(),
+          params: match.params!.asValueMap,
           navigator: key.name);
     }
   }
@@ -252,9 +266,7 @@ class QRouterController extends QNavigator {
   @override
   Future<void> popUntilOrPushName(String name,
       {Map<String, dynamic>? params}) async {
-    final match =
-        await MatchController.fromName(name, routes.parentFullPath, routes)
-            .match;
+    final match = await findName(name, params: params);
     await popUntilOrPushMatch(match);
   }
 
@@ -262,8 +274,25 @@ class QRouterController extends QNavigator {
   Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params}) =>
       popUntilOrPushName(name, params: params);
 
-  Future<void> popUntilOrPushMatch(QRouteInternal match,
-      {bool checkChild = true}) async {
+  @override
+  Future<void> switchTo(String path) async {
+    await popUntilOrPushMatch(await findPath(path),
+        pageAlreadyExistAction: PageAlreadyExistAction.BringToTop);
+  }
+
+  @override
+  Future<void> switchToName(String name, {Map<String, dynamic>? params}) async {
+    final match = await findName(name, params: params);
+    await popUntilOrPushMatch(match,
+        pageAlreadyExistAction: PageAlreadyExistAction.BringToTop);
+  }
+
+  Future<void> popUntilOrPushMatch(
+    QRouteInternal match, {
+    bool checkChild = true,
+    PageAlreadyExistAction pageAlreadyExistAction =
+        PageAlreadyExistAction.Remove,
+  }) async {
     final index =
         _pagesController.routes.indexWhere((element) => element.isSame(match));
     // Page not exist add it.
@@ -288,21 +317,44 @@ class QRouterController extends QNavigator {
       return;
     }
 
-    // page is exist and has no children
-    // then pop until it or replace it
-    if (index == _pagesController.pages.length - 1) {
-      // if the same page is on the top, then replace it.
-      // remove it from the top and add it again
-      if (await _pagesController.removeLast(allowEmptyPages: true) !=
-          PopResult.Poped) return;
-      await addRouteAsync(match, checkChild: checkChild);
-      return;
+    switch (pageAlreadyExistAction) {
+      case PageAlreadyExistAction.BringToTop:
+        final route = _pagesController.routes[index];
+        final page = _pagesController.pages[index];
+        _pagesController.routes.remove(route);
+        _pagesController.pages.remove(page);
+        _pagesController.routes.add(route);
+        _pagesController.pages.add(page);
+        final lastFoudnRoute = QR.history.findLastForNavigator(route.name);
+        if (lastFoudnRoute != null) {
+          QR.rootNavigator.updateUrl(lastFoudnRoute.path,
+              addHistory: true,
+              params: lastFoudnRoute.params.asValueMap,
+              navigator: lastFoudnRoute.navigator,
+              updateParams: true);
+        }
+        QR.log('${match.fullPath} is on to top of the stack');
+        match.isProcessed = true;
+        break;
+      case PageAlreadyExistAction.Remove:
+      default:
+        // page is exist and has no children
+        // then pop until it or replace it
+        if (index == _pagesController.pages.length - 1) {
+          // if the same page is on the top, then replace it.
+          // remove it from the top and add it again
+          if (await _pagesController.removeLast(allowEmptyPages: true) !=
+              PopResult.Poped) return;
+          await addRouteAsync(match, checkChild: checkChild);
+          return;
+        }
+        // page exist remove unit it
+        final pagesLength = _pagesController.pages.length;
+        for (var i = index + 1; i < pagesLength; i++) {
+          if (await _pagesController.removeLast() != PopResult.Poped) return;
+        }
     }
-    // page exist remove unit it
-    final pagesLength = _pagesController.pages.length;
-    for (var i = index + 1; i < pagesLength; i++) {
-      if (await _pagesController.removeLast() != PopResult.Poped) return;
-    }
+
     update();
   }
 
@@ -315,7 +367,7 @@ class QRouterController extends QNavigator {
 
   @override
   void updateUrl(String url,
-      {Map<String, String>? params,
+      {Map<String, dynamic>? params,
       QKey? mKey,
       String? navigator,
       bool updateParams = false,

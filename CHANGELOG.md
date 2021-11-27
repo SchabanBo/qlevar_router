@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.5.7] 27.11.2021
+
+- Add PageAlreadyExistAction to `to` and `toName`
+- Add switchTo
+- Add switchToName
+
 ## [1.5.6] 21.11.2021
 
 - Add update params options to updateUrl

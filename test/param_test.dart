@@ -142,7 +142,7 @@ void main() {
       await QR.to('/user/a');
       await tester.pumpAndSettle();
       expectedPath('/user/a');
-      expect(QR.params['id']!.value, 'a');
+      expect(QR.params['id']!.value.toString(), 'a');
       expect(find.text('Case 3'), findsOneWidget);
 
       await QR.to('/user/w');
