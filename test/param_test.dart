@@ -150,5 +150,65 @@ void main() {
       expectedPath('/user/w');
       expect(QR.params['id'], null);
     });
+
+    test('Test params with toName', () async {
+      QR.reset();
+      final _ = QRouterDelegate([
+        QRoute(
+            path: '/',
+            name: 'home',
+            builder: () => Scaffold(body: WidgetOne())),
+        QRoute(
+            path: '/:categoryId',
+            name: 'component-params',
+            builder: () => Container()),
+        QRoute(
+            path: '/params', name: 'path-params', builder: () => Container()),
+      ]);
+
+      await _.setInitialRoutePath('/');
+      expect(0, QR.params.length);
+      final testObj = TestObject('name', 15);
+
+      // Test component params with toName
+      await QR.toName('component-params', params: {
+        'categoryId': testObj,
+        'in': 3,
+        'str': 'test',
+        'bool': true
+      });
+      expect(4, QR.params.length);
+      expectedPath('/TestObject{name: name, age: 15}?in=3&str=test&bool=true');
+      expect(testObj, QR.params['categoryId']!.value!);
+      expect(3, QR.params['in']!.value!);
+      expect('test', QR.params['str']!.value!);
+      expect(true, QR.params['bool']!.value!);
+      // Reset
+      await QR.toName('home');
+      expect(0, QR.params.length);
+      expectedPath('/');
+
+      // Test path params with toName
+      await QR.navigator.pushName('path-params',
+          params: {'obj': testObj, 'in': 3, 'str': 'test', 'bool': true});
+      expect(4, QR.params.length);
+      expectedPath(
+          '/params?obj=TestObject{name: name, age: 15}&in=3&str=test&bool=true');
+      expect(testObj, QR.params['obj']!.value!);
+      expect(3, QR.params['in']!.value!);
+      expect('test', QR.params['str']!.value!);
+      expect(true, QR.params['bool']!.value!);
+    });
   });
+}
+
+class TestObject {
+  final String name;
+  final int age;
+  TestObject(this.name, this.age);
+
+  @override
+  String toString() {
+    return 'TestObject{name: $name, age: $age}';
+  }
 }

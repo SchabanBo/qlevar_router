@@ -24,11 +24,41 @@ class QMiddleware {
 }
 
 class QMiddlewareBuilder extends QMiddleware {
+  /// This function will be called before [onEnter] and after [onMatch]
+  /// if the result from this page is null the navigation will continue and
+  /// the page will be created or the result should be the path to redirect to.
+  /// ````
+  /// redirectGuardFunc: (s) async => isAuthed ? null : '/login',
+  /// ````
   final Future<String?> Function(String)? redirectGuardFunc;
+
+  /// This function will be called before [onEnter] and after [onMatch]
+  /// if the result from this page is null the page will be created
+  /// or the result should be the name of the page to redirect to.
+  /// but here you can redirect to name with params instead of path.
+  /// ````
+  /// redirectGuardNameFunc: (s) async =>
+  ///     isAuthed ? null : QNameRedirect(name: Routes.login),
+  /// ````
   final Future<QNameRedirect?> Function(String)? redirectGuardNameFunc;
+
+  /// This method will be called every time a path matches the assigned route.
   final Future Function()? onMatchFunc;
+
+  /// This method will be called before adding the page to the stack
+  /// and before the page building function is called.
   final Future Function()? onEnterFunc;
+
+  /// This method will be called before removing the page from the stack
   final Future Function()? onExitFunc;
+
+  /// Can this route pop, called when trying to remove the page.
+  /// ````
+  /// // if you want to allow the page to pop only when user saves the data
+  /// canPopFunc: () async {
+  ///      return Storage.isDataSaved();
+  /// }
+  /// ````
   final Future<bool> Function()? canPopFunc;
 
   QMiddlewareBuilder(

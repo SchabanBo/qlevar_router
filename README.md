@@ -19,6 +19,7 @@
     - [onMatch](#onmatch)
     - [onEnter](#onenter)
     - [onExit](#onexit)
+  - [Observer](#observer)
   - [Not found page](#not-found-page)
   - [Page Transition](#page-transition)
     - [Mix it up](#mix-it-up)
@@ -199,6 +200,14 @@ This method will be called before adding the page to the stack and before the pa
 
 This method will be called before removing the page from the stack
 
+## Observer
+
+to observe every navigation in your app you could set QObserver to the `QR.observer`.
+QObserver can have :
+
+- **onNavigate**: add listener to every new route that will be added to the tree
+- **onPop**: Add listener to every route that will be deleted from the tree
+
 ## Not found page
 
 you can set your custom not found page to show it whenever a page was not found, or a default one will be set.
@@ -331,6 +340,7 @@ QR.show(QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog') ,name:'/da
 
 ### Dialog
 
+[Example](https://qlevar-router.netlify.app/#/overlays)
 To open a dialog with `QR` you can do so
 
 ```dart
@@ -346,7 +356,8 @@ QDialog.text(text: Text('Simple Text'), title: Text('Info')).show()
 
 ### Notifications
 
-To show Notifications to the user [Example](https://qlevar-router.netlify.app/#/nested/child)
+[Example](https://qlevar-router.netlify.app/#/overlays)
+To show Notifications to the user
 
 ```dart
 // Call QR.show and give it the QNotification object

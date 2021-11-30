@@ -82,6 +82,14 @@ class QRContext {
   /// ```
   void setUrlStrategy() => configureApp();
 
+  /// check if the current path is the same as the given path
+  bool isCurrentPath(String path) => currentPath == path;
+
+  /// check if the current path is the same as the given name and params
+  bool isCurrentName(String name, {Map<String, dynamic>? params}) =>
+      currentPath ==
+      MatchController.findPathFromName(name, params ?? <String, dynamic>{});
+
   /// Update the borwser url
   void updateUrlInfo(String url,
           {Map<String, dynamic>? params,
@@ -124,7 +132,7 @@ class QRContext {
   Future<void> to(String path,
       {bool ignoreSamePath = true,
       PageAlreadyExistAction? pageAlreadyExistAction}) async {
-    if (ignoreSamePath && currentPath == path) {
+    if (ignoreSamePath && isCurrentPath(path)) {
       return;
     }
     final controller = _manager.withName(rootRouterName);
@@ -142,10 +150,7 @@ class QRContext {
       {Map<String, dynamic>? params,
       bool ignoreSamePath = true,
       PageAlreadyExistAction? pageAlreadyExistAction}) async {
-    if (ignoreSamePath &&
-        currentPath ==
-            MatchController.findPathFromName(
-                name, params ?? <String, dynamic>{})) {
+    if (ignoreSamePath && isCurrentName(name, params: params)) {
       return;
     }
     final controller = _manager.withName(rootRouterName);
