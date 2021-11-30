@@ -45,16 +45,18 @@ class QHistory {
   void remove(QRouteInternal route) {
     final entry =
         _history.lastIndexWhere((element) => element.key.isSame((route.key)));
-    _history.removeAt(entry);
+    if (entry != -1) {
+      _history.removeAt(entry);
+    }
   }
 
-  void removeFullPathSame(QRouteInternal route) {
+  void removeActivePathSame(QRouteInternal route) {
     if (_history.isEmpty) {
       return;
     }
     final entry =
         _history.lastIndexWhere((element) => element.path == route.activePath);
-    if (entry!=-1) {
+    if (entry != -1) {
       _history.removeAt(entry);
     }
   }

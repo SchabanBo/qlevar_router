@@ -67,7 +67,7 @@ class PagesController {
     return true;
   }
 
-  Future<bool> removeFullPathSame(QRouteInternal route) async {
+  Future<bool> removeActivePathSame(QRouteInternal route) async {
     for(var i = routes.length-1; i >= 0; i--){
       var oldRoute = routes[i];
       if (oldRoute.activePath == route.activePath) {

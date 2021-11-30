@@ -308,8 +308,8 @@ class QRouterController extends QNavigator {
         await _pagesController.removeAllKeySame(match);
         QR.history.removeAllKeySame(match);
       }else if (pageAlreadyExistAction == PageAlreadyExistAction.BringToTop){
-        await _pagesController.removeFullPathSame(match);
-        QR.history.removeFullPathSame(match);
+        await _pagesController.removeActivePathSame(match);
+        QR.history.removeActivePathSame(match);
       }
       await addRouteAsync(match, checkChild: checkChild);
       return;
@@ -333,7 +333,7 @@ class QRouterController extends QNavigator {
         _pagesController.pages.add(page);
         final lastFoudnRoute = QR.history.findLastForNavigator(route.activePath);
         if (lastFoudnRoute != null) {
-          QR.history.removeFullPathSame(route);
+          QR.history.removeActivePathSame(route);
           QR.rootNavigator.updateUrl(lastFoudnRoute.path,
               addHistory: true,
               mKey: lastFoudnRoute.key,
@@ -353,7 +353,7 @@ class QRouterController extends QNavigator {
         _pagesController.pages.add(page);
         final lastFoudnRoute = QR.history.findLastForNavigator(match.activePath);
         if (lastFoudnRoute != null) {
-          QR.history.removeFullPathSame(match);
+          QR.history.removeActivePathSame(match);
           QR.rootNavigator.updateUrl(lastFoudnRoute.path,
               addHistory: true,
               mKey: lastFoudnRoute.key,
