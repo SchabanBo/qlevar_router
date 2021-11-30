@@ -308,9 +308,8 @@ class QRouterController extends QNavigator {
         await _pagesController.removeAllKeySame(match);
         QR.history.removeAllKeySame(match);
       }else if (pageAlreadyExistAction == PageAlreadyExistAction.BringToTop){
-        // TODO problem
         await _pagesController.removeFullPathSame(match);
-        // QR.history.removeFullPathSame(match);
+        QR.history.removeFullPathSame(match);
       }
       await addRouteAsync(match, checkChild: checkChild);
       return;

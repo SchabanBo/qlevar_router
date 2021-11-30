@@ -14,18 +14,18 @@ class NestedRoutePage extends StatelessWidget {
       children: [
         Expanded(
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              QButton("child", () => QR.to("/nested/child",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-              QButton("child1", () => QR.to("/nested/child-1",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-              QButton("child2", () => QR.to("/nested/child-2",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-              QButton("child3", () => QR.to("/nested/child-3",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-              QButton("child 4", () => QR.to("/nested/child?aa=ss",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-          // QButton("child", () => QR.toName(AppRoutes.nestedChild,pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-          // QButton("child 1", () => QR.toName(AppRoutes.nestedChild1,pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-          // QButton("child 2", () => QR.toName(AppRoutes.nestedChild2,pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-          // QButton("child 3", () => QR.toName(AppRoutes.nestedChild3,pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
-          // QButton("child 4", () => QR.toName(AppRoutes.nestedChild,params: {
-          //   "aa":"ss",
-          // },pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
+              // QButton("child", () => QR.to("/nested/child",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
+              // QButton("child1", () => QR.to("/nested/child-1",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
+              // QButton("child2", () => QR.to("/nested/child-2",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
+              // QButton("child3", () => QR.to("/nested/child-3",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
+              // QButton("child 4", () => QR.to("/nested/child?aa=ss",pageAlreadyExistAction: PageAlreadyExistAction.BringToTop)),
+          QButton("child", () => QR.toName(AppRoutes.nestedChild,pageAlreadyExistAction: PageAlreadyExistAction.BringToTopAndRemoveOtherSameName)),
+          QButton("child 1", () => QR.toName(AppRoutes.nestedChild1,pageAlreadyExistAction: PageAlreadyExistAction.BringToTopAndRemoveOtherSameName)),
+          QButton("child 2", () => QR.toName(AppRoutes.nestedChild2,pageAlreadyExistAction: PageAlreadyExistAction.BringToTopAndRemoveOtherSameName)),
+          QButton("child 3", () => QR.toName(AppRoutes.nestedChild3,pageAlreadyExistAction: PageAlreadyExistAction.BringToTopAndRemoveOtherSameName)),
+          QButton("child 4", () => QR.toName(AppRoutes.nestedChild,params: {
+            "aa":"ss",
+          },pageAlreadyExistAction: PageAlreadyExistAction.BringToTopAndRemoveOtherSameName)),
         ])),
         Card(
           child: Padding(

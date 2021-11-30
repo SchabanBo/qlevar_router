@@ -53,8 +53,10 @@ class QHistory {
       return;
     }
     final entry =
-        _history.lastIndexWhere((element) => element.path == route.fullPath);
-    _history.removeAt(entry);
+        _history.lastIndexWhere((element) => element.path == route.activePath);
+    if (entry!=-1) {
+      _history.removeAt(entry);
+    }
   }
 
   void removeAllKeySame(QRouteInternal route) {
