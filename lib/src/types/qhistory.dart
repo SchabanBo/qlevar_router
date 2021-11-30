@@ -29,7 +29,7 @@ class QHistory {
     }
   }
 
-  QHistoryEntry? findLastForNavigator(String navigator) {
+  QHistoryEntry? findLastForNavigator(String? navigator) {
     for (var i = _history.length - 1; i >= 0; i--) {
       if (_history[i].path == navigator) {
         return _history[i];

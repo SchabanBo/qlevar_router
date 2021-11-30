@@ -331,7 +331,7 @@ class QRouterController extends QNavigator {
         _pagesController.pages.remove(page);
         _pagesController.routes.add(route);
         _pagesController.pages.add(page);
-        final lastFoudnRoute = QR.history.findLastForNavigator(route.fullPath);
+        final lastFoudnRoute = QR.history.findLastForNavigator(route.activePath);
         if (lastFoudnRoute != null) {
           QR.history.removeFullPathSame(route);
           QR.rootNavigator.updateUrl(lastFoudnRoute.path,
@@ -351,7 +351,7 @@ class QRouterController extends QNavigator {
         await _pagesController.removeAllKeySame(route);
         _pagesController.routes.add(route);
         _pagesController.pages.add(page);
-        final lastFoudnRoute = QR.history.findLastForNavigator(match.fullPath);
+        final lastFoudnRoute = QR.history.findLastForNavigator(match.activePath);
         if (lastFoudnRoute != null) {
           QR.history.removeFullPathSame(match);
           QR.rootNavigator.updateUrl(lastFoudnRoute.path,
@@ -360,8 +360,6 @@ class QRouterController extends QNavigator {
               params: lastFoudnRoute.params.asValueMap,
               navigator: lastFoudnRoute.navigator,
               updateParams: true);
-        }else{
-          await addRouteAsync(match, checkChild: checkChild);
         }
         QR.log('${match.fullPath} is on to top of the stack');
         match.isProcessed = true;

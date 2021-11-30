@@ -111,7 +111,7 @@ class QParams {
   }
 
   bool isSame(QParams other) =>
-      length == other.length && mapEquals(asValueMap, other.asValueMap);
+      length == other.length && asValueMap.toString() == other.asValueMap.toString();
 }
 
 /// Class represent the param value
