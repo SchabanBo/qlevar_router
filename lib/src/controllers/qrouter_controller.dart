@@ -304,7 +304,14 @@ class QRouterController extends QNavigator {
           await _pagesController.removeIndex(sameRouteIndex);
         }
       }
-
+      if (pageAlreadyExistAction == PageAlreadyExistAction.BringToTopAndRemoveOtherSameName) {
+        await _pagesController.removeAllKeySame(match);
+        QR.history.removeAllKeySame(match);
+      }else if (pageAlreadyExistAction == PageAlreadyExistAction.BringToTop){
+        // TODO problem
+        await _pagesController.removeFullPathSame(match);
+        // QR.history.removeFullPathSame(match);
+      }
       await addRouteAsync(match, checkChild: checkChild);
       return;
     }
@@ -325,13 +332,37 @@ class QRouterController extends QNavigator {
         _pagesController.pages.remove(page);
         _pagesController.routes.add(route);
         _pagesController.pages.add(page);
-        final lastFoudnRoute = QR.history.findLastForNavigator(route.name);
+        final lastFoudnRoute = QR.history.findLastForNavigator(route.fullPath);
         if (lastFoudnRoute != null) {
+          QR.history.removeFullPathSame(route);
           QR.rootNavigator.updateUrl(lastFoudnRoute.path,
               addHistory: true,
+              mKey: lastFoudnRoute.key,
               params: lastFoudnRoute.params.asValueMap,
               navigator: lastFoudnRoute.navigator,
               updateParams: true);
+        }
+        QR.log('${match.fullPath} is on to top of the stack');
+        match.isProcessed = true;
+        break;
+      case PageAlreadyExistAction.BringToTopAndRemoveOtherSameName:
+        final route = _pagesController.routes[index];
+        final page = _pagesController.pages[index];
+
+        await _pagesController.removeAllKeySame(route);
+        _pagesController.routes.add(route);
+        _pagesController.pages.add(page);
+        final lastFoudnRoute = QR.history.findLastForNavigator(match.fullPath);
+        if (lastFoudnRoute != null) {
+          QR.history.removeFullPathSame(match);
+          QR.rootNavigator.updateUrl(lastFoudnRoute.path,
+              addHistory: true,
+              mKey: lastFoudnRoute.key,
+              params: lastFoudnRoute.params.asValueMap,
+              navigator: lastFoudnRoute.navigator,
+              updateParams: true);
+        }else{
+          await addRouteAsync(match, checkChild: checkChild);
         }
         QR.log('${match.fullPath} is on to top of the stack');
         match.isProcessed = true;
