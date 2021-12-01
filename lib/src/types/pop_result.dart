@@ -21,6 +21,7 @@ enum PageAlreadyExistAction {
   /// Just bring the page to the top of the stack
   BringToTop,
 
-  /// Put the page at the top of the stack and remove other pages with the same name
-  BringToTopAndRemoveOtherSameName,
+  /// Put the page at the top of the stack
+  /// and remove other pages with the same name
+  ToTopRemoveSameKey,
 }

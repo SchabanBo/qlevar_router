@@ -304,7 +304,7 @@ class QRouterController extends QNavigator {
           await _pagesController.removeIndex(sameRouteIndex);
         }
       }
-      if (pageAlreadyExistAction == PageAlreadyExistAction.BringToTopAndRemoveOtherSameName) {
+      if (pageAlreadyExistAction == PageAlreadyExistAction.ToTopRemoveSameKey) {
         await _pagesController.removeAllKeySame(match);
         QR.history.removeAllKeySame(match);
       }else if (pageAlreadyExistAction == PageAlreadyExistAction.BringToTop){
@@ -331,27 +331,27 @@ class QRouterController extends QNavigator {
         _pagesController.pages.remove(page);
         _pagesController.routes.add(route);
         _pagesController.pages.add(page);
-        final lastFoudnRoute = QR.history.findLastForNavigator(route.activePath);
-        if (lastFoudnRoute != null) {
+        final lastFoundRoute = QR.history.findLastForPath(route.activePath);
+        if (lastFoundRoute != null) {
           QR.history.removeActivePathSame(route);
-          QR.rootNavigator.updateUrl(lastFoudnRoute.path,
+          QR.rootNavigator.updateUrl(lastFoundRoute.path,
               addHistory: true,
-              mKey: lastFoudnRoute.key,
-              params: lastFoudnRoute.params.asValueMap,
-              navigator: lastFoudnRoute.navigator,
+              mKey: lastFoundRoute.key,
+              params: lastFoundRoute.params.asValueMap,
+              navigator: lastFoundRoute.navigator,
               updateParams: true);
         }
         QR.log('${match.fullPath} is on to top of the stack');
         match.isProcessed = true;
         break;
-      case PageAlreadyExistAction.BringToTopAndRemoveOtherSameName:
+      case PageAlreadyExistAction.ToTopRemoveSameKey:
         final route = _pagesController.routes[index];
         final page = _pagesController.pages[index];
 
         await _pagesController.removeAllKeySame(route);
         _pagesController.routes.add(route);
         _pagesController.pages.add(page);
-        final lastFoudnRoute = QR.history.findLastForNavigator(match.activePath);
+        final lastFoudnRoute = QR.history.findLastForPath(match.activePath);
         if (lastFoudnRoute != null) {
           QR.history.removeActivePathSame(match);
           QR.rootNavigator.updateUrl(lastFoudnRoute.path,
