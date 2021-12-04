@@ -52,6 +52,8 @@ class HomePage extends StatelessWidget {
                     'show page according to an object state'),
                 Description("Overlays", () => QR.to("/overlays"),
                     'Show notifications and dialogs in your app'),
+                Description("Code Expamles", () => QR.to("/examples"),
+                    'Show qr_samples repo for more expamles'),
               ],
             )),
       ),

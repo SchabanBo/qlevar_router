@@ -211,7 +211,6 @@ class QRouterController extends QNavigator {
   Future<void> addRouteAsync(QRouteInternal match,
       {bool notify = true, bool checkChild = true}) async {
     QR.log('adding $match to the navigator with $key');
-    QR.params.updateParams(match.getAllParams());
     await _addRoute(match);
     while (checkChild &&
         match.hasChild &&

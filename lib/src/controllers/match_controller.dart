@@ -12,9 +12,13 @@ class MatchController {
 
   /// index of the path segment we are searching for
   int _searchIndex = -1;
-  MatchController(String sPath, this.foundPath, this.routes)
+  MatchController(String sPath, this.foundPath, this.routes,
+      {Map<String, dynamic>? params})
       : path = _fixedPathUri(sPath),
         parentPath = foundPath {
+    if (params != null) {
+      this.params.addAll(params);
+    }
     QR.log(
         // ignore: lines_longer_than_80_chars
         '${'Finding Match for $sPath under '}${foundPath.isEmpty ? 'root' : 'path $foundPath'}');
@@ -27,7 +31,7 @@ class MatchController {
     if (foundPath != '/' && path.startsWith(foundPath)) {
       path = path.replaceAll(foundPath, '');
     }
-    return MatchController(path, foundPath, routes);
+    return MatchController(path, foundPath, routes, params: params);
   }
 
   void updateFoundPath(String segment) {
@@ -44,17 +48,28 @@ class MatchController {
       foundPath = foundPath.substring(0, foundPath.length - 1);
     }
     if (_searchIndex + 1 == path.pathSegments.length && path.hasQuery) {
-      foundPath += '?${path.query}';
-      params.addAll(path.queryParameters);
+      foundPath += '?${Uri.decodeFull(path.query)}';
+      // Add the query params to the params map if they are not already there
+      for (var queryParam in path.queryParameters.entries) {
+        if (!params.asMap.containsKey(queryParam.key)) {
+          params[queryParam.key] = queryParam.value;
+        }
+      }
     }
     // update searchIndex after we updated foundPath
     _searchIndex++;
   }
 
   Future<QRouteInternal> get match async {
+    final result = await _searchMatch();
+    QR.params.updateParams(result.getAllParams());
+    return result;
+  }
+
+  Future<QRouteInternal> _searchMatch() async {
     var searchIn = routes;
     if (path.pathSegments.isEmpty) {
-      final match = await _tryFind(searchIn, _searchIndex);
+      final match = await _tryFind(searchIn, -1);
       if (match == null) {
         return QRouteInternal.notfound(parentPath + path.toString());
       }
@@ -98,7 +113,11 @@ class MatchController {
           return false;
         }
       }
-      params[name] = segment;
+      if (!params.asMap.containsKey(name)) {
+        params[name] = segment;
+      } else {
+        QR.log('Duplicate param name $name');
+      }
       return true;
     }
     return false;
@@ -190,7 +209,8 @@ class MatchController {
     // Search for component params
     for (var _param in params.entries) {
       if (newPath.contains(':${_param.key}')) {
-        newPath = newPath.replaceAll(':${_param.key}', _param.value.toString());
+        newPath =
+            newPath.replaceAll(':${_param.key}', _getParamString(_param.value));
       } else {
         pathParams.addEntries([_param]);
       }
@@ -199,22 +219,32 @@ class MatchController {
     // Replace old component
     for (var _param in QR.params.asMap.entries) {
       if (newPath.contains(':${_param.key}')) {
-        newPath = newPath.replaceAll(':${_param.key}', _param.value.toString());
+        newPath =
+            newPath.replaceAll(':${_param.key}', _getParamString(_param.value));
       }
     }
 
     if (pathParams.isNotEmpty) {
       newPath = '$newPath?';
+
       // Build the params
       for (var i = 0; i < pathParams.length; i++) {
         final param = pathParams.entries.toList()[i];
-        newPath = '$newPath${param.key}=${param.value}';
+        newPath = '$newPath${param.key}=${_getParamString(param.value)}';
         if (i != pathParams.length - 1) {
           newPath = '$newPath&';
         }
       }
     }
     return newPath;
+  }
+
+  static String _getParamString(dynamic value) {
+    if (value is String) return value;
+    if (value is int || value is double || value is bool) {
+      return value.toString();
+    }
+    return value.toString();
   }
 
   static Uri _fixedPathUri(String path) {

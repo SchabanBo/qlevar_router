@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.5.8] 30.11.2021
+
+- Add `QR.IsSamePath`, `QR.isSameName`
+- #47, #50 ,#51
+
 ## [1.5.7] 27.11.2021
 
 - Add PageAlreadyExistAction to `to` and `toName`

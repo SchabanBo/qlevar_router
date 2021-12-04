@@ -21,7 +21,7 @@ class QParams {
   Map<String, dynamic> get asValueMap {
     final result = <String, dynamic>{};
     for (var item in _params.entries) {
-      result[item.key] = item.value;
+      result[item.key] = item.value.value;
     }
     return result;
   }
