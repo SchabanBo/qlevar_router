@@ -6,21 +6,23 @@ import 'middleware_controller.dart';
 
 class PagesController {
   final routes = <QRouteInternal>[];
-  final pages = <QPageInternal>[
-    QMaterialPageInternal(
-        child: QR.settings.iniPage, matchKey: QKey('Init Page'))
-  ];
+  late final pages = <QPageInternal>[_initPage];
 
   bool exist(QRouteInternal route) =>
       routes.any((element) => element.key.isSame(route.key));
+
+  static const String _initPageKey = 'Init Page';
+
+  QMaterialPageInternal get _initPage => QMaterialPageInternal(
+      child: QR.settings.iniPage, matchKey: QKey(_initPageKey));
 
   Future<void> add(QRouteInternal route) async {
     routes.add(route);
     await MiddlewareController(route).runOnEnter();
     await _notifyObserverOnNavigation(route);
     pages.add(PageCreator(route).create());
-    if (pages.any((element) => element.matchKey.hasName('Init Page'))) {
-      pages.removeWhere((element) => element.matchKey.hasName('Init Page'));
+    if (pages.any((element) => element.matchKey.hasName(_initPageKey))) {
+      pages.removeWhere((element) => element.matchKey.hasName(_initPageKey));
     }
   }
 
@@ -49,6 +51,7 @@ class PagesController {
     await _notifyObserverOnPop(route);
     routes.removeLast(); // remove from the routes
     pages.removeLast(); // reomve from the pages
+    _checkEmptyStack();
     return PopResult.Poped;
   }
 
@@ -64,13 +67,16 @@ class PagesController {
     await _notifyObserverOnPop(route);
     routes.removeAt(index); // remove from the routes
     pages.removeAt(index); // reomve from the pages
+    _checkEmptyStack();
     return true;
   }
 
   Future<PopResult> removeAll() async {
-    for (var i = 0; i < pages.length; i++) {
+    for (var i = 0; i < routes.length; i++) {
       final result = await removeLast(allowEmptyPages: true);
-      if (result != PopResult.Poped) return result;
+      if (result != PopResult.Poped) {
+        return result;
+      }
       i--;
     }
     return PopResult.Poped;
@@ -85,6 +91,14 @@ class PagesController {
   Future _notifyObserverOnPop(QRouteInternal route) async {
     for (var onPop in QR.observer.onPop) {
       await onPop(route.activePath!, route.route);
+    }
+  }
+
+  /// show init page when a middleware has something to do,
+  /// so no red screen will be showen
+  void _checkEmptyStack() {
+    if (pages.isEmpty) {
+      pages.add(_initPage);
     }
   }
 }
