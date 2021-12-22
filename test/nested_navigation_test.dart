@@ -88,10 +88,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('child-1'), findsOneWidget);
       expectedPath('/dashboard/child-1');
+      final navi = QR.navigatorOf('/dashboard');
 
       for (var z = 0; z < 10; z++) {
         final i = Random().nextInt(5) + 1;
-        await QR.navigatorOf('/dashboard').replaceAll('/child-$i');
+        await navi.replaceAll('/child-$i');
         await tester.pumpAndSettle();
         expect(find.text('login'), findsNothing);
         expect(find.text('child-$i'), findsOneWidget);

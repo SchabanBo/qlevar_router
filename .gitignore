@@ -15,7 +15,6 @@
 *.iws
 .idea/
 
-.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -44,4 +43,5 @@ app.*.map.json
 example/android/app/debug
 example/android/app/profile
 example/android/app/release
-pubspec.lock
+*.lock
+.vscode
