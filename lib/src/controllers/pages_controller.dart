@@ -71,6 +71,29 @@ class PagesController {
     return true;
   }
 
+  Future<bool> removeActivePathSame(QRouteInternal route) async {
+    for(var i = routes.length-1; i >= 0; i--){
+      var oldRoute = routes[i];
+      if (oldRoute.activePath == route.activePath) {
+        routes.removeAt(i);
+        pages.removeAt(i);
+        return true;
+      }
+    }
+    return true;
+  }
+
+  Future<bool> removeAllKeySame(QRouteInternal route) async {
+    for(var i = routes.length-1; i >= 0; i--){
+      var oldRoute = routes[i];
+      if (oldRoute.key == route.key) {
+        routes.removeAt(i);
+        pages.removeAt(i);
+      }
+    }
+    return true;
+  }
+
   Future<PopResult> removeAll() async {
     for (var i = 0; i < routes.length; i++) {
       final result = await removeLast(allowEmptyPages: true);
