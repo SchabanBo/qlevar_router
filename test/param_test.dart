@@ -37,7 +37,7 @@ void main() {
       }
     });
 
-    test('Nested Compoent Test', () async {
+    test('Nested Component Test', () async {
       QR.reset();
       final _ = QRouterDelegate([
         QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
@@ -62,7 +62,7 @@ void main() {
       expect(QR.params.length, 0);
     });
 
-    test('Multi Compoent Test', () async {
+    test('Multi Component Test', () async {
       QR.reset();
       final _ = QRouterDelegate([
         QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
@@ -113,9 +113,9 @@ void main() {
       expect(QR.params['categoryId']!.asInt, 4);
     });
 
-    testWidgets('Regex Compoent Test', (tester) async {
+    testWidgets('Regex Component Test', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper([
+      await tester.pumpWidget(AppWrapper([
         QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
         QRoute.withChild(
             path: '/user',

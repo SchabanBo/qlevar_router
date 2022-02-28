@@ -1,5 +1,4 @@
 import '../../qlevar_router.dart';
-
 import 'qroute_internal.dart';
 
 class QRouteChildren {
@@ -25,7 +24,7 @@ class QRouteChildren {
   void add(List<QRoute> routes) {
     for (var route in routes) {
       if (_routes.any((element) => element.route.path == route.path)) {
-        QR.log('Path ${route.path} already exist, connt add');
+        QR.log('Path ${route.path} already exist, cannot add');
         continue;
       }
       final internal = QRouteInternal.from(route, parentFullPath);

@@ -38,7 +38,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       await _controller.push(initPath ?? '/');
     }
     if (configuration != '/') {
-      QR.log('incomming init path $configuration', isDebug: true);
+      QR.log('incoming init path $configuration', isDebug: true);
       await _controller.push(configuration);
       return;
     }
@@ -51,14 +51,14 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     route = Uri.decodeFull(route).toString();
     if (QR.history.hasLast &&
         QR.history.last.path == QR.settings.notFoundPage.path) {
-      if (QR.history.length > 2 && route == QR.history.beforelast.path) {
+      if (QR.history.length > 2 && route == QR.history.beforeLast.path) {
         QR.history.removeLast();
       }
     }
     if (QR.history.hasLast && route == QR.history.last.path) {
       QR.log(
           // ignore: lines_longer_than_80_chars
-          'New route reported that was last visited. Useing QR.back() to response',
+          'New route reported that was last visited. using QR.back() to response',
           isDebug: true);
 
       QR.back();
@@ -72,7 +72,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   Future<bool> popRoute() async {
     final result = await QR.back();
     switch (result) {
-      case PopResult.NotPoped:
+      case PopResult.NotPopped:
         return false;
       default:
         return true;

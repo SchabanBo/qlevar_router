@@ -10,7 +10,7 @@ import 'test_widgets/test_widgets.dart';
 void main() {
   group('Nested navigation', () {
     testWidgets('Navigate to child from route with auth', (tester) async {
-      var isAuthed = false;
+      var isAuth = false;
       QR.reset();
       final routes = [
         QRoute(
@@ -23,7 +23,7 @@ void main() {
             path: '/dashboard',
             middleware: [
               QMiddlewareBuilder(
-                  redirectGuardFunc: (s) async => isAuthed ? null : '/login'),
+                  redirectGuardFunc: (s) async => isAuth ? null : '/login'),
             ],
             builderChild: (c) => TestDashboard(c),
             initRoute: '/orders',
@@ -39,7 +39,7 @@ void main() {
       delegate.setNewRoutePath('/dashboard/orders');
       await tester.pumpAndSettle();
       expect(find.text('login'), findsOneWidget);
-      isAuthed = true;
+      isAuth = true;
       delegate.setNewRoutePath('/dashboard/orders');
       await tester.pumpAndSettle();
       expect(find.text('login'), findsNothing);

@@ -35,7 +35,7 @@ void main() {
 
     testWidgets('Find Multi component', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(routes));
+      await tester.pumpWidget(AppWrapper(routes));
 
       await QR.to('/two/one/');
       await tester.pumpAndSettle();
@@ -55,7 +55,7 @@ void main() {
 
     testWidgets('Find Multi component with path param', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(routes));
+      await tester.pumpWidget(AppWrapper(routes));
 
       await QR.to('/two/5');
       await tester.pumpAndSettle();
@@ -75,7 +75,7 @@ void main() {
 
     testWidgets('No Extra Slash at the end', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(routes));
+      await tester.pumpWidget(AppWrapper(routes));
 
       await QR.to('/this/extra');
       await tester.pumpAndSettle();
@@ -95,7 +95,7 @@ void main() {
 
     testWidgets('Multi path init route', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(
+      await tester.pumpWidget(AppWrapper(
         [
           QRoute(path: '/', builder: () => Container()),
           QRoute(path: '/zero', builder: () => Scaffold(body: Container())),
@@ -117,7 +117,7 @@ void main() {
 
     testWidgets('Multi path with child init route', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(
+      await tester.pumpWidget(AppWrapper(
         [
           QRoute(path: '/', builder: () => Container()),
           QRoute(path: '/zero', builder: () => Scaffold(body: Container())),
@@ -141,7 +141,7 @@ void main() {
     testWidgets('Path query should only append to the last match',
         (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(
+      await tester.pumpWidget(AppWrapper(
         [
           QRoute(path: '/', builder: () => Container()),
           QRoute(path: '/zero', builder: () => Scaffold(body: Container())),

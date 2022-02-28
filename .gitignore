@@ -1,47 +1,19 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Files and directories created by pub
 .dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
+android/
+ios/
+macos/
 .packages
-.pub-cache/
-.pub/
-/build/
-/coverage/
-/example/build/
-/example/coverage/
 
-# Web related
-lib/generated_plugin_registrant.dart
-/example/lib/generated_plugin_registrant.dart
-# Symbolication related
-app.*.symbols
+# Remove the following pattern if you wish to check in your lock file
+pubspec.lock
 
-# Obfuscation related
-app.*.map.json
+# Conventional directory for build outputs
+build/
+coverage/
 
-# Android Studio will place build artifacts here
-example/android/app/debug
-example/android/app/profile
-example/android/app/release
-*.lock
-.vscode
+# Directory created by dartdoc
+doc/api/
+
+# IntelliJ
+.idea/

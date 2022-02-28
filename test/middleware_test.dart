@@ -7,7 +7,7 @@ import 'test_widgets/test_widgets.dart';
 
 void main() {
   group('Middlewares', () {
-    var isAuthed = false;
+    var isAuth = false;
     var counter = 0;
     final routes = [
       QRoute(path: '/', builder: () => Container()),
@@ -19,7 +19,7 @@ void main() {
             QMiddlewareBuilder(redirectGuardFunc: (s) async {
               print('From redirect guard: $s');
               return await Future.delayed(
-                  Duration(milliseconds: 500), () => isAuthed ? null : '/two');
+                  Duration(milliseconds: 500), () => isAuth ? null : '/two');
             }),
             QMiddlewareBuilder(
               onEnterFunc: () async => counter++,
@@ -45,12 +45,12 @@ void main() {
           builder: () => Scaffold(body: WidgetTwo())),
       QRoute(path: '/three', builder: () => Scaffold(body: WidgetThree())),
     ];
-    test('Redirect / onEnter / onMatch / onExite', () async {
+    test('Redirect / onEnter / onMatch / onExited', () async {
       QR.reset();
       final _ = QRouterDelegate(routes);
       await QR.to('/nested');
       expectedPath('/two');
-      isAuthed = true;
+      isAuth = true;
       expect(counter, 3); // Nested onMatch + Two onMatch + Two onEnter
       await QR.to(
           '/nested'); // Here to() is used then the Two onExit will not be called
@@ -60,7 +60,7 @@ void main() {
       expect(counter, 7); // Nested onExite + Two onExite
     });
 
-    test('Redirectguard has the right path and param', () async {
+    test('Redirect guard has the right path and param', () async {
       QR.reset();
       var pathFromGuard = '';
       var paramFromGuard = '';

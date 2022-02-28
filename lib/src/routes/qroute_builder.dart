@@ -11,7 +11,7 @@ class QRouteBuilder {
   final Widget? widget;
 
   /// The path to set for this route
-  /// leave `null` if you dont want to update the path
+  /// leave `null` if you don't want to update the path
   final String? path;
 
   final Map<String, Object>? params;

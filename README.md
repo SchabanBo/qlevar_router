@@ -236,15 +236,15 @@ so if you want to show slide and fade transition you can do
 QRoute(
       path: '/child',
       pageType: QFadePage(
-          transitionDurationmilliseconds: 1000,
-          withType: QSlidePage(transitionDurationmilliseconds: 5000), // set the type to mix with
+          transitionDurationMilliseconds: 1000,
+          withType: QSlidePage(transitionDurationMilliseconds: 5000), // set the type to mix with
           ),
       builder: () => TextPage('Hi child 4')),
 ]),
 ```
 
 please note that when you mix transitions the only the first transition duration will be used
-in this case `QFadePage.transitionDurationmilliseconds (1000)` will be used and `QSlidePage.transitionDurationmilliseconds (5000)` will be ignored
+in this case `QFadePage.transitionDurationMilliseconds (1000)` will be used and `QSlidePage.transitionDurationMilliseconds (5000)` will be ignored
 
 **QPlatformPage**, **QMaterialPage** and **QCupertinoPage** CANNOT be mixed.
 
@@ -404,10 +404,10 @@ The `QDeclarative` required tow parameters
 
 ```dart
 QDeclarative(
-      routeKey: widget.dkey, // give the key you got from QRoute
+      routeKey: widget.dKey, // give the key you got from QRoute
       builder: () => [ 
                name: 'Hungry',
-              builder: () =>getQuestion((v) => state.loveCoffee = v, 'Do you love coffee?'),
+              builder: () =>getQuestion((v) => state.loveCoffee = v, 'Do you love Coffee?'),
               when: () => state.loveCoffee == null,
               // when this route pop, if you want to get out of the declarative
               // router give false as result so the router know that this

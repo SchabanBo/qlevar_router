@@ -28,14 +28,14 @@ class PagesController {
 
   Future<PopResult> removeLast({bool allowEmptyPages = false}) async {
     if (routes.isEmpty) {
-      return PopResult.NotPoped;
+      return PopResult.NotPopped;
     }
     final route = routes.last; // find the page
     final middleware = MiddlewareController(route);
     if (!await middleware.runCanPop()) return PopResult.NotAllowedToPop;
 
     if (allowEmptyPages == false && routes.length == 1) {
-      return PopResult.NotPoped;
+      return PopResult.NotPopped;
     }
 
     await middleware.runOnExit(); // run on exit
@@ -50,9 +50,9 @@ class PagesController {
     }
     await _notifyObserverOnPop(route);
     routes.removeLast(); // remove from the routes
-    pages.removeLast(); // reomve from the pages
+    pages.removeLast(); // remove from the pages
     _checkEmptyStack();
-    return PopResult.Poped;
+    return PopResult.Popped;
   }
 
   Future<bool> removeIndex(int index) async {
@@ -66,7 +66,7 @@ class PagesController {
     QR.history.remove(route); // remove history for this route
     await _notifyObserverOnPop(route);
     routes.removeAt(index); // remove from the routes
-    pages.removeAt(index); // reomve from the pages
+    pages.removeAt(index); // remove from the pages
     _checkEmptyStack();
     return true;
   }
@@ -74,12 +74,12 @@ class PagesController {
   Future<PopResult> removeAll() async {
     for (var i = 0; i < routes.length; i++) {
       final result = await removeLast(allowEmptyPages: true);
-      if (result != PopResult.Poped) {
+      if (result != PopResult.Popped) {
         return result;
       }
       i--;
     }
-    return PopResult.Poped;
+    return PopResult.Popped;
   }
 
   Future _notifyObserverOnNavigation(QRouteInternal route) async {
@@ -95,7 +95,7 @@ class PagesController {
   }
 
   /// show init page when a middleware has something to do,
-  /// so no red screen will be showen
+  /// so no red screen will be showed
   void _checkEmptyStack() {
     if (pages.isEmpty) {
       pages.add(_initPage);

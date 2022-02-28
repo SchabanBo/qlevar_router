@@ -13,7 +13,7 @@ class QRouter extends StatefulWidget {
   QRouter(this._controller);
 
   /// Get the name for the current child
-  /// This is the name whih define in [QRoute.name] if it is null [QRoute.path]
+  /// This is the name which define in [QRoute.name] if it is null [QRoute.path]
   /// Will be returned
   String get routeName =>
       _controller.currentRoute.name ?? _controller.currentRoute.path;

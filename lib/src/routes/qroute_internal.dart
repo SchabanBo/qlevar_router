@@ -8,7 +8,7 @@ class QRouteInternal {
   /// The full path
   final String fullPath;
 
-  /// The orginal definition for this route
+  /// The original definition for this route
   final QRoute route;
 
   final bool isNotFound;
@@ -52,15 +52,15 @@ class QRouteInternal {
           activePath: path,
           params: newParams);
 
-  factory QRouteInternal.from(QRoute route, String cureentPath) {
+  factory QRouteInternal.from(QRoute route, String currentPath) {
     final key = QKey(route.name ?? route.path);
     if (!route.path.startsWith('/')) {
       route = route.copyWith(path: '/${route.path}');
     }
-    if (cureentPath == '/!') {
-      cureentPath = '';
+    if (currentPath == '/!') {
+      currentPath = '';
     }
-    final fullPath = '$cureentPath${route.path}';
+    final fullPath = '$currentPath${route.path}';
     QR.treeInfo.namePath[route.name ?? route.path] = fullPath;
     return QRouteInternal(
         key: key,
@@ -72,7 +72,7 @@ class QRouteInternal {
             : QRouteChildren.from(route.children!, key, fullPath));
   }
 
-  factory QRouteInternal.notfound(String notFoundPath) {
+  factory QRouteInternal.notFound(String notFoundPath) {
     final route = QR.settings.notFoundPage;
     final key = QKey(route.name ?? route.path);
     return QRouteInternal(
@@ -105,7 +105,7 @@ class QRouteInternal {
   @override
   String toString() => 'Route: $key, Full Path: $fullPath';
 
-  bool get hasMiddlewares =>
+  bool get hasMiddleware =>
       route.middleware != null && route.middleware!.isNotEmpty;
 
   String getLastActivePath() {

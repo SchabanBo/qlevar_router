@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.5.10] 28.02.2022
+
+- Fix #56
+- Fix Typos
+
 ## [1.5.9] 21.12.2021
 
 - Fix blank screen when middleware is working and no page in the stack

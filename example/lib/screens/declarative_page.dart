@@ -4,8 +4,8 @@ import 'package:qlevar_router/qlevar_router.dart';
 import '../helpers/page.dart';
 
 class DeclarativePage extends StatefulWidget {
-  final QKey dkey;
-  DeclarativePage(this.dkey);
+  final QKey dKey;
+  DeclarativePage(this.dKey);
   @override
   _DeclarativePageState createState() => _DeclarativePageState();
 }
@@ -14,12 +14,12 @@ class _DeclarativePageState extends State<DeclarativePage> {
   final state = _Info();
   @override
   Widget build(BuildContext context) => PageContainer(QDeclarative(
-      routeKey: widget.dkey,
+      routeKey: widget.dKey,
       builder: () => [
             QDRoute(
               name: 'Hungry',
               builder: () => getQuestion(
-                  (v) => state.loveCoffee = v, 'Do you love coffee?'),
+                  (v) => state.loveCoffee = v, 'Do you love Coffee?'),
               when: () => state.loveCoffee == null,
               // when this route pop, if you want to get out of the declarative
               // router give false as result so the router know that this
@@ -35,7 +35,7 @@ class _DeclarativePageState extends State<DeclarativePage> {
                 pageType: QSlidePage(
                     curve: Curves.easeInOutCubic,
                     offset: Offset(-1, 0),
-                    transitionDurationmilliseconds: 500)),
+                    transitionDurationMilliseconds: 500)),
             QDRoute(
                 name: 'Pizza',
                 builder: () => getQuestion(
@@ -103,10 +103,10 @@ class _DeclarativePageState extends State<DeclarativePage> {
   String getResult() {
     if (state.loveCoffee == true && state.loveBurger == false) {
       // ignore: lines_longer_than_80_chars
-      return "Lets go to burger king, you can order coffe and will get a burger :)";
+      return "Lets go to burger king, you can order Coffee and will get a burger :)";
     }
     if (state.loveCoffee == true) {
-      return "Lets go to burger king, you can order coffe :)";
+      return "Lets go to burger king, you can order coffee :)";
     }
     if (state.loveBurger == true) {
       return "Lets go to burger king :)";
@@ -125,5 +125,5 @@ class _Info {
 
   @override
   String toString() =>
-      'loveCoffe: $loveCoffee, loveBurger: $loveBurger, lovePizza: $lovePizza';
+      'loveCoffee: $loveCoffee, loveBurger: $loveBurger, lovePizza: $lovePizza';
 }

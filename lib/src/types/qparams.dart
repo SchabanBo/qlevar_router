@@ -51,7 +51,7 @@ class QParams {
   /// get the params keys
   List<String> get keys => _params.keys.toList();
 
-  /// Add prarms
+  /// Add params
   void addAll(Map<String, dynamic> other) => _params
       .addAll(other.map((key, value) => MapEntry(key, _ParamValue(value))));
 

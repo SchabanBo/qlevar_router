@@ -43,7 +43,7 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
               icon: Icon(Icons.arrow_back),
               onPressed: () async {
                 final path = QR.currentPath;
-                if (await QR.back() == PopResult.Poped) {
+                if (await QR.back() == PopResult.Popped) {
                   _paths.add(path);
                 }
               },

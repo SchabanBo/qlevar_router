@@ -28,7 +28,7 @@ class MiddlewareController {
   }
 
   Future runOnEnter() async {
-    if (!route.hasMiddlewares) {
+    if (!route.hasMiddleware) {
       return;
     }
     for (var middle in route.route.middleware!) {
@@ -37,7 +37,7 @@ class MiddlewareController {
   }
 
   Future runOnExit() async {
-    if (!route.hasMiddlewares) {
+    if (!route.hasMiddleware) {
       return;
     }
     for (var middle in route.route.middleware!) {
@@ -46,7 +46,7 @@ class MiddlewareController {
   }
 
   Future runOnMatch() async {
-    if (!route.hasMiddlewares) {
+    if (!route.hasMiddleware) {
       return;
     }
     for (var middle in route.route.middleware!) {
@@ -55,7 +55,7 @@ class MiddlewareController {
   }
 
   Future<bool> runCanPop() async {
-    if (!route.hasMiddlewares) {
+    if (!route.hasMiddleware) {
       return true;
     }
     for (var middle in route.route.middleware!) {

@@ -22,7 +22,7 @@ void main() {
     'QNavigator - Push RemoveLast ReplaceAll',
     (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(pages));
+      await tester.pumpWidget(AppWrapper(pages));
 
       await QR.navigator.removeLast();
       await QR.navigator.removeLast();
@@ -88,7 +88,7 @@ void main() {
 
   testWidgets('Init initPath', (tester) async {
     QR.reset();
-    await tester.pumpWidget(AppWarpper(pages, initPath: '/two'));
+    await tester.pumpWidget(AppWrapper(pages, initPath: '/two'));
     printCurrentHistory();
     await QR.navigator.removeLast();
     await QR.navigator.removeLast();
@@ -124,7 +124,7 @@ void main() {
 
   testWidgets('replaceAll with default init route', (tester) async {
     QR.reset();
-    await tester.pumpWidget(AppWarpper(pages));
+    await tester.pumpWidget(AppWrapper(pages));
     printCurrentHistory();
     await QR.navigator.replaceAll('/two');
     printCurrentHistory();
@@ -138,7 +138,7 @@ void main() {
 
   testWidgets('replaceAll with different init route', (tester) async {
     QR.reset();
-    await tester.pumpWidget(AppWarpper(pages, initPath: '/three'));
+    await tester.pumpWidget(AppWrapper(pages, initPath: '/three'));
     await QR.navigator.replaceAll('/two');
     printCurrentHistory();
     expectedPath('/two');
@@ -151,7 +151,7 @@ void main() {
 
   testWidgets('Navigate with name', (tester) async {
     QR.reset();
-    await tester.pumpWidget(AppWarpper(pages));
+    await tester.pumpWidget(AppWrapper(pages));
     await QR.toName('two');
     expectedPath('/two');
     await tester.pumpAndSettle();

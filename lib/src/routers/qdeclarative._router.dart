@@ -4,11 +4,11 @@ import '../../qlevar_router.dart';
 import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
 
-/// The dcelatarive page builder
+/// The Declarative page builder
 /// it gives you the state and take the pages to show
 typedef DeclarativeBuilder = List<QDRoute> Function();
 
-/// Delcarative Router
+/// Declarative Router
 /// Navigate between your pages with a state update
 class QDeclarative extends StatefulWidget {
   /// The key you got from the `QRoute.declarativeBuilder`.
@@ -39,7 +39,7 @@ class QDeclarativeController extends State<QDeclarative> {
     setState(() {});
   }
 
-  /// Did the pop procceed
+  /// Did the pop proceed
   bool pop() {
     final pop = routes!.last.onPop!();
     update();
@@ -67,7 +67,7 @@ class QDeclarativeController extends State<QDeclarative> {
     assert(
         _routes.any((e) => e.when()),
         // ignore: lines_longer_than_80_chars
-        'No route has returend true as [when] result from QDeclarative.builder');
+        'No route has returned true as [when] result from QDeclarative.builder');
     final newRoute = widget.builder().firstWhere((e) => e.when());
     final index = _pages.indexWhere((e) => e.matchKey.hasName(newRoute.name));
 

@@ -63,7 +63,7 @@ void main() {
 
     testWidgets('Stack with Nested Route when parent pop', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(routes));
+      await tester.pumpWidget(AppWrapper(routes));
 
       await QR.to('/nested');
       await tester.pumpAndSettle();
