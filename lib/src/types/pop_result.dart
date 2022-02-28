@@ -1,12 +1,12 @@
 /// This represent the pop result
 enum PopResult {
   /// The pop end successfully
-  Poped,
+  Popped,
 
   /// Cannot pop
-  NotPoped,
+  NotPopped,
 
-  /// The Can pop in the middleware returens false
+  /// The Can pop in the middleware returns false
   NotAllowedToPop,
 
   /// when QR.back close a dialog
@@ -15,7 +15,7 @@ enum PopResult {
 
 /// Use this to define what to do when page already is in the stack
 enum PageAlreadyExistAction {
-  /// Remove the pagfe from the stack
+  /// Remove the page from the stack
   Remove,
 
   /// Just bring the page to the top of the stack

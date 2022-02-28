@@ -5,7 +5,7 @@ import 'controllers/controller_manager.dart';
 import 'controllers/match_controller.dart';
 import 'controllers/qrouter_controller.dart';
 import 'helpers/platform/configure_web.dart'
-    if (dart.library.io) 'helpers/platform/configure_nonweb.dart';
+    if (dart.library.io) 'helpers/platform/configure_non_web.dart';
 import 'helpers/widgets/stack_tree.dart';
 import 'overlays/qoverlay.dart';
 import 'routes/qroute_children.dart';
@@ -20,13 +20,13 @@ class QRContext {
   /// back method . Modifying it does not affect the Browser history
   final history = QHistory();
 
-  /// The parameter for the cureent route
+  /// The parameter for the current route
   final params = QParams();
 
   /// The Settings for this package
   final settings = _QRSettings();
 
-  /// Info about the cureent route tree
+  /// Info about the current route tree
   final treeInfo = _QTreeInfo();
 
   /// Add observer for the navigation or pop
@@ -36,15 +36,15 @@ class QRContext {
 
   bool isShowingDialog = false;
 
-  /// The cureent route url
+  /// The current route url
   String get currentPath => history.isEmpty ? '/' : history.current.path;
 
   /// Set the active navigator name to call with [navigator]
   /// by default it is the root navigator
   /// For example if you work on a dashboard and you want to do your changes
-  /// from now on olny on the dashboard Navi. Then set this value
+  /// from now on only on the dashboard Navi. Then set this value
   /// to the Dashboard Navi name and every time you call [QR.navigator]
-  /// the Dashboard navigator will be called instade of root navigator
+  /// the Dashboard navigator will be called instated of root navigator
   String activeNavigatorName = QRContext.rootRouterName;
 
   /// Get the root navigator
@@ -74,7 +74,7 @@ class QRContext {
   /// Remove a navigator with this name
   bool removeNavigator(String name) => _manager.removeNavigator(name);
 
-  /// Remove the hastag from url,
+  /// Remove the hashtag from url,
   /// call this function before running your app,
   /// Somewhere before calling `runApp()` do:
   ///```dart
@@ -90,7 +90,7 @@ class QRContext {
       currentPath ==
       MatchController.findPathFromName(name, params ?? <String, dynamic>{});
 
-  /// Update the borwser url
+  /// Update the browser url
   void updateUrlInfo(String url,
           {Map<String, dynamic>? params,
           QKey? mKey,
@@ -123,7 +123,7 @@ class QRContext {
       _manager.createDeclarativeRouterController(key);
 
   /// Navigate to this path.
-  /// The package will try to get the right navigtor to this path.
+  /// The package will try to get the right navigator to this path.
   /// Set [ignoreSamePath] to true to ignore the navigation if the current path
   /// is the same as the route path
   /// Use [pageAlreadyExistAction] to define what to do when
@@ -208,11 +208,11 @@ class QRContext {
 
   /// try to pop the last active navigator or go to last path in the history
   Future<PopResult> back() async {
-    // is proccesed by declerative
+    // is processed by declarative
     if (_manager.isDeclarative(QR.history.current.key.key)) {
       final dCon = _manager.getDeclarative(QR.history.current.key.key);
       if (dCon.pop()) {
-        return PopResult.Poped;
+        return PopResult.Popped;
       }
     }
 
@@ -230,22 +230,22 @@ class QRContext {
         final controller = navigatorOf(navi);
 
         final popResult = await controller.removeLast();
-        if (popResult != PopResult.NotPoped) {
-          if (popResult != PopResult.Poped) return popResult;
+        if (popResult != PopResult.NotPopped) {
+          if (popResult != PopResult.Popped) return popResult;
           if (navi != QRContext.rootRouterName) {
             (rootNavigator as QRouterController).update(withParams: false);
           }
-          return PopResult.Poped;
+          return PopResult.Popped;
         }
       }
     }
 
     if (!history.hasLast) {
-      return PopResult.NotPoped;
+      return PopResult.NotPopped;
     }
     to(history.last.path);
     QR.history.removeLast(count: 2);
-    return PopResult.Poped;
+    return PopResult.Popped;
   }
 
   /// Print a message from the package

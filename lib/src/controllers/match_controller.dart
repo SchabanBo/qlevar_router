@@ -71,7 +71,7 @@ class MatchController {
     if (path.pathSegments.isEmpty) {
       final match = await _tryFind(searchIn, -1);
       if (match == null) {
-        return QRouteInternal.notfound(parentPath + path.toString());
+        return QRouteInternal.notFound(parentPath + path.toString());
       }
       return match;
     }
@@ -81,14 +81,14 @@ class MatchController {
 
     final result = await _tryFind(searchIn, _searchIndex);
     if (result == null) {
-      return QRouteInternal.notfound(parentPath + path.toString());
+      return QRouteInternal.notFound(parentPath + path.toString());
     }
     var match = result;
     while (_searchIndex < path.pathSegments.length) {
       searchIn = match.children!;
       match.child = await _tryFind(searchIn, _searchIndex);
       if (match.child == null) {
-        return QRouteInternal.notfound(parentPath + path.toString());
+        return QRouteInternal.notFound(parentPath + path.toString());
       }
       match = match.child!;
     }
@@ -170,7 +170,7 @@ class MatchController {
     if (foundIndex == -1) {
       foundIndex = routes.routes.indexWhere(isComponent);
     }
-    // or multi pathes
+    // or multi paths
     if (foundIndex == -1 &&
         index != -1 &&
         // if the length of remaining segments isn't

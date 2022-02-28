@@ -6,8 +6,8 @@ import '../helpers.dart';
 import '../test_widgets/test_widgets.dart';
 
 void main() {
-  testWidgets('Deeplink Query Param', (tester) async {
-    await tester.pumpWidget(AppWarpper([
+  testWidgets('DeepLink Query Param', (tester) async {
+    await tester.pumpWidget(AppWrapper([
       QRoute(path: '/', builder: () => BooksListScreen()),
     ]));
     await tester.pumpAndSettle();

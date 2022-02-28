@@ -40,10 +40,10 @@ class ControllerManager {
   }
 
   bool isDeclarative(int key) =>
-      dControllers.any((element) => element.widget.routeKey.haskey(key));
+      dControllers.any((element) => element.widget.routeKey.hasKey(key));
 
   QDeclarativeController getDeclarative(int key) =>
-      dControllers.firstWhere((element) => element.widget.routeKey.haskey(key));
+      dControllers.firstWhere((element) => element.widget.routeKey.hasKey(key));
 
   QRouterController withName(String name) =>
       controllers.firstWhere((element) => element.key.hasName(name));

@@ -37,18 +37,19 @@ void main() {
                       children: [
                         const SizedBox(),
                         QR.history.debug(),
-                        QR.getActiveTree(),
+                        QR.getActiveTree()
                       ],
                     ))),
             QRoute(
-                path: '/slash',
-                builder: () => const Scaffold(body: WidgetThree())),
+              path: '/slash',
+              builder: () => const Scaffold(body: WidgetThree()),
+            ),
           ]),
     ];
 
     testWidgets('Active Tree Widget', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(routes));
+      await tester.pumpWidget(AppWrapper(routes));
 
       await QR.to('/two/one');
       await tester.pumpAndSettle();
@@ -63,7 +64,7 @@ void main() {
 
     testWidgets('Show Navigation History', (tester) async {
       QR.reset();
-      await tester.pumpWidget(AppWarpper(routes));
+      await tester.pumpWidget(AppWrapper(routes));
       await tester.pumpAndSettle();
       await QR.to('/two/one');
       await tester.pumpAndSettle();

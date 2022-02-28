@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../types/qroute_key.dart';
 
 abstract class QPageInternal<T> extends Page {
@@ -26,7 +27,7 @@ class QMaterialPageInternal<T> extends QPageInternal<T> {
     required this.child,
     required QKey matchKey,
     this.maintainState = true,
-    this.fullscreenDialog = false,
+    this.fullScreenDialog = false,
     LocalKey? key,
     String? restorationId,
     String? name,
@@ -41,7 +42,7 @@ class QMaterialPageInternal<T> extends QPageInternal<T> {
 
   final Widget child;
   final bool maintainState;
-  final bool fullscreenDialog;
+  final bool fullScreenDialog;
 
   @override
   Route<T> createRoute(BuildContext context) {
@@ -72,7 +73,7 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
   bool get maintainState => _page.maintainState;
 
   @override
-  bool get fullscreenDialog => _page.fullscreenDialog;
+  bool get fullscreenDialog => _page.fullScreenDialog;
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
@@ -84,7 +85,7 @@ class QCupertinoPageInternal<T> extends QPageInternal<T> {
     required this.child,
     this.title,
     this.maintainState = true,
-    this.fullscreenDialog = false,
+    this.fullScreenDialog = false,
     LocalKey? key,
     String? restorationId,
     String? name,
@@ -100,7 +101,7 @@ class QCupertinoPageInternal<T> extends QPageInternal<T> {
   final Widget child;
   final String? title;
   final bool maintainState;
-  final bool fullscreenDialog;
+  final bool fullScreenDialog;
 
   @override
   Route<T> createRoute(BuildContext context) {
@@ -128,7 +129,7 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
   bool get maintainState => _page.maintainState;
 
   @override
-  bool get fullscreenDialog => _page.fullscreenDialog;
+  bool get fullscreenDialog => _page.fullScreenDialog;
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
@@ -137,7 +138,7 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
 class QCustomPageInternal extends QPageInternal {
   final Widget child;
   final bool maintainState;
-  final bool fullscreenDialog;
+  final bool fullScreenDialog;
   final int transitionDuration;
   final int reverseTransitionDuration;
   final RouteTransitionsBuilder transitionsBuilder;
@@ -153,7 +154,7 @@ class QCustomPageInternal extends QPageInternal {
     required this.reverseTransitionDuration,
     required this.transitionsBuilder,
     this.maintainState = true,
-    this.fullscreenDialog = false,
+    this.fullScreenDialog = false,
     this.barrierColor,
     this.barrierLabel,
     this.barrierDismissible,
@@ -183,7 +184,7 @@ class QCustomPageInternal extends QPageInternal {
       barrierDismissible: barrierDismissible ?? false,
       barrierLabel: barrierLabel,
       transitionsBuilder: transitionsBuilder,
-      fullscreenDialog: fullscreenDialog,
+      fullscreenDialog: fullScreenDialog,
       maintainState: maintainState,
     );
   }

@@ -12,7 +12,7 @@ final books = [
 ];
 void main() {
   testWidgets('Deeplink Pathparam', (tester) async {
-    await tester.pumpWidget(AppWarpper([
+    await tester.pumpWidget(AppWrapper([
       QRoute(path: '/', builder: () => const BooksListScreen()),
       QRoute(path: '/books/:id', builder: () => BookDetailsScreen()),
     ]));

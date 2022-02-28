@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../qlevar_router.dart';
 
+import '../../qlevar_router.dart';
 import 'qoverlay.dart';
 
 /// Show a notification in any router you have in your project
@@ -114,6 +114,7 @@ class QNotification extends StatefulWidget with QOverlay {
     if (duration != null) {
       Future.delayed(duration!, remove);
     }
+    return null;
   }
 
   void remove() => _state!.remove().then((_) {
@@ -173,8 +174,8 @@ class _NotificationState extends State<QNotification>
   );
 
   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-    begin: _clacBeginOffset(),
-    end: _clacEndOffset(),
+    begin: _calcBeginOffset(),
+    end: _calcEndOffset(),
   ).animate(CurvedAnimation(
     parent: _controller,
     curve: widget.animationCurve,
@@ -191,7 +192,7 @@ class _NotificationState extends State<QNotification>
     });
   }
 
-  Offset _clacBeginOffset() {
+  Offset _calcBeginOffset() {
     switch (widget.position) {
       case QNotificationPosition.LeftTop:
       case QNotificationPosition.LeftCenter:
@@ -209,7 +210,7 @@ class _NotificationState extends State<QNotification>
     }
   }
 
-  Offset _clacEndOffset() {
+  Offset _calcEndOffset() {
     switch (widget.position) {
       case QNotificationPosition.RightTop:
       case QNotificationPosition.RightCenter:

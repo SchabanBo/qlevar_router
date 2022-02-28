@@ -11,11 +11,11 @@ class QRoute {
   /// Set the path to this Route
   /// then use `QR.to()`to navigate to it.
   ///
-  /// you can add path parmeter easily like this:
+  /// you can add path parameter easily like this:
   /// `/:id`
-  /// and recive it using `QR.params['id']`
+  /// and receive it using `QR.params['id']`
   ///
-  /// More over you can add **Regex** to this paramter
+  /// More over you can add **Regex** to this parameter
   /// '`/:id(^[0-9]\$)'` any id with more than one number
   /// Will be directed to the `notfound` route
   ///
@@ -42,7 +42,7 @@ class QRoute {
   /// use it with [QRoute.withChild]
   final PageWithChildBuilder? builderChild;
 
-  /// used when you wnat to use declarative router
+  /// used when you want to use declarative router
   final PageWithDeclarativeBuilder? declarativeBuilder;
 
   /// Set the page type for this route
@@ -57,7 +57,7 @@ class QRoute {
   /// Set the initPath for the route, used with [QRoute.withChild]
   final String? initRoute;
 
-  /// The childrens for this route
+  /// The children for this route
   final List<QRoute>? children;
 
   const QRoute({

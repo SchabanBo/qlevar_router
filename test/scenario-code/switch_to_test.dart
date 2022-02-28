@@ -18,7 +18,7 @@ int counter = 0;
 void main() {
   testWidgets('Switch to, ensure page saves the state', (tester) async {
     QR.reset();
-    await tester.pumpWidget(AppWarpper([
+    await tester.pumpWidget(AppWrapper([
       QRoute.withChild(
           path: '/home',
           initRoute: '/test1',

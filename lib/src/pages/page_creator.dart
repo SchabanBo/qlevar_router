@@ -33,7 +33,7 @@ abstract class _PageConverter {
       name: pageName,
       child: child,
       maintainState: pageType.maintainState,
-      fullscreenDialog: pageType.fullscreenDialog,
+      fullScreenDialog: pageType.fullScreenDialog,
       restorationId: pageType.restorationId,
       key: key,
       matchKey: matchKey);
@@ -43,7 +43,7 @@ abstract class _PageConverter {
           name: pageName,
           child: child,
           maintainState: pageType.maintainState,
-          fullscreenDialog: pageType.fullscreenDialog,
+          fullScreenDialog: pageType.fullScreenDialog,
           restorationId: pageType.restorationId,
           title: title,
           key: key,
@@ -55,7 +55,7 @@ abstract class _PageConverter {
         name: pageName,
         child: child,
         maintainState: pageType.maintainState,
-        fullscreenDialog: pageType.fullscreenDialog,
+        fullScreenDialog: pageType.fullScreenDialog,
         restorationId: pageType.restorationId,
         key: key,
         matchKey: matchKey,
@@ -63,8 +63,8 @@ abstract class _PageConverter {
         barrierDismissible: page.barrierDismissible,
         barrierLabel: page.barrierLabel,
         opaque: page.opaque,
-        reverseTransitionDuration: page.reverseTransitionDurationmilliseconds,
-        transitionDuration: page.transitionDurationmilliseconds,
+        reverseTransitionDuration: page.reverseTransitionDurationMilliseconds,
+        transitionDuration: page.transitionDurationMilliseconds,
         transitionsBuilder: page.transitionsBuilder ?? _buildTransaction);
   }
 

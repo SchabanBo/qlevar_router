@@ -15,7 +15,7 @@ void main() {
   void printCurrentHistory() => print(QR.history.entries.map((e) => e.path));
 
   testWidgets('Check Not Found Route AKA 404', (tester) async {
-    await tester.pumpWidget(AppWarpper(pages));
+    await tester.pumpWidget(AppWrapper(pages));
     await tester.pumpAndSettle();
     await QR.to('/something');
     expectedPath('/something');

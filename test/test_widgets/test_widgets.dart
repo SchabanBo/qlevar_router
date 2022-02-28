@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:qlevar_router/qlevar_router.dart';
 
-class AppWarpper extends StatelessWidget {
+class AppWrapper extends StatelessWidget {
   final List<QRoute> pages;
   final String? initPath;
-  const AppWarpper(this.pages, {this.initPath, Key? key}) : super(key: key);
+  const AppWrapper(this.pages, {this.initPath, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

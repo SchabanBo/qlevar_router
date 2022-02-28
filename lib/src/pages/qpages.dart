@@ -5,9 +5,9 @@ import 'package:flutter/cupertino.dart';
 /// The default is [QPlatformPage]
 abstract class QPage {
   final bool maintainState;
-  final bool fullscreenDialog;
+  final bool fullScreenDialog;
   final String? restorationId;
-  const QPage(this.fullscreenDialog, this.maintainState, this.restorationId);
+  const QPage(this.fullScreenDialog, this.maintainState, this.restorationId);
 }
 
 /// This type will set the page type as [MaterialPage]
@@ -30,7 +30,7 @@ class QCupertinoPage extends QPage {
   }) : super(fullscreenDialog, maintainState, restorationId);
 }
 
-/// This type will determinade the page type based on the platfrom
+/// This type will determinate the page type based on the platform
 ///  and gives [QMaterialPage] or [QCupertinoPage]
 class QPlatformPage extends QPage {
   const QPlatformPage({
@@ -42,8 +42,8 @@ class QPlatformPage extends QPage {
 
 /// Give a custom animation for the page.
 class QCustomPage extends QPage {
-  final int transitionDurationmilliseconds;
-  final int reverseTransitionDurationmilliseconds;
+  final int transitionDurationMilliseconds;
+  final int reverseTransitionDurationMilliseconds;
   final bool? opaque;
   final bool? barrierDismissible;
   final Color? barrierColor;
@@ -58,14 +58,14 @@ class QCustomPage extends QPage {
     this.barrierDismissible,
     this.barrierLabel,
     this.opaque,
-    int? reverseTransitionDurationmilliseconds,
-    int? transitionDurationmilliseconds,
+    int? reverseTransitionDurationMilliseconds,
+    int? transitionDurationMilliseconds,
     this.transitionsBuilder,
     String? restorationId,
     this.withType,
-  })  : reverseTransitionDurationmilliseconds =
-            reverseTransitionDurationmilliseconds ?? 300,
-        transitionDurationmilliseconds = transitionDurationmilliseconds ?? 300,
+  })  : reverseTransitionDurationMilliseconds =
+            reverseTransitionDurationMilliseconds ?? 300,
+        transitionDurationMilliseconds = transitionDurationMilliseconds ?? 300,
         super(fullscreenDialog, maintainState, restorationId);
 }
 
@@ -79,8 +79,8 @@ class QSlidePage extends QCustomPage {
     bool? barrierDismissible,
     String? barrierLabel,
     bool? opaque,
-    int? reverseTransitionDurationmilliseconds,
-    int? transitionDurationmilliseconds,
+    int? reverseTransitionDurationMilliseconds,
+    int? transitionDurationMilliseconds,
     String? restorationId,
     QCustomPage? withType,
     this.curve,
@@ -92,9 +92,9 @@ class QSlidePage extends QCustomPage {
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
           opaque: opaque,
-          reverseTransitionDurationmilliseconds:
-              reverseTransitionDurationmilliseconds,
-          transitionDurationmilliseconds: transitionDurationmilliseconds,
+          reverseTransitionDurationMilliseconds:
+              reverseTransitionDurationMilliseconds,
+          transitionDurationMilliseconds: transitionDurationMilliseconds,
           restorationId: restorationId,
           withType: withType,
         );
@@ -109,8 +109,8 @@ class QFadePage extends QCustomPage {
     bool? barrierDismissible,
     String? barrierLabel,
     bool? opaque,
-    int? reverseTransitionDurationmilliseconds,
-    int? transitionDurationmilliseconds,
+    int? reverseTransitionDurationMilliseconds,
+    int? transitionDurationMilliseconds,
     String? restorationId,
     QCustomPage? withType,
     this.curve,
@@ -121,9 +121,9 @@ class QFadePage extends QCustomPage {
             fullscreenDialog: fullscreenDialog,
             maintainState: maintainState,
             opaque: opaque,
-            reverseTransitionDurationmilliseconds:
-                reverseTransitionDurationmilliseconds,
-            transitionDurationmilliseconds: transitionDurationmilliseconds,
+            reverseTransitionDurationMilliseconds:
+                reverseTransitionDurationMilliseconds,
+            transitionDurationMilliseconds: transitionDurationMilliseconds,
             restorationId: restorationId,
             withType: withType);
 }
