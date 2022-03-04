@@ -199,6 +199,245 @@ void main() {
       expect('test', QR.params['str']!.value!);
       expect(true, QR.params['bool']!.value!);
     });
+
+    testWidgets('Navigate to multi component param and back with QR.back',
+        (tester) async {
+      // The navigation should be:
+      // to :/store/2
+      // to :/store/1
+      // to :/store/1/product/1
+      // to :/store/1/product/2
+      // to :/store/1/product/3
+      // back: /store/1/product/2
+      // back: /store/1/product/1
+      // back: /store/1
+      // back: /store/2
+
+      QR.reset();
+      final routes = [
+        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute(
+          path: '/store',
+          builder: () => Scaffold(body: Text('Stores')),
+          children: [
+            QRoute(
+              path: '/:id',
+              builder: () => Scaffold(
+                body: Text('Store ${QR.params['id']!.value}'),
+              ),
+              children: [
+                QRoute(
+                  path: '/product/:product_id',
+                  builder: () => Scaffold(
+                    body: Text('Product ${QR.params['product_id']!.value}'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        )
+      ];
+
+      await tester.pumpWidget(AppWrapper(routes));
+      await QR.to('/store/2');
+      await tester.pumpAndSettle();
+      expect(find.text('Store 2'), findsOneWidget);
+      await QR.to('/store/1');
+      await tester.pumpAndSettle();
+      expect(find.text('Store 1'), findsOneWidget);
+      await QR.to('/store/1/product/1');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 1'), findsOneWidget);
+      await QR.to('/store/1/product/2');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 2'), findsOneWidget);
+      await QR.to('/store/1/product/3');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 3'), findsOneWidget);
+
+      await QR.back();
+      await tester.pumpAndSettle();
+      expect(find.text('Product 2'), findsOneWidget);
+      await QR.back();
+      await tester.pumpAndSettle();
+      expect(find.text('Product 1'), findsOneWidget);
+
+      await QR.back();
+      await tester.pumpAndSettle();
+      expect(find.text('Store 1'), findsOneWidget);
+      await QR.back();
+      await tester.pumpAndSettle();
+      expect(find.text('Store 2'), findsOneWidget);
+      await QR.back();
+      await tester.pumpAndSettle();
+      expect(find.text('Stores'), findsOneWidget);
+    });
+
+    testWidgets(
+        'Navigate to multi component param and back with appBar back button',
+        (tester) async {
+      // The navigation should be:
+      // to :/store/2
+      // to :/store/1
+      // to :/store/1/product/1
+      // to :/store/1/product/2
+      // to :/store/1/product/3
+      // back: /store/1/product/2
+      // back: /store/1/product/1
+      // back: /store/1
+      // back: /store/2
+
+      QR.reset();
+      final routes = [
+        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute(
+          path: '/store',
+          builder: () => Scaffold(body: Text('Stores')),
+          children: [
+            QRoute(
+              path: '/:id',
+              builder: () => Scaffold(
+                appBar: AppBar(),
+                body: Text('Store ${QR.params['id']!.value}'),
+              ),
+              children: [
+                QRoute(
+                  path: '/product/:product_id',
+                  builder: () => Scaffold(
+                    appBar: AppBar(),
+                    body: Text('Product ${QR.params['product_id']!.value}'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        )
+      ];
+
+      await tester.pumpWidget(AppWrapper(routes));
+      await QR.to('/store/2');
+      await tester.pumpAndSettle();
+      expect(find.text('Store 2'), findsOneWidget);
+      await QR.to('/store/1');
+      await tester.pumpAndSettle();
+      expect(find.text('Store 1'), findsOneWidget);
+      await QR.to('/store/1/product/1');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 1'), findsOneWidget);
+      await QR.to('/store/1/product/2');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 2'), findsOneWidget);
+      await QR.to('/store/1/product/3');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 3'), findsOneWidget);
+
+      var backButton = find.byTooltip('Back');
+      expect(backButton, findsOneWidget);
+      await tester.tap(backButton);
+      await tester.pumpAndSettle();
+      expect(find.text('Product 2'), findsOneWidget);
+
+      await tester.tap(backButton);
+      await tester.pumpAndSettle();
+      expect(find.text('Product 1'), findsOneWidget);
+
+      await tester.tap(backButton);
+      await tester.pumpAndSettle();
+      expect(find.text('Store 1'), findsOneWidget);
+
+      await tester.tap(backButton);
+      await tester.pumpAndSettle();
+      expect(find.text('Store 2'), findsOneWidget);
+
+      await tester.tap(backButton);
+      await tester.pumpAndSettle();
+      expect(find.text('Stores'), findsOneWidget);
+    });
+
+    testWidgets(
+        'Navigate to multi component param and back with browser back button',
+        (tester) async {
+      // The navigation should be:
+      // to :/store/2
+      // to :/store/1
+      // to :/store/1/product/1
+      // to :/store/1/product/2
+      // to :/store/1/product/3
+      // back: /store/1/product/2
+      // back: /store/1/product/1
+      // back: /store/1
+      // back: /store/2
+
+      QR.reset();
+      final routes = [
+        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute(
+          path: '/store',
+          builder: () => Scaffold(body: Text('Stores')),
+          children: [
+            QRoute(
+              path: '/:id',
+              builder: () => Scaffold(
+                appBar: AppBar(),
+                body: Text('Store ${QR.params['id']!.value}'),
+              ),
+              children: [
+                QRoute(
+                  path: '/product/:product_id',
+                  builder: () => Scaffold(
+                    appBar: AppBar(),
+                    body: Text('Product ${QR.params['product_id']!.value}'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        )
+      ];
+      final router = QRouterDelegate(routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationParser: const QRouteInformationParser(),
+          routerDelegate: router,
+        ),
+      );
+
+      await QR.to('/store/2');
+      await tester.pumpAndSettle();
+      expect(find.text('Store 2'), findsOneWidget);
+      await QR.to('/store/1');
+      await tester.pumpAndSettle();
+      expect(find.text('Store 1'), findsOneWidget);
+      await QR.to('/store/1/product/1');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 1'), findsOneWidget);
+      await QR.to('/store/1/product/2');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 2'), findsOneWidget);
+      await QR.to('/store/1/product/3');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 3'), findsOneWidget);
+
+      router.setNewRoutePath('/store/1/product/2');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 2'), findsOneWidget);
+
+      router.setNewRoutePath('/store/1/product/1');
+      await tester.pumpAndSettle();
+      expect(find.text('Product 1'), findsOneWidget);
+
+      router.setNewRoutePath('/store/1');
+      await tester.pumpAndSettle();
+      expect(find.text('Store 1'), findsOneWidget);
+
+      router.setNewRoutePath('/store/2');
+      await tester.pumpAndSettle();
+      expect(find.text('Store 2'), findsOneWidget);
+
+      router.setNewRoutePath('/store');
+      await tester.pumpAndSettle();
+      expect(find.text('Stores'), findsOneWidget);
+    });
   });
 }
 

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.5.11] 04.03.2022
+
+- Redesign example
+- Remove QNotification
+- Add more tests
+
 ## [1.5.10] 28.02.2022
 
 - Fix #56

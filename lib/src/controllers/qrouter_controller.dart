@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
 import '../helpers/widgets/routes_tree.dart';
-import '../overlays/qoverlay.dart';
 import '../pages/qpage_internal.dart';
 import '../qr.dart';
 import '../routes/qroute_children.dart';
@@ -91,7 +90,7 @@ abstract class QNavigator extends ChangeNotifier {
   /// you should give the route name or path to remove
   void removeRoutes(List<String> routesNames);
 
-  Future<T?> show<T>(QOverlay overlay);
+  Future<T?> show<T>(QDialog overlay);
 }
 
 class QRouterController extends QNavigator {
@@ -313,8 +312,11 @@ class QRouterController extends QNavigator {
       if (checkChild) {
         await popUntilOrPushMatch(match.child!);
       }
+
       // See [#56]
-      if (key.hasName(QRContext.rootRouterName)) {
+      // if the parent have a navigator then just insure that the
+      // page is on the top
+      if (QR.hasNavigator(match.name) && this != QR.navigatorOf(match.name)) {
         _bringPageToTop(index);
       }
 
@@ -408,7 +410,7 @@ class QRouterController extends QNavigator {
   void removeRoutes(List<String> routesNames) => routes.remove(routesNames);
 
   @override
-  Future<T?> show<T>(QOverlay overlay) {
+  Future<T?> show<T>(QDialog overlay) {
     assert(navKey.currentState != null);
     return overlay.show(
         state: navKey.currentState!, context: navKey.currentContext!);
