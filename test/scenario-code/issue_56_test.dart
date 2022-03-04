@@ -76,6 +76,6 @@ void main() {
     await delegate.setNewRoutePath('/home/login');
     await tester.pumpAndSettle();
     expectedPath('/home/login');
-    tester.ensureVisible(find.text('Go to vendor login'));
+    expect(find.text('Go to vendor login'), findsOneWidget);
   });
 }

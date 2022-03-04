@@ -1,20 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
-import 'routes.dart';
+import 'routes/app_routes.dart';
+import 'services/auth_service.dart';
+import 'services/storage_service.dart';
 
 void main() {
-  QR.settings.enableDebugLog = true;
-  runApp(MyApp());
+  Get.lazyPut(() => AuthService());
+  Get.lazyPut(() => StorageService());
+  runApp(const QlevarApp());
 }
 
-class MyApp extends StatelessWidget {
+class QlevarApp extends StatelessWidget {
+  const QlevarApp({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.blueGrey.shade800,
-      ),
+  Widget build(BuildContext context) {
+    final appRoutes = AppRoutes();
+    appRoutes.setup();
+    return MaterialApp.router(
+      // Add the [QRouteInformationParser]
       routeInformationParser: QRouteInformationParser(),
-      routerDelegate: QRouterDelegate(AppRoutes().routes(), withWebBar: true));
+      // Add the [QRouterDelegate] with your routes
+      routerDelegate: QRouterDelegate(
+        appRoutes.routes,
+        observers: [
+          // Add your observers to the main navigator
+          // to watch for all routes in all navigators use [QR.observer]
+        ],
+      ),
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+    );
+  }
 }
+
+// TODO:
+// - Fix test

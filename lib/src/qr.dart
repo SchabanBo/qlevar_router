@@ -7,7 +7,6 @@ import 'controllers/qrouter_controller.dart';
 import 'helpers/platform/configure_web.dart'
     if (dart.library.io) 'helpers/platform/configure_non_web.dart';
 import 'helpers/widgets/stack_tree.dart';
-import 'overlays/qoverlay.dart';
 import 'routes/qroute_children.dart';
 import 'routes/qroute_internal.dart';
 import 'types/qhistory.dart';
@@ -55,6 +54,9 @@ class QRContext {
 
   /// return router for a name
   QNavigator navigatorOf(String name) => _manager.withName(name);
+
+  /// Check if navigator with this name exists
+  bool hasNavigator(String name) => _manager.hasController(name);
 
   ///  return a router [QRouter] for the given routes
   /// you do not need to give the [initRoute]
@@ -107,7 +109,7 @@ class QRContext {
     return DebugStackTree(_manager.controllers);
   }
 
-  Future<T?> show<T>(QOverlay overlay, {String? name}) async =>
+  Future<T?> show<T>(QDialog overlay, {String? name}) async =>
       await overlay.show(name: name);
 
   /// create a controller to use with a Navigator
@@ -162,10 +164,12 @@ class QRContext {
       {String forController = QRContext.rootRouterName,
       PageAlreadyExistAction? pageAlreadyExistAction}) async {
     final controller = _manager.withName(forController);
-    await controller.popUntilOrPushMatch(match,
-        checkChild: false,
-        pageAlreadyExistAction:
-            pageAlreadyExistAction ?? PageAlreadyExistAction.Remove);
+    await controller.popUntilOrPushMatch(
+      match,
+      checkChild: false,
+      pageAlreadyExistAction:
+          pageAlreadyExistAction ?? PageAlreadyExistAction.Remove,
+    );
     if (match.hasChild && !match.isProcessed) {
       final newControllerName =
           _manager.hasController(match.name) ? match.name : forController;

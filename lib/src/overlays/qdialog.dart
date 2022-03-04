@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../qlevar_router.dart';
 
+import '../../qlevar_router.dart';
 import '../routes/qdialog_route.dart';
-import 'qoverlay.dart';
 
 // Create a dialog to use with [QR]
-class QDialog with QOverlay {
+class QDialog {
   /// It gives the pop action to close the dialog and takes the widget to show
   final Widget Function(void Function<T>([T]) pop) widget;
   final bool barrierDismissible = true;
@@ -50,7 +49,6 @@ class QDialog with QOverlay {
             ));
   }
 
-  @override
   Future<T?> show<T>(
       {String? name, NavigatorState? state, BuildContext? context}) async {
     if (state == null || context == null) {

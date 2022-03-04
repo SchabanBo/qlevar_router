@@ -62,6 +62,8 @@ void main() {
     });
 
     testWidgets('Stack with Nested Route when parent pop', (tester) async {
+      // When pressing back on the parent all children should be closed
+      // and the path should be the previous route in the parent navigator
       QR.reset();
       await tester.pumpWidget(AppWrapper(routes));
 
@@ -83,8 +85,11 @@ void main() {
       expectedPath('/nested/child-3');
       expectedHistoryLength(5);
 
-      final backButton = find.byTooltip('Back');
+      var backButton = find.byTooltip('Back');
+      expect(backButton, findsOneWidget);
       await tester.tap(backButton);
+      await tester.pumpAndSettle();
+
       expectedPath('/');
       expectedHistoryLength(1);
     });
