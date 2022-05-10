@@ -212,6 +212,10 @@ class QRContext {
 
   /// try to pop the last active navigator or go to last path in the history
   Future<PopResult> back() async {
+    if (!history.hasLast) {
+      return PopResult.NotPopped;
+    }
+
     // is processed by declarative
     if (_manager.isDeclarative(QR.history.current.key.key)) {
       final dCon = _manager.getDeclarative(QR.history.current.key.key);
@@ -244,9 +248,6 @@ class QRContext {
       }
     }
 
-    if (!history.hasLast) {
-      return PopResult.NotPopped;
-    }
     to(history.last.path);
     QR.history.removeLast(count: 2);
     return PopResult.Popped;
@@ -280,7 +281,7 @@ class _QRSettings {
       path: '/notfound',
       builder: () => Material(child: Center(child: Text('Page Not Found'))));
 
-  Widget iniPage =
+  Widget initPage =
       Material(child: Container(child: Center(child: Text('Loading'))));
   Function(String) logger = print;
   QPage pagesType = QPlatformPage();
