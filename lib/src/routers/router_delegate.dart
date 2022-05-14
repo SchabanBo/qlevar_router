@@ -10,7 +10,7 @@ import '../qr.dart';
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
-  final key = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> key;
   final QRouterController _controller;
   final bool withWebBar;
   final bool alwaysAddInitPath;
@@ -19,12 +19,14 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   QRouterDelegate(
     List<QRoute> routes, {
+    GlobalKey<NavigatorState>? navKey,
     this.initPath,
     this.withWebBar = false,
     this.alwaysAddInitPath = false,
     this.observers = const [],
-  }) : _controller = QR.createRouterController(QRContext.rootRouterName,
-            routes: routes) {
+  })  : _controller =
+            QR.createRouterController(QRContext.rootRouterName, routes: routes),
+        key = navKey ?? GlobalKey<NavigatorState>() {
     _controller.addListener(notifyListeners);
     _controller.navKey = key;
   }
