@@ -14,7 +14,7 @@ class PagesController {
   static const String _initPageKey = 'Init Page';
 
   QMaterialPageInternal get _initPage => QMaterialPageInternal(
-      child: QR.settings.iniPage, matchKey: QKey(_initPageKey));
+      child: QR.settings.initPage, matchKey: QKey(_initPageKey));
 
   Future<void> add(QRouteInternal route) async {
     routes.add(route);
