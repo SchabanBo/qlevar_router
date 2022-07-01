@@ -9,13 +9,15 @@ void main() {
   QR.settings.enableDebugLog = false;
   QR.settings.enableLog = false;
   final pages = [
-    QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+    QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
     QRoute(
-        name: 'two', path: '/two', builder: () => Scaffold(body: WidgetTwo())),
+        name: 'two',
+        path: '/two',
+        builder: () => const Scaffold(body: WidgetTwo())),
     QRoute(
         name: 'three',
         path: '/three',
-        builder: () => Scaffold(body: WidgetThree())),
+        builder: () => const Scaffold(body: WidgetThree())),
   ];
 
   testWidgets(
@@ -168,8 +170,8 @@ void main() {
     QR.reset();
     await prepareTest(tester);
     await tester.pumpAndSettle();
-    final routePath = '/new-route';
-    final routeText = 'new route';
+    const routePath = '/new-route';
+    const routeText = 'new route';
     expect(find.text('login'), findsOneWidget);
     // Make sure route not exist
     await QR.to('/dashboard$routePath');
@@ -183,7 +185,8 @@ void main() {
     expectedPath('/dashboard/child-1');
     // Add Route
     final dashboardNavi = QR.navigatorOf('/dashboard');
-    final newRoute = QRoute(path: routePath, builder: () => Text(routeText));
+    final newRoute =
+        QRoute(path: routePath, builder: () => const Text(routeText));
     dashboardNavi.addRoutes([newRoute]);
     await QR.to('/dashboard$routePath');
     await tester.pumpAndSettle();
@@ -206,8 +209,8 @@ void main() {
   testWidgets('Add and remove routes', (tester) async {
     await prepareTest(tester);
     await tester.pumpAndSettle();
-    final routePath = '/new-route';
-    final routeText = 'new route';
+    const routePath = '/new-route';
+    const routeText = 'new route';
     expect(find.text('login'), findsOneWidget);
     // Make sure route not exist
     await QR.to(routePath);
@@ -219,7 +222,8 @@ void main() {
     expect(find.text('login'), findsOneWidget);
     expectedPath('/login');
     // Add Route
-    final newRoute = QRoute(path: routePath, builder: () => Text(routeText));
+    final newRoute =
+        QRoute(path: routePath, builder: () => const Text(routeText));
     QR.navigator.addRoutes([newRoute]);
     await QR.to(routePath);
     await tester.pumpAndSettle();

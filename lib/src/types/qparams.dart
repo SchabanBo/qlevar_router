@@ -2,22 +2,22 @@ import 'package:flutter/foundation.dart';
 
 /// The params for the route
 class QParams {
-  final Map<String, _ParamValue> _params;
+  final Map<String, ParamValue> _params;
 
-  QParams({Map<String, _ParamValue>? params})
-      : _params = params ?? <String, _ParamValue>{};
+  QParams({Map<String, ParamValue>? params})
+      : _params = params ?? <String, ParamValue>{};
 
   QParams copyWith() => QParams(params: Map.from(_params));
 
   /// Get param from key
-  _ParamValue? operator [](String key) => _params[key];
+  ParamValue? operator [](String key) => _params[key];
 
   /// set new param
   void operator []=(String key, Object value) =>
-      _params[key] = _ParamValue(value);
+      _params[key] = ParamValue(value);
 
   /// get the params as map
-  Map<String, _ParamValue> get asMap => _params;
+  Map<String, ParamValue> get asMap => _params;
 
   Map<String, dynamic> get asValueMap {
     final result = <String, dynamic>{};
@@ -53,7 +53,7 @@ class QParams {
 
   /// Add params
   void addAll(Map<String, dynamic> other) => _params
-      .addAll(other.map((key, value) => MapEntry(key, _ParamValue(value))));
+      .addAll(other.map((key, value) => MapEntry(key, ParamValue(value))));
 
   /// See if a parameter is Exist, if not create it with this `initValue`.
   /// if you set `keepAlive` to true then the package will not remove this param
@@ -67,7 +67,7 @@ class QParams {
   }) {
     final param = _params[name];
     if (param == null) {
-      _params[name] = _ParamValue(
+      _params[name] = ParamValue(
         initValue,
         keepAlive: keepAlive || cleanupAfter != null,
         cleanupAfter: cleanupAfter,
@@ -115,14 +115,14 @@ class QParams {
 }
 
 /// Class represent the param value
-class _ParamValue {
+class ParamValue {
   final Object? _value;
   bool keepAlive;
   int? cleanupAfter;
   Function(Object, Object)? onChange;
   Function()? onDelete;
 
-  _ParamValue(
+  ParamValue(
     this._value, {
     this.keepAlive = false,
     this.cleanupAfter,
@@ -130,19 +130,19 @@ class _ParamValue {
     this.onDelete,
   });
 
-  _ParamValue copyWith({
+  ParamValue copyWith({
     Object? value,
     Function(Object, Object)? onChange,
     Function()? onDelete,
   }) {
-    return _ParamValue(
+    return ParamValue(
       value ?? _value,
       onChange: onChange ?? this.onChange,
       onDelete: onDelete ?? this.onDelete,
     );
   }
 
-  bool isSame(_ParamValue other) => _value == other.value;
+  bool isSame(ParamValue other) => _value == other.value;
 
   /// is param has value
   bool get hasValue => _value != null;

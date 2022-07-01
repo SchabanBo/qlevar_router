@@ -4,7 +4,7 @@ import '../../types/qhistory.dart';
 
 class DebugHistory extends StatelessWidget {
   final List<QHistoryEntry> history;
-  DebugHistory(this.history);
+  const DebugHistory(this.history, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -19,25 +19,27 @@ class DebugHistory extends StatelessWidget {
                                 margin: const EdgeInsets.all(5),
                                 child: Row(children: [
                                   Text(e.navigator,
-                                      style: TextStyle(fontSize: 16)),
+                                      style: const TextStyle(fontSize: 16)),
                                   const SizedBox(width: 10),
                                   Text(e.key.toString(),
-                                      style: TextStyle(fontSize: 16)),
+                                      style: const TextStyle(fontSize: 16)),
                                   const SizedBox(width: 10),
-                                  Text(e.path, style: TextStyle(fontSize: 16)),
+                                  Text(e.path,
+                                      style: const TextStyle(fontSize: 16)),
                                   const SizedBox(width: 10),
                                   Text(e.params.asStringMap().toString(),
-                                      style: TextStyle(fontSize: 16)),
+                                      style: const TextStyle(fontSize: 16)),
                                 ]),
                               ))
                           .toList()),
-                  title: Text('History:', style: TextStyle(fontSize: 16)),
+                  title: const Text('History:', style: TextStyle(fontSize: 16)),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.of(c).pop(),
-                        child: Text('Close'))
+                        child: const Text('Close'))
                   ],
                 )),
-        child: Text('Show Navigation History', style: TextStyle(fontSize: 16)));
+        child: const Text('Show Navigation History',
+            style: TextStyle(fontSize: 16)));
   }
 }

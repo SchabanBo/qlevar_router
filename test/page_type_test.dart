@@ -10,11 +10,11 @@ void main() {
     test('Page type to internal page type', () async {
       QR.reset();
       final pageMap = {
-        QPlatformPage(): QMaterialPageInternal,
-        QMaterialPage(): QMaterialPageInternal,
-        QCupertinoPage(): QCupertinoPageInternal,
-        QSlidePage(): QCustomPageInternal,
-        QCustomPage(): QCustomPageInternal,
+        const QPlatformPage(): QMaterialPageInternal,
+        const QMaterialPage(): QMaterialPageInternal,
+        const QCupertinoPage(): QCupertinoPageInternal,
+        const QSlidePage(): QCustomPageInternal,
+        const QCustomPage(): QCustomPageInternal,
       };
       for (var item in pageMap.entries) {
         final route = QRouteInternal.from(

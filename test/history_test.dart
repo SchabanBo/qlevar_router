@@ -14,18 +14,19 @@ void main() {
           builderChild: (r) => Scaffold(appBar: AppBar(), body: r),
           initRoute: '/child',
           children: [
-            QRoute(path: '/child', builder: () => Text('child')),
-            QRoute(path: '/child-1', builder: () => Text('child 1')),
-            QRoute(path: '/child-2', builder: () => Text('child 2')),
-            QRoute(path: '/child-3', builder: () => Text('child 3')),
+            QRoute(path: '/child', builder: () => const Text('child')),
+            QRoute(path: '/child-1', builder: () => const Text('child 1')),
+            QRoute(path: '/child-2', builder: () => const Text('child 2')),
+            QRoute(path: '/child-3', builder: () => const Text('child 3')),
           ]),
-      QRoute(path: '/two', builder: () => Scaffold(body: WidgetTwo())),
-      QRoute(path: '/three', builder: () => Scaffold(body: WidgetThree())),
+      QRoute(path: '/two', builder: () => const Scaffold(body: WidgetTwo())),
+      QRoute(
+          path: '/three', builder: () => const Scaffold(body: WidgetThree())),
     ];
     test('Stack with Nested Route With QR.back()', () async {
       QR.reset();
-      final _ = QRouterDelegate(routes);
-      await _.setInitialRoutePath('/');
+      final delegate = QRouterDelegate(routes);
+      await delegate.setInitialRoutePath('/');
       await QR.to('/nested');
       expectedPath('/nested/child');
       expectedHistoryLength(3);
@@ -58,7 +59,7 @@ void main() {
       await QR.back();
       expectedPath('/');
       expectedHistoryLength(1);
-      _.dispose();
+      delegate.dispose();
     });
 
     testWidgets('Stack with Nested Route when parent pop', (tester) async {
@@ -96,8 +97,8 @@ void main() {
 
     test('Simple Navigation History', () async {
       QR.reset();
-      final _ = QRouterDelegate(routes);
-      await _.setInitialRoutePath('/');
+      final delegate = QRouterDelegate(routes);
+      await delegate.setInitialRoutePath('/');
       await QR.to('/nested');
       expectedPath('/nested/child');
       expectedHistoryLength(3);

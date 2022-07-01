@@ -41,8 +41,8 @@ class QRContext {
   /// Set the active navigator name to call with [navigator]
   /// by default it is the root navigator
   /// For example if you work on a dashboard and you want to do your changes
-  /// from now on only on the dashboard Navi. Then set this value
-  /// to the Dashboard Navi name and every time you call [QR.navigator]
+  /// from now on only on the dashboard Navigator. Then set this value
+  /// to the Dashboard Navigator name and every time you call [QR.navigator]
   /// the Dashboard navigator will be called instated of root navigator
   String activeNavigatorName = QRContext.rootRouterName;
 
@@ -57,6 +57,9 @@ class QRContext {
 
   /// Check if navigator with this name exists
   bool hasNavigator(String name) => _manager.hasController(name);
+
+  BuildContext? get context =>
+      (navigator as QRouterController).navKey.currentContext;
 
   ///  return a router [QRouter] for the given routes
   /// you do not need to give the [initRoute]
@@ -108,9 +111,6 @@ class QRContext {
   Widget getActiveTree() {
     return DebugStackTree(_manager.controllers);
   }
-
-  Future<T?> show<T>(QDialog overlay, {String? name}) async =>
-      await overlay.show(name: name);
 
   /// create a controller to use with a Navigator
   QRouterController createRouterController(String name,
@@ -180,8 +180,8 @@ class QRContext {
     }
 
     if (!match.hasChild && _manager.hasController(match.name)) {
-      final _navigator = navigatorOf(match.name) as QRouterController;
-      if (_navigator.hasRoutes) {
+      final navigator = navigatorOf(match.name) as QRouterController;
+      if (navigator.hasRoutes) {
         match.activePath =
             match.activePath! + navigatorOf(match.name).currentRoute.path;
       }
@@ -212,7 +212,7 @@ class QRContext {
 
   /// try to pop the last active navigator or go to last path in the history
   Future<PopResult> back() async {
-    if (!history.hasLast) {
+    if (history.isEmpty) {
       return PopResult.NotPopped;
     }
 
@@ -224,23 +224,23 @@ class QRContext {
       }
     }
 
-    final lastNavi = QR.history.current.navigator;
-    if (_manager.hasController(lastNavi)) {
-      final popNaviOptions = [lastNavi];
+    final lastNavigator = QR.history.current.navigator;
+    if (_manager.hasController(lastNavigator)) {
+      final popNavigatorOptions = [lastNavigator];
       // Should navigator be removed? if the last path in history is the last
       // path in the navigator then we need to pop the navigator before it and
       // close this one
-      if (history.hasLast && lastNavi != history.last.navigator) {
-        popNaviOptions.add(history.last.navigator);
+      if (history.hasLast && lastNavigator != history.last.navigator) {
+        popNavigatorOptions.add(history.last.navigator);
       }
 
-      for (final navi in popNaviOptions) {
-        final controller = navigatorOf(navi);
+      for (final navigator in popNavigatorOptions) {
+        final controller = navigatorOf(navigator);
 
         final popResult = await controller.removeLast();
         if (popResult != PopResult.NotPopped) {
           if (popResult != PopResult.Popped) return popResult;
-          if (navi != QRContext.rootRouterName) {
+          if (navigator != QRContext.rootRouterName) {
             (rootNavigator as QRouterController).update(withParams: false);
           }
           return PopResult.Popped;
@@ -279,12 +279,12 @@ class _QRSettings {
   // Add the default not found page path without slash.
   QRoute notFoundPage = QRoute(
       path: '/notfound',
-      builder: () => Material(child: Center(child: Text('Page Not Found'))));
+      builder: () =>
+          const Material(child: Center(child: Text('Page Not Found'))));
 
-  Widget initPage =
-      Material(child: Container(child: Center(child: Text('Loading'))));
+  Widget initPage = const Material(child: Center(child: Text('Loading')));
   Function(String) logger = print;
-  QPage pagesType = QPlatformPage();
+  QPage pagesType = const QPlatformPage();
 
   /// Set this to true if you want only one route instance in the stack
   /// e.x. if you have in the stack a route `home/store/2` and then navigate to

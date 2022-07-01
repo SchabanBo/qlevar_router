@@ -40,6 +40,8 @@ class BooksListScreen extends StatelessWidget {
     Book('Foundation', 'Isaac Asimov'),
     Book('Fahrenheit 451', 'Ray Bradbury'),
   ];
+
+  BooksListScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final filter = QR.params['filter'];
@@ -48,7 +50,7 @@ class BooksListScreen extends StatelessWidget {
       body: ListView(
         children: [
           TextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'filter',
             ),
             onSubmitted: (v) async =>

@@ -2,5 +2,5 @@
 class QPlatform {
   static const bool isWeb = true;
 
-  static final bool isIOS = false;
+  static const bool isIOS = false;
 }

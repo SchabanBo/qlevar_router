@@ -41,16 +41,16 @@ class QDialogRoute<T> extends PopupRoute<T> {
           Animation<double> secondaryAnimation, Widget child) =>
       _transitionBuilder == null
           ? FadeTransition(
-              child: child,
-              opacity: CurvedAnimation(parent: animation, curve: Curves.linear))
+              opacity: CurvedAnimation(parent: animation, curve: Curves.linear),
+              child: child)
           : _transitionBuilder!(context, animation, secondaryAnimation, child);
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
           Animation<double> secondaryAnimation) =>
       Semantics(
-        child: widget(context, animation, secondaryAnimation),
         scopesRoute: true,
         explicitChildNodes: true,
+        child: widget(context, animation, secondaryAnimation),
       );
 }

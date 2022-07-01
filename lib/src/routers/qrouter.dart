@@ -10,7 +10,7 @@ class QRouter extends StatefulWidget {
 
   final QRouterController _controller;
 
-  QRouter(this._controller);
+  QRouter(this._controller, {Key? key}) : super(key: key);
 
   /// Get the name for the current child
   /// This is the name which define in [QRoute.name] if it is null [QRoute.path]
@@ -22,7 +22,7 @@ class QRouter extends StatefulWidget {
   QNavigator get navigator => _controller;
 
   @override
-  _QRouterState createState() => _QRouterState();
+  State createState() => _QRouterState();
 }
 
 class _QRouterState extends State<QRouter> {

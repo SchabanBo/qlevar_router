@@ -59,7 +59,8 @@ class MiddlewareRoutes {
             middleware: [
               QMiddlewareBuilder(
                 canPopFunc: () async {
-                  final result = await QR.show<bool>(dialog);
+                  final result = await showDialog<bool>(
+                      context: QR.context!, builder: dialog);
                   return result ?? false;
                 },
               )
@@ -68,19 +69,17 @@ class MiddlewareRoutes {
         ],
       );
 
-  QDialog get dialog => QDialog(
-        widget: (pop) => AlertDialog(
-          title: Text('Do you want to go back?'),
-          actions: [
-            TextButton(
-              onPressed: () => pop(true),
-              child: Text('Yes'),
-            ),
-            TextButton(
-              onPressed: () => pop(false),
-              child: Text('No'),
-            )
-          ],
-        ),
+  AlertDialog dialog(BuildContext context) => AlertDialog(
+        title: Text('Do you want to go back?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('No'),
+          )
+        ],
       );
 }
