@@ -179,29 +179,7 @@ class AuthMiddleware extends QMiddleware{
 }
 ```
 
-```plantuml
-@startuml
-
-
-[-> QRController : Navigation Request
-collections OnMatch as OnMatch
-collections Redirect as Redirect
-collections OnEnter as OnEnter
-QRController -> OnMatch: searching for\nthe matching route
-OnMatch -> Redirect
-Redirect -> OnEnter : Initializing the page
-Redirect ->] : new navigation request to the redirect path
-
-OnEnter -> Ready 
-collections CanPop as CanPop
-collections onExit as onExit
-Ready -> CanPop: :on leaving the page
-CanPop -> onExit : can leave the page
-CanPop -> Ready : cannot leave the page
-onExit->]: remove page
-
-@enduml
-```
+![Middleware](./example/assets/middleware.png)
 
 ### redirectGuard
 
