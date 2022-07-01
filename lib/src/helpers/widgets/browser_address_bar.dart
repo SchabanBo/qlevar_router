@@ -9,9 +9,10 @@ class BrowserAddressBar extends StatefulWidget {
 
   final Function(String) setNewRoute;
   final QRouterController _controller;
-  BrowserAddressBar(this.setNewRoute, this._controller);
+  const BrowserAddressBar(this.setNewRoute, this._controller, {Key? key})
+      : super(key: key);
   @override
-  _BrowserAddressBarState createState() => _BrowserAddressBarState();
+  State createState() => _BrowserAddressBarState();
 }
 
 class _BrowserAddressBarState extends State<BrowserAddressBar> {
@@ -40,7 +41,7 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
             child: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () async {
                 final path = QR.currentPath;
                 if (await QR.back() == PopResult.Popped) {
@@ -49,7 +50,7 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
               },
             ),
             IconButton(
-              icon: Icon(Icons.arrow_forward),
+              icon: const Icon(Icons.arrow_forward),
               onPressed: _paths.isEmpty
                   ? null
                   : () {
@@ -58,17 +59,17 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
                       widget.setNewRoute(path);
                     },
             ),
-            SizedBox(width: 25),
+            const SizedBox(width: 25),
             Expanded(
                 child: Container(
-                    margin: EdgeInsets.all(5),
+                    margin: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       color: Colors.black12,
                       borderRadius: BorderRadius.circular(2),
                     ),
                     child: TextFormField(
                       controller: controller,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.only(
                               left: 15, bottom: 18, top: -3, right: 15)),
@@ -77,7 +78,7 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
                         _paths.clear();
                       },
                     ))),
-            SizedBox(width: 50),
+            const SizedBox(width: 50),
           ],
         )));
   }

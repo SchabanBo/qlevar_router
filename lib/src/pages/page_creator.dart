@@ -78,11 +78,12 @@ abstract class _PageConverter {
       case QSlidePage:
         final slide = type as QSlidePage;
         child = SlideTransition(
-            child: child,
             position: CurvedAnimation(
                     parent: animation, curve: slide.curve ?? Curves.easeIn)
                 .drive(Tween<Offset>(
-                    end: Offset.zero, begin: slide.offset ?? Offset(1, 0))));
+                    end: Offset.zero,
+                    begin: slide.offset ?? const Offset(1, 0))),
+            child: child);
         break;
       case QFadePage:
         child = FadeTransition(

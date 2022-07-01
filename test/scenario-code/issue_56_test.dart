@@ -7,7 +7,7 @@ import '../helpers.dart';
 void main() {
   testWidgets('Issue 56', (tester) async {
     QR.reset();
-    final _router = [
+    final router = [
       QRoute.withChild(
         name: 'home',
         path: '/home',
@@ -50,8 +50,8 @@ void main() {
               builder: () {
                 return Center(
                   child: MaterialButton(
-                    child: const Text('back'),
                     onPressed: QR.back,
+                    child: const Text('back'),
                   ),
                 );
               },
@@ -59,7 +59,7 @@ void main() {
           ])
     ];
     final delegate = QRouterDelegate(
-      _router,
+      router,
       initPath: '/home',
     );
     await tester.pumpWidget(MaterialApp.router(

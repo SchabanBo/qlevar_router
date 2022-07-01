@@ -15,10 +15,9 @@ void main() {
       final routes = [
         QRoute(
             path: '/login',
-            builder: () => Scaffold(
-                    body: Container(
-                  child: Text('login'),
-                ))),
+            builder: () => const Scaffold(
+                  body: Text('login'),
+                )),
         QRoute.withChild(
             path: '/dashboard',
             middleware: [
@@ -27,11 +26,13 @@ void main() {
             ],
             builderChild: (c) => TestDashboard(c),
             initRoute: '/orders',
-            children: [QRoute(path: '/orders', builder: () => Text('Orders'))])
+            children: [
+              QRoute(path: '/orders', builder: () => const Text('Orders'))
+            ])
       ];
       final delegate = QRouterDelegate(routes, initPath: '/dashboard');
       await tester.pumpWidget(MaterialApp.router(
-        routeInformationParser: QRouteInformationParser(),
+        routeInformationParser: const QRouteInformationParser(),
         routerDelegate: delegate,
       ));
       await tester.pumpAndSettle();

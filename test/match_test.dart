@@ -12,24 +12,28 @@ void main() {
       QRoute(path: '/zero', builder: () => Scaffold(body: Container())),
       QRoute(
           path: '/two/one',
-          builder: () => Scaffold(body: WidgetTwo()),
+          builder: () => const Scaffold(body: WidgetTwo()),
           children: [
-            QRoute(path: 'three', builder: () => Scaffold(body: WidgetThree())),
+            QRoute(
+                path: 'three',
+                builder: () => const Scaffold(body: WidgetThree())),
           ]),
       QRoute(
           path: '/two/:id',
-          builder: () => Scaffold(body: WidgetTwo()),
+          builder: () => const Scaffold(body: WidgetTwo()),
           children: [
             QRoute(
-                path: '/three', builder: () => Scaffold(body: WidgetThree())),
+                path: '/three',
+                builder: () => const Scaffold(body: WidgetThree())),
           ]),
       QRoute.withChild(
           path: 'this/extra',
           builderChild: (child) => Scaffold(body: child),
           children: [
-            QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+            QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
             QRoute(
-                path: '/slash', builder: () => Scaffold(body: WidgetThree())),
+                path: '/slash',
+                builder: () => const Scaffold(body: WidgetThree())),
           ]),
     ];
 
@@ -101,11 +105,11 @@ void main() {
           QRoute(path: '/zero', builder: () => Scaffold(body: Container())),
           QRoute(
               path: '/two/one',
-              builder: () => Scaffold(body: WidgetTwo()),
+              builder: () => const Scaffold(body: WidgetTwo()),
               children: [
                 QRoute(
                     path: '/three',
-                    builder: () => Scaffold(body: WidgetThree())),
+                    builder: () => const Scaffold(body: WidgetThree())),
               ])
         ],
         initPath: '/two/one',
@@ -125,10 +129,10 @@ void main() {
               path: '/this/extra',
               builderChild: (child) => Scaffold(body: child),
               children: [
-                QRoute(path: '/', builder: () => Scaffold()),
+                QRoute(path: '/', builder: () => const Scaffold()),
                 QRoute(
                     path: '/slash',
-                    builder: () => Scaffold(body: WidgetThree())),
+                    builder: () => const Scaffold(body: WidgetThree())),
               ]),
         ],
         initPath: '/this/extra/slash',
@@ -149,10 +153,10 @@ void main() {
               path: '/this/extra',
               builderChild: (child) => Scaffold(body: child),
               children: [
-                QRoute(path: '/', builder: () => Scaffold()),
+                QRoute(path: '/', builder: () => const Scaffold()),
                 QRoute(
                     path: '/slash/extra',
-                    builder: () => Scaffold(body: WidgetThree())),
+                    builder: () => const Scaffold(body: WidgetThree())),
               ]),
         ],
         initPath: '/this/extra/slash/extra?id=200',

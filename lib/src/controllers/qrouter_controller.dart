@@ -89,8 +89,6 @@ abstract class QNavigator extends ChangeNotifier {
   /// Remove defended routes from this navigator.
   /// you should give the route name or path to remove
   void removeRoutes(List<String> routesNames);
-
-  Future<T?> show<T>(QDialog overlay);
 }
 
 class QRouterController extends QNavigator {
@@ -387,9 +385,9 @@ class QRouterController extends QNavigator {
       QR.log('Only ${QRContext.rootRouterName} can update the url');
       return;
     }
-    final _params = QParams();
-    _params.addAll(params ?? Uri.parse(url).queryParameters);
-    QR.history.add(QHistoryEntry(mKey ?? QKey('Out Route'), url, _params,
+    final newParams = QParams();
+    newParams.addAll(params ?? Uri.parse(url).queryParameters);
+    QR.history.add(QHistoryEntry(mKey ?? QKey('Out Route'), url, newParams,
         navigator ?? 'Out Route', false));
     update(withParams: updateParams);
     if (!addHistory) {
@@ -408,13 +406,6 @@ class QRouterController extends QNavigator {
 
   @override
   void removeRoutes(List<String> routesNames) => routes.remove(routesNames);
-
-  @override
-  Future<T?> show<T>(QDialog overlay) {
-    assert(navKey.currentState != null);
-    return overlay.show(
-        state: navKey.currentState!, context: navKey.currentContext!);
-  }
 
   @override
   Future<void> replaceLast(String path) async {

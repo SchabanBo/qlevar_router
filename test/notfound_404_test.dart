@@ -8,10 +8,11 @@ import 'test_widgets/test_widgets.dart';
 void main() {
   QR.settings.enableLog = false;
   final pages = [
-    QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
-    QRoute(path: '/two', builder: () => Scaffold(body: WidgetTwo())),
-    QRoute(path: '/three', builder: () => Scaffold(body: WidgetThree())),
+    QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
+    QRoute(path: '/two', builder: () => const Scaffold(body: WidgetTwo())),
+    QRoute(path: '/three', builder: () => const Scaffold(body: WidgetThree())),
   ];
+  // ignore: avoid_print
   void printCurrentHistory() => print(QR.history.entries.map((e) => e.path));
 
   testWidgets('Check Not Found Route AKA 404', (tester) async {

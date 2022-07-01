@@ -9,11 +9,11 @@ void main() {
   group('Params', () {
     test('Query Params', () async {
       QR.reset();
-      final _ = QRouterDelegate([
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
-        QRoute(path: '/tow', builder: () => Scaffold(body: WidgetTwo()))
+      final delegate = QRouterDelegate([
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
+        QRoute(path: '/tow', builder: () => const Scaffold(body: WidgetTwo()))
       ]);
-      await _.setInitialRoutePath('/');
+      await delegate.setInitialRoutePath('/');
       await QR.to('/tow?param1=45&param2=not');
       expect(QR.currentPath, '/tow?param1=45&param2=not');
       expect(QR.params['param1']!.asInt, 45);
@@ -23,11 +23,12 @@ void main() {
     });
     test('Path Params', () async {
       QR.reset();
-      final _ = QRouterDelegate([
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
-        QRoute(path: '/:userId', builder: () => Scaffold(body: WidgetTwo()))
+      final delegate = QRouterDelegate([
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
+        QRoute(
+            path: '/:userId', builder: () => const Scaffold(body: WidgetTwo()))
       ]);
-      await _.setInitialRoutePath('/');
+      await delegate.setInitialRoutePath('/');
       for (var i = 0; i < 5; i++) {
         await QR.to('/$i');
         expect(QR.currentPath, '/$i');
@@ -39,14 +40,14 @@ void main() {
 
     test('Nested Component Test', () async {
       QR.reset();
-      final _ = QRouterDelegate([
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+      QRouterDelegate([
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute(
             path: '/user',
             builder: () => Scaffold(body: Container()),
             children: [
               QRoute(path: '/:userId', builder: () => Container(), children: [
-                QRoute(path: '/info', builder: () => WidgetTwo()),
+                QRoute(path: '/info', builder: () => const WidgetTwo()),
               ]),
             ]),
       ]);
@@ -64,23 +65,23 @@ void main() {
 
     test('Multi Component Test', () async {
       QR.reset();
-      final _ = QRouterDelegate([
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+      final delegate = QRouterDelegate([
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute(
             path: '/user',
             builder: () => Scaffold(body: Container()),
             children: [
               QRoute(path: '/:userId', builder: () => Container(), children: [
-                QRoute(path: '/', builder: () => WidgetOne()),
+                QRoute(path: '/', builder: () => const WidgetOne()),
                 QRoute(path: '/info', builder: () => Container(), children: [
-                  QRoute(path: '/', builder: () => WidgetOne()),
-                  QRoute(path: '/:companyId', builder: () => WidgetTwo())
+                  QRoute(path: '/', builder: () => const WidgetOne()),
+                  QRoute(path: '/:companyId', builder: () => const WidgetTwo())
                 ]),
               ]),
             ]),
         QRoute(path: '/:categoryId/items', builder: () => Container())
       ]);
-      await _.setInitialRoutePath('/');
+      await delegate.setInitialRoutePath('/');
       await QR.to('/user/5/info/7?hi=tt');
       expect(QR.currentPath, '/user/5/info/7?hi=tt');
       expect(QR.params['userId']!.asInt, 5);
@@ -103,8 +104,8 @@ void main() {
 
     test('Multi path Test', () async {
       QR.reset();
-      final _ = QRouterDelegate([
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+      QRouterDelegate([
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute(path: '/:categoryId/items', builder: () => Container())
       ]);
 
@@ -116,14 +117,16 @@ void main() {
     testWidgets('Regex Component Test', (tester) async {
       QR.reset();
       await tester.pumpWidget(AppWrapper([
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute.withChild(
             path: '/user',
             builderChild: (c) => Scaffold(body: Container(child: c)),
             children: [
-              QRoute(path: '/:id(^[0-9]\$)', builder: () => Text('Case 1')),
-              QRoute(path: '/:id(^[0-9]+\$)', builder: () => Text('Case 2')),
-              QRoute(path: '/:id(a|b|c)', builder: () => Text('Case 3'))
+              QRoute(
+                  path: '/:id(^[0-9]\$)', builder: () => const Text('Case 1')),
+              QRoute(
+                  path: '/:id(^[0-9]+\$)', builder: () => const Text('Case 2')),
+              QRoute(path: '/:id(a|b|c)', builder: () => const Text('Case 3'))
             ]),
       ]));
 
@@ -153,11 +156,11 @@ void main() {
 
     test('Test params with toName', () async {
       QR.reset();
-      final _ = QRouterDelegate([
+      final delegate = QRouterDelegate([
         QRoute(
             path: '/',
             name: 'home',
-            builder: () => Scaffold(body: WidgetOne())),
+            builder: () => const Scaffold(body: WidgetOne())),
         QRoute(
             path: '/:categoryId',
             name: 'component-params',
@@ -166,7 +169,7 @@ void main() {
             path: '/params', name: 'path-params', builder: () => Container()),
       ]);
 
-      await _.setInitialRoutePath('/');
+      await delegate.setInitialRoutePath('/');
       expect(0, QR.params.length);
       final testObj = TestObject('name', 15);
 
@@ -215,10 +218,10 @@ void main() {
 
       QR.reset();
       final routes = [
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute(
           path: '/store',
-          builder: () => Scaffold(body: Text('Stores')),
+          builder: () => const Scaffold(body: Text('Stores')),
           children: [
             QRoute(
               path: '/:id',
@@ -289,10 +292,10 @@ void main() {
 
       QR.reset();
       final routes = [
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute(
           path: '/store',
-          builder: () => Scaffold(body: Text('Stores')),
+          builder: () => const Scaffold(body: Text('Stores')),
           children: [
             QRoute(
               path: '/:id',
@@ -370,10 +373,10 @@ void main() {
 
       QR.reset();
       final routes = [
-        QRoute(path: '/', builder: () => Scaffold(body: WidgetOne())),
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute(
           path: '/store',
-          builder: () => Scaffold(body: Text('Stores')),
+          builder: () => const Scaffold(body: Text('Stores')),
           children: [
             QRoute(
               path: '/:id',

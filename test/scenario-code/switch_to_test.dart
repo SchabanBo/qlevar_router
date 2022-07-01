@@ -12,7 +12,7 @@ List<String> tabs = [
   "test2",
   "test3",
 ];
-const Key _goToDetailskey = Key("GoToDetails");
+const Key _goToDetailsKey = Key("GoToDetails");
 
 int counter = 0;
 void main() {
@@ -31,40 +31,40 @@ void main() {
     ], initPath: '/home'));
     await tester.pumpAndSettle();
     expectedPath('/home/test1/grid');
-    final indexs = <int>[];
-    Future<void> _goToDetails() async {
-      final detailsButton = find.byKey(_goToDetailskey);
+    final indexes = <int>[];
+    Future<void> goToDetails() async {
+      final detailsButton = find.byKey(_goToDetailsKey);
       await tester.tap(detailsButton);
       await tester.pumpAndSettle();
-      indexs.add(QR.params['index']!.asInt!);
+      indexes.add(QR.params['index']!.asInt!);
     }
 
-    await _goToDetails();
+    await goToDetails();
     expect(counter, 1); // First page created
     await tester.tap(find.text('test2'));
     await tester.pumpAndSettle();
-    await _goToDetails();
+    await goToDetails();
     expect(counter, 2); // second page created
     await tester.tap(find.text('test3'));
     await tester.pumpAndSettle();
-    await _goToDetails();
+    await goToDetails();
     expect(counter, 3); // third page created
-    expect(indexs.length, 3);
+    expect(indexes.length, 3);
     await tester.tap(find.text('test1'));
     await tester.pumpAndSettle();
     expect(counter, 3); // no new page created
-    expect(indexs.length, 3);
-    expect(indexs[0], QR.params['index']!.asInt!);
+    expect(indexes.length, 3);
+    expect(indexes[0], QR.params['index']!.asInt!);
     await tester.tap(find.text('test2'));
     await tester.pumpAndSettle();
     expect(counter, 3); // no new page created
-    expect(indexs.length, 3);
-    expect(indexs[1], QR.params['index']!.asInt!);
+    expect(indexes.length, 3);
+    expect(indexes[1], QR.params['index']!.asInt!);
     await tester.tap(find.text('test3'));
     await tester.pumpAndSettle();
     expect(counter, 3); // no new page created
-    expect(indexs.length, 3);
-    expect(indexs[2], QR.params['index']!.asInt!);
+    expect(indexes.length, 3);
+    expect(indexes[2], QR.params['index']!.asInt!);
   });
 }
 
@@ -94,7 +94,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.router}) : super(key: key);
   final QRouter router;
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class PostRouteWrapper extends StatelessWidget {
   final QRouter router;
   final String name;
-  PostRouteWrapper(this.router, this.name);
+  const PostRouteWrapper(this.router, this.name, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -148,11 +148,11 @@ class PostRouteWrapper extends StatelessWidget {
           children: [
             Text(name),
             TextButton(
-                key: _goToDetailskey,
+                key: _goToDetailsKey,
                 onPressed: () =>
                     router.navigator.push('/detail/${Random().nextInt(1000)}'),
-                child: Text('GoToDetails')),
-            Container(
+                child: const Text('GoToDetails')),
+            SizedBox(
               width: size.width * 0.7,
               height: size.height * 0.7,
               child: router,

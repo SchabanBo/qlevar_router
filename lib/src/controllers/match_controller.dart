@@ -109,7 +109,7 @@ class MatchController {
           }
           return false;
         } on FormatException catch (e) {
-          print(e);
+          QR.log('Error finding regex match for $name: $e');
           return false;
         }
       }
@@ -207,20 +207,20 @@ class MatchController {
     final pathParams = <String, dynamic>{};
 
     // Search for component params
-    for (var _param in params.entries) {
-      if (newPath.contains(':${_param.key}')) {
+    for (var param in params.entries) {
+      if (newPath.contains(':${param.key}')) {
         newPath =
-            newPath.replaceAll(':${_param.key}', _getParamString(_param.value));
+            newPath.replaceAll(':${param.key}', _getParamString(param.value));
       } else {
-        pathParams.addEntries([_param]);
+        pathParams.addEntries([param]);
       }
     }
 
     // Replace old component
-    for (var _param in QR.params.asMap.entries) {
-      if (newPath.contains(':${_param.key}')) {
+    for (var param in QR.params.asMap.entries) {
+      if (newPath.contains(':${param.key}')) {
         newPath =
-            newPath.replaceAll(':${_param.key}', _getParamString(_param.value));
+            newPath.replaceAll(':${param.key}', _getParamString(param.value));
       }
     }
 
@@ -248,16 +248,16 @@ class MatchController {
   }
 
   static Uri _fixedPathUri(String path) {
-    var _fixedPath = Uri.parse(path);
+    var fixedPath = Uri.parse(path);
 
     /// if the path ended with extra slash /
     /// remove it and continue
-    if (_fixedPath.pathSegments.isNotEmpty &&
-        _fixedPath.pathSegments.last.isEmpty) {
-      _fixedPath = _fixedPath.replace(
-        pathSegments: ([..._fixedPath.pathSegments])..removeLast(),
+    if (fixedPath.pathSegments.isNotEmpty &&
+        fixedPath.pathSegments.last.isEmpty) {
+      fixedPath = fixedPath.replace(
+        pathSegments: ([...fixedPath.pathSegments])..removeLast(),
       );
     }
-    return _fixedPath;
+    return fixedPath;
   }
 }

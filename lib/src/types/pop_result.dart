@@ -1,4 +1,6 @@
 /// This represent the pop result
+// ignore_for_file: constant_identifier_names
+
 enum PopResult {
   /// The pop end successfully
   Popped,

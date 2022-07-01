@@ -5,7 +5,10 @@ import '../../pages/qpage_internal.dart';
 
 class DebugStackTree extends StatelessWidget {
   final List<QRouterController> _controllers;
-  DebugStackTree(this._controllers);
+  const DebugStackTree(
+    this._controllers, {
+    Key? key,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -13,14 +16,15 @@ class DebugStackTree extends StatelessWidget {
             context: context,
             builder: (c) => AlertDialog(
                   content: _StackTree(_controllers),
-                  title: Text('Stack Tree:', style: TextStyle(fontSize: 16)),
+                  title:
+                      const Text('Stack Tree:', style: TextStyle(fontSize: 16)),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.of(c).pop(),
-                        child: Text('Close'))
+                        child: const Text('Close'))
                   ],
                 )),
-        child: Text('Show Active Tree', style: TextStyle(fontSize: 16)));
+        child: const Text('Show Active Tree', style: TextStyle(fontSize: 16)));
   }
 }
 
@@ -62,30 +66,29 @@ class _ControllerInfo {
       child: Card(
         color: Colors.teal.withOpacity(0.3),
         elevation: 5,
-        child: Column(
-            children: [
+        child: Column(children: [
           const SizedBox(height: 10),
           Row(children: [
             const SizedBox(width: 10),
-            Text('$key'),
+            Text(key),
             const SizedBox(width: 5),
-          ])
-        ]
-              ..addAll(pages.map((page) => Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: Card(
-                      color: Colors.teal.withOpacity(0.3),
-                      elevation: 5,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 10),
-                          Text('${page.key}'),
-                        ],
-                      )))))
-              ..addAll(children.map((e) => Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: e.getWidget(),
+          ]),
+          ...pages.map((page) => Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Card(
+                  color: Colors.teal.withOpacity(0.3),
+                  elevation: 5,
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      Text(page.key),
+                    ],
                   )))),
+          ...children.map((e) => Padding(
+                padding: const EdgeInsets.all(8),
+                child: e.getWidget(),
+              ))
+        ]),
       ),
     );
   }

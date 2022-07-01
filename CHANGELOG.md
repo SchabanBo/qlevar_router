@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.6.0] 
+
+- remove QDialog
+- cleanup and fix some typos
+
 ## [1.5.11] 04.03.2022
 
 - Redesign example

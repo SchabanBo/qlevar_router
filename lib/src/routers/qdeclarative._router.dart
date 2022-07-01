@@ -24,6 +24,7 @@ class QDeclarative extends StatefulWidget {
 
   @override
   QDeclarativeController createState() =>
+      // ignore: no_logic_in_create_state
       QR.createDeclarativeRouterController(routeKey);
 }
 
@@ -63,9 +64,9 @@ class QDeclarativeController extends State<QDeclarative> {
   }
 
   void updatePages() {
-    final _routes = widget.builder();
+    final buildRoutes = widget.builder();
     assert(
-        _routes.any((e) => e.when()),
+        buildRoutes.any((e) => e.when()),
         // ignore: lines_longer_than_80_chars
         'No route has returned true as [when] result from QDeclarative.builder');
     final newRoute = widget.builder().firstWhere((e) => e.when());

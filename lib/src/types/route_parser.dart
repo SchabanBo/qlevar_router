@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
 import '../../qlevar_router.dart';
 
 /// The parser for QRouter
@@ -12,6 +13,6 @@ class QRouteInformationParser extends RouteInformationParser<String> {
           Uri.decodeFull(routeInformation.location ?? '/').toString());
 
   @override
-  RouteInformation restoreRouteInformation(String match) =>
+  RouteInformation restoreRouteInformation(String configuration) =>
       RouteInformation(location: Uri.encodeFull(QR.currentPath).toString());
 }

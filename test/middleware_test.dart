@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -17,9 +18,11 @@ void main() {
           initRoute: '/child',
           middleware: [
             QMiddlewareBuilder(redirectGuardFunc: (s) async {
-              print('From redirect guard: $s');
-              return await Future.delayed(
-                  Duration(milliseconds: 500), () => isAuth ? null : '/two');
+              if (kDebugMode) {
+                print('From redirect guard: $s');
+              }
+              return await Future.delayed(const Duration(milliseconds: 500),
+                  () => isAuth ? null : '/two');
             }),
             QMiddlewareBuilder(
               onEnterFunc: () async => counter++,
@@ -28,10 +31,10 @@ void main() {
             )
           ],
           children: [
-            QRoute(path: '/child', builder: () => Text('child')),
-            QRoute(path: '/child-1', builder: () => Text('child 1')),
-            QRoute(path: '/child-2', builder: () => Text('child 2')),
-            QRoute(path: '/child-3', builder: () => Text('child 3')),
+            QRoute(path: '/child', builder: () => const Text('child')),
+            QRoute(path: '/child-1', builder: () => const Text('child 1')),
+            QRoute(path: '/child-2', builder: () => const Text('child 2')),
+            QRoute(path: '/child-3', builder: () => const Text('child 3')),
           ]),
       QRoute(
           path: '/two',
@@ -42,12 +45,13 @@ void main() {
               onMatchFunc: () async => counter++,
             )
           ],
-          builder: () => Scaffold(body: WidgetTwo())),
-      QRoute(path: '/three', builder: () => Scaffold(body: WidgetThree())),
+          builder: () => const Scaffold(body: WidgetTwo())),
+      QRoute(
+          path: '/three', builder: () => const Scaffold(body: WidgetThree())),
     ];
     test('Redirect / onEnter / onMatch / onExited', () async {
       QR.reset();
-      final _ = QRouterDelegate(routes);
+      QRouterDelegate(routes);
       await QR.to('/nested');
       expectedPath('/two');
       isAuth = true;
@@ -57,27 +61,29 @@ void main() {
       expect(counter, 5); // Nested onMatch + Nested onEnter
       expectedPath('/nested/child');
       await QR.navigator.replaceAll('/three');
-      expect(counter, 7); // Nested onExite + Two onExite
+      expect(counter, 7); // Nested onExit + Two onExit
     });
 
     test('Redirect guard has the right path and param', () async {
       QR.reset();
       var pathFromGuard = '';
       var paramFromGuard = '';
-      final _ = QRouterDelegate([
+      final delegate = QRouterDelegate([
         QRoute(
-            path: '/:doaminId/dashboard',
+            path: '/:domainId/dashboard',
             builder: () => Container(),
             middleware: [
               QMiddlewareBuilder(redirectGuardFunc: (s) async {
                 pathFromGuard = s;
-                print(s);
-                paramFromGuard = QR.params['doaminId'].toString();
+                if (kDebugMode) {
+                  print(s);
+                }
+                paramFromGuard = QR.params['domainId'].toString();
                 return null;
               })
             ])
       ], initPath: '/domain1/dashboard');
-      await _.setInitialRoutePath('/');
+      await delegate.setInitialRoutePath('/');
       expect(pathFromGuard, '/domain1/dashboard');
       expect(paramFromGuard, 'domain1');
 
@@ -93,19 +99,24 @@ void main() {
       final routes = [
         QRoute(
             path: '/',
-            builder: () => Scaffold(appBar: AppBar(), body: WidgetOne())),
-        QRoute(path: '/two', builder: () => WidgetTwo(), middleware: [
+            builder: () => Scaffold(appBar: AppBar(), body: const WidgetOne())),
+        QRoute(path: '/two', builder: () => const WidgetTwo(), middleware: [
           QMiddlewareBuilder(canPopFunc: () async {
-            final result = await QR.show<bool>(QDialog(
-                widget: (pop) => AlertDialog(
-                      title: Text('Do you want to go back?'),
+            final result = await showDialog<bool>(
+                context: QR.context!,
+                builder: (context) => AlertDialog(
+                      title: const Text('Do you want to go back?'),
                       actions: [
                         TextButton(
-                            onPressed: () => pop(true), child: Text('Yes')),
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: const Text('Yes'),
+                        ),
                         TextButton(
-                            onPressed: () => pop(false), child: Text('No'))
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text('No'),
+                        )
                       ],
-                    )));
+                    ));
 
             return result ?? false;
           })

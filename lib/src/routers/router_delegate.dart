@@ -48,16 +48,17 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   }
 
   @override
-  Future<void> setNewRoutePath(String route) async {
+  Future<void> setNewRoutePath(String configuration) async {
     // fix route encoding (order%20home => order home)
-    route = Uri.decodeFull(route).toString();
+    configuration = Uri.decodeFull(configuration).toString();
     if (QR.history.hasLast &&
         QR.history.last.path == QR.settings.notFoundPage.path) {
-      if (QR.history.length > 2 && route == QR.history.beforeLast.path) {
+      if (QR.history.length > 2 &&
+          configuration == QR.history.beforeLast.path) {
         QR.history.removeLast();
       }
     }
-    if (QR.history.hasLast && route == QR.history.last.path) {
+    if (QR.history.hasLast && configuration == QR.history.last.path) {
       QR.log(
           // ignore: lines_longer_than_80_chars
           'New route reported that was last visited. using QR.back() to response',
@@ -66,7 +67,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       QR.back();
       return;
     }
-    await QR.to(route);
+    await QR.to(configuration);
     return;
   }
 

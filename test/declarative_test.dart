@@ -8,7 +8,7 @@ void main() {
   group('Declarative routes tests', () {
     testWidgets('Navigation', (tester) async {
       await tester.pumpWidget(MaterialApp.router(
-        routeInformationParser: QRouteInformationParser(),
+        routeInformationParser: const QRouteInformationParser(),
         routerDelegate: QRouterDelegate(
           [
             QRoute(
@@ -49,7 +49,7 @@ void main() {
 
 class _DeclarativePage extends StatefulWidget {
   final QKey dKey;
-  _DeclarativePage(this.dKey);
+  const _DeclarativePage(this.dKey);
   @override
   _DeclarativePageState createState() => _DeclarativePageState();
 }
@@ -74,7 +74,7 @@ class _DeclarativePageState extends State<_DeclarativePage> {
                         (v) => state.loveBurger = v, 'Do you love burger?'),
                     onPop: () => state.loveCoffee = null,
                     when: () => state.loveBurger == null,
-                    pageType: QSlidePage(
+                    pageType: const QSlidePage(
                         curve: Curves.easeInOutCubic,
                         offset: Offset(-1, 0),
                         transitionDurationMilliseconds: 500)),
@@ -84,7 +84,7 @@ class _DeclarativePageState extends State<_DeclarativePage> {
                         (v) => state.lovePizza = v, 'Do you love Pizza?'),
                     onPop: () => state.loveBurger = null,
                     when: () => state.lovePizza == null,
-                    pageType: QSlidePage(offset: Offset(-1, 1))),
+                    pageType: const QSlidePage(offset: Offset(-1, 1))),
                 QDRoute(
                     name: 'Result',
                     builder: result,
@@ -95,9 +95,9 @@ class _DeclarativePageState extends State<_DeclarativePage> {
   Widget getQuestion(void Function(bool) value, String text) => Scaffold(
           body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         back,
-        SizedBox(height: 50),
-        Text(text, style: TextStyle(fontSize: 18)),
-        SizedBox(height: 25),
+        const SizedBox(height: 50),
+        Text(text, style: const TextStyle(fontSize: 18)),
+        const SizedBox(height: 25),
         yesNo(value),
       ]));
 
@@ -109,13 +109,13 @@ class _DeclarativePageState extends State<_DeclarativePage> {
                 value(true);
                 setState(() {});
               },
-              child: Text('Yes', style: TextStyle(fontSize: 18))),
+              child: const Text('Yes', style: TextStyle(fontSize: 18))),
           ElevatedButton(
               onPressed: () {
                 value(false);
                 setState(() {});
               },
-              child: Text('No', style: TextStyle(fontSize: 18))),
+              child: const Text('No', style: TextStyle(fontSize: 18))),
         ],
       );
 
@@ -124,11 +124,11 @@ class _DeclarativePageState extends State<_DeclarativePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           back,
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           Text('Your answers: $state'),
-          SizedBox(height: 50),
-          Text(getResult(), style: TextStyle(fontSize: 25)),
-          Divider(),
+          const SizedBox(height: 50),
+          Text(getResult(), style: const TextStyle(fontSize: 25)),
+          const Divider(),
           ElevatedButton(
               onPressed: () {
                 state.loveCoffee = null;
@@ -136,11 +136,11 @@ class _DeclarativePageState extends State<_DeclarativePage> {
                 state.lovePizza = null;
                 setState(() {});
               },
-              child: Text('Reset')),
+              child: const Text('Reset')),
         ],
       ));
 
-  Widget back = ElevatedButton(onPressed: QR.back, child: Text('Back'));
+  Widget back = ElevatedButton(onPressed: QR.back, child: const Text('Back'));
 
   String getResult() {
     if (state.loveCoffee == true && state.loveBurger == false) {

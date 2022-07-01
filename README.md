@@ -9,9 +9,9 @@
   - [Demo](#demo)
     - [The example Projects](#the-example-projects)
     - [The Samples Project](#the-samples-project)
-  - [Params](#params)
-    - [Route Component](#route-component)
-    - [Query Param](#query-param)
+  - [Parameters](#parameters)
+    - [Path Parameters](#path-parameters)
+    - [Query Parameters](#query-parameters)
     - [Params features](#params-features)
   - [Middleware](#middleware)
     - [redirectGuard](#redirectguard)
@@ -21,14 +21,12 @@
     - [onExit](#onexit)
   - [Observer](#observer)
   - [Not found page](#not-found-page)
+  - [Deferred loading](#Deferred-loading)
   - [Page Transition](#page-transition)
     - [Mix it up](#mix-it-up)
     - [App Page Transition](#app-page-transition)
   - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
   - [Clean Structure](#clean-structure)
-  - [Overlays](#overlays)
-    - [Dialog](#dialog)
-    - [Notifications](#notifications)
   - [Declarative routing](#declarative-routing)
     - [QDRoute](#qdroute)
     - [How Declarative router works](#how-declarative-router-works)
@@ -116,20 +114,24 @@ You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_
 
 You can check out the [samples project](https://github.com/SchabanBo/qr_samples) for more samples and test some use case
 
-## Params
+## Parameters
 
-send your params with the route, or set them before routing and call them from the next page. The params could be any object type.
+send your params with the route. The params could be any object type.
 
-### Route Component
+### Path Parameters
 
 ```dart
 QRoute(path: '/:orderId',page: (child) => OrderDetails()),
+
+// User regex to define what this parameter can be
+// like this parameters can only be numbers
+QRoute(path: '/:id(^[0-9]+\$)', builder: () => Text('Case 2')), 
 
 // and this receive it in your page
 final orderId = QR.params['orderId'].toString()
 ```
 
-### Query Param
+### Query Parameters
 
 ```dart
  QR.to('/home/items/details?itemName=${e.name}&numbers=[2,6,7]')
@@ -177,6 +179,30 @@ class AuthMiddleware extends QMiddleware{
 }
 ```
 
+```plantuml
+@startuml
+
+
+[-> QRController : Navigation Request
+collections OnMatch as OnMatch
+collections Redirect as Redirect
+collections OnEnter as OnEnter
+QRController -> OnMatch: searching for\nthe matching route
+OnMatch -> Redirect
+Redirect -> OnEnter : Initializing the page
+Redirect ->] : new navigation request to the redirect path
+
+OnEnter -> Ready 
+collections CanPop as CanPop
+collections onExit as onExit
+Ready -> CanPop: :on leaving the page
+CanPop -> onExit : can leave the page
+CanPop -> Ready : cannot leave the page
+onExit->]: remove page
+
+@enduml
+```
+
 ### redirectGuard
 
 you can redirect to a new page whenever a page is called using the `redirectGuard`.
@@ -215,6 +241,9 @@ you can set your custom not found page to show it whenever a page was not found,
 ```dart
   QR.settings.notFoundPage = QRoute(path: '/404', builder: ()=> NotFoundPage())
 ```
+
+##  Deferred loading
+For web application you can split your compiled java script files to moe than one for helping with the page loading speed. read more about it [here](https://medium.com/@SchabanBo/reduce-your-flutter-web-app-loading-time-8018d8f442)
 
 ## Page Transition
 
@@ -322,64 +351,6 @@ class AppRoutes {
 }
 ```
 
-## Overlays
-
-you could ask yourself what is the deferent between the normal overlays like `showDialog()` and `QOverlay`.
-When you use the `showDialog()` the dialog will be shown for the root navigator (will cover all pages). but when you use `QR.show` you can choose on which navigator should the overlay be shown.
-[Example](https://qlevar-router.netlify.app/#/nested/child)
-
-```dart
-showDialog() // The dialog will cover all page
-
-QR.show() // The same as showDialog will call the root navigator
-
-QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog')).show(name:'/dashboard') // or
-QR.show(QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog') ,name:'/dashboard') // The dialog will cover just the dashboard router area
-
-```
-
-### Dialog
-
-[Example](https://qlevar-router.netlify.app/#/overlays)
-To open a dialog with `QR` you can do so
-
-```dart
-// Call QR.show and give it the QDialog object
-QR.show(QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog')))
-
-// Or you can just call the QDialog 
-QDialog(widget: (pop) => AlertDialog(title: Text('Hi Dialog')).show()
-
-// you want just to show a simple text
-QDialog.text(text: Text('Simple Text'), title: Text('Info')).show()
-```
-
-### Notifications
-
-[Example](https://qlevar-router.netlify.app/#/overlays)
-To show Notifications to the user
-
-```dart
-// Call QR.show and give it the QNotification object
- QR.show(QNotification(child: notificationChild));
-
-// Or you can just call the QNotification 
-QNotification(child: notificationChild).show()
-
-```
-
-you can set the notification position on the router with the `position` property. The options are:
-
-- LeftTop
-- Top
-- RightTop
-- LeftCenter
-- Center
-- RightCenter
-- LeftBottom
-- Bottom
-- RightBottom
-
 ## Declarative routing
 
 if you want to change a page automatically according to an object state with having to check the object every time and then send the user to the right page. you can do so with the declarative routing.
@@ -475,10 +446,6 @@ class MyApp extends StatelessWidget {
       routerDelegate: QRouterDelegate(AppRoutes().routes, withWebBar: true));
 }
 ```
-
-and so will have something like this when you run as windows application
-
-![BrowserAddressBar](https://github.com/SchabanBo/qlevar_router/blob/master/example/assets/images/BrowserAddressBar.gif)
 
 ## Contribute
 
