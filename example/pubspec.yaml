@@ -12,11 +12,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  get: ^4.6.5
   qlevar_router:
     path: ../
 
   url_launcher: ^6.0.16
-  get: ^4.6.1
 
 dev_dependencies:
   flutter_test:
