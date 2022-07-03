@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## [1.6.0] 
+## [1.6.1] 03.07.2022
+
+- Fix #69
+
+## [1.6.0] 01.07.2022
 
 - remove QDialog
 - cleanup and fix some typos

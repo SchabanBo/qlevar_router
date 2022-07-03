@@ -118,10 +118,6 @@ void main() {
       await QR.back();
       expectedPath('/nested/child');
       expectedHistoryLength(3);
-
-      // QR.back();
-      // expectedPath('/two');
-      // expectedHistoryLength(1);
     });
   });
 }

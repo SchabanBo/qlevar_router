@@ -238,6 +238,15 @@ class QRContext {
         final controller = navigatorOf(navigator);
 
         final popResult = await controller.removeLast();
+
+        // If this is the only navigator and didn't pop and there is no history
+        // then we need to close the app see [#69]
+        if (popResult == PopResult.NotPopped &&
+            popNavigatorOptions.length == 1 &&
+            !history.hasLast) {
+          return popResult;
+        }
+
         if (popResult != PopResult.NotPopped) {
           if (popResult != PopResult.Popped) return popResult;
           if (navigator != QRContext.rootRouterName) {
