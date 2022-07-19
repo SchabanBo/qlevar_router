@@ -44,13 +44,4 @@ class QRouteChildren {
       QR.log('$name is not child of from $parentKey. Can not remove it');
     }
   }
-
-  QRouteInternal? findName(String name) =>
-      _routes.firstWhere((element) => element.key.hasName(name));
-
-  QRouteInternal? operator [](QKey key) =>
-      _routes.firstWhere((element) => element.key.isSame(key));
-
-  bool isParentFor(String name) =>
-      _routes.any((element) => element.key.hasName(name));
 }

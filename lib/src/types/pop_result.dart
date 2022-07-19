@@ -10,9 +10,6 @@ enum PopResult {
 
   /// The Can pop in the middleware returns false
   NotAllowedToPop,
-
-  /// when QR.back close a dialog
-  DialogClosed,
 }
 
 /// Use this to define what to do when page already is in the stack

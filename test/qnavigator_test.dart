@@ -240,4 +240,128 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Page Not Found'), findsOneWidget);
   });
+
+  testWidgets('QNavigator replace', (tester) async {
+    QR.reset();
+    await tester.pumpWidget(AppWrapper(pages));
+
+    await tester.pumpAndSettle();
+
+    expectedPath('/');
+    expect(find.byType(WidgetOne), findsOneWidget);
+    expect(find.byType(WidgetTwo), findsNothing);
+    expect(find.byType(WidgetThree), findsNothing);
+    expectedHistoryLength(1);
+
+    await QR.navigator.push('/two');
+
+    expectedPath('/two');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetOne), findsNothing);
+    expect(find.byType(WidgetTwo), findsOneWidget);
+    expect(find.byType(WidgetThree), findsNothing);
+    expectedHistoryLength(2);
+
+    await QR.navigator.replace('/two', '/three');
+
+    expectedPath('/three');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetOne), findsNothing);
+    expect(find.byType(WidgetTwo), findsNothing);
+    expect(find.byType(WidgetThree), findsOneWidget);
+    expectedHistoryLength(2);
+  });
+
+  testWidgets('QNavigator replace name', (tester) async {
+    QR.reset();
+    await tester.pumpWidget(AppWrapper(pages));
+
+    await tester.pumpAndSettle();
+
+    expectedPath('/');
+    expect(find.byType(WidgetOne), findsOneWidget);
+    expect(find.byType(WidgetTwo), findsNothing);
+    expect(find.byType(WidgetThree), findsNothing);
+    expectedHistoryLength(1);
+
+    await QR.navigator.push('/two');
+
+    expectedPath('/two');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetOne), findsNothing);
+    expect(find.byType(WidgetTwo), findsOneWidget);
+    expect(find.byType(WidgetThree), findsNothing);
+    expectedHistoryLength(2);
+
+    await QR.navigator.replaceName('two', 'three');
+
+    expectedPath('/three');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetOne), findsNothing);
+    expect(find.byType(WidgetTwo), findsNothing);
+    expect(find.byType(WidgetThree), findsOneWidget);
+    expectedHistoryLength(2);
+  });
+
+  testWidgets('QNavigator replace last', (tester) async {
+    QR.reset();
+    await tester.pumpWidget(AppWrapper(pages));
+
+    await tester.pumpAndSettle();
+
+    expectedPath('/');
+    expect(find.byType(WidgetOne), findsOneWidget);
+    expect(find.byType(WidgetTwo), findsNothing);
+    expect(find.byType(WidgetThree), findsNothing);
+    expectedHistoryLength(1);
+
+    await QR.navigator.push('/two');
+
+    expectedPath('/two');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetOne), findsNothing);
+    expect(find.byType(WidgetTwo), findsOneWidget);
+    expect(find.byType(WidgetThree), findsNothing);
+    expectedHistoryLength(2);
+
+    await QR.navigator.replaceLast('/three');
+
+    expectedPath('/three');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetOne), findsNothing);
+    expect(find.byType(WidgetTwo), findsNothing);
+    expect(find.byType(WidgetThree), findsOneWidget);
+    expectedHistoryLength(2);
+  });
+
+  testWidgets('QNavigator replace last name', (tester) async {
+    QR.reset();
+    await tester.pumpWidget(AppWrapper(pages));
+
+    await tester.pumpAndSettle();
+
+    expectedPath('/');
+    expect(find.byType(WidgetOne), findsOneWidget);
+    expect(find.byType(WidgetTwo), findsNothing);
+    expect(find.byType(WidgetThree), findsNothing);
+    expectedHistoryLength(1);
+
+    await QR.navigator.push('/two');
+
+    expectedPath('/two');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetOne), findsNothing);
+    expect(find.byType(WidgetTwo), findsOneWidget);
+    expect(find.byType(WidgetThree), findsNothing);
+    expectedHistoryLength(2);
+
+    await QR.navigator.replaceLastName('three');
+
+    expectedPath('/three');
+    await tester.pumpAndSettle();
+    expect(find.byType(WidgetOne), findsNothing);
+    expect(find.byType(WidgetTwo), findsNothing);
+    expect(find.byType(WidgetThree), findsOneWidget);
+    expectedHistoryLength(2);
+  });
 }

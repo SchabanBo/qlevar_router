@@ -144,10 +144,6 @@ class QRouterController extends QNavigator {
 
   @override
   Future<PopResult> removeLast() async {
-    if (QR.isShowingDialog) {
-      navKey.currentState!.pop();
-      return PopResult.DialogClosed;
-    }
     final isPopped = await _pagesController.removeLast();
     if (isPopped == PopResult.Popped) {
       update(withParams: true);
@@ -162,7 +158,6 @@ class QRouterController extends QNavigator {
     final index = _pagesController.routes.indexWhere((e) => e.isSame(match));
     assert(index != -1, 'Path with name $name was not found in the stack');
     if (!await _pagesController.removeIndex(index)) return;
-    QR.history.removeLast();
     await pushName(withName, params: withParams);
   }
 
@@ -409,14 +404,14 @@ class QRouterController extends QNavigator {
 
   @override
   Future<void> replaceLast(String path) async {
-    if (await _pagesController.removeAll() != PopResult.Popped) return;
-    return await push(path);
+    final last = _pagesController.routes.last;
+    return replace(last.activePath!, path);
   }
 
   @override
   Future<void> replaceLastName(String name,
       {Map<String, dynamic>? params}) async {
-    if (await _pagesController.removeAll() != PopResult.Popped) return;
-    return await pushName(name, params: params);
+    final last = _pagesController.routes.last;
+    return replaceName(last.name, name, params: params);
   }
 }

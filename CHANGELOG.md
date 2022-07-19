@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.6.1] 19.07.2022
+
+- Fix #72
+- Add Tests
+- Code cleanup
+
 ## [1.6.1] 03.07.2022
 
 - Fix #69

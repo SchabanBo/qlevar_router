@@ -32,6 +32,7 @@
     - [How Declarative router works](#how-declarative-router-works)
   - [Remove Url Hashtag](#remove-url-hashtag)
   - [Web hot reload](#web-hot-reload)
+  - [Articles](#articles)
   - [Contribute](#contribute)
 
 Qlevar router is a flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
@@ -424,6 +425,11 @@ class MyApp extends StatelessWidget {
       routerDelegate: QRouterDelegate(AppRoutes().routes, withWebBar: true));
 }
 ```
+
+## Articles
+
+- [Building an app using Cubit and qlevar_router](https://medium.com/@SchabanBo/building-an-app-using-cubit-and-qlevar-router-481fba0f2349)
+- [Reduce your flutter web app loading time](https://medium.com/@SchabanBo/reduce-your-flutter-web-app-loading-time-8018d8f442)
 
 ## Contribute
 

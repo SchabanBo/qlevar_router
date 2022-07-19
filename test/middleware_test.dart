@@ -17,6 +17,7 @@ void main() {
           builderChild: (r) => Scaffold(appBar: AppBar(), body: r),
           initRoute: '/child',
           middleware: [
+            QMiddleware(),
             QMiddlewareBuilder(redirectGuardFunc: (s) async {
               if (kDebugMode) {
                 print('From redirect guard: $s');
