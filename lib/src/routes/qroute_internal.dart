@@ -87,13 +87,6 @@ class QRouteInternal {
             : QRouteChildren.from(route.children!, key, route.path));
   }
 
-  void clean() {
-    child = null;
-    activePath = null;
-    params = null;
-    isProcessed = false;
-  }
-
   bool isSame(QRouteInternal other) =>
       key.isSame(other.key) &&
       (params != null && other.params != null && params!.isSame(other.params!));

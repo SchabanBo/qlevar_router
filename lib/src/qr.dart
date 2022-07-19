@@ -33,8 +33,6 @@ class QRContext {
 
   final _manager = ControllerManager();
 
-  bool isShowingDialog = false;
-
   /// The current route url
   String get currentPath => history.isEmpty ? '/' : history.current.path;
 
@@ -236,23 +234,35 @@ class QRContext {
 
       for (final navigator in popNavigatorOptions) {
         final controller = navigatorOf(navigator);
-
         final popResult = await controller.removeLast();
 
-        // If this is the only navigator and didn't pop and there is no history
-        // then we need to close the app see [#69]
-        if (popResult == PopResult.NotPopped &&
-            popNavigatorOptions.length == 1 &&
-            !history.hasLast) {
-          return popResult;
-        }
-
-        if (popResult != PopResult.NotPopped) {
-          if (popResult != PopResult.Popped) return popResult;
-          if (navigator != QRContext.rootRouterName) {
-            (rootNavigator as QRouterController).update(withParams: false);
-          }
-          return PopResult.Popped;
+        switch (popResult) {
+          case PopResult.NotPopped:
+            // If this is the only navigator and didn't pop and there is no history
+            // then we need to close the app &
+            // is this the last navigator?
+            if (navigator == popNavigatorOptions.last) {
+              if (history.hasLast) {
+                // there is a history, go to the last path
+                continue;
+              }
+              // Close the app, there is nothing to get back to see [#69].
+              return popResult;
+            }
+            // this navigator can't pop, so remove it from the history see [#72]
+            if (isOnlyNavigatorLeft(popNavigatorOptions)) {
+              history.removeWithNavigator(navigator);
+            }
+            break;
+          case PopResult.Popped:
+            // if this navigator popped and was not the root navigator then
+            // notify the root navigator to update the UI
+            if (navigator != QRContext.rootRouterName) {
+              (rootNavigator as QRouterController).update(withParams: false);
+            }
+            return PopResult.Popped;
+          default:
+            return popResult;
         }
       }
     }
@@ -260,6 +270,15 @@ class QRContext {
     to(history.last.path);
     QR.history.removeLast(count: 2);
     return PopResult.Popped;
+  }
+
+  bool isOnlyNavigatorLeft(List<String> navigators) {
+    for (var navigator in navigators) {
+      if (history.entries.where((h) => h.navigator == navigator).length > 1) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /// Print a message from the package

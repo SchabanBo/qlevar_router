@@ -34,7 +34,7 @@ class PagesController {
     final middleware = MiddlewareController(route);
     if (!await middleware.runCanPop()) return PopResult.NotAllowedToPop;
 
-    if (allowEmptyPages == false && routes.length == 1) {
+    if (!allowEmptyPages && routes.length == 1) {
       return PopResult.NotPopped;
     }
 
