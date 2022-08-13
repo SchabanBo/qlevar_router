@@ -7,11 +7,12 @@ import '../routes/qroute_internal.dart';
 import 'qpage_internal.dart';
 
 abstract class _PageConverter {
-  final String? pageName;
-  final QKey matchKey;
-  late final key = ValueKey<int>(hashCode);
-  final QPage pageType;
   _PageConverter(this.pageName, this.matchKey, this.pageType);
+
+  late final key = ValueKey<int>(hashCode);
+  final QKey matchKey;
+  final String? pageName;
+  final QPage pageType;
 
   QPageInternal createWithChild(Widget child) {
     if (pageType is QPlatformPage) {
@@ -36,6 +37,7 @@ abstract class _PageConverter {
       fullScreenDialog: pageType.fullScreenDialog,
       restorationId: pageType.restorationId,
       key: key,
+      addMaterialWidget: (pageType as QMaterialPage).addMaterialWidget,
       matchKey: matchKey);
 
   QCupertinoPageInternal _getCupertinoPage(String? title, Widget child) =>
@@ -103,11 +105,13 @@ abstract class _PageConverter {
 }
 
 class PageCreator extends _PageConverter {
-  final QRouteInternal route;
-  QRoute get qRoute => route.route;
   PageCreator(this.route)
       : super(route.route.name, route.key,
             route.route.pageType ?? QR.settings.pagesType);
+
+  final QRouteInternal route;
+
+  QRoute get qRoute => route.route;
 
   QPageInternal create() => super.createWithChild(build());
 

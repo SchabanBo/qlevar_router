@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Current
+
+- Fix #73
+- Readme update
+
 ## [1.6.1] 19.07.2022
 
 - Fix #72

@@ -1,8 +1,8 @@
 # Qlevar Router (QR)
 
-[![likes](https://badges.bar/qlevar_router/likes)](https://pub.dev/packages/qlevar_router)
-[![popularity](https://badges.bar/qlevar_router/popularity)](https://pub.dev/packages/qlevar_router)
-[![pub points](https://badges.bar/qlevar_router/pub%20points)](https://pub.dev/packages/qlevar_router)
+[![likes](https://img.shields.io/pub/likes/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
+[![popularity](https://img.shields.io/pub/popularity/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
+[![pub points](https://img.shields.io/pub/points/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router) 
 [![codecov](https://codecov.io/gh/SchabanBo/qlevar_router/branch/master/graph/badge.svg?token=WF1RBRWTN1)](https://codecov.io/gh/SchabanBo/qlevar_router)
 
 - [Qlevar Router (QR)](#qlevar-router-qr)
@@ -21,7 +21,7 @@
     - [onExit](#onexit)
   - [Observer](#observer)
   - [Not found page](#not-found-page)
-  - [Deferred loading](#Deferred-loading)
+  - [Deferred loading](#deferred-loading)
   - [Page Transition](#page-transition)
     - [Mix it up](#mix-it-up)
     - [App Page Transition](#app-page-transition)
@@ -111,9 +111,20 @@ QR.history.debug() // will show you a dialog contains the history stack for your
 
 You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
 
+- [Store](https://qlevar-router.netlify.app/#/store): simple page navigation with passing parameters in the url.
+- [Dashboard](https://qlevar-router.netlify.app/#/dashboard): Authentication middleware and nested routes with sidebar.
+- [MobileStore](https://qlevar-router.netlify.app/#/mobile/stores): a bottom navigation bar example.
+- [Middleware](https://qlevar-router.netlify.app/#/parent): test the different methods for the [middleware](#middleware).
+- [Declarative](https://qlevar-router.netlify.app/#/declarative): navigate base on the state of an object.
+- [EditableRoutes](https://qlevar-router.netlify.app/#/editable-routes/child): add or remove routes from the routes tree in run time.
+
 ### The Samples Project
 
-You can check out the [samples project](https://github.com/SchabanBo/qr_samples) for more samples and test some use case
+You can check out the [samples project](https://github.com/SchabanBo/qr_samples) for more samples and test some use cases.
+
+- [Dashboard Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/dashboard.dart)
+- [Bottom Navigation bar Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/bottom_nav_bar.dart)
+- [TabView Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/tab_view.dart)
 
 ## Parameters
 

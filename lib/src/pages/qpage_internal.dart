@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import '../types/qroute_key.dart';
 
 abstract class QPageInternal<T> extends Page {
-  final QKey matchKey;
-
   const QPageInternal(
       {required this.matchKey,
       LocalKey? key,
@@ -19,6 +17,8 @@ abstract class QPageInternal<T> extends Page {
           restorationId: restorationId,
         );
 
+  final QKey matchKey;
+
   bool sameKey(QPageInternal other) => matchKey == other.matchKey;
 }
 
@@ -27,6 +27,7 @@ class QMaterialPageInternal<T> extends QPageInternal<T> {
     required this.child,
     required QKey matchKey,
     this.maintainState = true,
+    this.addMaterialWidget = true,
     this.fullScreenDialog = false,
     LocalKey? key,
     String? restorationId,
@@ -40,9 +41,10 @@ class QMaterialPageInternal<T> extends QPageInternal<T> {
           restorationId: restorationId,
         );
 
+  final bool addMaterialWidget;
   final Widget child;
-  final bool maintainState;
   final bool fullScreenDialog;
+  final bool maintainState;
 
   @override
   Route<T> createRoute(BuildContext context) {
@@ -62,21 +64,21 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
     assert(opaque);
   }
 
-  QMaterialPageInternal<T> get _page => settings as QMaterialPageInternal<T>;
-
   @override
   Widget buildContent(BuildContext context) {
-    return _page.child;
+    return _page.addMaterialWidget ? Material(child: _page.child) : _page.child;
   }
 
   @override
-  bool get maintainState => _page.maintainState;
+  String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
   bool get fullscreenDialog => _page.fullScreenDialog;
 
   @override
-  String get debugLabel => '${super.debugLabel}(${_page.name})';
+  bool get maintainState => _page.maintainState;
+
+  QMaterialPageInternal<T> get _page => settings as QMaterialPageInternal<T>;
 }
 
 class QCupertinoPageInternal<T> extends QPageInternal<T> {
@@ -99,9 +101,9 @@ class QCupertinoPageInternal<T> extends QPageInternal<T> {
         );
 
   final Widget child;
-  final String? title;
-  final bool maintainState;
   final bool fullScreenDialog;
+  final bool maintainState;
+  final String? title;
 
   @override
   Route<T> createRoute(BuildContext context) {
@@ -117,36 +119,25 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
     assert(opaque);
   }
 
-  QCupertinoPageInternal<T> get _page => settings as QCupertinoPageInternal<T>;
-
   @override
   Widget buildContent(BuildContext context) => _page.child;
 
   @override
-  String? get title => _page.title;
-
-  @override
-  bool get maintainState => _page.maintainState;
+  String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
   bool get fullscreenDialog => _page.fullScreenDialog;
 
   @override
-  String get debugLabel => '${super.debugLabel}(${_page.name})';
+  bool get maintainState => _page.maintainState;
+
+  @override
+  String? get title => _page.title;
+
+  QCupertinoPageInternal<T> get _page => settings as QCupertinoPageInternal<T>;
 }
 
 class QCustomPageInternal extends QPageInternal {
-  final Widget child;
-  final bool maintainState;
-  final bool fullScreenDialog;
-  final int transitionDuration;
-  final int reverseTransitionDuration;
-  final RouteTransitionsBuilder transitionsBuilder;
-  final bool? opaque;
-  final bool? barrierDismissible;
-  final Color? barrierColor;
-  final String? barrierLabel;
-
   const QCustomPageInternal({
     required this.child,
     required QKey matchKey,
@@ -170,6 +161,17 @@ class QCustomPageInternal extends QPageInternal {
           matchKey: matchKey,
           restorationId: restorationId,
         );
+
+  final Color? barrierColor;
+  final bool? barrierDismissible;
+  final String? barrierLabel;
+  final Widget child;
+  final bool fullScreenDialog;
+  final bool maintainState;
+  final bool? opaque;
+  final int reverseTransitionDuration;
+  final int transitionDuration;
+  final RouteTransitionsBuilder transitionsBuilder;
 
   @override
   Route createRoute(BuildContext context) {

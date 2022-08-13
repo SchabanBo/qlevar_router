@@ -15,9 +15,20 @@ import 'types/qobserver.dart';
 class QRContext {
   static const rootRouterName = 'Root';
 
+  /// Set the active navigator name to call with [navigator]
+  /// by default it is the root navigator
+  /// For example if you work on a dashboard and you want to do your changes
+  /// from now on only on the dashboard Navigator. Then set this value
+  /// to the Dashboard Navigator name and every time you call [QR.navigator]
+  /// the Dashboard navigator will be called instated of root navigator
+  String activeNavigatorName = QRContext.rootRouterName;
+
   /// This history for the navigation. It is internal history to help with
   /// back method . Modifying it does not affect the Browser history
   final history = QHistory();
+
+  /// Add observer for the navigation or pop
+  final observer = QObserver();
 
   /// The parameter for the current route
   final params = QParams();
@@ -28,21 +39,10 @@ class QRContext {
   /// Info about the current route tree
   final treeInfo = _QTreeInfo();
 
-  /// Add observer for the navigation or pop
-  final observer = QObserver();
-
   final _manager = ControllerManager();
 
   /// The current route url
   String get currentPath => history.isEmpty ? '/' : history.current.path;
-
-  /// Set the active navigator name to call with [navigator]
-  /// by default it is the root navigator
-  /// For example if you work on a dashboard and you want to do your changes
-  /// from now on only on the dashboard Navigator. Then set this value
-  /// to the Dashboard Navigator name and every time you call [QR.navigator]
-  /// the Dashboard navigator will be called instated of root navigator
-  String activeNavigatorName = QRContext.rootRouterName;
 
   /// Get the root navigator
   QNavigator get rootNavigator => navigatorOf(QRContext.rootRouterName);
@@ -158,56 +158,6 @@ class QRContext {
     await _toMatch(match, pageAlreadyExistAction: pageAlreadyExistAction);
   }
 
-  Future<void> _toMatch(QRouteInternal match,
-      {String forController = QRContext.rootRouterName,
-      PageAlreadyExistAction? pageAlreadyExistAction}) async {
-    final controller = _manager.withName(forController);
-    await controller.popUntilOrPushMatch(
-      match,
-      checkChild: false,
-      pageAlreadyExistAction:
-          pageAlreadyExistAction ?? PageAlreadyExistAction.Remove,
-    );
-    if (match.hasChild && !match.isProcessed) {
-      final newControllerName =
-          _manager.hasController(match.name) ? match.name : forController;
-      await _toMatch(match.child!,
-          forController: newControllerName,
-          pageAlreadyExistAction: pageAlreadyExistAction);
-      return;
-    }
-
-    if (!match.hasChild && _manager.hasController(match.name)) {
-      final navigator = navigatorOf(match.name) as QRouterController;
-      if (navigator.hasRoutes) {
-        match.activePath =
-            match.activePath! + navigatorOf(match.name).currentRoute.path;
-      }
-    }
-
-    if (match.isProcessed) return;
-    if (currentPath != match.activePath!) {
-      // See [#18]
-      final samePathFromInit = match.route.withChildRouter &&
-          match.route.initRoute != null &&
-          currentPath == (match.activePath! + match.route.initRoute!);
-      if (!samePathFromInit) {
-        updateUrlInfo(match.activePath!,
-            mKey: match.key,
-            params: match.params!.asValueMap,
-            // The history should be added for the child init route
-            // so use the parent name as navigator
-            navigator: match.route.name ?? match.route.path,
-            // Add history so currentPath become like activePath
-            addHistory: true);
-        return;
-      }
-    }
-    if (forController != rootRouterName) {
-      (rootNavigator as QRouterController).update(withParams: false);
-    }
-  }
-
   /// try to pop the last active navigator or go to last path in the history
   Future<PopResult> back() async {
     if (history.isEmpty) {
@@ -299,20 +249,68 @@ class QRContext {
     treeInfo.namePath[rootRouterName] = '/';
     treeInfo.routeIndexer = -1;
   }
+
+  Future<void> _toMatch(QRouteInternal match,
+      {String forController = QRContext.rootRouterName,
+      PageAlreadyExistAction? pageAlreadyExistAction}) async {
+    final controller = _manager.withName(forController);
+    await controller.popUntilOrPushMatch(
+      match,
+      checkChild: false,
+      pageAlreadyExistAction:
+          pageAlreadyExistAction ?? PageAlreadyExistAction.Remove,
+    );
+    if (match.hasChild && !match.isProcessed) {
+      final newControllerName =
+          _manager.hasController(match.name) ? match.name : forController;
+      await _toMatch(match.child!,
+          forController: newControllerName,
+          pageAlreadyExistAction: pageAlreadyExistAction);
+      return;
+    }
+
+    if (!match.hasChild && _manager.hasController(match.name)) {
+      final navigator = navigatorOf(match.name) as QRouterController;
+      if (navigator.hasRoutes) {
+        match.activePath =
+            match.activePath! + navigatorOf(match.name).currentRoute.path;
+      }
+    }
+
+    if (match.isProcessed) return;
+    if (currentPath != match.activePath!) {
+      // See [#18]
+      final samePathFromInit = match.route.withChildRouter &&
+          match.route.initRoute != null &&
+          currentPath == (match.activePath! + match.route.initRoute!);
+      if (!samePathFromInit) {
+        updateUrlInfo(match.activePath!,
+            mKey: match.key,
+            params: match.params!.asValueMap,
+            // The history should be added for the child init route
+            // so use the parent name as navigator
+            navigator: match.route.name ?? match.route.path,
+            // Add history so currentPath become like activePath
+            addHistory: true);
+        return;
+      }
+    }
+    if (forController != rootRouterName) {
+      (rootNavigator as QRouterController).update(withParams: false);
+    }
+  }
 }
 
 class _QRSettings {
-  bool enableLog = true;
+  Function(String) logger = print;
   bool enableDebugLog = false;
+  bool enableLog = true;
+  Widget initPage = const Material(child: Center(child: Text('Loading')));
   // Add the default not found page path without slash.
   QRoute notFoundPage = QRoute(
       path: '/notfound',
       builder: () =>
           const Material(child: Center(child: Text('Page Not Found'))));
-
-  Widget initPage = const Material(child: Center(child: Text('Loading')));
-  Function(String) logger = print;
-  QPage pagesType = const QPlatformPage();
 
   /// Set this to true if you want only one route instance in the stack
   /// e.x. if you have in the stack a route `home/store/2` and then navigate to
@@ -321,6 +319,8 @@ class _QRSettings {
   /// if this setting is false the new  `home/store/4` will be added
   /// and the stack will have two routes but with different params
   bool oneRouteInstancePerStack = false;
+
+  QPage pagesType = const QPlatformPage();
 }
 
 class _QTreeInfo {
