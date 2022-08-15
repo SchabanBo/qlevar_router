@@ -28,6 +28,7 @@ void main() {
             QMiddlewareBuilder(
               onEnterFunc: () async => counter++,
               onExitFunc: () async => counter++,
+              onExitedFunc: () async => counter++,
               onMatchFunc: () async => counter++,
             )
           ],
@@ -43,6 +44,7 @@ void main() {
             QMiddlewareBuilder(
               onEnterFunc: () async => counter++,
               onExitFunc: () async => counter++,
+              onExitedFunc: () async => counter++,
               onMatchFunc: () async => counter++,
             )
           ],
@@ -50,7 +52,7 @@ void main() {
       QRoute(
           path: '/three', builder: () => const Scaffold(body: WidgetThree())),
     ];
-    test('Redirect / onEnter / onMatch / onExited', () async {
+    test('Redirect / onEnter / onMatch / onExit / onExited', () async {
       QR.reset();
       QRouterDelegate(routes);
       await QR.to('/nested');
@@ -63,6 +65,8 @@ void main() {
       expectedPath('/nested/child');
       await QR.navigator.replaceAll('/three');
       expect(counter, 7); // Nested onExit + Two onExit
+      await Future.delayed(const Duration(milliseconds: 500));
+      expect(counter, 9); // Nested onExited + Two onExited
     });
 
     test('Redirect guard has the right path and param', () async {
@@ -156,6 +160,7 @@ void main() {
       await widgetTester.tap(find.text('Yes'));
       await widgetTester.pumpAndSettle();
       expect(find.text('Yes'), findsNothing);
+      await widgetTester.pumpAndSettle();
       expectedPath('/');
       expect(find.byType(WidgetOne), findsOneWidget);
       expect(true, secondDialogDone);

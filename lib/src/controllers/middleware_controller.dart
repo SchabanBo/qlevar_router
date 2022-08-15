@@ -45,6 +45,15 @@ class MiddlewareController {
     }
   }
 
+  Future runOnExited() async {
+    if (!route.hasMiddleware) {
+      return;
+    }
+    for (var middle in route.route.middleware!) {
+      await middle.onExited();
+    }
+  }
+
   Future runOnMatch() async {
     if (!route.hasMiddleware) {
       return;

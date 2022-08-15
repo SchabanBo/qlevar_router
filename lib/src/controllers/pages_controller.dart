@@ -52,6 +52,10 @@ class PagesController {
     routes.removeLast(); // remove from the routes
     pages.removeLast(); // remove from the pages
     _checkEmptyStack();
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      () => middleware.runOnExited(), // run on exited
+    );
     return PopResult.Popped;
   }
 
@@ -68,6 +72,10 @@ class PagesController {
     routes.removeAt(index); // remove from the routes
     pages.removeAt(index); // remove from the pages
     _checkEmptyStack();
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      () => middleware.runOnExited(), // run on exited
+    );
     return true;
   }
 

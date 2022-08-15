@@ -21,6 +21,10 @@ class QMiddleware {
 
   /// This method will be called before removing the page from the stack
   Future onExit() async {}
+
+  /// This method will be called after removing the page from the stack
+  /// Useful to dispose any dependencies
+  Future onExited() async {}
 }
 
 class QMiddlewareBuilder extends QMiddleware {
@@ -61,13 +65,19 @@ class QMiddlewareBuilder extends QMiddleware {
   /// ````
   final Future<bool> Function()? canPopFunc;
 
-  QMiddlewareBuilder(
-      {this.redirectGuardFunc,
-      this.redirectGuardNameFunc,
-      this.onMatchFunc,
-      this.onEnterFunc,
-      this.canPopFunc,
-      this.onExitFunc});
+  /// This method will be called after removing the page from the stack
+  /// Useful to dispose any dependencies
+  final Future Function()? onExitedFunc;
+
+  QMiddlewareBuilder({
+    this.redirectGuardFunc,
+    this.redirectGuardNameFunc,
+    this.onMatchFunc,
+    this.onEnterFunc,
+    this.canPopFunc,
+    this.onExitFunc,
+    this.onExitedFunc,
+  });
 
   @override
   Future onEnter() async {
@@ -80,6 +90,13 @@ class QMiddlewareBuilder extends QMiddleware {
   Future onExit() async {
     if (onExitFunc != null) {
       await onExitFunc!();
+    }
+  }
+
+  @override
+  Future onExited() async {
+    if (onExitedFunc != null) {
+      await onExitedFunc!();
     }
   }
 
