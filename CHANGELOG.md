@@ -1,12 +1,12 @@
 # CHANGELOG
 
-## Current
+## [1.6.3] 31.08.2022
 
 - Fix #73
 - Readme update
 - QParams improvements to solve #77
 
-## [1.6.1] 19.07.2022
+## [1.6.2] 19.07.2022
 
 - Fix #72
 - Add Tests
