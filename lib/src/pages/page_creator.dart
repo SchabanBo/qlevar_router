@@ -7,11 +7,12 @@ import '../routes/qroute_internal.dart';
 import 'qpage_internal.dart';
 
 abstract class _PageConverter {
-  final String? pageName;
-  final QKey matchKey;
-  late final key = ValueKey<int>(hashCode);
-  final QPage pageType;
   _PageConverter(this.pageName, this.matchKey, this.pageType);
+
+  late final key = ValueKey<int>(hashCode);
+  final QKey matchKey;
+  final String? pageName;
+  final QPage pageType;
 
   QPageInternal createWithChild(Widget child) {
     if (pageType is QPlatformPage) {
@@ -30,42 +31,48 @@ abstract class _PageConverter {
   }
 
   QMaterialPageInternal _getMaterialPage(Widget child) => QMaterialPageInternal(
-      name: pageName,
-      child: child,
-      maintainState: pageType.maintainState,
-      fullScreenDialog: pageType.fullScreenDialog,
-      restorationId: pageType.restorationId,
-      key: key,
-      matchKey: matchKey);
-
-  QCupertinoPageInternal _getCupertinoPage(String? title, Widget child) =>
-      QCupertinoPageInternal(
-          name: pageName,
-          child: child,
-          maintainState: pageType.maintainState,
-          fullScreenDialog: pageType.fullScreenDialog,
-          restorationId: pageType.restorationId,
-          title: title,
-          key: key,
-          matchKey: matchKey);
-
-  QCustomPageInternal _getCustomPage(Widget child) {
-    final page = pageType as QCustomPage;
-    return QCustomPageInternal(
         name: pageName,
         child: child,
         maintainState: pageType.maintainState,
         fullScreenDialog: pageType.fullScreenDialog,
         restorationId: pageType.restorationId,
         key: key,
+        addMaterialWidget: pageType is QMaterialPage
+            ? (pageType as QMaterialPage).addMaterialWidget
+            : true,
         matchKey: matchKey,
-        barrierColor: page.barrierColor,
-        barrierDismissible: page.barrierDismissible,
-        barrierLabel: page.barrierLabel,
-        opaque: page.opaque,
-        reverseTransitionDuration: page.reverseTransitionDurationMilliseconds,
-        transitionDuration: page.transitionDurationMilliseconds,
-        transitionsBuilder: page.transitionsBuilder ?? _buildTransaction);
+      );
+
+  QCupertinoPageInternal _getCupertinoPage(String? title, Widget child) =>
+      QCupertinoPageInternal(
+        name: pageName,
+        child: child,
+        maintainState: pageType.maintainState,
+        fullScreenDialog: pageType.fullScreenDialog,
+        restorationId: pageType.restorationId,
+        title: title,
+        key: key,
+        matchKey: matchKey,
+      );
+
+  QCustomPageInternal _getCustomPage(Widget child) {
+    final page = pageType as QCustomPage;
+    return QCustomPageInternal(
+      name: pageName,
+      child: child,
+      maintainState: pageType.maintainState,
+      fullScreenDialog: pageType.fullScreenDialog,
+      restorationId: pageType.restorationId,
+      key: key,
+      matchKey: matchKey,
+      barrierColor: page.barrierColor,
+      barrierDismissible: page.barrierDismissible,
+      barrierLabel: page.barrierLabel,
+      opaque: page.opaque,
+      reverseTransitionDuration: page.reverseTransitionDurationMilliseconds,
+      transitionDuration: page.transitionDurationMilliseconds,
+      transitionsBuilder: page.transitionsBuilder ?? _buildTransaction,
+    );
   }
 
   Widget _buildTransaction(BuildContext context, Animation<double> animation,
@@ -103,11 +110,13 @@ abstract class _PageConverter {
 }
 
 class PageCreator extends _PageConverter {
-  final QRouteInternal route;
-  QRoute get qRoute => route.route;
   PageCreator(this.route)
       : super(route.route.name, route.key,
             route.route.pageType ?? QR.settings.pagesType);
+
+  final QRouteInternal route;
+
+  QRoute get qRoute => route.route;
 
   QPageInternal create() => super.createWithChild(build());
 

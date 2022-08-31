@@ -4,10 +4,11 @@ import 'package:flutter/cupertino.dart';
 /// you can use [QMaterialPage], [QCupertinoPage] or [QPlatformPage]
 /// The default is [QPlatformPage]
 abstract class QPage {
-  final bool maintainState;
-  final bool fullScreenDialog;
-  final String? restorationId;
   const QPage(this.fullScreenDialog, this.maintainState, this.restorationId);
+
+  final bool fullScreenDialog;
+  final bool maintainState;
+  final String? restorationId;
 }
 
 /// This type will set the page type as [MaterialPage]
@@ -15,19 +16,23 @@ class QMaterialPage extends QPage {
   const QMaterialPage({
     bool fullscreenDialog = false,
     bool maintainState = true,
+    this.addMaterialWidget = true,
     String? restorationId,
   }) : super(fullscreenDialog, maintainState, restorationId);
+
+  final bool addMaterialWidget;
 }
 
 /// This type will set the page type as [CupertinoPage]
 class QCupertinoPage extends QPage {
-  final String? title;
   const QCupertinoPage({
     bool fullscreenDialog = false,
     bool maintainState = true,
     String? restorationId,
     this.title,
   }) : super(fullscreenDialog, maintainState, restorationId);
+
+  final String? title;
 }
 
 /// This type will determinate the page type based on the platform
@@ -42,15 +47,6 @@ class QPlatformPage extends QPage {
 
 /// Give a custom animation for the page.
 class QCustomPage extends QPage {
-  final int transitionDurationMilliseconds;
-  final int reverseTransitionDurationMilliseconds;
-  final bool? opaque;
-  final bool? barrierDismissible;
-  final Color? barrierColor;
-  final String? barrierLabel;
-  final RouteTransitionsBuilder? transitionsBuilder;
-  final QCustomPage? withType;
-
   const QCustomPage({
     bool fullscreenDialog = false,
     bool maintainState = true,
@@ -67,11 +63,18 @@ class QCustomPage extends QPage {
             reverseTransitionDurationMilliseconds ?? 300,
         transitionDurationMilliseconds = transitionDurationMilliseconds ?? 300,
         super(fullscreenDialog, maintainState, restorationId);
+
+  final Color? barrierColor;
+  final bool? barrierDismissible;
+  final String? barrierLabel;
+  final bool? opaque;
+  final int reverseTransitionDurationMilliseconds;
+  final int transitionDurationMilliseconds;
+  final RouteTransitionsBuilder? transitionsBuilder;
+  final QCustomPage? withType;
 }
 
 class QSlidePage extends QCustomPage {
-  final Offset? offset;
-  final Curve? curve;
   const QSlidePage({
     bool fullscreenDialog = false,
     bool maintainState = true,
@@ -98,10 +101,12 @@ class QSlidePage extends QCustomPage {
           restorationId: restorationId,
           withType: withType,
         );
+
+  final Curve? curve;
+  final Offset? offset;
 }
 
 class QFadePage extends QCustomPage {
-  final Curve? curve;
   const QFadePage({
     bool fullscreenDialog = false,
     bool maintainState = true,
@@ -126,4 +131,6 @@ class QFadePage extends QCustomPage {
             transitionDurationMilliseconds: transitionDurationMilliseconds,
             restorationId: restorationId,
             withType: withType);
+
+  final Curve? curve;
 }

@@ -92,16 +92,6 @@ abstract class QNavigator extends ChangeNotifier {
 }
 
 class QRouterController extends QNavigator {
-  final QKey key;
-
-  final QRouteChildren routes;
-
-  final _pagesController = PagesController();
-
-  bool isDisposed = false;
-
-  late GlobalKey<NavigatorState> navKey;
-
   QRouterController(
     this.key,
     this.routes, {
@@ -115,28 +105,56 @@ class QRouterController extends QNavigator {
     }
   }
 
-  bool get hasRoutes => _pagesController.routes.isNotEmpty;
+  bool isDisposed = false;
+  final QKey key;
+  late GlobalKey<NavigatorState> navKey;
+  final QRouteChildren routes;
+
+  final _pagesController = PagesController();
+
+  @override
+  void addRoutes(List<QRoute> routes) => this.routes.add(routes);
+
+  @override
+  bool get canPop => _pagesController.pages.length > 1;
 
   @override
   QRoute get currentRoute => _pagesController.routes.last.route;
+
+  @override
+  void dispose() {
+    isDisposed = true;
+    super.dispose();
+  }
 
   @override
   RoutesChildren get getRoutesWidget =>
       RoutesChildren(routes, parentPath: routes.parentFullPath);
 
   @override
-  bool get canPop => _pagesController.pages.length > 1;
+  Future<void> popUnitOrPush(String path) => popUntilOrPush(path);
 
-  List<QPageInternal> get pages => List.unmodifiable(_pagesController.pages);
+  @override
+  Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params}) =>
+      popUntilOrPushName(name, params: params);
 
-  Future<QRouteInternal> findPath(String path) =>
-      MatchController(path, routes.parentFullPath, routes).match;
+  @override
+  Future<void> popUntilOrPush(String path) async {
+    await popUntilOrPushMatch(await findPath(path));
+  }
 
-  Future<QRouteInternal> findName(String name,
-          {Map<String, dynamic>? params}) =>
-      MatchController.fromName(name, routes.parentFullPath, routes,
-              params: params)
-          .match;
+  @override
+  Future<void> popUntilOrPushName(String name,
+      {Map<String, dynamic>? params}) async {
+    final match = await findName(name, params: params);
+    await popUntilOrPushMatch(match);
+  }
+
+  @override
+  Future<void> push(String path) async {
+    final match = await findPath(path);
+    await addRouteAsync(match);
+  }
 
   @override
   Future<void> pushName(String name, {Map<String, dynamic>? params}) async =>
@@ -152,13 +170,22 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  Future<void> replaceName(String name, String withName,
-      {Map<String, dynamic>? params, Map<String, dynamic>? withParams}) async {
-    final match = await findName(name, params: params);
+  void removeRoutes(List<String> routesNames) => routes.remove(routesNames);
+
+  @override
+  Future<void> replace(String path, String withPath) async {
+    final match = await findPath(path);
     final index = _pagesController.routes.indexWhere((e) => e.isSame(match));
-    assert(index != -1, 'Path with name $name was not found in the stack');
+    assert(index != -1, 'Path $path was not found in the stack');
     if (!await _pagesController.removeIndex(index)) return;
-    await pushName(withName, params: withParams);
+    await push(withPath);
+  }
+
+  @override
+  Future<void> replaceAll(String path) async {
+    final match = await findPath(path);
+    if (await _pagesController.removeAll() != PopResult.Popped) return;
+    await addRouteAsync(match);
   }
 
   @override
@@ -170,17 +197,74 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  Future<void> push(String path) async {
-    final match = await findPath(path);
-    await addRouteAsync(match);
+  Future<void> replaceLast(String path) async {
+    final last = _pagesController.routes.last;
+    return replace(last.activePath!, path);
   }
 
   @override
-  Future<void> replaceAll(String path) async {
-    final match = await findPath(path);
-    if (await _pagesController.removeAll() != PopResult.Popped) return;
-    await addRouteAsync(match);
+  Future<void> replaceLastName(String name,
+      {Map<String, dynamic>? params}) async {
+    final last = _pagesController.routes.last;
+    return replaceName(last.name, name, params: params);
   }
+
+  @override
+  Future<void> replaceName(String name, String withName,
+      {Map<String, dynamic>? params, Map<String, dynamic>? withParams}) async {
+    final match = await findName(name, params: params);
+    final index = _pagesController.routes.indexWhere((e) => e.isSame(match));
+    assert(index != -1, 'Path with name $name was not found in the stack');
+    if (!await _pagesController.removeIndex(index)) return;
+    await pushName(withName, params: withParams);
+  }
+
+  @override
+  Future<void> switchTo(String path) async {
+    await popUntilOrPushMatch(await findPath(path),
+        pageAlreadyExistAction: PageAlreadyExistAction.BringToTop);
+  }
+
+  @override
+  Future<void> switchToName(String name, {Map<String, dynamic>? params}) async {
+    final match = await findName(name, params: params);
+    await popUntilOrPushMatch(match,
+        pageAlreadyExistAction: PageAlreadyExistAction.BringToTop);
+  }
+
+  @override
+  void updateUrl(String url,
+      {Map<String, dynamic>? params,
+      QKey? mKey,
+      String? navigator,
+      bool updateParams = false,
+      bool addHistory = true}) {
+    if (key.name != QRContext.rootRouterName) {
+      QR.log('Only ${QRContext.rootRouterName} can update the url');
+      return;
+    }
+    final newParams = QParams();
+    newParams.addAll(params ?? Uri.parse(url).queryParameters);
+    QR.history.add(QHistoryEntry(mKey ?? QKey('Out Route'), url, newParams,
+        navigator ?? 'Out Route', false));
+    update(withParams: updateParams);
+    if (!addHistory) {
+      QR.history.removeLast();
+    }
+  }
+
+  bool get hasRoutes => _pagesController.routes.isNotEmpty;
+
+  List<QPageInternal> get pages => List.unmodifiable(_pagesController.pages);
+
+  Future<QRouteInternal> findPath(String path) =>
+      MatchController(path, routes.parentFullPath, routes).match;
+
+  Future<QRouteInternal> findName(String name,
+          {Map<String, dynamic>? params}) =>
+      MatchController.fromName(name, routes.parentFullPath, routes,
+              params: params)
+          .match;
 
   void updatePathIfNeeded(QRouteInternal match) {
     if (key.name != QRContext.rootRouterName) {
@@ -189,15 +273,6 @@ class QRouterController extends QNavigator {
           params: match.params!.asValueMap,
           navigator: key.name);
     }
-  }
-
-  @override
-  Future<void> replace(String path, String withPath) async {
-    final match = await findPath(path);
-    final index = _pagesController.routes.indexWhere((e) => e.isSame(match));
-    assert(index != -1, 'Path $path was not found in the stack');
-    if (!await _pagesController.removeIndex(index)) return;
-    await push(withPath);
   }
 
   Future<void> addRouteAsync(QRouteInternal match,
@@ -216,66 +291,6 @@ class QRouterController extends QNavigator {
       update();
       updatePathIfNeeded(match);
     }
-  }
-
-  Future<void> _addRoute(QRouteInternal route) async {
-    if (_pagesController.exist(route) && route.hasChild) {
-      // if page already exist, and has a child, that means the child need
-      // to be added, so do not run the middleware for it or add it again
-      return;
-    }
-    if (route.hasMiddleware) {
-      final medCont = MiddlewareController(route);
-      final result = await medCont.runRedirect();
-      if (result != null) {
-        QR.log('redirect from [${route.activePath}] to [$result]');
-        await QR.to(result);
-        route.isProcessed = true;
-        return;
-      }
-      final resultName = await medCont.runRedirectName();
-      if (resultName != null) {
-        QR.log('redirect from [${route.activePath}] to name [$resultName]');
-        await QR.toName(resultName.name, params: resultName.params);
-        route.isProcessed = true;
-        return;
-      }
-    }
-    QR.history.add(QHistoryEntry(
-        route.key, route.activePath!, route.params!, key.name, route.hasChild));
-    await _pagesController.add(route);
-  }
-
-  @override
-  Future<void> popUntilOrPush(String path) async {
-    await popUntilOrPushMatch(await findPath(path));
-  }
-
-  @override
-  Future<void> popUnitOrPush(String path) => popUntilOrPush(path);
-
-  @override
-  Future<void> popUntilOrPushName(String name,
-      {Map<String, dynamic>? params}) async {
-    final match = await findName(name, params: params);
-    await popUntilOrPushMatch(match);
-  }
-
-  @override
-  Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params}) =>
-      popUntilOrPushName(name, params: params);
-
-  @override
-  Future<void> switchTo(String path) async {
-    await popUntilOrPushMatch(await findPath(path),
-        pageAlreadyExistAction: PageAlreadyExistAction.BringToTop);
-  }
-
-  @override
-  Future<void> switchToName(String name, {Map<String, dynamic>? params}) async {
-    final match = await findName(name, params: params);
-    await popUntilOrPushMatch(match,
-        pageAlreadyExistAction: PageAlreadyExistAction.BringToTop);
   }
 
   Future<void> popUntilOrPushMatch(
@@ -352,6 +367,41 @@ class QRouterController extends QNavigator {
     update();
   }
 
+  void update({bool withParams = false}) {
+    if (withParams) {
+      QR.params.updateParams(QR.history.current.params);
+    }
+    notifyListeners();
+  }
+
+  Future<void> _addRoute(QRouteInternal route) async {
+    if (_pagesController.exist(route) && route.hasChild) {
+      // if page already exist, and has a child, that means the child need
+      // to be added, so do not run the middleware for it or add it again
+      return;
+    }
+    if (route.hasMiddleware) {
+      final medCont = MiddlewareController(route);
+      final result = await medCont.runRedirect();
+      if (result != null) {
+        QR.log('redirect from [${route.activePath}] to [$result]');
+        await QR.to(result);
+        route.isProcessed = true;
+        return;
+      }
+      final resultName = await medCont.runRedirectName();
+      if (resultName != null) {
+        QR.log('redirect from [${route.activePath}] to name [$resultName]');
+        await QR.toName(resultName.name, params: resultName.params);
+        route.isProcessed = true;
+        return;
+      }
+    }
+    QR.history.add(QHistoryEntry(
+        route.key, route.activePath!, route.params!, key.name, route.hasChild));
+    await _pagesController.add(route);
+  }
+
   QRouteInternal _bringPageToTop(int index) {
     final route = _pagesController.routes[index];
     final page = _pagesController.pages[index];
@@ -360,58 +410,5 @@ class QRouterController extends QNavigator {
     _pagesController.routes.add(route);
     _pagesController.pages.add(page);
     return route;
-  }
-
-  void update({bool withParams = false}) {
-    if (withParams) {
-      QR.params.updateParams(QR.history.current.params);
-    }
-    notifyListeners();
-  }
-
-  @override
-  void updateUrl(String url,
-      {Map<String, dynamic>? params,
-      QKey? mKey,
-      String? navigator,
-      bool updateParams = false,
-      bool addHistory = true}) {
-    if (key.name != QRContext.rootRouterName) {
-      QR.log('Only ${QRContext.rootRouterName} can update the url');
-      return;
-    }
-    final newParams = QParams();
-    newParams.addAll(params ?? Uri.parse(url).queryParameters);
-    QR.history.add(QHistoryEntry(mKey ?? QKey('Out Route'), url, newParams,
-        navigator ?? 'Out Route', false));
-    update(withParams: updateParams);
-    if (!addHistory) {
-      QR.history.removeLast();
-    }
-  }
-
-  @override
-  void dispose() {
-    isDisposed = true;
-    super.dispose();
-  }
-
-  @override
-  void addRoutes(List<QRoute> routes) => this.routes.add(routes);
-
-  @override
-  void removeRoutes(List<String> routesNames) => routes.remove(routesNames);
-
-  @override
-  Future<void> replaceLast(String path) async {
-    final last = _pagesController.routes.last;
-    return replace(last.activePath!, path);
-  }
-
-  @override
-  Future<void> replaceLastName(String name,
-      {Map<String, dynamic>? params}) async {
-    final last = _pagesController.routes.last;
-    return replaceName(last.name, name, params: params);
   }
 }

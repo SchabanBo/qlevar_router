@@ -442,6 +442,40 @@ void main() {
       expect(find.text('Stores'), findsOneWidget);
     });
   });
+
+  test('ensureExist / updateParam', () async {
+    QR.reset();
+    int? oldValue;
+    int? newValue;
+    bool deleted = false;
+
+    QR.params.ensureExist('TestParam', initValue: 5, onChange: (o, n) {
+      oldValue = o as int;
+      newValue = n as int;
+    }, onDelete: () {
+      deleted = true;
+    }, cleanupAfter: 1);
+
+    QRouterDelegate([
+      QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
+      QRoute(path: '/info', builder: () => const WidgetTwo())
+    ]);
+    expect(QR.params['TestParam']!.asInt, 5);
+    await QR.to('/info');
+    expect(QR.currentPath, '/info');
+    expect(QR.params.isNotEmpty, true);
+    expect(QR.params['TestParam']!.asInt, 5);
+    QR.params.updateParam('TestParam', 6);
+
+    expect(QR.params['TestParam']!.valueAs<int>(), 6);
+    expect(oldValue, 5);
+    expect(newValue, 6);
+
+    await QR.to('/');
+    expect(QR.params['TestParam'], null);
+    expect(QR.params.isEmpty, true);
+    expect(deleted, true);
+  });
 }
 
 class TestObject {
