@@ -31,43 +31,48 @@ abstract class _PageConverter {
   }
 
   QMaterialPageInternal _getMaterialPage(Widget child) => QMaterialPageInternal(
-      name: pageName,
-      child: child,
-      maintainState: pageType.maintainState,
-      fullScreenDialog: pageType.fullScreenDialog,
-      restorationId: pageType.restorationId,
-      key: key,
-      addMaterialWidget: (pageType as QMaterialPage).addMaterialWidget,
-      matchKey: matchKey);
-
-  QCupertinoPageInternal _getCupertinoPage(String? title, Widget child) =>
-      QCupertinoPageInternal(
-          name: pageName,
-          child: child,
-          maintainState: pageType.maintainState,
-          fullScreenDialog: pageType.fullScreenDialog,
-          restorationId: pageType.restorationId,
-          title: title,
-          key: key,
-          matchKey: matchKey);
-
-  QCustomPageInternal _getCustomPage(Widget child) {
-    final page = pageType as QCustomPage;
-    return QCustomPageInternal(
         name: pageName,
         child: child,
         maintainState: pageType.maintainState,
         fullScreenDialog: pageType.fullScreenDialog,
         restorationId: pageType.restorationId,
         key: key,
+        addMaterialWidget: pageType is QMaterialPage
+            ? (pageType as QMaterialPage).addMaterialWidget
+            : true,
         matchKey: matchKey,
-        barrierColor: page.barrierColor,
-        barrierDismissible: page.barrierDismissible,
-        barrierLabel: page.barrierLabel,
-        opaque: page.opaque,
-        reverseTransitionDuration: page.reverseTransitionDurationMilliseconds,
-        transitionDuration: page.transitionDurationMilliseconds,
-        transitionsBuilder: page.transitionsBuilder ?? _buildTransaction);
+      );
+
+  QCupertinoPageInternal _getCupertinoPage(String? title, Widget child) =>
+      QCupertinoPageInternal(
+        name: pageName,
+        child: child,
+        maintainState: pageType.maintainState,
+        fullScreenDialog: pageType.fullScreenDialog,
+        restorationId: pageType.restorationId,
+        title: title,
+        key: key,
+        matchKey: matchKey,
+      );
+
+  QCustomPageInternal _getCustomPage(Widget child) {
+    final page = pageType as QCustomPage;
+    return QCustomPageInternal(
+      name: pageName,
+      child: child,
+      maintainState: pageType.maintainState,
+      fullScreenDialog: pageType.fullScreenDialog,
+      restorationId: pageType.restorationId,
+      key: key,
+      matchKey: matchKey,
+      barrierColor: page.barrierColor,
+      barrierDismissible: page.barrierDismissible,
+      barrierLabel: page.barrierLabel,
+      opaque: page.opaque,
+      reverseTransitionDuration: page.reverseTransitionDurationMilliseconds,
+      transitionDuration: page.transitionDurationMilliseconds,
+      transitionsBuilder: page.transitionsBuilder ?? _buildTransaction,
+    );
   }
 
   Widget _buildTransaction(BuildContext context, Animation<double> animation,

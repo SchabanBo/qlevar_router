@@ -33,6 +33,7 @@
   - [Remove Url Hashtag](#remove-url-hashtag)
   - [Web hot reload](#web-hot-reload)
   - [Articles](#articles)
+  - [Projects](#projects)
   - [Contribute](#contribute)
 
 Qlevar router is a flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
@@ -125,6 +126,7 @@ You can check out the [samples project](https://github.com/SchabanBo/qr_samples)
 - [Dashboard Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/dashboard.dart)
 - [Bottom Navigation bar Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/bottom_nav_bar.dart)
 - [TabView Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/tab_view.dart)
+- [Use data from another page](https://github.com/SchabanBo/qr_samples/blob/main/lib/examples/return_data.dart)
 
 ## Parameters
 
@@ -441,6 +443,10 @@ class MyApp extends StatelessWidget {
 
 - [Building an app using Cubit and qlevar_router](https://medium.com/@SchabanBo/building-an-app-using-cubit-and-qlevar-router-481fba0f2349)
 - [Reduce your flutter web app loading time](https://medium.com/@SchabanBo/reduce-your-flutter-web-app-loading-time-8018d8f442)
+
+## Projects
+
+- [Localic](https://github.com/SchabanBo/localic): A local management application uses [riverpod](https://riverpod.dev) as state management.
 
 ## Contribute
 

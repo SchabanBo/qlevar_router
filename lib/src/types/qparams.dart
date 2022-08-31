@@ -58,21 +58,48 @@ class QParams {
   /// See if a parameter is Exist, if not create it with this `initValue`.
   /// if you set `keepAlive` to true then the package will not remove this param
   /// or you can set `cleanupAfter` so the package will clean up this param
-  /// after X callas, where x is the number you set in `cleanupAfter`
+  /// after X callas, where x is the number you set in `cleanupAfter`.
+  /// to set a function to be called when this param is changed set `onChange`
+  /// function it gives the current value and the new value and to set a function to be
+  /// called when this param is deleted use `onDelete`
   void ensureExist(
     String name, {
     Object? initValue,
     int? cleanupAfter,
     bool keepAlive = false,
+    ParamChanged? onChange,
+    Function()? onDelete,
   }) {
-    final param = _params[name];
-    if (param == null) {
-      _params[name] = ParamValue(
-        initValue,
-        keepAlive: keepAlive || cleanupAfter != null,
-        cleanupAfter: cleanupAfter,
-      );
+    if (_params[name] != null) {
+      return;
     }
+    _params[name] = ParamValue(
+      initValue,
+      keepAlive: keepAlive || cleanupAfter != null,
+      cleanupAfter: cleanupAfter,
+      onChange: onChange,
+      onDelete: onDelete,
+    );
+  }
+
+  void updateParam(
+    String name,
+    Object value, {
+    int? cleanupAfter,
+    bool keepAlive = false,
+    ParamChanged? onChange,
+    Function()? onDelete,
+  }) {
+    final newParam = _params[name]!.copyWith(
+      value: value,
+      cleanupAfter: cleanupAfter,
+      keepAlive: keepAlive,
+      onChange: onChange,
+      onDelete: onDelete,
+    );
+    final params = Map<String, ParamValue>.from(_params);
+    params[name] = newParam;
+    updateParams(QParams(params: params));
   }
 
   /// add new params when path updates
@@ -100,7 +127,7 @@ class QParams {
         if (!_params[key]!.isSame(newParams[key]!)) {
           if (_params[key]?.onChange != null) {
             _params[key]!.onChange!(
-                _params[key]!._value!, newParams[key]!._value!);
+                _params[key]!._value, newParams[key]!._value);
           }
           _params[key] = _params[key]!.copyWith(value: newParams[key]!._value);
         }
@@ -119,7 +146,7 @@ class ParamValue {
   final Object? _value;
   bool keepAlive;
   int? cleanupAfter;
-  Function(Object, Object)? onChange;
+  ParamChanged? onChange;
   Function()? onDelete;
 
   ParamValue(
@@ -132,11 +159,15 @@ class ParamValue {
 
   ParamValue copyWith({
     Object? value,
-    Function(Object, Object)? onChange,
+    bool? keepAlive,
+    int? cleanupAfter,
+    ParamChanged? onChange,
     Function()? onDelete,
   }) {
     return ParamValue(
       value ?? _value,
+      keepAlive: keepAlive ?? this.keepAlive,
+      cleanupAfter: cleanupAfter ?? this.cleanupAfter,
       onChange: onChange ?? this.onChange,
       onDelete: onDelete ?? this.onDelete,
     );
@@ -161,3 +192,5 @@ class ParamValue {
   @override
   String toString() => hasValue ? value!.toString() : 'null';
 }
+
+typedef ParamChanged = Function(Object?, Object?);
