@@ -1,5 +1,10 @@
 # CHANGELOG
 
+
+## [1.6.4] 31.08.2022
+
+- Fix middlewares of children router will not be called when parent removed.
+
 ## [1.6.3] 31.08.2022
 
 - Fix #73
