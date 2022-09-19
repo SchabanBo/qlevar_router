@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -10,7 +12,8 @@ void main() {
     test('Page type to internal page type', () async {
       QR.reset();
       final pageMap = {
-        const QPlatformPage(): QMaterialPageInternal,
+        const QPlatformPage():
+            Platform.isMacOS ? QCupertinoPageInternal : QMaterialPageInternal,
         const QMaterialPage(): QMaterialPageInternal,
         const QCupertinoPage(): QCupertinoPageInternal,
         const QSlidePage(): QCustomPageInternal,
