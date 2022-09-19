@@ -95,7 +95,8 @@ you want to work with the basic functions from the navigator just set which navi
   QR.navigator.removeLast();
 ```
 
-or just call the navigator `QR.navigatorOf('Dashboard')`
+or just call the navigator `QR.navigatorOf('Dashboard')`.
+**Note:** The routes name must be unique for each route in the app.
 
 Use these functions to see your navigators and Stack history and active pages in your project for a better understanding of where you are in your project and how to order your pages.
 

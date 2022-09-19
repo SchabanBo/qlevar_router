@@ -123,6 +123,7 @@ class QRouterController extends QNavigator {
 
   @override
   void dispose() {
+    _pagesController.removeAll();
     isDisposed = true;
     super.dispose();
   }

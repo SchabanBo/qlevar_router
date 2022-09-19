@@ -11,6 +11,7 @@ export 'src/types/pop_result.dart';
 export 'src/types/qparams.dart';
 export 'src/types/qroute_key.dart';
 export 'src/types/route_parser.dart';
+export 'src/types/router_state.dart';
 
 // ignore: non_constant_identifier_names
 final QR = QRContext();
