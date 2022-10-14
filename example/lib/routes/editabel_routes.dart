@@ -7,6 +7,9 @@ class EditableRoutes {
         path: '/editable-routes',
         builderChild: (child) => AddRemoveRoutes(child),
         initRoute: '/child',
+        observers: [
+          // Add your observer for this navigator
+        ],
         children: [
           QRoute(path: '/child', builder: () => AddRemoveChild('Hi child')),
           QRoute(path: '/child-1', builder: () => AddRemoveChild('Hi child 1')),

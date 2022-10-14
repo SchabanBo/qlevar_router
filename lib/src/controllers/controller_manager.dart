@@ -7,8 +7,13 @@ class ControllerManager {
   final controllers = <QRouterController>[];
   final dControllers = <QDeclarativeController>[];
 
-  QRouterController createController(String name, List<QRoute>? routes,
-      QRouteChildren? cRoutes, String? initPath, QRouteInternal? initRoute) {
+  QRouterController createController(
+    String name,
+    List<QRoute>? routes,
+    QRouteChildren? cRoutes,
+    String? initPath,
+    QRouteInternal? initRoute,
+  ) {
     if (hasController(name)) {
       QR.log('A navigator with name [$name] already exist', isDebug: true);
       return controllers.firstWhere((element) => element.key.hasName(name));

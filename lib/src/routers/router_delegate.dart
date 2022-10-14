@@ -10,13 +10,6 @@ import '../qr.dart';
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
-  final GlobalKey<NavigatorState> key;
-  final QRouterController _controller;
-  final bool withWebBar;
-  final bool alwaysAddInitPath;
-  final String? initPath;
-  final List<NavigatorObserver> observers;
-
   QRouterDelegate(
     List<QRoute> routes, {
     GlobalKey<NavigatorState>? navKey,
@@ -31,8 +24,49 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     _controller.navKey = key;
   }
 
+  /// Set this to true if you want always the initial router to be added on the stack
+  /// Example.
+  /// you have tow routes under the domain www.example.com
+  /// - '/' init route
+  /// - '/user'
+  /// if the user opens www.example.com/user and this property was true the '/' path will be added
+  /// so the user could press back to '/', otherwise the user will not be able to press back
+  final bool alwaysAddInitPath;
+
+  /// The initial router when the app starts
+  final String? initPath;
+
+  /// The navigation key for the navigator
+  final GlobalKey<NavigatorState> key;
+
+  /// A list of observers for this navigator.
+  final List<NavigatorObserver> observers;
+
+  /// Add a fake app bar so you can test navigating to routes
+  /// This app bar will not be added in the release mode
+  final bool withWebBar;
+
+  final QRouterController _controller;
+
   @override
   String get currentConfiguration => QR.currentPath;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Future<bool> popRoute() async {
+    final result = await QR.back();
+    switch (result) {
+      case PopResult.NotPopped:
+        return false;
+      default:
+        return true;
+    }
+  }
 
   @override
   Future<void> setInitialRoutePath(String configuration) async {
@@ -71,28 +105,6 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     return;
   }
 
-  @override
-  Future<bool> popRoute() async {
-    final result = await QR.back();
-    switch (result) {
-      case PopResult.NotPopped:
-        return false;
-      default:
-        return true;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      (withWebBar && BrowserAddressBar.isNeeded)
-          ? Column(children: [
-              SizedBox(
-                  height: 40,
-                  child: BrowserAddressBar(setNewRoutePath, _controller)),
-              Expanded(child: navigator),
-            ])
-          : navigator;
-
   Navigator get navigator => Navigator(
         key: key,
         pages: _controller.pages,
@@ -104,8 +116,13 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       );
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  Widget build(BuildContext context) =>
+      (withWebBar && BrowserAddressBar.isNeeded)
+          ? Column(children: [
+              SizedBox(
+                  height: 40,
+                  child: BrowserAddressBar(setNewRoutePath, _controller)),
+              Expanded(child: navigator),
+            ])
+          : navigator;
 }

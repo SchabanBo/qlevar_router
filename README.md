@@ -221,7 +221,31 @@ This method will be called before removing the page from the stack
 
 ## Observer
 
-to observe every navigation in your app you could set QObserver to the `QR.observer`.
+To set your observers to the navigators for the root navigator you need to pass them to `QRouterDelegate`
+
+```dart
+RouterDelegate(
+  appRoutes.routes,
+  observers: [
+    // Your observers
+  ],
+),
+```
+
+for nested navigators you can pass them when defining a nested route
+
+```dart
+QRoute.withChild(
+  path: '/editable-routes',
+  builderChild: (child) => AddRemoveRoutes(child),
+  observers: [
+    // Add your observer for this navigator
+  ],
+  children: [..],
+);
+```
+
+to set global observes for every navigation in your app you could set QObserver to the `QR.observer`.
 QObserver can have :
 
 - **onNavigate**: add listener to every new route that will be added to the tree
