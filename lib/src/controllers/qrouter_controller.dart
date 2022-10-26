@@ -369,7 +369,7 @@ class QRouterController extends QNavigator {
   }
 
   void update({bool withParams = false}) {
-    if (withParams) {
+    if (withParams && QR.params.isNotEmpty) {
       QR.params.updateParams(QR.history.current.params);
     }
     notifyListeners();

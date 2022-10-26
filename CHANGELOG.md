@@ -4,12 +4,11 @@
 
 - Add #84
 - Add RouterState
+- Add #86
+- Fix #88
 
 TODO:
-  - Update samples bottom nav bar and tab view
-  - Check rail vav for samples
   - Add #81
-  - Add #86
 
 ## [1.6.4] 31.08.2022
 

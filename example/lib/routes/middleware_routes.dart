@@ -20,6 +20,7 @@ class MiddlewareRoutes {
             onMatchFunc: () async => print('-- Parent page Matched --'),
             onEnterFunc: () async => print('-- Enter Parent page --'),
             onExitFunc: () async => print('-- Exit Parent page --'),
+            onExitedFunc: () => print('-- Parent page Exited--'),
           )
         ],
         children: [

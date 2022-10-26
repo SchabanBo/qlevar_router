@@ -4,6 +4,8 @@
 [![popularity](https://img.shields.io/pub/popularity/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
 [![pub points](https://img.shields.io/pub/points/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router) 
 [![codecov](https://codecov.io/gh/SchabanBo/qlevar_router/branch/master/graph/badge.svg?token=WF1RBRWTN1)](https://codecov.io/gh/SchabanBo/qlevar_router)
+[![HitCount](https://hits.dwyl.com/SchabanBo/qlevar_router.svg?style=flat-square)](http://hits.dwyl.com/SchabanBo/qlevar_router)
+
 
 - [Qlevar Router (QR)](#qlevar-router-qr)
   - [Demo](#demo)
@@ -19,6 +21,7 @@
     - [onMatch](#onmatch)
     - [onEnter](#onenter)
     - [onExit](#onexit)
+  - [OnExited](#onexited)
   - [Observer](#observer)
   - [Not found page](#not-found-page)
   - [Deferred loading](#deferred-loading)
@@ -124,9 +127,10 @@ You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_
 
 You can check out the [samples project](https://github.com/SchabanBo/qr_samples) for more samples and test some use cases.
 
-- [Dashboard Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/dashboard.dart)
+- [Dashboard with splash page Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/dashboard.dart)
 - [Bottom Navigation bar Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/bottom_nav_bar.dart)
 - [TabView Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/tab_view.dart)
+- [NavRail Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/nav_rail.dart)
 - [Use data from another page](https://github.com/SchabanBo/qr_samples/blob/main/lib/examples/return_data.dart)
 
 ## Parameters
@@ -218,6 +222,10 @@ This method will be called before adding the page to the stack and before the pa
 ### onExit
 
 This method will be called before removing the page from the stack
+
+## OnExited
+
+This method will be called one frame after the page was removed from the stack, this will be the best place to cleanup any resource that the page was using.
 
 ## Observer
 
