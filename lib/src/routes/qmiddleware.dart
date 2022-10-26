@@ -95,7 +95,7 @@ class QMiddlewareBuilder extends QMiddleware {
 
   @override
   void onExited() {
-    if (onExitFunc != null) {
+    if (onExitedFunc != null) {
       onExitedFunc!();
     }
   }

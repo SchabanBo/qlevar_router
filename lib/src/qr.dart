@@ -78,7 +78,7 @@ class QRContext {
   }
 
   /// Remove a navigator with this name
-  bool removeNavigator(String name) => _manager.removeNavigator(name);
+  Future<bool> removeNavigator(String name) => _manager.removeNavigator(name);
 
   /// Remove the hashtag from url,
   /// call this function before running your app,

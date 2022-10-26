@@ -56,12 +56,12 @@ class ControllerManager {
   bool hasController(String name) =>
       controllers.any((element) => element.key.hasName(name));
 
-  bool removeNavigator(String name) {
+  Future<bool> removeNavigator(String name) async {
     if (!hasController(name)) {
       return false;
     }
     final controller = withName(name);
-    controller.dispose();
+    await controller.disposeAsync();
     controllers.remove(controller);
     QR.log('Navigator with name [$name] was removed');
     return true;

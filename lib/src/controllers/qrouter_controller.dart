@@ -121,9 +121,8 @@ class QRouterController extends QNavigator {
   @override
   QRoute get currentRoute => _pagesController.routes.last.route;
 
-  @override
-  void dispose() {
-    _pagesController.removeAll();
+  Future<void> disposeAsync() async {
+    await _pagesController.removeAll();
     isDisposed = true;
     super.dispose();
   }
@@ -369,7 +368,7 @@ class QRouterController extends QNavigator {
   }
 
   void update({bool withParams = false}) {
-    if (withParams && QR.params.isNotEmpty) {
+    if (withParams && QR.history.entries.isNotEmpty) {
       QR.params.updateParams(QR.history.current.params);
     }
     notifyListeners();

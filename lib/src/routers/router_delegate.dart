@@ -53,7 +53,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.disposeAsync();
     super.dispose();
   }
 

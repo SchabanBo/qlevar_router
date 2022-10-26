@@ -41,7 +41,7 @@ class PagesController {
     await middleware.runOnExit(); // run on exit
     middleware.scheduleOnExited(); // schedule on exited
 
-    if (QR.removeNavigator(route.name)) {
+    if (await QR.removeNavigator(route.name)) {
       // if this route has navigator then remove it to remove this route too.
       // and remove all histories to this route
       QR.history.removeWithNavigator(route.name);
