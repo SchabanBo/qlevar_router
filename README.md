@@ -4,7 +4,7 @@
 [![popularity](https://img.shields.io/pub/popularity/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
 [![pub points](https://img.shields.io/pub/points/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router) 
 [![codecov](https://codecov.io/gh/SchabanBo/qlevar_router/branch/master/graph/badge.svg?token=WF1RBRWTN1)](https://codecov.io/gh/SchabanBo/qlevar_router)
-[![HitCount](https://hits.dwyl.com/SchabanBo/qlevar_router.svg?style=flat-square)](http://hits.dwyl.com/SchabanBo/qlevar_router)
+[![HitCount](https://hits.dwyl.com/SchabanBo/qlevar_router.svg?style=flat-square)](https://pub.dev/packages/qlevar_router)
 
 
 - [Qlevar Router (QR)](#qlevar-router-qr)
