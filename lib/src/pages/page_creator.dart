@@ -129,6 +129,7 @@ class PageCreator extends _PageConverter {
         cRoutes: route.children,
         initPath: qRoute.initRoute ?? '/',
         initRoute: route.child,
+        observers: qRoute.observers,
       );
       if (qRoute.initRoute != null && route.child == null) {
         route.activePath = '${route.activePath}${qRoute.initRoute}';

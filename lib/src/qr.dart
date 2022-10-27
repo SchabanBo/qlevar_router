@@ -61,21 +61,24 @@ class QRContext {
 
   ///  return a router [QRouter] for the given routes
   /// you do not need to give the [initRoute]
-  QRouter createNavigator(String name,
-      {List<QRoute>? routes,
-      QRouteChildren? cRoutes,
-      String? initPath,
-      QRouteInternal? initRoute}) {
+  QRouter createNavigator(
+    String name, {
+    List<QRoute>? routes,
+    QRouteChildren? cRoutes,
+    String? initPath,
+    QRouteInternal? initRoute,
+    List<NavigatorObserver>? observers,
+  }) {
     final controller = createRouterController(name,
         routes: routes,
         cRoutes: cRoutes,
         initPath: initPath,
         initRoute: initRoute);
-    return QRouter(controller);
+    return QRouter(controller, observers);
   }
 
   /// Remove a navigator with this name
-  bool removeNavigator(String name) => _manager.removeNavigator(name);
+  Future<bool> removeNavigator(String name) => _manager.removeNavigator(name);
 
   /// Remove the hashtag from url,
   /// call this function before running your app,
@@ -94,11 +97,13 @@ class QRContext {
       MatchController.findPathFromName(name, params ?? <String, dynamic>{});
 
   /// Update the browser url
-  void updateUrlInfo(String url,
-          {Map<String, dynamic>? params,
-          QKey? mKey,
-          String? navigator,
-          bool addHistory = true}) =>
+  void updateUrlInfo(
+    String url, {
+    Map<String, dynamic>? params,
+    QKey? mKey,
+    String? navigator,
+    bool addHistory = true,
+  }) =>
       rootNavigator.updateUrl(url,
           mKey: mKey,
           params: params,
@@ -111,11 +116,13 @@ class QRContext {
   }
 
   /// create a controller to use with a Navigator
-  QRouterController createRouterController(String name,
-          {List<QRoute>? routes,
-          QRouteChildren? cRoutes,
-          String? initPath,
-          QRouteInternal? initRoute}) =>
+  QRouterController createRouterController(
+    String name, {
+    List<QRoute>? routes,
+    QRouteChildren? cRoutes,
+    String? initPath,
+    QRouteInternal? initRoute,
+  }) =>
       _manager.createController(name, routes, cRoutes, initPath, initRoute);
 
   /// create a state to use with a declarative router

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.7.0] 27.10.2022
+
+- Add #84
+- Add RouterState
+- Add #86
+- Fix #88
+- Add #81
 
 ## [1.6.4] 31.08.2022
 

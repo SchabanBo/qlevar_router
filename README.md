@@ -4,6 +4,8 @@
 [![popularity](https://img.shields.io/pub/popularity/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
 [![pub points](https://img.shields.io/pub/points/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router) 
 [![codecov](https://codecov.io/gh/SchabanBo/qlevar_router/branch/master/graph/badge.svg?token=WF1RBRWTN1)](https://codecov.io/gh/SchabanBo/qlevar_router)
+[![HitCount](https://hits.dwyl.com/SchabanBo/qlevar_router.svg?style=flat-square)](http://hits.dwyl.com/SchabanBo/qlevar_router)
+
 
 - [Qlevar Router (QR)](#qlevar-router-qr)
   - [Demo](#demo)
@@ -12,6 +14,7 @@
   - [Parameters](#parameters)
     - [Path Parameters](#path-parameters)
     - [Query Parameters](#query-parameters)
+    - [Hidden params](#hidden-params)
     - [Params features](#params-features)
   - [Middleware](#middleware)
     - [redirectGuard](#redirectguard)
@@ -19,6 +22,7 @@
     - [onMatch](#onmatch)
     - [onEnter](#onenter)
     - [onExit](#onexit)
+  - [OnExited](#onexited)
   - [Observer](#observer)
   - [Not found page](#not-found-page)
   - [Deferred loading](#deferred-loading)
@@ -124,9 +128,10 @@ You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_
 
 You can check out the [samples project](https://github.com/SchabanBo/qr_samples) for more samples and test some use cases.
 
-- [Dashboard Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/dashboard.dart)
+- [Dashboard with splash page Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/dashboard.dart)
 - [Bottom Navigation bar Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/bottom_nav_bar.dart)
 - [TabView Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/tab_view.dart)
+- [NavRail Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/nav_rail.dart)
 - [Use data from another page](https://github.com/SchabanBo/qr_samples/blob/main/lib/examples/return_data.dart)
 
 ## Parameters
@@ -154,6 +159,16 @@ final orderId = QR.params['orderId'].toString()
 // and this receive it in your page
 final itemName = QR.params['itemName'].toString()
 final numbers = QR.params['numbers']
+```
+
+### Hidden params
+
+if you want to pass data between the page without showing it in the URL, you can use `QR.params.addAsHidden` this will add values to use after one page navigation, in the next time you navigate to a new page the param will be cleaned up. to keep it for more time, set the cleanUpAfter parameter.
+
+**NOTE:** using this on web will cause the data to be lost if the user refreshes the page.
+
+```dart
+QR.params.addAsHidden('param3', true, cleanUpAfter: 2);
 ```
 
 ### Params features
@@ -219,9 +234,37 @@ This method will be called before adding the page to the stack and before the pa
 
 This method will be called before removing the page from the stack
 
+## OnExited
+
+This method will be called one frame after the page was removed from the stack, this will be the best place to cleanup any resource that the page was using.
+
 ## Observer
 
-to observe every navigation in your app you could set QObserver to the `QR.observer`.
+To set your observers to the navigators for the root navigator you need to pass them to `QRouterDelegate`
+
+```dart
+RouterDelegate(
+  appRoutes.routes,
+  observers: [
+    // Your observers
+  ],
+),
+```
+
+for nested navigators you can pass them when defining a nested route
+
+```dart
+QRoute.withChild(
+  path: '/editable-routes',
+  builderChild: (child) => AddRemoveRoutes(child),
+  observers: [
+    // Add your observer for this navigator
+  ],
+  children: [..],
+);
+```
+
+to set global observes for every navigation in your app you could set QObserver to the `QR.observer`.
 QObserver can have :
 
 - **onNavigate**: add listener to every new route that will be added to the tree

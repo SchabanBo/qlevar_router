@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../qlevar_router.dart';
 import '../routes/qroute_internal.dart';
 
@@ -43,6 +45,16 @@ class MiddlewareController {
     for (var middle in route.route.middleware!) {
       await middle.onExit();
     }
+  }
+
+  Future scheduleOnExited() async {
+    if (!route.hasMiddleware) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      for (var middle in route.route.middleware!) {
+        middle.onExited();
+      }
+    });
   }
 
   Future runOnMatch() async {

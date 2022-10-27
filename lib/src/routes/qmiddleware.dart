@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class QMiddleware {
   /// This function will be called before [onEnter] and after [onMatch]
   /// if the result from this page is null the page will be created
@@ -21,6 +23,9 @@ class QMiddleware {
 
   /// This method will be called before removing the page from the stack
   Future onExit() async {}
+
+  // This method will be called one frame after the page was removed from the stack
+  void onExited() {}
 }
 
 class QMiddlewareBuilder extends QMiddleware {
@@ -52,6 +57,9 @@ class QMiddlewareBuilder extends QMiddleware {
   /// This method will be called before removing the page from the stack
   final Future Function()? onExitFunc;
 
+  // This method will be called one frame after the page was removed from the stack
+  final VoidCallback? onExitedFunc;
+
   /// Can this route pop, called when trying to remove the page.
   /// ````
   /// // if you want to allow the page to pop only when user saves the data
@@ -61,13 +69,15 @@ class QMiddlewareBuilder extends QMiddleware {
   /// ````
   final Future<bool> Function()? canPopFunc;
 
-  QMiddlewareBuilder(
-      {this.redirectGuardFunc,
-      this.redirectGuardNameFunc,
-      this.onMatchFunc,
-      this.onEnterFunc,
-      this.canPopFunc,
-      this.onExitFunc});
+  QMiddlewareBuilder({
+    this.redirectGuardFunc,
+    this.redirectGuardNameFunc,
+    this.onMatchFunc,
+    this.onEnterFunc,
+    this.canPopFunc,
+    this.onExitFunc,
+    this.onExitedFunc,
+  });
 
   @override
   Future onEnter() async {
@@ -80,6 +90,13 @@ class QMiddlewareBuilder extends QMiddleware {
   Future onExit() async {
     if (onExitFunc != null) {
       await onExitFunc!();
+    }
+  }
+
+  @override
+  void onExited() {
+    if (onExitedFunc != null) {
+      onExitedFunc!();
     }
   }
 

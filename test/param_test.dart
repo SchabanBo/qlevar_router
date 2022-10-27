@@ -21,6 +21,27 @@ void main() {
       await QR.back();
       expect(QR.params.length, 0);
     });
+
+    test('Hidden Params', () async {
+      QR.reset();
+      final delegate = QRouterDelegate([
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
+        QRoute(path: '/tow', builder: () => const Scaffold(body: WidgetTwo()))
+      ]);
+      await delegate.setInitialRoutePath('/');
+      QR.params.addAsHidden('param2', 'not');
+      QR.params.addAsHidden('param3', true, cleanUpAfter: 2);
+      await QR.to('/tow?param1=45');
+      expect(QR.currentPath, '/tow?param1=45');
+      expect(QR.params['param1']!.asInt, 45);
+      expect(QR.params['param2'].toString(), 'not');
+      expect(QR.params['param3']!.valueAs<bool>(), true);
+      await QR.back();
+      expect(QR.params.length, 1);
+      await QR.to('/tow');
+      expect(QR.params.length, 0);
+    });
+
     test('Path Params', () async {
       QR.reset();
       final delegate = QRouterDelegate([

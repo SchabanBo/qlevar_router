@@ -7,8 +7,13 @@ class ControllerManager {
   final controllers = <QRouterController>[];
   final dControllers = <QDeclarativeController>[];
 
-  QRouterController createController(String name, List<QRoute>? routes,
-      QRouteChildren? cRoutes, String? initPath, QRouteInternal? initRoute) {
+  QRouterController createController(
+    String name,
+    List<QRoute>? routes,
+    QRouteChildren? cRoutes,
+    String? initPath,
+    QRouteInternal? initRoute,
+  ) {
     if (hasController(name)) {
       QR.log('A navigator with name [$name] already exist', isDebug: true);
       return controllers.firstWhere((element) => element.key.hasName(name));
@@ -51,12 +56,12 @@ class ControllerManager {
   bool hasController(String name) =>
       controllers.any((element) => element.key.hasName(name));
 
-  bool removeNavigator(String name) {
+  Future<bool> removeNavigator(String name) async {
     if (!hasController(name)) {
       return false;
     }
     final controller = withName(name);
-    controller.dispose();
+    await controller.disposeAsync();
     controllers.remove(controller);
     QR.log('Navigator with name [$name] was removed');
     return true;

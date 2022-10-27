@@ -92,7 +92,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expectedPath('/');
-      expectedHistoryLength(0);
+      expectedHistoryLength(1);
     });
 
     test('Simple Navigation History', () async {
