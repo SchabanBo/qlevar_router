@@ -14,6 +14,7 @@
   - [Parameters](#parameters)
     - [Path Parameters](#path-parameters)
     - [Query Parameters](#query-parameters)
+    - [Hidden params](#hidden-params)
     - [Params features](#params-features)
   - [Middleware](#middleware)
     - [redirectGuard](#redirectguard)
@@ -158,6 +159,16 @@ final orderId = QR.params['orderId'].toString()
 // and this receive it in your page
 final itemName = QR.params['itemName'].toString()
 final numbers = QR.params['numbers']
+```
+
+### Hidden params
+
+if you want to pass data between the page without showing it in the URL, you can use `QR.params.addAsHidden` this will add values to use after one page navigation, in the next time you navigate to a new page the param will be cleaned up. to keep it for more time, set the cleanUpAfter parameter.
+
+**NOTE:** using this on web will cause the data to be lost if the user refreshes the page.
+
+```dart
+QR.params.addAsHidden('param3', true, cleanUpAfter: 2);
 ```
 
 ### Params features

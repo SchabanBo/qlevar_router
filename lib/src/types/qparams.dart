@@ -82,6 +82,17 @@ class QParams {
     );
   }
 
+  /// Add a param without showing it in the path, as default this param will
+  /// be automatically deleted after one page navigation, to change this,
+  /// change the [cleanUpAfter] value to keep it from more navigation times
+  void addAsHidden(String key, Object value, {int cleanUpAfter = 1}) {
+    _params[key] = ParamValue(
+      value,
+      cleanupAfter: cleanUpAfter,
+      keepAlive: true,
+    );
+  }
+
   void updateParam(
     String name,
     Object value, {
