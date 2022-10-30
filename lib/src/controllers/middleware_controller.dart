@@ -50,7 +50,7 @@ class MiddlewareController {
   Future scheduleOnExited() async {
     if (!route.hasMiddleware) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       for (var middle in route.route.middleware!) {
         middle.onExited();
       }

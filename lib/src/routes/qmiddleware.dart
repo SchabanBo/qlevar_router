@@ -24,7 +24,7 @@ class QMiddleware {
   /// This method will be called before removing the page from the stack
   Future onExit() async {}
 
-  // This method will be called one frame after the page was removed from the stack
+  /// This method will be called one frame after the page was removed from the stack
   void onExited() {}
 }
 
