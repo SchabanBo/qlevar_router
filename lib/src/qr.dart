@@ -59,6 +59,8 @@ class QRContext {
   BuildContext? get context =>
       (navigator as QRouterController).navKey.currentContext;
 
+  QDependency get dependencies => QDependency();
+
   ///  return a router [QRouter] for the given routes
   /// you do not need to give the [initRoute]
   QRouter createNavigator(
