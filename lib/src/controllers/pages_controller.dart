@@ -63,7 +63,7 @@ class PagesController {
     final middleware = MiddlewareController(route);
     if (!await middleware.runCanPop()) return false;
     await middleware.runOnExit(); // run on exit
-
+    middleware.scheduleOnExited(); // schedule on exited
     QR.removeNavigator(route.name); // remove navigator if exist
     QR.history.remove(route); // remove history for this route
     await _notifyObserverOnPop(route);

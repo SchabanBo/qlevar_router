@@ -4,14 +4,6 @@ import '../routes/qroute_internal.dart';
 import 'middleware_controller.dart';
 
 class MatchController {
-  final Uri path;
-  final QRouteChildren routes;
-  String foundPath;
-  final params = QParams();
-  final String parentPath;
-
-  /// index of the path segment we are searching for
-  int _searchIndex = -1;
   MatchController(String sPath, this.foundPath, this.routes,
       {Map<String, dynamic>? params})
       : path = _fixedPathUri(sPath),
@@ -33,6 +25,15 @@ class MatchController {
     }
     return MatchController(path, foundPath, routes, params: params);
   }
+
+  String foundPath;
+  final params = QParams();
+  final String parentPath;
+  final Uri path;
+  final QRouteChildren routes;
+
+  /// index of the path segment we are searching for
+  int _searchIndex = -1;
 
   void updateFoundPath(String segment) {
     foundPath += "/$segment";
@@ -66,33 +67,13 @@ class MatchController {
     return result;
   }
 
-  Future<QRouteInternal> _searchMatch() async {
-    var searchIn = routes;
-    if (path.pathSegments.isEmpty) {
-      final match = await _tryFind(searchIn, -1);
-      if (match == null) {
-        return QRouteInternal.notFound(parentPath + path.toString());
-      }
-      return match;
-    }
+  Future<QRouteInternal?> _addInitRouterIfNeeded(QRouteInternal route) async {
+    // There is no init route
+    if (!route.route.withChildRouter) return null;
+    // navigator not created, don't add init route
+    if (!QR.hasNavigator(route.name)) return null;
 
-    // search from the first segment
-    _searchIndex = 0;
-
-    final result = await _tryFind(searchIn, _searchIndex);
-    if (result == null) {
-      return QRouteInternal.notFound(parentPath + path.toString());
-    }
-    var match = result;
-    while (_searchIndex < path.pathSegments.length) {
-      searchIn = match.children!;
-      match.child = await _tryFind(searchIn, _searchIndex);
-      if (match.child == null) {
-        return QRouteInternal.notFound(parentPath + path.toString());
-      }
-      match = match.child!;
-    }
-    return result;
+    return await _tryFind(route.children!, -1);
   }
 
   bool isSameComponent(String routeSegment, String segment) {
@@ -121,6 +102,75 @@ class MatchController {
       return true;
     }
     return false;
+  }
+
+  static String findPathFromName(String name, Map<String, dynamic> params) {
+    final isPathFound = QR.treeInfo.namePath[name];
+    assert(isPathFound != null, 'Path name not found');
+    var newPath = isPathFound!;
+    final pathParams = <String, dynamic>{};
+
+    // Search for component params
+    for (var param in params.entries) {
+      if (newPath.contains(':${param.key}')) {
+        newPath =
+            newPath.replaceAll(':${param.key}', _getParamString(param.value));
+      } else {
+        pathParams.addEntries([param]);
+      }
+    }
+
+    // Replace old component
+    for (var param in QR.params.asMap.entries) {
+      if (newPath.contains(':${param.key}')) {
+        newPath =
+            newPath.replaceAll(':${param.key}', _getParamString(param.value));
+      }
+    }
+
+    if (pathParams.isNotEmpty) {
+      newPath = '$newPath?';
+
+      // Build the params
+      for (var i = 0; i < pathParams.length; i++) {
+        final param = pathParams.entries.toList()[i];
+        newPath = '$newPath${param.key}=${_getParamString(param.value)}';
+        if (i != pathParams.length - 1) {
+          newPath = '$newPath&';
+        }
+      }
+    }
+    return newPath;
+  }
+
+  Future<QRouteInternal> _searchMatch() async {
+    var searchIn = routes;
+    if (path.pathSegments.isEmpty) {
+      final match = await _tryFind(searchIn, -1);
+      if (match == null) {
+        return QRouteInternal.notFound(parentPath + path.toString());
+      }
+      return match;
+    }
+
+    // search from the first segment
+    _searchIndex = 0;
+
+    final result = await _tryFind(searchIn, _searchIndex);
+    if (result == null) {
+      return QRouteInternal.notFound(parentPath + path.toString());
+    }
+    var match = result;
+    while (_searchIndex < path.pathSegments.length) {
+      searchIn = match.children!;
+      match.child = await _tryFind(searchIn, _searchIndex);
+      if (match.child == null) {
+        return QRouteInternal.notFound(parentPath + path.toString());
+      }
+      match = match.child!;
+    }
+    match.child = await _addInitRouterIfNeeded(match);
+    return result;
   }
 
   Future<QRouteInternal?> _tryFind(QRouteChildren routes, int index) async {
@@ -198,45 +248,6 @@ class MatchController {
 
     QR.log('[$path] is not child of ${routes.parentKey}');
     return null;
-  }
-
-  static String findPathFromName(String name, Map<String, dynamic> params) {
-    final isPathFound = QR.treeInfo.namePath[name];
-    assert(isPathFound != null, 'Path name not found');
-    var newPath = isPathFound!;
-    final pathParams = <String, dynamic>{};
-
-    // Search for component params
-    for (var param in params.entries) {
-      if (newPath.contains(':${param.key}')) {
-        newPath =
-            newPath.replaceAll(':${param.key}', _getParamString(param.value));
-      } else {
-        pathParams.addEntries([param]);
-      }
-    }
-
-    // Replace old component
-    for (var param in QR.params.asMap.entries) {
-      if (newPath.contains(':${param.key}')) {
-        newPath =
-            newPath.replaceAll(':${param.key}', _getParamString(param.value));
-      }
-    }
-
-    if (pathParams.isNotEmpty) {
-      newPath = '$newPath?';
-
-      // Build the params
-      for (var i = 0; i < pathParams.length; i++) {
-        final param = pathParams.entries.toList()[i];
-        newPath = '$newPath${param.key}=${_getParamString(param.value)}';
-        if (i != pathParams.length - 1) {
-          newPath = '$newPath&';
-        }
-      }
-    }
-    return newPath;
   }
 
   static String _getParamString(dynamic value) {

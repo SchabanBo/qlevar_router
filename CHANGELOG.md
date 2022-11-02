@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.7.1]
+
+- Fix #90.
+- Fix path will sometime not update when PageAlreadyExistAction.BringToTop is set.
+
 ## [1.7.0] 27.10.2022
 
 - Add #84

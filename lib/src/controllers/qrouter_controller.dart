@@ -121,12 +121,6 @@ class QRouterController extends QNavigator {
   @override
   QRoute get currentRoute => _pagesController.routes.last.route;
 
-  Future<void> disposeAsync() async {
-    await _pagesController.removeAll();
-    isDisposed = true;
-    super.dispose();
-  }
-
   @override
   RoutesChildren get getRoutesWidget =>
       RoutesChildren(routes, parentPath: routes.parentFullPath);
@@ -233,12 +227,14 @@ class QRouterController extends QNavigator {
   }
 
   @override
-  void updateUrl(String url,
-      {Map<String, dynamic>? params,
-      QKey? mKey,
-      String? navigator,
-      bool updateParams = false,
-      bool addHistory = true}) {
+  void updateUrl(
+    String url, {
+    Map<String, dynamic>? params,
+    QKey? mKey,
+    String? navigator,
+    bool updateParams = false,
+    bool addHistory = true,
+  }) {
     if (key.name != QRContext.rootRouterName) {
       QR.log('Only ${QRContext.rootRouterName} can update the url');
       return;
@@ -253,25 +249,41 @@ class QRouterController extends QNavigator {
     }
   }
 
+  Future<void> disposeAsync() async {
+    await _pagesController.removeAll();
+    isDisposed = true;
+    super.dispose();
+  }
+
   bool get hasRoutes => _pagesController.routes.isNotEmpty;
 
   List<QPageInternal> get pages => List.unmodifiable(_pagesController.pages);
 
-  Future<QRouteInternal> findPath(String path) =>
-      MatchController(path, routes.parentFullPath, routes).match;
+  Future<QRouteInternal> findPath(String path) => MatchController(
+        path,
+        routes.parentFullPath,
+        routes,
+      ).match;
 
-  Future<QRouteInternal> findName(String name,
-          {Map<String, dynamic>? params}) =>
-      MatchController.fromName(name, routes.parentFullPath, routes,
-              params: params)
-          .match;
+  Future<QRouteInternal> findName(
+    String name, {
+    Map<String, dynamic>? params,
+  }) =>
+      MatchController.fromName(
+        name,
+        routes.parentFullPath,
+        routes,
+        params: params,
+      ).match;
 
   void updatePathIfNeeded(QRouteInternal match) {
     if (key.name != QRContext.rootRouterName) {
-      QR.updateUrlInfo(match.activePath!,
-          mKey: match.key,
-          params: match.params!.asValueMap,
-          navigator: key.name);
+      QR.updateUrlInfo(
+        match.activePath!,
+        mKey: match.key,
+        params: match.params!.asValueMap,
+        navigator: key.name,
+      );
     }
   }
 
@@ -336,11 +348,15 @@ class QRouterController extends QNavigator {
         final route = _bringPageToTop(index);
         final lastFoundRoute = QR.history.findLastForNavigator(route.name);
         if (lastFoundRoute != null) {
-          QR.rootNavigator.updateUrl(lastFoundRoute.path,
-              addHistory: true,
-              params: lastFoundRoute.params.asValueMap,
-              navigator: lastFoundRoute.navigator,
-              updateParams: true);
+          QR.rootNavigator.updateUrl(
+            lastFoundRoute.path,
+            addHistory: true,
+            params: lastFoundRoute.params.asValueMap,
+            navigator: lastFoundRoute.navigator,
+            updateParams: true,
+          );
+        } else {
+          updatePathIfNeeded(match);
         }
         QR.log('${match.fullPath} is on to top of the stack');
         match.isProcessed = true;
