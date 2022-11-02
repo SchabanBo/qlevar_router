@@ -31,6 +31,7 @@
     - [App Page Transition](#app-page-transition)
   - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
   - [Clean Structure](#clean-structure)
+  - [Testing](#testing)
   - [Declarative routing](#declarative-routing)
     - [QDRoute](#qdroute)
     - [How Declarative router works](#how-declarative-router-works)
@@ -386,6 +387,63 @@ class AppRoutes {
       ];
 }
 ```
+
+## Testing
+
+For easy testing you can use `RouteMock` or `NamedRouteMock` so when navigating while testing you can give which widget should be shown.
+E.x: you have a widget that when clicking on in should navigate to the HomeView. In normal case to test this you should add QRouterDelegate so when clicking on the widget the test wont fail and show the page. But in this case we only what to test if this button send the request to package in a correct way.
+
+```dart
+void main() {
+  testWidgets('RouteMock', (tester) async {
+    // Set up env
+    QR.reset();
+    QR.settings.mockRoute = _RouteMock();
+    
+    // add widget and test it
+    await tester.pumpWidget(const MaterialApp(home: _TestWidget()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.done));
+    await tester.pumpAndSettle();
+    // check if the widget sent the request to qlevar_Router
+    expect(QR.currentPath, '/home');
+  });
+}
+
+class _RouteMock extends RouteMock {
+  @override
+  String? mockName(String name) {
+    return null;
+  }
+
+  @override
+  QRoute? mockPath(String path) {
+    // Check if qlevar_router has received a request to go to the home page
+    // if so, then return empty page so the test can pass.
+    // if not, the test will fail, becurse you are trying to navigate without setting the QRouterDelegate
+    if (path == '/home') {
+      return QRoute(path: '/home', builder: () => const SizedBox.shrink());
+    }
+    return null;
+  }
+}
+
+class _TestWidget extends StatelessWidget {
+  const _TestWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IconButton(
+        onPressed: () {
+          QR.to('/home');
+        },
+        icon: const Icon(Icons.done),
+      ),
+    );
+  }
+}
+``` 
 
 ## Declarative routing
 

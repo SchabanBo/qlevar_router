@@ -19,6 +19,13 @@ class MatchController {
   factory MatchController.fromName(
       String name, String foundPath, QRouteChildren routes,
       {Map<String, dynamic>? params}) {
+    // Check if this route should be mocked
+    if (QR.settings.mockRoute != null) {
+      final path = QR.settings.mockRoute!.mockName(name);
+      if (path != null) {
+        return MatchController(path, foundPath, routes, params: params);
+      }
+    }
     var path = findPathFromName(name, params ?? <String, dynamic>{});
     if (foundPath != '/' && path.startsWith(foundPath)) {
       path = path.replaceAll(foundPath, '');
@@ -62,9 +69,19 @@ class MatchController {
   }
 
   Future<QRouteInternal> get match async {
+    // Check if this route should be mocked
+    final isMocked = _isMocked();
+    if (isMocked != null) return isMocked;
     final result = await _searchMatch();
     QR.params.updateParams(result.getAllParams());
     return result;
+  }
+
+  QRouteInternal? _isMocked() {
+    if (QR.settings.mockRoute == null) return null;
+    final route = QR.settings.mockRoute!.mockPath(path.toString());
+    if (route == null) return null;
+    return QRouteInternal.mocked(path.toString(), route);
   }
 
   Future<QRouteInternal?> _addInitRouterIfNeeded(QRouteInternal route) async {

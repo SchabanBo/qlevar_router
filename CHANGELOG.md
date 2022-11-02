@@ -4,6 +4,7 @@
 
 - Fix #90.
 - Fix path will sometime not update when PageAlreadyExistAction.BringToTop is set.
+- add `RouteMock`
 
 ## [1.7.0] 27.10.2022
 

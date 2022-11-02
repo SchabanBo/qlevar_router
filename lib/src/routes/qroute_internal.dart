@@ -72,6 +72,20 @@ class QRouteInternal {
             : QRouteChildren.from(route.children!, key, fullPath));
   }
 
+  factory QRouteInternal.mocked(String path, QRoute route) {
+    final key = QKey(route.name ?? route.path);
+    return QRouteInternal(
+        key: key,
+        route: route,
+        fullPath: route.path,
+        isNotFound: true,
+        params: QParams(params: {}),
+        activePath: path,
+        children: route.children == null
+            ? null
+            : QRouteChildren.from(route.children!, key, route.path));
+  }
+
   factory QRouteInternal.notFound(String notFoundPath) {
     final route = QR.settings.notFoundPage;
     final key = QKey(route.name ?? route.path);

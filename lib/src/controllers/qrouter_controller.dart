@@ -414,7 +414,12 @@ class QRouterController extends QNavigator {
       }
     }
     QR.history.add(QHistoryEntry(
-        route.key, route.activePath!, route.params!, key.name, route.hasChild));
+      route.key,
+      route.activePath!,
+      route.params!,
+      key.name,
+      route.hasChild,
+    ));
     await _pagesController.add(route);
   }
 
