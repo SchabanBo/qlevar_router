@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class QMiddleware {
   /// This function will be called before [onEnter] and after [onMatch]
   /// if the result from this page is null the page will be created
@@ -24,7 +22,7 @@ class QMiddleware {
   /// This method will be called before removing the page from the stack
   Future onExit() async {}
 
-  // This method will be called one frame after the page was removed from the stack
+  /// This method will be called one frame after the page was removed from the stack
   void onExited() {}
 }
 
@@ -57,8 +55,8 @@ class QMiddlewareBuilder extends QMiddleware {
   /// This method will be called before removing the page from the stack
   final Future Function()? onExitFunc;
 
-  // This method will be called one frame after the page was removed from the stack
-  final VoidCallback? onExitedFunc;
+  /// This method will be called one frame after the page was removed from the stack
+  final Function? onExitedFunc;
 
   /// Can this route pop, called when trying to remove the page.
   /// ````
