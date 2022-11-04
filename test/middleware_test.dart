@@ -63,6 +63,105 @@ void main() {
     expect(counter, 7); // Nested onExit + Two onExit
   });
 
+  testWidgets('onExited with replaceLast & replaceLastName',
+      (widgetTester) async {
+    QR.reset();
+    var counter = 0;
+    final routes = [
+      QRoute(
+        path: '/',
+        builder: () => Scaffold(appBar: AppBar(), body: const WidgetOne()),
+      ),
+      QRoute.withChild(
+          path: '/nested',
+          builderChild: (r) => Scaffold(appBar: AppBar(), body: r),
+          initRoute: '/child',
+          middleware: [
+            QMiddlewareBuilder(onExitedFunc: () => counter++),
+          ],
+          children: [
+            QRoute(
+                path: '/child',
+                middleware: [
+                  QMiddlewareBuilder(onExitedFunc: () => counter++),
+                ],
+                builder: () => const Text('child')),
+            QRoute(
+                path: '/child-1',
+                middleware: [
+                  QMiddlewareBuilder(onExitedFunc: () => counter++),
+                ],
+                builder: () => const Text('child 1')),
+          ]),
+      QRoute(
+        path: '/two',
+        middleware: [
+          QMiddlewareBuilder(onExitedFunc: () => counter++),
+        ],
+        builder: () => const Scaffold(body: WidgetTwo()),
+      ),
+      QRoute(
+          path: '/three',
+          middleware: [
+            QMiddlewareBuilder(onExitedFunc: () => counter++),
+          ],
+          builder: () => const Scaffold(
+                body: WidgetThree(),
+              )),
+    ];
+    final delegate = QRouterDelegate(routes);
+    await widgetTester.pumpWidget(MaterialApp.router(
+        routeInformationParser: const QRouteInformationParser(),
+        routerDelegate: delegate));
+    await widgetTester.pumpAndSettle();
+    expectedPath('/');
+    expect(find.byType(WidgetOne), findsOneWidget);
+
+    await QR.to('/nested');
+    expectedPath('/nested/child');
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pump();
+    expect(counter, 0);
+
+    await QR.to('/nested/child-1');
+    expectedPath('/nested/child-1');
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pump();
+    expect(counter, 0);
+
+    await QR.back(); // removes child-1 from the stack
+    expectedPath('/nested/child');
+    expect(counter, 0); // as frame was not schedule, counter will be 0
+
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pump();
+    expectedPath('/nested/child');
+    // counter should be 1, because frame has been scheduled above
+    expect(counter, 1);
+
+    await QR.navigator.replaceLast('two');
+    expectedPath('/two');
+    // as frame was not schedule, counter will be not be updated
+    expect(counter, 1);
+
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pump();
+    expectedPath('/two');
+    // counter should be updated, because frame has been scheduled above
+    expect(counter, 3); // child + nested
+
+    await QR.navigator.replaceAll('three');
+    expectedPath('/three');
+    // as frame was not schedule, counter will be not be updated
+    expect(counter, 3);
+
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pump();
+    expectedPath('/three');
+    // counter should be updated, because frame has been scheduled above
+    expect(counter, 4);
+  });
+
   test('Redirect guard has the right path and param', () async {
     QR.reset();
     var pathFromGuard = '';
