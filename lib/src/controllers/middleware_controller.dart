@@ -51,9 +51,11 @@ class MiddlewareController {
     if (!route.hasMiddleware) return;
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      for (var middle in route.route.middleware!) {
-        middle.onExited();
-      }
+      WidgetsBinding.instance.endOfFrame.then((_) {
+        for (var middle in route.route.middleware!) {
+          middle.onExited();
+        }
+      });
     });
   }
 
