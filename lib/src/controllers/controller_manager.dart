@@ -50,8 +50,22 @@ class ControllerManager {
   QDeclarativeController getDeclarative(int key) =>
       dControllers.firstWhere((element) => element.widget.routeKey.hasKey(key));
 
-  QRouterController withName(String name) =>
-      controllers.firstWhere((element) => element.key.hasName(name));
+  QRouterController withName(String name) {
+    if (controllers.any((element) => element.key.hasName(name))) {
+      return controllers.firstWhere((element) => element.key.hasName(name));
+    }
+    if (QR.settings.mockRoute != null) {
+      return QRouterController(
+        QKey(name),
+        QRouteChildren(
+          [QRouteInternal.from(QRoute.empty, '/')],
+          QKey(name),
+          '/',
+        ),
+      );
+    }
+    throw Exception('No router was set in the app');
+  }
 
   bool hasController(String name) =>
       controllers.any((element) => element.key.hasName(name));

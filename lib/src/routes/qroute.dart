@@ -8,6 +8,8 @@ typedef PageWithDeclarativeBuilder = Widget Function(QKey);
 
 /// Define a route
 class QRoute {
+  static QRoute empty = QRoute(path: '/', builder: () => const SizedBox());
+
   const QRoute({
     required this.path,
     required this.builder,
