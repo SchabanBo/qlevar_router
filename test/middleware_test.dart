@@ -260,45 +260,48 @@ void main() {
   });
 
   testWidgets('middleware run in the right order', (widgetTester) async {
-    var onMatch = DateTime.now();
-
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var redirect = DateTime.now();
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var onEnter = DateTime.now();
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var canPop = DateTime.now();
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var onExit = DateTime.now();
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var onExited = DateTime.now();
+    final now = DateTime.now();
+    var onMatch = now;
+    var redirect = now;
+    var onEnter = now;
+    var canPop = now;
+    var onExit = now;
+    var onExited = now;
 
     QR.reset();
+    const duration = Duration(milliseconds: 1000);
     final delegate = QRouterDelegate([
       QRoute(path: '/', builder: () => const SizedBox()),
       QRoute(path: '/two', builder: () => const SizedBox(), middleware: [
         QMiddlewareBuilder(
           canPopFunc: () async {
             canPop = DateTime.now();
+            await widgetTester.pumpAndSettle(duration);
             return true;
           },
-          onEnterFunc: () async => onEnter = DateTime.now(),
-          onExitFunc: () async => onExit = DateTime.now(),
-          onExitedFunc: () => onExited = DateTime.now(),
-          onMatchFunc: () async => onMatch = DateTime.now(),
+          onEnterFunc: () async {
+            await widgetTester.pumpAndSettle(duration);
+            onEnter = DateTime.now();
+          },
+          onExitFunc: () async {
+            await widgetTester.pumpAndSettle(duration);
+            onExit = DateTime.now();
+          },
+          onExitedFunc: () {
+            onExited = DateTime.now();
+          },
+          onMatchFunc: () async {
+            await widgetTester.pumpAndSettle(duration);
+            onMatch = DateTime.now();
+          },
           redirectGuardFunc: (p0) async {
+            await widgetTester.pumpAndSettle(duration);
             redirect = DateTime.now();
             return null;
           },
         )
       ]),
     ]);
-
-    expect(onMatch.difference(redirect).isNegative, true);
-    expect(redirect.difference(onEnter).isNegative, true);
-    expect(onEnter.difference(canPop).isNegative, true);
-    expect(canPop.difference(onExit).isNegative, true);
-    expect(onExit.difference(onExited).isNegative, true);
 
     await widgetTester.pumpWidget(MaterialApp.router(
         routeInformationParser: const QRouteInformationParser(),
@@ -314,6 +317,14 @@ void main() {
     await widgetTester.pumpAndSettle();
     expectedPath('/');
 
+    // Ensure all values are set
+    expect(now.difference(onMatch).isNegative, true);
+    expect(now.difference(redirect).isNegative, true);
+    expect(now.difference(onEnter).isNegative, true);
+    expect(now.difference(canPop).isNegative, true);
+    expect(now.difference(onExit).isNegative, true);
+    expect(now.difference(onExited).isNegative, true);
+    // ensure the right order
     expect(onMatch.difference(redirect).isNegative, true);
     expect(redirect.difference(onEnter).isNegative, true);
     expect(onEnter.difference(canPop).isNegative, true);
