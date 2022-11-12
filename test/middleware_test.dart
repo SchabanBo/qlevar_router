@@ -63,6 +63,105 @@ void main() {
     expect(counter, 7); // Nested onExit + Two onExit
   });
 
+  testWidgets('onExited with replaceLast & replaceLastName',
+      (widgetTester) async {
+    QR.reset();
+    var counter = 0;
+    final routes = [
+      QRoute(
+        path: '/',
+        builder: () => Scaffold(appBar: AppBar(), body: const WidgetOne()),
+      ),
+      QRoute.withChild(
+          path: '/nested',
+          builderChild: (r) => Scaffold(appBar: AppBar(), body: r),
+          initRoute: '/child',
+          middleware: [
+            QMiddlewareBuilder(onExitedFunc: () => counter++),
+          ],
+          children: [
+            QRoute(
+                path: '/child',
+                middleware: [
+                  QMiddlewareBuilder(onExitedFunc: () => counter++),
+                ],
+                builder: () => const Text('child')),
+            QRoute(
+                path: '/child-1',
+                middleware: [
+                  QMiddlewareBuilder(onExitedFunc: () => counter++),
+                ],
+                builder: () => const Text('child 1')),
+          ]),
+      QRoute(
+        path: '/two',
+        middleware: [
+          QMiddlewareBuilder(onExitedFunc: () => counter++),
+        ],
+        builder: () => const Scaffold(body: WidgetTwo()),
+      ),
+      QRoute(
+          path: '/three',
+          middleware: [
+            QMiddlewareBuilder(onExitedFunc: () => counter++),
+          ],
+          builder: () => const Scaffold(
+                body: WidgetThree(),
+              )),
+    ];
+    final delegate = QRouterDelegate(routes);
+    await widgetTester.pumpWidget(MaterialApp.router(
+        routeInformationParser: const QRouteInformationParser(),
+        routerDelegate: delegate));
+    await widgetTester.pumpAndSettle();
+    expectedPath('/');
+    expect(find.byType(WidgetOne), findsOneWidget);
+
+    await QR.to('/nested');
+    expectedPath('/nested/child');
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pumpAndSettle();
+    expect(counter, 0);
+
+    await QR.to('/nested/child-1');
+    expectedPath('/nested/child-1');
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pumpAndSettle();
+    expect(counter, 0);
+
+    await QR.back(); // removes child-1 from the stack
+    expectedPath('/nested/child');
+    expect(counter, 0); // as frame was not schedule, counter will be 0
+
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pumpAndSettle();
+    expectedPath('/nested/child');
+    // counter should be 1, because frame has been scheduled above
+    expect(counter, 1);
+
+    await QR.navigator.replaceLast('two');
+    expectedPath('/two');
+    // as frame was not schedule, counter will be not be updated
+    expect(counter, 1);
+
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pumpAndSettle();
+    expectedPath('/two');
+    // counter should be updated, because frame has been scheduled above
+    expect(counter, 3); // child + nested
+
+    await QR.navigator.replaceAll('three');
+    expectedPath('/three');
+    // as frame was not schedule, counter will be not be updated
+    expect(counter, 3);
+
+    widgetTester.binding.scheduleFrame();
+    await widgetTester.pumpAndSettle();
+    expectedPath('/three');
+    // counter should be updated, because frame has been scheduled above
+    expect(counter, 4);
+  });
+
   test('Redirect guard has the right path and param', () async {
     QR.reset();
     var pathFromGuard = '';
@@ -161,45 +260,48 @@ void main() {
   });
 
   testWidgets('middleware run in the right order', (widgetTester) async {
-    var onMatch = DateTime.now();
-
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var redirect = DateTime.now();
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var onEnter = DateTime.now();
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var canPop = DateTime.now();
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var onExit = DateTime.now();
-    await widgetTester.pumpAndSettle(const Duration(milliseconds: 10));
-    var onExited = DateTime.now();
+    final now = DateTime.now();
+    var onMatch = now;
+    var redirect = now;
+    var onEnter = now;
+    var canPop = now;
+    var onExit = now;
+    var onExited = now;
 
     QR.reset();
+    const duration = Duration(milliseconds: 1000);
     final delegate = QRouterDelegate([
       QRoute(path: '/', builder: () => const SizedBox()),
       QRoute(path: '/two', builder: () => const SizedBox(), middleware: [
         QMiddlewareBuilder(
           canPopFunc: () async {
             canPop = DateTime.now();
+            await widgetTester.pumpAndSettle(duration);
             return true;
           },
-          onEnterFunc: () async => onEnter = DateTime.now(),
-          onExitFunc: () async => onExit = DateTime.now(),
-          onExitedFunc: () => onExited = DateTime.now(),
-          onMatchFunc: () async => onMatch = DateTime.now(),
+          onEnterFunc: () async {
+            await widgetTester.pumpAndSettle(duration);
+            onEnter = DateTime.now();
+          },
+          onExitFunc: () async {
+            await widgetTester.pumpAndSettle(duration);
+            onExit = DateTime.now();
+          },
+          onExitedFunc: () {
+            onExited = DateTime.now();
+          },
+          onMatchFunc: () async {
+            await widgetTester.pumpAndSettle(duration);
+            onMatch = DateTime.now();
+          },
           redirectGuardFunc: (p0) async {
+            await widgetTester.pumpAndSettle(duration);
             redirect = DateTime.now();
             return null;
           },
         )
       ]),
     ]);
-
-    expect(onMatch.difference(redirect).isNegative, true);
-    expect(redirect.difference(onEnter).isNegative, true);
-    expect(onEnter.difference(canPop).isNegative, true);
-    expect(canPop.difference(onExit).isNegative, true);
-    expect(onExit.difference(onExited).isNegative, true);
 
     await widgetTester.pumpWidget(MaterialApp.router(
         routeInformationParser: const QRouteInformationParser(),
@@ -215,6 +317,14 @@ void main() {
     await widgetTester.pumpAndSettle();
     expectedPath('/');
 
+    // Ensure all values are set
+    expect(now.difference(onMatch).isNegative, true);
+    expect(now.difference(redirect).isNegative, true);
+    expect(now.difference(onEnter).isNegative, true);
+    expect(now.difference(canPop).isNegative, true);
+    expect(now.difference(onExit).isNegative, true);
+    expect(now.difference(onExited).isNegative, true);
+    // ensure the right order
     expect(onMatch.difference(redirect).isNegative, true);
     expect(redirect.difference(onEnter).isNegative, true);
     expect(onEnter.difference(canPop).isNegative, true);

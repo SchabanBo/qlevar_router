@@ -136,9 +136,11 @@ class QRContext {
   /// Use [pageAlreadyExistAction] to define what to do when
   /// page already is in the stack you can remove the page
   /// or just bring it to the top
-  Future<void> to(String path,
-      {bool ignoreSamePath = true,
-      PageAlreadyExistAction? pageAlreadyExistAction}) async {
+  Future<void> to(
+    String path, {
+    bool ignoreSamePath = true,
+    PageAlreadyExistAction? pageAlreadyExistAction,
+  }) async {
     if (ignoreSamePath && isCurrentPath(path)) {
       return;
     }
@@ -153,10 +155,12 @@ class QRContext {
   /// Use [pageAlreadyExistAction] to define what to do when
   /// page already is in the stack you can remove the page
   /// or just bring it to the top
-  Future<void> toName(String name,
-      {Map<String, dynamic>? params,
-      bool ignoreSamePath = true,
-      PageAlreadyExistAction? pageAlreadyExistAction}) async {
+  Future<void> toName(
+    String name, {
+    Map<String, dynamic>? params,
+    bool ignoreSamePath = true,
+    PageAlreadyExistAction? pageAlreadyExistAction,
+  }) async {
     if (ignoreSamePath && isCurrentName(name, params: params)) {
       return;
     }
@@ -255,6 +259,7 @@ class QRContext {
     observer.onPop.clear();
     treeInfo.namePath[rootRouterName] = '/';
     treeInfo.routeIndexer = -1;
+    settings.reset();
   }
 
   Future<void> _toMatch(QRouteInternal match,
@@ -308,16 +313,19 @@ class QRContext {
   }
 }
 
+const Widget _iniPage = Material(child: Center(child: Text('Loading')));
+final _notFoundPage = QRoute(
+  path: '/notfound',
+  builder: () => const Material(child: Center(child: Text('Page Not Found'))),
+);
+
 class _QRSettings {
   Function(String) logger = print;
   bool enableDebugLog = false;
   bool enableLog = true;
-  Widget initPage = const Material(child: Center(child: Text('Loading')));
+  Widget initPage = _iniPage;
   // Add the default not found page path without slash.
-  QRoute notFoundPage = QRoute(
-      path: '/notfound',
-      builder: () =>
-          const Material(child: Center(child: Text('Page Not Found'))));
+  QRoute notFoundPage = _notFoundPage;
 
   /// Set this to true if you want only one route instance in the stack
   /// e.x. if you have in the stack a route `home/store/2` and then navigate to
@@ -328,6 +336,22 @@ class _QRSettings {
   bool oneRouteInstancePerStack = false;
 
   QPage pagesType = const QPlatformPage();
+
+  /// This can be used for testing. if this is set the package will use the given route
+  /// and there will be no need for setting the route tree.
+  /// If this is set the null was returned, then the package will search in the routes tree.
+  RouteMock? mockRoute;
+
+  void reset() {
+    logger = print;
+    enableDebugLog = false;
+    enableLog = true;
+    initPage = _iniPage;
+    notFoundPage = _notFoundPage;
+    oneRouteInstancePerStack = false;
+    pagesType = const QPlatformPage();
+    mockRoute = null;
+  }
 }
 
 class _QTreeInfo {
