@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:qlevar_router/src/routes/qroute_internal.dart';
 
 import 'helpers.dart';
 import 'test_widgets/test_widgets.dart';
@@ -164,6 +165,25 @@ void main() {
       await tester.pumpAndSettle();
       expectedPath('/this/extra/slash/extra?id=200');
       expect(QR.history.entries[0].path, '/this/extra');
+    });
+
+    test('Throw error when the route name is not unique', () {
+      final route = QRoute(
+        path: '/test',
+        builder: () => Scaffold(body: Container()),
+        children: [
+          QRoute(
+              path: '/zero',
+              builder: () => Scaffold(body: Container()),
+              name: 'zero'),
+          QRoute(
+              path: '/one',
+              builder: () => Scaffold(body: Container()),
+              name: 'zero'),
+        ],
+      );
+      expect(() => QRouteInternal.from(route, '/'),
+          throwsA(isA<AssertionError>()));
     });
   });
 }

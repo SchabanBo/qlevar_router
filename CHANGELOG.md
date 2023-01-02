@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Current
+
+ - Throw exception if the route name is not unique.
+
 ## [1.7.1]
 
 - Fix #90.
