@@ -2,13 +2,14 @@
 
 ## Current
 
- - Throw exception if the route name is not unique.
+- Throw exception if the route name is not unique.
 
-## [1.7.1]
+## [1.7.1] 12.11.2022
 
 - Fix #90.
 - Fix path will sometime not update when PageAlreadyExistAction.BringToTop is set.
 - add `RouteMock`
+- Fix #86 @tejHackerDEV
 
 ## [1.7.0] 27.10.2022
 
