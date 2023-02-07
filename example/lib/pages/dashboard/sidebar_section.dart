@@ -10,25 +10,25 @@ class SidebarSection extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          FlutterLogo(size: 75),
+          const FlutterLogo(size: 75),
           const SizedBox(height: 10),
           ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
             onTap: () {
               QR.to('dashboard/home');
             },
           ),
           ListTile(
-            leading: Icon(Icons.store),
-            title: Text('Stores'),
+            leading: const Icon(Icons.store),
+            title: const Text('Stores'),
             onTap: () {
               QR.to('dashboard/stores');
             },
           ),
           ListTile(
-            leading: Icon(Icons.gif_box),
-            title: Text('Products'),
+            leading: const Icon(Icons.gif_box),
+            title: const Text('Products'),
             onTap: () {
               QR.to('dashboard/products');
             },

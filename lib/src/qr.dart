@@ -74,7 +74,7 @@ class QRContext {
         cRoutes: cRoutes,
         initPath: initPath,
         initRoute: initRoute);
-    return QRouter(controller, observers);
+    return QRouter(controller, observers: observers);
   }
 
   /// Remove a navigator with this name
@@ -183,6 +183,13 @@ class QRContext {
       }
     }
 
+    // check if there is any popups to close, Check [#101]
+    final popupCOntroller = _manager.controllerWithPopup();
+    if (popupCOntroller != null) {
+      popupCOntroller.closePopup();
+      return PopResult.PopupDismissed;
+    }
+
     final lastNavigator = QR.history.current.navigator;
     if (_manager.hasController(lastNavigator)) {
       final popNavigatorOptions = [lastNavigator];
@@ -233,6 +240,7 @@ class QRContext {
     return PopResult.Popped;
   }
 
+  // check if the given navigator is the only one in the history
   bool isOnlyNavigatorLeft(List<String> navigators) {
     for (var navigator in navigators) {
       if (history.entries.where((h) => h.navigator == navigator).length > 1) {

@@ -15,19 +15,19 @@ class HomeView extends StatelessWidget {
       padding: const EdgeInsets.all(28.0),
       child: Column(
         children: [
-          Text('Home', style: textTheme.headline3),
+          Text('Home', style: textTheme.displaySmall),
           const SizedBox(height: 16),
           Text(
             'Stores: ${storage.stores.length}',
-            style: textTheme.headline6,
+            style: textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
           Text(
             'Products: ${storage.products.length}',
-            style: textTheme.headline6,
+            style: textTheme.titleLarge,
           ),
           TextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Type product index to show (Press enter)',
             ),
             onSubmitted: (value) {

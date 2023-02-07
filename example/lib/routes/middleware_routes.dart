@@ -12,51 +12,52 @@ class MiddlewareRoutes {
         name: 'Parent',
         path: '/parent',
         builder: () {
-          print('-- Build Parent page --');
-          return MiddlewareView();
+          debugPrint('-- Build Parent page --');
+          return const MiddlewareView();
         },
         middleware: [
           QMiddlewareBuilder(
-            onMatchFunc: () async => print('-- Parent page Matched --'),
-            onEnterFunc: () async => print('-- Enter Parent page --'),
-            onExitFunc: () async => print('-- Exit Parent page --'),
-            onExitedFunc: () => print('-- Parent page Exited--'),
+            onMatchFunc: () async => debugPrint('-- Parent page Matched --'),
+            onEnterFunc: () async => debugPrint('-- Enter Parent page --'),
+            onExitFunc: () async => debugPrint('-- Exit Parent page --'),
+            onExitedFunc: () => debugPrint('-- Parent page Exited--'),
           )
         ],
         children: [
-          QRoute(path: '/child-1', builder: () => ChildView('Hi child 1')),
+          QRoute(
+              path: '/child-1', builder: () => const ChildView('Hi child 1')),
           QRoute(
             path: '/child-2',
             middleware: [
               QMiddlewareBuilder(
                 redirectGuardFunc: (s) => Future.delayed(
-                  Duration(milliseconds: 100),
+                  const Duration(milliseconds: 100),
                   () => Get.find<StorageService>().canNavigateToChild
                       ? null
                       : '/parent/child-1',
                 ),
               )
             ],
-            builder: () => ChildView('Hi child 2'),
+            builder: () => const ChildView('Hi child 2'),
           ),
           QRoute(
             path: '/child-3',
             middleware: [
               QMiddlewareBuilder(
                 redirectGuardNameFunc: (s) => Future.delayed(
-                  Duration(milliseconds: 100),
-                  () => QNameRedirect(
-                    name: StoreRoutes.store_id,
+                  const Duration(milliseconds: 100),
+                  () => const QNameRedirect(
+                    name: StoreRoutes.storeId,
                     params: {'id': '2'},
                   ),
                 ),
               )
             ],
-            builder: () => ChildView('Hi child 3'),
+            builder: () => const ChildView('Hi child 3'),
           ),
           QRoute(
             path: '/child-4',
-            builder: () => ChildView('Should this child pop?'),
+            builder: () => const ChildView('Should this child pop?'),
             middleware: [
               QMiddlewareBuilder(
                 canPopFunc: () async {
@@ -71,15 +72,15 @@ class MiddlewareRoutes {
       );
 
   AlertDialog dialog(BuildContext context) => AlertDialog(
-        title: Text('Do you want to go back?'),
+        title: const Text('Do you want to go back?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Yes'),
+            child: const Text('Yes'),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('No'),
+            child: const Text('No'),
           )
         ],
       );

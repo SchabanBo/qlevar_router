@@ -9,7 +9,6 @@ class MobileProductsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('object');
     return ListView(
       children: products.map((product) {
         return ListTile(

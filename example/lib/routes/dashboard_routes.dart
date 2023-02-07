@@ -10,11 +10,11 @@ import 'middleware/auth_middleware.dart';
 
 class DashboardRoutes {
   static const String dashboard = 'dashboard';
-  static const String dashboard_home = 'dashboard_home';
-  static const String dashboard_stores = 'dashboard_stores';
-  static const String dashboard_stores_id = 'dashboard_stores_id';
-  static const String dashboard_store_id_product = 'dashboard_store_id_product';
-  static const String dashboard_pruducts = 'dashboard_pruducts';
+  static const String dashboardHome = 'dashboard_home';
+  static const String dashboardStores = 'dashboard_stores';
+  static const String dashboardStoresId = 'dashboard_stores_id';
+  static const String dashboardStoreIdProduct = 'dashboard_store_id_product';
+  static const String dashboardProducts = 'dashboard_products';
 
   final route = QRoute.withChild(
     path: '/dashboard',
@@ -30,24 +30,24 @@ class DashboardRoutes {
     children: [
       QRoute(
         path: '/home',
-        name: dashboard_home,
+        name: dashboardHome,
         builder: () => HomeView(),
       ),
       QRoute(
         path: '/stores',
-        name: dashboard_stores,
+        name: dashboardStores,
         builder: () => StoresView(fromDashboard: true),
         children: [
           QRoute(
             path: '/:id',
-            name: dashboard_stores_id,
-            pageType: QCupertinoPage(),
+            name: dashboardStoresId,
+            pageType: const QCupertinoPage(),
             builder: () => StoreView(fromDashboard: true),
             children: [
               QRoute(
                 path: '/product/:product_id',
-                name: dashboard_store_id_product,
-                pageType: QMaterialPage(),
+                name: dashboardStoreIdProduct,
+                pageType: const QMaterialPage(),
                 builder: () => ProductView(),
               ),
             ],
@@ -56,7 +56,7 @@ class DashboardRoutes {
       ),
       QRoute(
         path: '/products',
-        name: dashboard_pruducts,
+        name: dashboardProducts,
         builder: () => ProductsView(),
       ),
     ],

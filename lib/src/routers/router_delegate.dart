@@ -16,12 +16,15 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     this.initPath,
     this.withWebBar = false,
     this.alwaysAddInitPath = false,
-    this.observers = const [],
+    List<NavigatorObserver>? observers,
   })  : _controller =
             QR.createRouterController(QRContext.rootRouterName, routes: routes),
         key = navKey ?? GlobalKey<NavigatorState>() {
     _controller.addListener(notifyListeners);
     _controller.navKey = key;
+    if (observers != null) {
+      this.observers.addAll(observers);
+    }
   }
 
   /// Set this to true if you want always the initial router to be added on the stack
@@ -40,7 +43,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   final GlobalKey<NavigatorState> key;
 
   /// A list of observers for this navigator.
-  final List<NavigatorObserver> observers;
+  late final List<NavigatorObserver> observers = [_controller.observer];
 
   /// Add a fake app bar so you can test navigating to routes
   /// This app bar will not be added in the release mode

@@ -22,8 +22,8 @@ class ProductView extends StatelessWidget {
       appBar: AppBar(
         title: Text(product),
       ),
-      body: Center(child: Icon(Icons.shopping_cart, size: 50)),
-      floatingActionButton: DebugTools(),
+      body: const Center(child: Icon(Icons.shopping_cart, size: 50)),
+      floatingActionButton: const DebugTools(),
     );
   }
 }

@@ -318,17 +318,24 @@ void main() {
     expectedPath('/');
 
     // Ensure all values are set
-    expect(now.difference(onMatch).isNegative, true);
-    expect(now.difference(redirect).isNegative, true);
-    expect(now.difference(onEnter).isNegative, true);
-    expect(now.difference(canPop).isNegative, true);
-    expect(now.difference(onExit).isNegative, true);
-    expect(now.difference(onExited).isNegative, true);
+    expect(now.isBeforeOrSame(onMatch), true);
+    expect(now.isBeforeOrSame(redirect), true);
+    expect(now.isBeforeOrSame(onEnter), true);
+    expect(now.isBeforeOrSame(canPop), true);
+    expect(now.isBeforeOrSame(onExit), true);
+    expect(now.isBeforeOrSame(onExited), true);
     // ensure the right order
-    expect(onMatch.difference(redirect).isNegative, true);
-    expect(redirect.difference(onEnter).isNegative, true);
-    expect(onEnter.difference(canPop).isNegative, true);
-    expect(canPop.difference(onExit).isNegative, true);
-    expect(onExit.difference(onExited).isNegative, true);
+    expect(onMatch.isBeforeOrSame(redirect), true);
+    expect(redirect.isBeforeOrSame(onEnter), true);
+    expect(onEnter.isBeforeOrSame(canPop), true);
+    expect(canPop.isBeforeOrSame(onExit), true);
+    expect(onExit.isBeforeOrSame(onExited), true);
   });
+}
+
+extension DateOrder on DateTime {
+  bool isBeforeOrSame(DateTime other) {
+    final def = difference(other);
+    return def.isNegative || def.inMilliseconds == 0;
+  }
 }

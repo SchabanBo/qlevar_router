@@ -17,7 +17,7 @@ class NodeWidget extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           name,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 35,
             color: Colors.indigo,
             decoration: TextDecoration.underline,

@@ -11,7 +11,7 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
         centerTitle: true,
       ),
       body: Center(
@@ -20,7 +20,7 @@ class LoginView extends StatelessWidget {
             Get.find<AuthService>().isAuth = true;
             QR.navigator.replaceLast('/dashboard');
           },
-          child: Text('Login'),
+          child: const Text('Login'),
         ),
       ),
     );

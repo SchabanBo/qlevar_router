@@ -3,6 +3,8 @@
 ## Current
 
 - Throw exception if the route name is not unique.
+- Cleanup analyzer warnings.
+- Fix #101
 
 ## [1.7.1] 12.11.2022
 

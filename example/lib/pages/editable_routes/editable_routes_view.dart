@@ -3,21 +3,21 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 class AddRemoveRoutes extends StatefulWidget {
   final QRouter route;
-  AddRemoveRoutes(this.route);
+  const AddRemoveRoutes(this.route, {Key? key}) : super(key: key);
   @override
-  _AddRemoveRoutesState createState() => _AddRemoveRoutesState();
+  State<AddRemoveRoutes> createState() => _AddRemoveRoutesState();
 }
 
 class _AddRemoveRoutesState extends State<AddRemoveRoutes> {
   final addCon = TextEditingController();
   final removeCon = TextEditingController();
-  final naviCon = TextEditingController();
+  final navIcon = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Remove Routes in run time'),
+        title: const Text('Add Remove Routes in run time'),
         centerTitle: true,
       ),
       body: Row(
@@ -26,8 +26,8 @@ class _AddRemoveRoutesState extends State<AddRemoveRoutes> {
             flex: 3,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
                     '''Add or remove routes by typing the route path in the text field.
 You can find the routes under [/add-remove-routes] path
@@ -36,7 +36,7 @@ In the right section you can find all routes under [/add-remove-routes] so you c
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
-                Divider(),
+                const Divider(),
                 Row(
                   children: [
                     const SizedBox(width: 10),
@@ -45,7 +45,8 @@ In the right section you can find all routes under [/add-remove-routes] so you c
                       width: 200,
                       child: TextField(
                         controller: addCon,
-                        decoration: InputDecoration(hintText: 'Add Route'),
+                        decoration:
+                            const InputDecoration(hintText: 'Add Route'),
                       ),
                     ),
                     TextButton(
@@ -59,15 +60,15 @@ In the right section you can find all routes under [/add-remove-routes] so you c
                             // setState to update the right section
                           });
                         },
-                        child: Text('Add')),
-                    Spacer(),
+                        child: const Text('Add')),
+                    const Spacer(),
                     Container(
                         padding: const EdgeInsets.all(8),
                         width: 200,
                         child: TextField(
                             controller: removeCon,
-                            decoration:
-                                InputDecoration(hintText: 'Remove Route'))),
+                            decoration: const InputDecoration(
+                                hintText: 'Remove Route'))),
                     TextButton(
                         onPressed: () {
                           widget.route.navigator.removeRoutes([removeCon.text]);
@@ -75,23 +76,23 @@ In the right section you can find all routes under [/add-remove-routes] so you c
                             // setState to update the right section
                           });
                         },
-                        child: Text('Remove')),
-                    Spacer(),
+                        child: const Text('Remove')),
+                    const Spacer(),
                     Container(
                         padding: const EdgeInsets.all(8),
                         width: 200,
                         child: TextField(
-                            controller: naviCon,
-                            decoration: InputDecoration(
+                            controller: navIcon,
+                            decoration: const InputDecoration(
                                 hintText: 'Navigate to Route'))),
                     TextButton(
                         onPressed: () {
-                          widget.route.navigator.push(naviCon.text);
+                          widget.route.navigator.push(navIcon.text);
                         },
-                        child: Text('Navigate'))
+                        child: const Text('Navigate'))
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 Expanded(child: widget.route)
               ],
             ),
@@ -105,13 +106,13 @@ In the right section you can find all routes under [/add-remove-routes] so you c
 
 class AddRemoveChild extends StatelessWidget {
   final String text;
-  AddRemoveChild(this.text);
+  const AddRemoveChild(this.text, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Text(
         text,
-        style: TextStyle(fontSize: 28),
+        style: const TextStyle(fontSize: 28),
       ),
     );
   }

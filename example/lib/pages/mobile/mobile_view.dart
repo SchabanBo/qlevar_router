@@ -5,9 +5,9 @@ import '../../routes/mobile_routes.dart';
 
 class MobileView extends StatefulWidget {
   final QRouter router;
-  MobileView(this.router);
+  const MobileView(this.router, {Key? key}) : super(key: key);
   @override
-  _MobileViewState createState() => _MobileViewState();
+  RouterState<MobileView> createState() => _MobileViewState();
 }
 
 class _MobileViewState extends RouterState<MobileView> {
@@ -18,12 +18,12 @@ class _MobileViewState extends RouterState<MobileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mobile'),
+        title: const Text('Mobile'),
         centerTitle: true,
       ),
       body: router,
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.store),
             label: 'store',

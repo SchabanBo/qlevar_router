@@ -14,17 +14,17 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: const Text('Dashboard'),
         actions: [
           IconButton(
-            icon: Icon(Icons.home),
+            icon: const Icon(Icons.home),
             onPressed: () {
               Get.find<AuthService>().isAuth = false;
               QR.navigator.replaceAll('/');
             },
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () {
               Get.find<AuthService>().isAuth = false;
               QR.navigator.replaceAll('/login');
@@ -34,7 +34,7 @@ class DashboardView extends StatelessWidget {
       ),
       body: Row(
         children: <Widget>[
-          Expanded(child: SidebarSection()),
+          const Expanded(child: SidebarSection()),
           Container(
             color: Colors.white,
             width: MediaQuery.of(context).size.width * 0.8,
@@ -42,7 +42,7 @@ class DashboardView extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: DebugTools(),
+      floatingActionButton: const DebugTools(),
     );
   }
 }

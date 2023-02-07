@@ -10,6 +10,9 @@ enum PopResult {
 
   /// The Can pop in the middleware returns false
   NotAllowedToPop,
+
+  /// This means that the navigator has a [PopupRoute] and it was dismissed and no other page was popped
+  PopupDismissed,
 }
 
 /// Use this to define what to do when page already is in the stack

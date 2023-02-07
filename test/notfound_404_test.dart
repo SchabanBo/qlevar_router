@@ -34,23 +34,9 @@ void main() {
     expect(find.byType(WidgetTwo), findsOneWidget);
     expect(find.byType(WidgetThree), findsNothing);
     expectedHistoryLength(3);
-
-    ///TODO :
-    ///notfound can't be duplicated ?
-    QR.to('/somethingwrong');
+    QR.to('/somethingWrong');
     printCurrentHistory();
-
     QR.to('/two');
     printCurrentHistory();
-
-    // expectedPath('/two');
-    // printCurrentHistory();
-    // await tester.pumpAndSettle();
-    // expect(find.byType(WidgetOne), findsNothing);
-    // expect(find.byType(WidgetTwo), findsOneWidget);
-    // expect(find.byType(WidgetThree), findsNothing);
-
-    // /// notfound can't be duplicated ?
-    // expectedHistoryLength(3);
   });
 }

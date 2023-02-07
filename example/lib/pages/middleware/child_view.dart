@@ -11,7 +11,7 @@ class ChildView extends StatelessWidget {
         title: Text(name),
         centerTitle: true,
       ),
-      body: Center(
+      body: const Center(
         child: Icon(Icons.child_friendly, size: 100, color: Colors.green),
       ),
     );

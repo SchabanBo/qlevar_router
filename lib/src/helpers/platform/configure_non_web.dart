@@ -1,3 +1,2 @@
-void configureApp() {
-  // No-op.
-}
+// coverage:ignore-file
+void configureApp() {}

@@ -10,6 +10,7 @@ import '../qr.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
 import '../types/qhistory.dart';
+import '../types/qobserver.dart';
 import 'match_controller.dart';
 import 'middleware_controller.dart';
 import 'pages_controller.dart';
@@ -109,6 +110,8 @@ class QRouterController extends QNavigator {
   final QKey key;
   late GlobalKey<NavigatorState> navKey;
   final QRouteChildren routes;
+
+  late final observer = QNavigatorObserver(key.name);
 
   final _pagesController = PagesController();
 
@@ -431,5 +434,10 @@ class QRouterController extends QNavigator {
     _pagesController.routes.add(route);
     _pagesController.pages.add(page);
     return route;
+  }
+
+  /// this method is only called when this navigator has a [PopupRoute] to remove it
+  void closePopup() {
+    Navigator.pop(navKey.currentContext!);
   }
 }

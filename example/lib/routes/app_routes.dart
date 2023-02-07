@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
@@ -7,7 +8,7 @@ import '../pages/not_found/not_found_view.dart';
 import '../pages/welcome/welcome_view.dart';
 import '../services/auth_service.dart';
 import 'dashboard_routes.dart';
-import 'editabel_routes.dart';
+import 'editable_routes.dart';
 import 'middleware_routes.dart';
 import 'mobile_routes.dart';
 import 'store_routes.dart';
@@ -30,18 +31,18 @@ class AppRoutes {
     // route that does not exist.
     QR.settings.notFoundPage = QRoute(
       path: 'path',
-      builder: () => NotFoundView(),
+      builder: () => const NotFoundView(),
     );
 
     // add observers to the app
     // this observer will be called when the user navigates to new route
     QR.observer.onNavigate.add((path, route) async {
-      print('Observer: Navigating to $path');
+      debugPrint('Observer: Navigating to $path');
     });
 
     // this observer will be called when the popped out from a route
     QR.observer.onPop.add((path, route) async {
-      print('Observer: popping out from $path');
+      debugPrint('Observer: popping out from $path');
     });
 
     // create initial route that will be used when the app is started
@@ -49,7 +50,7 @@ class AppRoutes {
     //QR.settings.iniPage = InitPage();
 
     // Change the page transition for all routes in your app.
-    QR.settings.pagesType = QFadePage();
+    QR.settings.pagesType = const QFadePage();
   }
 
   final routes = <QRoute>[
@@ -59,7 +60,7 @@ class AppRoutes {
       // this will define how to find this route with [QR.toName]
       name: root,
       // The page to show when this route is called
-      builder: () => WelcomeView(),
+      builder: () => const WelcomeView(),
     ),
     QRoute(
       path: '/login',
@@ -78,7 +79,7 @@ class AppRoutes {
           },
         )
       ],
-      builder: () => LoginView(),
+      builder: () => const LoginView(),
     ),
     // Split your routes definitions into groups and call them here
     StoreRoutes().route, // Add the store routes
