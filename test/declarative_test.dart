@@ -77,7 +77,7 @@ class _DeclarativePageState extends State<_DeclarativePage> {
                     pageType: const QSlidePage(
                         curve: Curves.easeInOutCubic,
                         offset: Offset(-1, 0),
-                        transitionDurationMilliseconds: 500)),
+                        transitionDuration: Duration(milliseconds: 500))),
                 QDRoute(
                     name: 'Pizza',
                     builder: () => getQuestion(

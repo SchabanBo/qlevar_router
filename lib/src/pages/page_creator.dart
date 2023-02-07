@@ -69,8 +69,8 @@ abstract class _PageConverter {
       barrierDismissible: page.barrierDismissible,
       barrierLabel: page.barrierLabel,
       opaque: page.opaque,
-      reverseTransitionDuration: page.reverseTransitionDurationMilliseconds,
-      transitionDuration: page.transitionDurationMilliseconds,
+      transitionDuration: page.transitionDuration,
+      reverseTransitionDuration: page.reverseTransitionDuration,
       transitionsBuilder: page.transitionsBuilder ?? _buildTransaction,
     );
   }

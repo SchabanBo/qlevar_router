@@ -169,8 +169,8 @@ class QCustomPageInternal extends QPageInternal {
   final bool fullScreenDialog;
   final bool maintainState;
   final bool? opaque;
-  final int reverseTransitionDuration;
-  final int transitionDuration;
+  final Duration transitionDuration;
+  final Duration reverseTransitionDuration;
   final RouteTransitionsBuilder transitionsBuilder;
 
   @override
@@ -179,9 +179,8 @@ class QCustomPageInternal extends QPageInternal {
       pageBuilder: (c, a1, a2) => child,
       settings: this,
       opaque: opaque ?? true,
-      transitionDuration: Duration(milliseconds: transitionDuration),
-      reverseTransitionDuration:
-          Duration(milliseconds: reverseTransitionDuration),
+      transitionDuration: transitionDuration,
+      reverseTransitionDuration: reverseTransitionDuration,
       barrierColor: barrierColor,
       barrierDismissible: barrierDismissible ?? false,
       barrierLabel: barrierLabel,

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+const defaultDuration = Duration(milliseconds: 300);
+
 /// Set the page type for this route
 /// you can use [QMaterialPage], [QCupertinoPage] or [QPlatformPage]
 /// The default is [QPlatformPage]
@@ -54,22 +56,19 @@ class QCustomPage extends QPage {
     this.barrierDismissible,
     this.barrierLabel,
     this.opaque,
-    int? reverseTransitionDurationMilliseconds,
-    int? transitionDurationMilliseconds,
+    this.transitionDuration = defaultDuration,
+    this.reverseTransitionDuration = defaultDuration,
     this.transitionsBuilder,
     String? restorationId,
     this.withType,
-  })  : reverseTransitionDurationMilliseconds =
-            reverseTransitionDurationMilliseconds ?? 300,
-        transitionDurationMilliseconds = transitionDurationMilliseconds ?? 300,
-        super(fullscreenDialog, maintainState, restorationId);
+  }) : super(fullscreenDialog, maintainState, restorationId);
 
   final Color? barrierColor;
   final bool? barrierDismissible;
   final String? barrierLabel;
   final bool? opaque;
-  final int reverseTransitionDurationMilliseconds;
-  final int transitionDurationMilliseconds;
+  final Duration transitionDuration;
+  final Duration reverseTransitionDuration;
   final RouteTransitionsBuilder? transitionsBuilder;
   final QCustomPage? withType;
 }
@@ -82,8 +81,8 @@ class QSlidePage extends QCustomPage {
     bool? barrierDismissible,
     String? barrierLabel,
     bool? opaque,
-    int? reverseTransitionDurationMilliseconds,
-    int? transitionDurationMilliseconds,
+    Duration? transitionDuration,
+    Duration? reverseTransitionDuration,
     String? restorationId,
     QCustomPage? withType,
     this.curve,
@@ -95,9 +94,9 @@ class QSlidePage extends QCustomPage {
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
           opaque: opaque,
-          reverseTransitionDurationMilliseconds:
-              reverseTransitionDurationMilliseconds,
-          transitionDurationMilliseconds: transitionDurationMilliseconds,
+          transitionDuration: transitionDuration ?? defaultDuration,
+          reverseTransitionDuration:
+              reverseTransitionDuration ?? defaultDuration,
           restorationId: restorationId,
           withType: withType,
         );
@@ -114,8 +113,8 @@ class QFadePage extends QCustomPage {
     bool? barrierDismissible,
     String? barrierLabel,
     bool? opaque,
-    int? reverseTransitionDurationMilliseconds,
-    int? transitionDurationMilliseconds,
+    Duration? transitionDuration,
+    Duration? reverseTransitionDuration,
     String? restorationId,
     QCustomPage? withType,
     this.curve,
@@ -126,9 +125,9 @@ class QFadePage extends QCustomPage {
             fullscreenDialog: fullscreenDialog,
             maintainState: maintainState,
             opaque: opaque,
-            reverseTransitionDurationMilliseconds:
-                reverseTransitionDurationMilliseconds,
-            transitionDurationMilliseconds: transitionDurationMilliseconds,
+            transitionDuration: transitionDuration ?? defaultDuration,
+            reverseTransitionDuration:
+                reverseTransitionDuration ?? defaultDuration,
             restorationId: restorationId,
             withType: withType);
 
