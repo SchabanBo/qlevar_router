@@ -6,6 +6,10 @@
 - Cleanup analyzer warnings.
 - Fix #101
 
+### Breaking changes
+
+- (Add #105) Replaced milli-seconds by Duration in PageTransition @tejHackerDEV
+
 ## [1.7.1] 12.11.2022
 
 - Fix #90.
