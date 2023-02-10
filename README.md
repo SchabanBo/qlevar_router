@@ -22,7 +22,10 @@
     - [onMatch](#onmatch)
     - [onEnter](#onenter)
     - [onExit](#onexit)
-  - [OnExited](#onexited)
+    - [OnExited](#onexited)
+  - [Nested navigators](#nested-navigators)
+    - [Saving pages state when navigating](#saving-pages-state-when-navigating)
+    - [PageAlreadyExistAction](#pagealreadyexistaction)
   - [Observer](#observer)
   - [Not found page](#not-found-page)
   - [Deferred loading](#deferred-loading)
@@ -235,9 +238,47 @@ This method will be called before adding the page to the stack and before the pa
 
 This method will be called before removing the page from the stack
 
-## OnExited
+### OnExited
 
 This method will be called one frame after the page was removed from the stack, this will be the best place to cleanup any resource that the page was using.
+
+## Nested navigators
+
+you can nest navigators inside each other, to do that you need to add `QRoute.withChild` to your routes tree.
+
+```dart
+QRoute.withChild(
+  name: store,
+  path: '/store',
+  builderChild: (router) => StorePage(router),
+  initRoute: '/orders',
+  children: [
+    QRoute(name: items, path: '/items', builder: () => ItemsPage()),
+    QRoute(name: orders, path: '/orders', builder: () => OrderPage()),
+  ],
+);
+```
+
+the `builderChild` will be called with the child navigator as a parameter, which is just a widget you can place on any place on the screen where you want to show the children of this route.
+see the example for more details. 
+[routes definition](https://github.com/SchabanBo/qlevar_router/blob/master/example/lib/routes/dashboard_routes.dart)
+[widget definition](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib/pages/dashboard)
+
+### Saving pages state when navigating
+
+if you want to save the state of the pages when navigating between them, you have tow options:
+
+1- when navigating between the pages, set `pageAlreadyExistAction` to 'bringToTop', this will bring the page to the top of the stack. if this page has any child pages, they will be reordered to be on top of the stack the same way as they were before.
+2- you can use 'QR.navigatorOf(DashboardRoutes.dashboard).switchTo('home');' to switch between the pages, this will keep the state of the pages. This will internally set `pageAlreadyExistAction` to 'bringToTop'.
+
+### PageAlreadyExistAction
+
+This parameter will be used when you navigate to a page that already exists in the stack.
+
+- **bringToTop**: will bring the page to the top of the stack, if the page has any child pages, they will be reordered to be on top of the stack the same way as they were before. see #61
+*NOTE:* this will not work for the route with `/` path
+- **IgnoreChildrenAndBringToTop**: will bring just the page to the top of the stack, if the page has any child pages, they will be ignored.
+- **remove**: if the page already exists, this will remove all pages on the top  until the page is on the top of the stack. 
 
 ## Observer
 
@@ -545,6 +586,7 @@ class MyApp extends StatelessWidget {
 
 - [Building an app using Cubit and qlevar_router](https://medium.com/@SchabanBo/building-an-app-using-cubit-and-qlevar-router-481fba0f2349)
 - [Reduce your flutter web app loading time](https://medium.com/@SchabanBo/reduce-your-flutter-web-app-loading-time-8018d8f442)
+- [Implementing Deep Linking in Flutter Using the qlevar_router](https://medium.com/@SchabanBo/implementing-deep-linking-in-flutter-using-the-qlevar-router-package-9bde293e3fe0)
 
 ## Projects
 

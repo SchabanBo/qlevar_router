@@ -2,9 +2,12 @@
 
 ## Current
 
-- Throw exception if the route name is not unique.
-- Cleanup analyzer warnings.
-- Fix #101
+## 1.8.0  10.02.2023
+
+- Throws exception if the route name is not unique.
+- Cleanups analyzer warnings.
+- Fixes #101
+- Adds #61
 
 ### Breaking changes
 

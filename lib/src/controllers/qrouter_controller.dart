@@ -279,13 +279,14 @@ class QRouterController extends QNavigator {
         params: params,
       ).match;
 
-  void updatePathIfNeeded(QRouteInternal match) {
+  void updatePathIfNeeded(QRouteInternal match, {bool updateParams = false}) {
     if (key.name != QRContext.rootRouterName) {
       QR.updateUrlInfo(
         match.activePath!,
         mKey: match.key,
         params: match.params!.asValueMap,
         navigator: key.name,
+        updateParams: updateParams,
       );
     }
   }
@@ -340,6 +341,7 @@ class QRouterController extends QNavigator {
       // if the parent have a navigator then just insure that the
       // page is on the top
       if (QR.hasNavigator(match.name) && this != QR.navigatorOf(match.name)) {
+        // here the bring on to should ignore any children, because the route has a navigator and the navigator will handle the children
         _bringPageToTop(index, true);
       }
 
@@ -349,22 +351,15 @@ class QRouterController extends QNavigator {
     switch (pageAlreadyExistAction) {
       case PageAlreadyExistAction.BringToTop:
       case PageAlreadyExistAction.IgnoreChildrenAndBringToTop:
-        final shouldIgnoreChildren = pageAlreadyExistAction ==
+        var shouldIgnoreChildren = pageAlreadyExistAction ==
             PageAlreadyExistAction.IgnoreChildrenAndBringToTop;
-        final route = _bringPageToTop(index, shouldIgnoreChildren);
-        // check if the page has child navigator
-        final lastFoundRoute = QR.history.findLastForNavigator(route.name);
-        if (lastFoundRoute != null) {
-          QR.rootNavigator.updateUrl(
-            lastFoundRoute.path,
-            addHistory: true,
-            params: lastFoundRoute.params.asValueMap,
-            navigator: lastFoundRoute.navigator,
-            updateParams: true,
-          );
-        } else {
-          updatePathIfNeeded(route);
+        if (match.route.path == '/') {
+          // if the path is / then we have to ignore the children, because
+          // in this case the children are the siblings of the route
+          shouldIgnoreChildren = true;
         }
+        final route = _bringPageToTop(index, shouldIgnoreChildren);
+        if (shouldIgnoreChildren) _updatePathWhenBringingPageToTop(route);
         QR.log('${route.fullPath} is on to top of the stack');
         match.isProcessed = true;
         break;
@@ -430,6 +425,26 @@ class QRouterController extends QNavigator {
     await _pagesController.add(route);
   }
 
+  void _updatePathWhenBringingPageToTop(QRouteInternal route) {
+    // if this route has his own navigator, then update its path to the last page seen in it
+    final lastFoundRoute = QR.history.findLastForNavigator(route.name);
+    if (lastFoundRoute != null) {
+      QR.log(
+          'update path to the last seen route for ${route.name} which is ${lastFoundRoute.path}',
+          isDebug: true);
+      QR.rootNavigator.updateUrl(
+        lastFoundRoute.path,
+        addHistory: true,
+        params: lastFoundRoute.params.asValueMap,
+        navigator: lastFoundRoute.navigator,
+        updateParams: true,
+      );
+    } else {
+      // update the path to this page
+      updatePathIfNeeded(route);
+    }
+  }
+
   QRouteInternal _bringPageToTop(int index, bool shouldIgnoreChildren) {
     var route = _pagesController.routes[index];
     if (shouldIgnoreChildren) {
@@ -440,9 +455,23 @@ class QRouterController extends QNavigator {
       _pagesController.pages.add(page);
       return route;
     }
+    // if page children should not be ignored, then bring the page to the top
+    // with its children too in the same order
     final routesWithSamePath = _pagesController.routes
         .where((element) => element.fullPath.contains(route.fullPath))
         .toList();
+    QR.log('bring page to top with children: $routesWithSamePath',
+        isDebug: true);
+    for (route in routesWithSamePath) {
+      index = _pagesController.routes.indexOf(route);
+      final page = _pagesController.pages[index];
+      _pagesController.routes.remove(route);
+      _pagesController.pages.remove(page);
+      _pagesController.routes.add(route);
+      _pagesController.pages.add(page);
+      _updatePathWhenBringingPageToTop(route);
+    }
+
     return route;
   }
 
