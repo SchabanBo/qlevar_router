@@ -340,7 +340,7 @@ class QRouterController extends QNavigator {
       // if the parent have a navigator then just insure that the
       // page is on the top
       if (QR.hasNavigator(match.name) && this != QR.navigatorOf(match.name)) {
-        _bringPageToTop(index);
+        _bringPageToTop(index, true);
       }
 
       return;
@@ -348,7 +348,11 @@ class QRouterController extends QNavigator {
 
     switch (pageAlreadyExistAction) {
       case PageAlreadyExistAction.BringToTop:
-        final route = _bringPageToTop(index);
+      case PageAlreadyExistAction.IgnoreChildrenAndBringToTop:
+        final shouldIgnoreChildren = pageAlreadyExistAction ==
+            PageAlreadyExistAction.IgnoreChildrenAndBringToTop;
+        final route = _bringPageToTop(index, shouldIgnoreChildren);
+        // check if the page has child navigator
         final lastFoundRoute = QR.history.findLastForNavigator(route.name);
         if (lastFoundRoute != null) {
           QR.rootNavigator.updateUrl(
@@ -359,9 +363,9 @@ class QRouterController extends QNavigator {
             updateParams: true,
           );
         } else {
-          updatePathIfNeeded(match);
+          updatePathIfNeeded(route);
         }
-        QR.log('${match.fullPath} is on to top of the stack');
+        QR.log('${route.fullPath} is on to top of the stack');
         match.isProcessed = true;
         break;
       case PageAlreadyExistAction.Remove:
@@ -426,13 +430,19 @@ class QRouterController extends QNavigator {
     await _pagesController.add(route);
   }
 
-  QRouteInternal _bringPageToTop(int index) {
-    final route = _pagesController.routes[index];
-    final page = _pagesController.pages[index];
-    _pagesController.routes.remove(route);
-    _pagesController.pages.remove(page);
-    _pagesController.routes.add(route);
-    _pagesController.pages.add(page);
+  QRouteInternal _bringPageToTop(int index, bool shouldIgnoreChildren) {
+    var route = _pagesController.routes[index];
+    if (shouldIgnoreChildren) {
+      final page = _pagesController.pages[index];
+      _pagesController.routes.remove(route);
+      _pagesController.pages.remove(page);
+      _pagesController.routes.add(route);
+      _pagesController.pages.add(page);
+      return route;
+    }
+    final routesWithSamePath = _pagesController.routes
+        .where((element) => element.fullPath.contains(route.fullPath))
+        .toList();
     return route;
   }
 

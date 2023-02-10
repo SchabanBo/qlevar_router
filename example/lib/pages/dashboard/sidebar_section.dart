@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
+import '../../routes/dashboard_routes.dart';
+
 class SidebarSection extends StatelessWidget {
   const SidebarSection({Key? key}) : super(key: key);
 
@@ -16,21 +18,21 @@ class SidebarSection extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text('Home'),
             onTap: () {
-              QR.to('dashboard/home');
+              QR.navigatorOf(DashboardRoutes.dashboard).switchTo('home');
             },
           ),
           ListTile(
             leading: const Icon(Icons.store),
             title: const Text('Stores'),
             onTap: () {
-              QR.to('dashboard/stores');
+              QR.navigatorOf(DashboardRoutes.dashboard).switchTo('stores');
             },
           ),
           ListTile(
             leading: const Icon(Icons.gif_box),
             title: const Text('Products'),
             onTap: () {
-              QR.to('dashboard/products');
+              QR.navigatorOf(DashboardRoutes.dashboard).switchTo('products');
             },
           )
         ],

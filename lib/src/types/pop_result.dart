@@ -20,6 +20,9 @@ enum PageAlreadyExistAction {
   /// Remove the page from the stack
   Remove,
 
-  /// Just bring the page to the top of the stack
+  /// Bring the page to the top of the stack, if the page has any children in the stack, bring the first child to the top
   BringToTop,
+
+  /// Just bring the page to the top of the stack, and ignore any children of this page in the stack
+  IgnoreChildrenAndBringToTop,
 }
