@@ -503,7 +503,7 @@ First you need to define the parent root of the declarative route as declarative
 
 Then in the `DeclarativePage` in the build function give as widget a `QDeclarative`
 
-The `QDeclarative` required tow parameters
+The `QDeclarative` required two parameters
 
 - routeKey: key you got from QRoute
 - builder: List of type `List<QDRoute>` of the route to return based on the state [See QDRoute](#qdroute)
