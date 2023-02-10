@@ -103,12 +103,16 @@ class QRContext {
     QKey? mKey,
     String? navigator,
     bool addHistory = true,
+    bool updateParams = false,
   }) =>
-      rootNavigator.updateUrl(url,
-          mKey: mKey,
-          params: params,
-          navigator: navigator,
-          addHistory: addHistory);
+      rootNavigator.updateUrl(
+        url,
+        mKey: mKey,
+        params: params,
+        navigator: navigator,
+        updateParams: updateParams,
+        addHistory: addHistory,
+      );
 
   /// return the current tree widget
   Widget getActiveTree() {

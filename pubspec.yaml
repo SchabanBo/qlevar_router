@@ -1,11 +1,11 @@
 name: qlevar_router
 description: A router that helps you to manage your project routes. Create nested routes. navigation without context between your pages.
 
-version: 1.7.1
+version: 1.8.0
 repository: https://github.com/SchabanBo/qlevar_router
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <4.0.0"
 
 dependencies:
   flutter_web_plugins:
