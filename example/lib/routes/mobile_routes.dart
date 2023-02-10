@@ -22,20 +22,20 @@ class MobileRoutes {
         QRoute(
           path: '/stores',
           name: tabs[0],
-          pageType: QFadePage(),
+          pageType: const QFadePage(),
           builder: () => MobileStoresView(),
         ),
         QRoute(
           path: '/products',
           name: tabs[1],
-          pageType: QFadePage(),
+          pageType: const QFadePage(),
           builder: () => MobileProductsView(),
         ),
         QRoute(
           path: '/settings',
           name: tabs[2],
-          pageType: QFadePage(),
-          builder: () => MobileSettingsView(),
+          pageType: const QFadePage(),
+          builder: () => const MobileSettingsView(),
         ),
       ]);
 }

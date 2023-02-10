@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../controllers/qrouter_controller.dart';
 import '../../pages/qpage_internal.dart';
 
+// coverage:ignore-file
 class DebugStackTree extends StatelessWidget {
   final List<QRouterController> _controllers;
   const DebugStackTree(

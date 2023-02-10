@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../types/qhistory.dart';
 
+// coverage:ignore-file
 class DebugHistory extends StatelessWidget {
   final List<QHistoryEntry> history;
   const DebugHistory(this.history, {Key? key}) : super(key: key);

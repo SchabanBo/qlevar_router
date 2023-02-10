@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## Current
+
+## 1.8.0  10.02.2023
+
+- Throws exception if the route name is not unique.
+- Cleanups analyzer warnings.
+- Fixes #101
+- Adds #61
+
+### Breaking changes
+
+- (Add #105) Replaced milli-seconds by Duration in PageTransition @tejHackerDEV
+
 ## [1.7.1] 12.11.2022
 
 - Fix #90.

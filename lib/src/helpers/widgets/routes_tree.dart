@@ -4,6 +4,7 @@ import '../../../qlevar_router.dart';
 import '../../routes/qroute_children.dart';
 import '../../routes/qroute_internal.dart';
 
+// coverage:ignore-file
 class RoutesChildren extends StatefulWidget {
   final List<_ExpandedQRoute> _children;
   final String parentPath;

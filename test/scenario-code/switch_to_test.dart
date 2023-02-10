@@ -16,6 +16,18 @@ const Key _goToDetailsKey = Key("GoToDetails");
 
 int counter = 0;
 void main() {
+  // runApp(AppWrapper([
+  //   QRoute.withChild(
+  //       path: '/home',
+  //       initRoute: '/test1',
+  //       builderChild: (router) => HomeScreen(router: router),
+  //       children: [
+  //         PostRoute().routes(tabs[0]),
+  //         PostRoute().routes(tabs[1]),
+  //         PostRoute().routes(tabs[2]),
+  //       ])
+  // ], initPath: '/home'));
+  // return;
   testWidgets('Switch to, ensure page saves the state', (tester) async {
     QR.reset();
     await tester.pumpWidget(AppWrapper([
@@ -113,8 +125,12 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex:
             tabs.indexWhere((element) => element == widget.router.routeName),
-        onTap: (value) => QR.toName(tabs[value],
-            pageAlreadyExistAction: PageAlreadyExistAction.BringToTop),
+        onTap: (value) {
+          QR.toName(
+            tabs[value],
+            pageAlreadyExistAction: PageAlreadyExistAction.BringToTop,
+          );
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.collections),

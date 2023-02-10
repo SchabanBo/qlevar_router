@@ -14,7 +14,7 @@ class WelcomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome to Qlevar Router'),
+        title: const Text('Welcome to Qlevar Router'),
         centerTitle: true,
       ),
       body: Center(
@@ -50,7 +50,7 @@ class WelcomeView extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: DebugTools(),
+      floatingActionButton: const DebugTools(),
     );
   }
 }

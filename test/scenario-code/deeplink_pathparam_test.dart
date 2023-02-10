@@ -11,7 +11,7 @@ final books = [
   Book('Fahrenheit 451', 'Ray Bradbury'),
 ];
 void main() {
-  testWidgets('Deeplink Pathparam', (tester) async {
+  testWidgets('Deep-link PathParam', (tester) async {
     await tester.pumpWidget(AppWrapper([
       QRoute(path: '/', builder: () => const BooksListScreen()),
       QRoute(path: '/books/:id', builder: () => BookDetailsScreen()),
@@ -72,8 +72,8 @@ class BookDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(book.title, style: Theme.of(context).textTheme.headline6),
-            Text(book.author, style: Theme.of(context).textTheme.subtitle1),
+            Text(book.title),
+            Text(book.author),
           ],
         ),
       ),

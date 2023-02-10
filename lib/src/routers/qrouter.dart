@@ -10,9 +10,14 @@ class QRouter extends StatefulWidget {
 
   final QRouterController _controller;
 
-  final List<NavigatorObserver>? observers;
+  late final List<NavigatorObserver> observers = [_controller.observer];
 
-  QRouter(this._controller, this.observers, {Key? key}) : super(key: key);
+  QRouter(this._controller, {List<NavigatorObserver>? observers, Key? key})
+      : super(key: key) {
+    if (observers != null) {
+      this.observers.addAll(observers);
+    }
+  }
 
   /// Get the name for the current child
   /// This is the name which define in [QRoute.name] if it is null [QRoute.path]
@@ -44,13 +49,20 @@ class _QRouterState extends State<QRouter> {
   Widget build(BuildContext context) {
     return Navigator(
       key: widget.navKey,
-      observers: widget.observers ?? [],
+      observers: widget.observers,
       pages: widget._controller.pages,
-      onPopPage: (route, result) {
-        widget._controller.removeLast();
-        return false;
-      },
+      onPopPage: _onPopPage,
     );
+  }
+
+  bool _onPopPage(route, result) {
+    // // remove the page from the list
+    // widget._controller.removeLast();
+    // // tell the root navigator to update the url
+    // (QR.rootNavigator as QRouterController).update(withParams: false);
+
+    QR.back();
+    return false;
   }
 
   @override

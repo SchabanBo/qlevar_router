@@ -80,4 +80,15 @@ class ControllerManager {
     QR.log('Navigator with name [$name] was removed');
     return true;
   }
+
+  /// check if any of the navigators has a popup route and return it
+  /// otherwise return null
+  QRouterController? controllerWithPopup() {
+    for (var controller in controllers) {
+      if (controller.observer.hasPopupRoute()) {
+        return controller;
+      }
+    }
+    return null;
+  }
 }

@@ -61,6 +61,13 @@ class QRouteInternal {
       currentPath = '';
     }
     final fullPath = '$currentPath${route.path}';
+
+    if (route.name != null && QR.treeInfo.namePath.containsKey(route.name)) {
+      final path = QR.treeInfo.namePath[route.name]!;
+      assert(!QR.treeInfo.namePath.containsKey(route.name),
+          'Route name ${route.name} (with path $fullPath) is already used by path $path, please use a unique name for each route.');
+    }
+
     QR.treeInfo.namePath[route.name ?? route.path] = fullPath;
     return QRouteInternal(
         key: key,

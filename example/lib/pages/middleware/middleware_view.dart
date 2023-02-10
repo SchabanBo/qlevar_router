@@ -10,12 +10,14 @@ class MiddlewareView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storage = Get.find<StorageService>();
-    final style =
-        Theme.of(context).textTheme.headline5!.copyWith(color: Colors.indigo);
+    final style = Theme.of(context)
+        .textTheme
+        .headlineMedium!
+        .copyWith(color: Colors.indigo);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Middleware Features'),
+        title: const Text('Middleware Features'),
         centerTitle: true,
       ),
       body: Center(
@@ -31,7 +33,7 @@ class MiddlewareView extends StatelessWidget {
                       onPressed: () => QR.to('/parent/child-1'),
                       child: Text('Child-1', style: style),
                     ),
-                    Text('Nothing special'),
+                    const Text('Nothing special'),
                   ],
                 ),
               ),

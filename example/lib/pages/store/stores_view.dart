@@ -16,14 +16,14 @@ class StoresView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Store'),
+        title: const Text('Store'),
       ),
       body: ListView(
         children: storage.stores
             .map(
               (e) => ListTile(
                 title: Text(e.name),
-                leading: Icon(
+                leading: const Icon(
                   Icons.store,
                   color: Colors.indigo,
                 ),
@@ -32,15 +32,15 @@ class StoresView extends StatelessWidget {
                 // and give the id of the store as parameter
                 onTap: () => QR.toName(
                   fromDashboard
-                      ? DashboardRoutes.dashboard_stores_id
-                      : StoreRoutes.store_id,
+                      ? DashboardRoutes.dashboardStoresId
+                      : StoreRoutes.storeId,
                   params: {'id': storage.stores.indexOf(e)},
                 ),
               ),
             )
             .toList(),
       ),
-      floatingActionButton: DebugTools(),
+      floatingActionButton: const DebugTools(),
     );
   }
 }

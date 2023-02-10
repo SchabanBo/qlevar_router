@@ -26,7 +26,7 @@ class StoreView extends StatelessWidget {
         children: store.products
             .map(
               (e) => ListTile(
-                leading: Icon(
+                leading: const Icon(
                   Icons.gif_box,
                   color: Colors.red,
                 ),
@@ -36,15 +36,15 @@ class StoreView extends StatelessWidget {
                 // the store id will be saved as the next route is child of this
                 onTap: () => QR.toName(
                   fromDashboard
-                      ? DashboardRoutes.dashboard_store_id_product
-                      : StoreRoutes.store_id_product,
+                      ? DashboardRoutes.dashboardStoreIdProduct
+                      : StoreRoutes.storeIdProduct,
                   params: {'product_id': store.products.indexOf(e)},
                 ),
               ),
             )
             .toList(),
       ),
-      floatingActionButton: DebugTools(),
+      floatingActionButton: const DebugTools(),
     );
   }
 }

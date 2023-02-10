@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../qlevar_router.dart';
 import '../../controllers/qrouter_controller.dart';
 
+// coverage:ignore-file
 class BrowserAddressBar extends StatefulWidget {
   static bool get isNeeded => (kReleaseMode || kIsWeb) ? false : true;
 

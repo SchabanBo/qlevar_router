@@ -39,9 +39,12 @@ void main() {
       ],
     ),
   ];
+  // pageAlreadyExistAction = PageAlreadyExistAction.BringToTop;
+  // runApp(AppWrapper(routes, initPath: '/home'));
+  // return;
   testWidgets('Test issue 90', (widgetTester) async {
     QR.reset();
-    isActionBringToTop = false;
+    pageAlreadyExistAction = PageAlreadyExistAction.Remove;
     await widgetTester.pumpWidget(AppWrapper(routes, initPath: '/home'));
     await widgetTester.pumpAndSettle();
     expectedPath('/home');
@@ -59,10 +62,32 @@ void main() {
     expect(currentNestedRouter.hashCode, newNestedRouter.hashCode);
   });
 
-  testWidgets('Test path updates if action is bring to top',
+  testWidgets(
+      'Test path updates if action is bring to top with ignore children',
       (widgetTester) async {
     QR.reset();
-    isActionBringToTop = true;
+    pageAlreadyExistAction = PageAlreadyExistAction.IgnoreChildrenAndBringToTop;
+    await widgetTester.pumpWidget(AppWrapper(routes, initPath: '/home'));
+    await widgetTester.pumpAndSettle();
+    expectedPath('/home');
+    await widgetTester.tap(find.byIcon(Icons.store));
+    await widgetTester.pumpAndSettle();
+    expectedPath('/home/store');
+    await widgetTester.tap(find.byIcon(Icons.settings));
+    await widgetTester.pumpAndSettle();
+    expectedPath('/home/settings');
+    await widgetTester.tap(find.byIcon(Icons.home));
+    await widgetTester.pumpAndSettle();
+    expectedPath('/home');
+  });
+
+  testWidgets(
+      'Test path updates if action is bring to top without ignoring children',
+      (widgetTester) async {
+    // in this case BringToTop should ignore children, because the route is /
+    // which mean the children of this route are the siblings
+    QR.reset();
+    pageAlreadyExistAction = PageAlreadyExistAction.BringToTop;
     await widgetTester.pumpWidget(AppWrapper(routes, initPath: '/home'));
     await widgetTester.pumpAndSettle();
     expectedPath('/home');
@@ -78,7 +103,7 @@ void main() {
   });
 }
 
-var isActionBringToTop = false;
+var pageAlreadyExistAction = PageAlreadyExistAction.Remove;
 
 class NavRailExample extends StatefulWidget {
   const NavRailExample(this.router, {Key? key}) : super(key: key);
@@ -102,9 +127,7 @@ class _NavRailExampleState extends RouterState<NavRailExample> {
             selectedIndex: indexOf(widget.router.routeName),
             onDestinationSelected: (v) => QR.toName(
               _tabs[v],
-              pageAlreadyExistAction: isActionBringToTop
-                  ? PageAlreadyExistAction.BringToTop
-                  : PageAlreadyExistAction.Remove,
+              pageAlreadyExistAction: pageAlreadyExistAction,
             ),
             destinations: const [
               NavigationRailDestination(

@@ -21,7 +21,7 @@ class QlevarApp extends StatelessWidget {
     appRoutes.setup();
     return MaterialApp.router(
       // Add the [QRouteInformationParser]
-      routeInformationParser: QRouteInformationParser(),
+      routeInformationParser: const QRouteInformationParser(),
       // Add the [QRouterDelegate] with your routes
       routerDelegate: QRouterDelegate(
         appRoutes.routes,

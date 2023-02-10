@@ -7,14 +7,14 @@ import 'middleware/loader_middleware.dart';
 
 class StoreRoutes {
   static const String store = 'store';
-  static const String store_id = 'store_id';
-  static const String store_id_product = 'store_id_product';
+  static const String storeId = 'store_id';
+  static const String storeIdProduct = 'store_id_product';
 
   final route = QRoute(
     path: '/store',
     name: store,
     // Set the route type to [QCupertinoPage] to use the Cupertino animation
-    pageType: QCupertinoPage(),
+    pageType: const QCupertinoPage(),
     middleware: [
       /// Use this [DeferredLoader] middleware to load this page
       /// only when user wants to go to it.
@@ -24,14 +24,14 @@ class StoreRoutes {
     children: [
       QRoute(
         path: '/:id',
-        name: store_id,
-        pageType: QCupertinoPage(),
+        name: storeId,
+        pageType: const QCupertinoPage(),
         builder: () => StoreView(),
         children: [
           QRoute(
             path: '/product/:product_id',
-            name: store_id_product,
-            pageType: QMaterialPage(),
+            name: storeIdProduct,
+            pageType: const QMaterialPage(),
             builder: () => ProductView(),
           ),
         ],
