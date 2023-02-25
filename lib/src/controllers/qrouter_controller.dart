@@ -93,16 +93,13 @@ abstract class QNavigator extends ChangeNotifier {
 }
 
 class QRouterController extends QNavigator {
-  QRouterController(
-    this.key,
-    this.routes, {
-    String? initPath,
-    QRouteInternal? initRoute,
-  }) {
+  QRouterController(this.key, this.routes);
+
+  Future<void> initialize({String? initPath, QRouteInternal? initRoute}) async {
     if (initRoute != null) {
-      addRouteAsync(initRoute);
+      await addRouteAsync(initRoute);
     } else if (initPath != null) {
-      push(initPath);
+      await push(initPath);
     }
   }
 

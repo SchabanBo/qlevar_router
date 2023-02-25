@@ -8,8 +8,6 @@ typedef PageWithDeclarativeBuilder = Widget Function(QKey);
 
 /// Define a route
 class QRoute {
-  static QRoute empty = QRoute(path: '/', builder: () => const SizedBox());
-
   const QRoute({
     required this.path,
     required this.builder,
@@ -17,6 +15,7 @@ class QRoute {
     this.pageType,
     this.middleware,
     this.children,
+    this.meta = const {},
   })  : assert(builder != null),
         observers = null,
         declarativeBuilder = null,
@@ -30,6 +29,7 @@ class QRoute {
     this.name,
     this.pageType,
     this.middleware,
+    this.meta = const {},
   })  : assert(declarativeBuilder != null),
         initRoute = null,
         observers = null,
@@ -47,9 +47,12 @@ class QRoute {
     this.middleware,
     this.children,
     this.observers,
+    this.meta = const {},
   })  : assert(builderChild != null),
         declarativeBuilder = null,
         builder = null;
+
+  static QRoute empty = QRoute(path: '/', builder: () => const SizedBox());
 
   /// The default widget builder for this route
   final PageBuilder? builder;
@@ -67,8 +70,20 @@ class QRoute {
   /// Set the initPath for the route, used with [QRoute.withChild]
   final String? initRoute;
 
+  /// The meta data for this route
+  /// you can use it to pass any data to the route
+  /// and receive it using the navigator
+  /// ```dart
+  /// QR.to('/path', meta: {'key': 'value'});
+  ///
+  /// QR.navigator.currentRoute.meta['key'] // value
+  /// // if you have more than one navigator you can use
+  /// QR.navigatorOf('navigatorName').currentRoute.meta['key'] // value
+  /// ```
+  final Map<String, dynamic> meta;
+
   /// Define a Middlewares for this route
-  /// with [QMiddleware] or [QMiddlewareBuilder]
+  /// with [QMiddleware] or [QMiddlewareBuilder] [More info](https://github.com/SchabanBo/qlevar_router#middleware)
   final List<QMiddleware>? middleware;
 
   /// The name for this route
@@ -79,7 +94,7 @@ class QRoute {
 
   /// Set the page type for this route
   /// you can use [QMaterialPage], [QCupertinoPage] or [QPlatformPage]
-  /// The default is [QPlatformPage]
+  /// The default is [QPlatformPage] [More info](https://github.com/SchabanBo/qlevar_router#page-transition)
   final QPage? pageType;
 
   /// Set the path to this Route
@@ -121,7 +136,8 @@ class QRoute {
       List<QMiddleware>? middleware,
       String? initRoute,
       List<QRoute>? children,
-      List<NavigatorObserver>? observers}) {
+      List<NavigatorObserver>? observers,
+      Map<String, dynamic>? meta}) {
     if (withChildRouter) {
       return QRoute.withChild(
         path: path ?? this.path,
@@ -132,6 +148,7 @@ class QRoute {
         initRoute: initRoute ?? this.initRoute,
         children: children ?? this.children,
         observers: observers ?? this.observers,
+        meta: meta ?? this.meta,
       );
     }
 
@@ -142,6 +159,7 @@ class QRoute {
       pageType: pageType ?? this.pageType,
       middleware: middleware ?? this.middleware,
       children: children ?? this.children,
+      meta: meta ?? this.meta,
     );
   }
 }

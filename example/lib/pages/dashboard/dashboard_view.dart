@@ -12,6 +12,7 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(QR.currentRoute.meta);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),

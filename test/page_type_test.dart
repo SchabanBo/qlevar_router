@@ -23,7 +23,7 @@ void main() {
         final route = QRouteInternal.from(
             QRoute(path: '/', builder: () => Container(), pageType: item.key),
             '/');
-        final resultType = PageCreator(route).create().runtimeType;
+        final resultType = (await PageCreator(route).create()).runtimeType;
         expect(resultType == item.value, true);
       }
     });

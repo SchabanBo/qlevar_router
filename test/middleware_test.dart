@@ -50,7 +50,8 @@ void main() {
   ];
   test('Redirect / onEnter / onMatch / onExit', () async {
     QR.reset();
-    QRouterDelegate(routes);
+    final delegate = QRouterDelegate(routes);
+    await delegate.setInitialRoutePath('/');
     await QR.to('/nested');
     expectedPath('/two');
     isAuth = true;

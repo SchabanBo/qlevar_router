@@ -42,6 +42,7 @@
   - [Web hot reload](#web-hot-reload)
   - [Articles](#articles)
   - [Projects](#projects)
+  - [Well tested](#well-tested)
   - [Contribute](#contribute)
 
 Qlevar router is a flutter package to help you with managing your project routing, navigation, deep linking, route params, etc ...
@@ -587,10 +588,18 @@ class MyApp extends StatelessWidget {
 - [Building an app using Cubit and qlevar_router](https://medium.com/@SchabanBo/building-an-app-using-cubit-and-qlevar-router-481fba0f2349)
 - [Reduce your flutter web app loading time](https://medium.com/@SchabanBo/reduce-your-flutter-web-app-loading-time-8018d8f442)
 - [Implementing Deep Linking in Flutter Using the qlevar_router](https://medium.com/@SchabanBo/implementing-deep-linking-in-flutter-using-the-qlevar-router-package-9bde293e3fe0)
+- [TabBar and BottomNavigationBar in flutter with qlevar_router](https://medium.com/@SchabanBo/tabbar-and-bottomnavigationbar-in-flutter-with-qlevar-router-893b1c476134)
+- [Implementing Deep Linking in Flutter Using the qlevar_router Package](https://medium.com/@SchabanBo/implementing-deep-linking-in-flutter-using-the-qlevar-router-package-9bde293e3fe0)
 
 ## Projects
 
 - [Localic](https://github.com/SchabanBo/localic): A local management application uses [riverpod](https://riverpod.dev) as state management.
+
+## Well tested
+
+The package is well tested, and I will keep adding more tests to make sure the package is stable.
+As a navigation package it is very important to test every single scenario to make sure the package is stable. because a small change in defining the route could lead to missing param or a wrong path in the url.
+That is why beside the default tests, i add a [test](https://github.com/SchabanBo/qlevar_router/tree/master/test) for every single scenario i got from the users. you can see the tests in the [scenario-code](https://github.com/SchabanBo/qlevar_router/tree/master/test/scenario-code) folder.
 
 ## Contribute
 

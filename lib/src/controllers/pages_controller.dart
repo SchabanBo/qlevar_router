@@ -20,7 +20,7 @@ class PagesController {
     routes.add(route);
     await MiddlewareController(route).runOnEnter();
     await _notifyObserverOnNavigation(route);
-    pages.add(PageCreator(route).create());
+    pages.add(await PageCreator(route).create());
     if (pages.any((element) => element.matchKey.hasName(_initPageKey))) {
       pages.removeWhere((element) => element.matchKey.hasName(_initPageKey));
     }

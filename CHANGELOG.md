@@ -2,6 +2,11 @@
 
 ## Current
 
+## 1.8.1  25.02.2023
+
+- Fix #109
+- add #107
+
 ## 1.8.0  10.02.2023
 
 - Throws exception if the route name is not unique.

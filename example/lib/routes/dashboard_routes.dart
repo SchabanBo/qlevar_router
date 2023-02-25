@@ -20,6 +20,9 @@ class DashboardRoutes {
     path: '/dashboard',
     name: dashboard,
     initRoute: '/home',
+    meta: {
+      'title': 'Dashboard',
+    },
     middleware: [
       // Set the auth middleware to allow only to the logged in users
       // to access the dashboard, the children routes will be protected
