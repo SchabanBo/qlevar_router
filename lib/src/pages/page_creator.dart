@@ -118,13 +118,13 @@ class PageCreator extends _PageConverter {
 
   QRoute get qRoute => route.route;
 
-  QPageInternal create() => super.createWithChild(build());
+  Future<QPageInternal> create() async => super.createWithChild(await build());
 
-  Widget build() {
+  Future<Widget> build() async {
     if (qRoute.withChildRouter) {
       assert(qRoute.children != null,
           'Can not create a navigator to a route without children. $route');
-      final router = QR.createNavigator(
+      final router = await QR.createNavigator(
         qRoute.name ?? qRoute.path,
         cRoutes: route.children,
         initPath: qRoute.initRoute ?? '/',

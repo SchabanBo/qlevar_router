@@ -30,24 +30,37 @@ class QRContext {
   /// Add observer for the navigation or pop
   final observer = QObserver();
 
-  /// The parameter for the current route
+  /// The parameter for the current route [see](https://github.com/SchabanBo/qlevar_router#parameters)
   final params = QParams();
 
   /// The Settings for this package
+  /// this will
   final settings = _QRSettings();
 
   /// Info about the current route tree
+  /// This is internal info for the package
+  /// Do not modify it unless you know what you are doing
+  /// It is used to help with getting the route path from the route name
   final treeInfo = _QTreeInfo();
 
   final _manager = ControllerManager();
 
-  /// The current route url
+  /// This is the url of the current route
   String get currentPath => history.isEmpty ? '/' : history.current.path;
 
+  /// Get the current route [QRoute] of the active navigator [navigator]
+  QRoute get currentRoute => navigator.currentRoute;
+
   /// Get the root navigator
+  /// This is the default navigator of the app
   QNavigator get rootNavigator => navigatorOf(QRContext.rootRouterName);
 
-  /// Get the active navigator
+  /// Get the active navigator by [activeNavigatorName]
+  /// by default it is the root navigator
+  /// For example if you work on a dashboard and you want to do your changes
+  /// from now on only on the dashboard Navigator. Then set this value
+  /// to the Dashboard Navigator name and every time you call [QR.navigator]
+  /// the Dashboard navigator will be called instated of root navigator
   QNavigator get navigator => navigatorOf(activeNavigatorName);
 
   /// return router for a name
@@ -56,20 +69,21 @@ class QRContext {
   /// Check if navigator with this name exists
   bool hasNavigator(String name) => _manager.hasController(name);
 
+  /// Get the current context of the active navigator
   BuildContext? get context =>
       (navigator as QRouterController).navKey.currentContext;
 
   ///  return a router [QRouter] for the given routes
   /// you do not need to give the [initRoute]
-  QRouter createNavigator(
+  Future<QRouter> createNavigator(
     String name, {
     List<QRoute>? routes,
     QRouteChildren? cRoutes,
     String? initPath,
     QRouteInternal? initRoute,
     List<NavigatorObserver>? observers,
-  }) {
-    final controller = createRouterController(name,
+  }) async {
+    final controller = await createRouterController(name,
         routes: routes,
         cRoutes: cRoutes,
         initPath: initPath,
@@ -120,7 +134,7 @@ class QRContext {
   }
 
   /// create a controller to use with a Navigator
-  QRouterController createRouterController(
+  Future<QRouterController> createRouterController(
     String name, {
     List<QRoute>? routes,
     QRouteChildren? cRoutes,
@@ -137,7 +151,7 @@ class QRContext {
   /// The package will try to get the right navigator to this path.
   /// Set [ignoreSamePath] to true to ignore the navigation if the current path
   /// is the same as the route path
-  /// Use [pageAlreadyExistAction] to define what to do when
+  /// Use [pageAlreadyExistAction](https://github.com/SchabanBo/qlevar_router#pagealreadyexistaction) to define what to do when
   /// page already is in the stack you can remove the page
   /// or just bring it to the top
   Future<void> to(
@@ -156,7 +170,7 @@ class QRContext {
   /// Go to a route with given [name] and [params]
   /// Set [ignoreSamePath] to true to ignore the navigation if the current path
   /// is the same as the route path
-  /// Use [pageAlreadyExistAction] to define what to do when
+  /// Use [pageAlreadyExistAction](https://github.com/SchabanBo/qlevar_router#pagealreadyexistaction) to define what to do when
   /// page already is in the stack you can remove the page
   /// or just bring it to the top
   Future<void> toName(
@@ -244,7 +258,7 @@ class QRContext {
     return PopResult.Popped;
   }
 
-  // check if the given navigator is the only one in the history
+  /// check if the given navigator is the only one in the history
   bool isOnlyNavigatorLeft(List<String> navigators) {
     for (var navigator in navigators) {
       if (history.entries.where((h) => h.navigator == navigator).length > 1) {
@@ -293,14 +307,6 @@ class QRContext {
       return;
     }
 
-    if (!match.hasChild && _manager.hasController(match.name)) {
-      final navigator = navigatorOf(match.name) as QRouterController;
-      if (navigator.hasRoutes) {
-        match.activePath =
-            match.activePath! + navigatorOf(match.name).currentRoute.path;
-      }
-    }
-
     if (match.isProcessed) return;
     if (currentPath != match.activePath!) {
       // See [#18]
@@ -332,11 +338,21 @@ final _notFoundPage = QRoute(
 );
 
 class _QRSettings {
+  /// The logger function to use. By default it uses the print function.
+  /// You can use this to log the messages from the package to your own logger.
   Function(String) logger = print;
+
+  /// Set this to true if you want to enable debug logs. This will print
+  /// more info about what is happening in the package.
   bool enableDebugLog = false;
+
+  /// Set this to false if you don't want the package to print any logs.
   bool enableLog = true;
+
+  /// The default page to show when the app starts until the first route is loaded.
   Widget initPage = _iniPage;
-  // Add the default not found page path without slash.
+
+  /// The page to show when the route is not found. you can change the path to show when a page is not found
   QRoute notFoundPage = _notFoundPage;
 
   /// Set this to true if you want only one route instance in the stack
@@ -347,6 +363,10 @@ class _QRSettings {
   /// and the stack will have two routes but with different params
   bool oneRouteInstancePerStack = false;
 
+  /// The type of the pages to use. By default it uses the QPlatformPage.
+  /// This will set the transition type for all pages.
+  /// if a route dose not have a pagesType set then this will be used.
+  /// [More info](https://github.com/SchabanBo/qlevar_router#page-transition)
   QPage pagesType = const QPlatformPage();
 
   /// This can be used for testing. if this is set the package will use the given route

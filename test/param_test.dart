@@ -61,7 +61,7 @@ void main() {
 
     test('Nested Component Test', () async {
       QR.reset();
-      QRouterDelegate([
+      final delegate = QRouterDelegate([
         QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute(
             path: '/user',
@@ -72,6 +72,7 @@ void main() {
               ]),
             ]),
       ]);
+      await delegate.setInitialRoutePath('/');
       await QR.to('/user/5/info');
       expect(QR.currentPath, '/user/5/info');
       expect(QR.params['userId']!.asInt, 5);
@@ -125,11 +126,11 @@ void main() {
 
     test('Multi path Test', () async {
       QR.reset();
-      QRouterDelegate([
+      final delegate = QRouterDelegate([
         QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
         QRoute(path: '/:categoryId/items', builder: () => Container())
       ]);
-
+      await delegate.setInitialRoutePath('/');
       await QR.to('/4/items');
       expectedPath('/4/items');
       expect(QR.params['categoryId']!.asInt, 4);
@@ -470,17 +471,24 @@ void main() {
     int? newValue;
     bool deleted = false;
 
-    QR.params.ensureExist('TestParam', initValue: 5, onChange: (o, n) {
-      oldValue = o as int;
-      newValue = n as int;
-    }, onDelete: () {
-      deleted = true;
-    }, cleanupAfter: 1);
+    QR.params.ensureExist(
+      'TestParam',
+      initValue: 5,
+      onChange: (o, n) {
+        oldValue = o as int;
+        newValue = n as int;
+      },
+      onDelete: () {
+        deleted = true;
+      },
+      cleanupAfter: 2, // one for the '/' path and one for the '/info' path
+    );
 
-    QRouterDelegate([
+    final delegate = QRouterDelegate([
       QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
       QRoute(path: '/info', builder: () => const WidgetTwo())
     ]);
+    await delegate.setInitialRoutePath('/');
     expect(QR.params['TestParam']!.asInt, 5);
     await QR.to('/info');
     expect(QR.currentPath, '/info');

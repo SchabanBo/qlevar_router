@@ -11,17 +11,14 @@ import '../qr.dart';
 // ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   QRouterDelegate(
-    List<QRoute> routes, {
+    this.routes, {
     GlobalKey<NavigatorState>? navKey,
     this.initPath,
     this.withWebBar = false,
     this.alwaysAddInitPath = false,
     List<NavigatorObserver>? observers,
-  })  : _controller =
-            QR.createRouterController(QRContext.rootRouterName, routes: routes),
-        key = navKey ?? GlobalKey<NavigatorState>() {
-    _controller.addListener(notifyListeners);
-    _controller.navKey = key;
+  }) : key = navKey ?? GlobalKey<NavigatorState>() {
+    _createController();
     if (observers != null) {
       this.observers.addAll(observers);
     }
@@ -43,13 +40,16 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   final GlobalKey<NavigatorState> key;
 
   /// A list of observers for this navigator.
-  late final List<NavigatorObserver> observers = [_controller.observer];
+  final List<NavigatorObserver> observers = [];
+
+  /// The route tree for the app
+  final List<QRoute> routes;
 
   /// Add a fake app bar so you can test navigating to routes
   /// This app bar will not be added in the release mode
   final bool withWebBar;
 
-  final QRouterController _controller;
+  late final QRouterController _controller;
 
   @override
   String get currentConfiguration => QR.currentPath;
@@ -73,6 +73,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   Future<void> setInitialRoutePath(String configuration) async {
+    await _controllerCompleter.future;
     if (alwaysAddInitPath) {
       await _controller.push(initPath ?? '/');
     }
@@ -118,14 +119,46 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
         },
       );
 
+  Widget _buildNavigator() {
+    if (!withWebBar || !BrowserAddressBar.isNeeded) {
+      return navigator;
+    }
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 40,
+          child: BrowserAddressBar(setNewRoutePath, _controller),
+        ),
+        Expanded(child: navigator),
+      ],
+    );
+  }
+
+  final _controllerCompleter = Completer<QRouterController>();
+
+  Future<void> _createController() async {
+    final con = await QR.createRouterController(
+      QRContext.rootRouterName,
+      routes: routes,
+    );
+    _controller = con;
+    _controllerCompleter.complete(con);
+    _controller.addListener(notifyListeners);
+    observers.add(_controller.observer);
+    _controller.navKey = key;
+  }
+
   @override
-  Widget build(BuildContext context) =>
-      (withWebBar && BrowserAddressBar.isNeeded)
-          ? Column(children: [
-              SizedBox(
-                  height: 40,
-                  child: BrowserAddressBar(setNewRoutePath, _controller)),
-              Expanded(child: navigator),
-            ])
-          : navigator;
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _controllerCompleter.future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _buildNavigator();
+        }
+        return QR.settings.initPage;
+      },
+    );
+  }
 }
