@@ -49,6 +49,7 @@ class QRContext {
   String get currentPath => history.isEmpty ? '/' : history.current.path;
 
   /// Get the current route [QRoute] of the active navigator [navigator]
+  /// to change the active navigator use [activeNavigatorName]
   QRoute get currentRoute => navigator.currentRoute;
 
   /// Get the root navigator
@@ -352,6 +353,11 @@ class _QRSettings {
   /// The default page to show when the app starts until the first route is loaded.
   Widget initPage = _iniPage;
 
+  /// This can be used for testing. if this is set the package will use the given route
+  /// and there will be no need for setting the route tree.
+  /// If this is set the null was returned, then the package will search in the routes tree.
+  RouteMock? mockRoute;
+
   /// The page to show when the route is not found. you can change the path to show when a page is not found
   QRoute notFoundPage = _notFoundPage;
 
@@ -368,11 +374,6 @@ class _QRSettings {
   /// if a route dose not have a pagesType set then this will be used.
   /// [More info](https://github.com/SchabanBo/qlevar_router#page-transition)
   QPage pagesType = const QPlatformPage();
-
-  /// This can be used for testing. if this is set the package will use the given route
-  /// and there will be no need for setting the route tree.
-  /// If this is set the null was returned, then the package will search in the routes tree.
-  RouteMock? mockRoute;
 
   void reset() {
     logger = print;
