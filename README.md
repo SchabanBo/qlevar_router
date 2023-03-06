@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
 }
 
 // from anywhere in your code navigate to new page with
-QR.toName(AppRoutes.userPage, param:{'userId':2});
+QR.toName(AppRoutes.userPage, params:{'userId':2});
 // or
 QR.to('/user/2');
 
