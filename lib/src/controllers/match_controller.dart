@@ -1,4 +1,5 @@
 import '../../qlevar_router.dart';
+import '../qr.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
 import 'middleware_controller.dart';
@@ -49,12 +50,12 @@ class MatchController {
     if (path.pathSegments.isEmpty && foundPath.length > 2) {
       foundPath = foundPath.substring(0, foundPath.length - 1);
     }
-    // See [#26]
-    if (foundPath.length > 1 &&
-        foundPath[foundPath.length - 1] == '/' &&
-        foundPath[foundPath.length - 2] == '/') {
-      foundPath = foundPath.substring(0, foundPath.length - 1);
+
+    // check if there is a double slash in the path and remove it
+    if (foundPath.contains('//')) {
+      foundPath = foundPath.replaceAll('//', '/');
     }
+
     if (_searchIndex + 1 == path.pathSegments.length && path.hasQuery) {
       foundPath += '?${Uri.decodeFull(path.query)}';
       // Add the query params to the params map if they are not already there
@@ -190,7 +191,8 @@ class MatchController {
     return result;
   }
 
-  Future<QRouteInternal?> _tryFind(QRouteChildren routes, int index) async {
+  Future<QRouteInternal?> _tryFind(QRouteChildren routes, int index,
+      {bool updatePath = true}) async {
     final path = index == -1 ? '' : this.path.pathSegments[index];
 
     bool isSamePath(QRouteInternal route) => route.route.path == '/$path';
@@ -253,14 +255,32 @@ class MatchController {
     final result = foundIndex == -1 ? null : routes.routes[foundIndex];
 
     if (result != null) {
-      if (_searchIndex == index && result.route.path != '/!') {
+      if (updatePath && _searchIndex == index && result.route.path != '/!') {
         updateFoundPath(path);
       }
-      var newMatch = result.asNewMatch(
-          result, foundPath.isEmpty ? '/' : foundPath,
+      var newMatch = result.asNewMatch(foundPath.isEmpty ? '/' : foundPath,
           newParams: params.copyWith());
       await MiddlewareController(newMatch).runOnMatch();
       return newMatch;
+    }
+
+    /// if the path is not found at this point and the we are in the root route
+    /// then search for a route with path '/' and search in its children for the wanted path
+    /// if found return the route with path '/' as the match to navigate to the wanted path
+    /// see #111
+    final isRoot = routes.parentKey.name == QRContext.rootRouterName;
+    final searchChildren = routes.routes
+        .any((child) => child.route.path == '/' && child.children != null);
+    if (isRoot && searchChildren) {
+      /// check for the wanted path in the children of the route with path '/'
+      final slashRoute =
+          routes.routes.firstWhere((element) => element.route.path == '/');
+      final routeExists =
+          await _tryFind(slashRoute.children!, index, updatePath: false);
+      if (routeExists != null) {
+        return slashRoute.asNewMatch(foundPath.isEmpty ? '/' : foundPath,
+            newParams: params.copyWith());
+      }
     }
 
     QR.log('[$path] is not child of ${routes.parentKey}');
