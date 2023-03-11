@@ -18,7 +18,7 @@ class BrowserAddressBar extends StatefulWidget {
 
 class _BrowserAddressBarState extends State<BrowserAddressBar> {
   final List<String> _paths = [];
-  final controller = TextEditingController();
+  final controller = TextEditingController(text: QR.currentPath);
   String path = '/';
 
   @override
@@ -37,9 +37,9 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData.dark(),
-        home: Material(
-            child: Row(
+      theme: ThemeData.dark(),
+      home: Material(
+        child: Row(
           children: [
             IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -62,25 +62,29 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
             ),
             const SizedBox(width: 25),
             Expanded(
-                child: Container(
-                    margin: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    child: TextFormField(
-                      controller: controller,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.only(
-                              left: 15, bottom: 18, top: -3, right: 15)),
-                      onFieldSubmitted: (s) {
-                        widget.setNewRoute(s);
-                        _paths.clear();
-                      },
-                    ))),
+              child: Container(
+                margin: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: TextFormField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(
+                          left: 15, bottom: 18, top: -3, right: 15)),
+                  onFieldSubmitted: (s) {
+                    widget.setNewRoute(s);
+                    _paths.clear();
+                  },
+                ),
+              ),
+            ),
             const SizedBox(width: 50),
           ],
-        )));
+        ),
+      ),
+    );
   }
 }
