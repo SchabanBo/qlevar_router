@@ -74,15 +74,18 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   @override
   Future<void> setInitialRoutePath(String configuration) async {
     await _controllerCompleter.future;
-    if (alwaysAddInitPath) {
-      await _controller.push(initPath ?? '/');
-    }
-    if (configuration != '/') {
+    if (configuration != _slash) {
       QR.log('incoming init path $configuration', isDebug: true);
-      await _controller.push(configuration);
+      if (alwaysAddInitPath) {
+        QR.log(
+            'adding init path $initPath because QRouterDelegate.alwaysAddInitPath is true',
+            isDebug: true);
+        await QR.to(initPath ?? _slash);
+      }
+      await QR.to(configuration);
       return;
     }
-    await _controller.push(initPath ?? configuration);
+    await _controller.push(initPath ?? _slash);
   }
 
   @override
@@ -162,3 +165,5 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     );
   }
 }
+
+const _slash = '/';
