@@ -31,9 +31,7 @@ class QlevarApp extends StatelessWidget {
         ],
       ),
       theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      restorationScopeId: 'app',
     );
   }
 }
-
-// TODO:
-// - Fix test
