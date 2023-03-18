@@ -16,7 +16,7 @@ void main() {
         builderChild: (r) => Scaffold(appBar: AppBar(), body: r),
         initRoute: '/child',
         middleware: [
-          QMiddleware(),
+          const QMiddleware(),
           QMiddlewareBuilder(redirectGuardFunc: (s) async {
             if (kDebugMode) {
               print('From redirect guard: $s');
@@ -331,6 +331,93 @@ void main() {
     expect(onEnter.isBeforeOrSame(canPop), true);
     expect(canPop.isBeforeOrSame(onExit), true);
     expect(onExit.isBeforeOrSame(onExited), true);
+  });
+
+  test('global middleware', () async {
+    QR.reset();
+    var state = [];
+    QR.settings.globalMiddlewares.add(QMiddlewareBuilder(
+      priority: 1,
+      onEnterFunc: () async {
+        state.add('global middleware 1 onEnter');
+      },
+    ));
+    QR.settings.globalMiddlewares.add(QMiddlewareBuilder(
+      priority: 501,
+      onEnterFunc: () async {
+        state.add('global middleware 2 onEnter');
+      },
+    ));
+    final delegate = QRouterDelegate([
+      QRoute(
+        path: '/',
+        builder: () => const SizedBox(),
+        middleware: [
+          QMiddlewareBuilder(
+            onEnterFunc: () async {
+              state.add('/ onEnter');
+            },
+            onExitFunc: () async {
+              state.add('/ onExit');
+            },
+          ),
+        ],
+      ),
+      QRoute(
+        path: '/home',
+        builder: () => const SizedBox(),
+        middleware: [
+          QMiddlewareBuilder(
+            onEnterFunc: () async {
+              state.add('/home onEnter');
+            },
+            onExitFunc: () async {
+              state.add('/home onExit');
+            },
+          ),
+        ],
+      ),
+      QRoute(
+        path: '/store',
+        builder: () => const SizedBox(),
+        middleware: [
+          QMiddlewareBuilder(
+            onEnterFunc: () async {
+              state.add('/store onEnter');
+            },
+            onExitFunc: () async {
+              state.add('/^store onExit');
+            },
+          ),
+        ],
+      ),
+    ]);
+    await delegate.setInitialRoutePath('/');
+    await QR.to('/');
+    expectedPath('/');
+    expect(state, [
+      'global middleware 1 onEnter',
+      '/ onEnter',
+      'global middleware 2 onEnter'
+    ]);
+    state.clear();
+    await QR.to('/home');
+    expectedPath('/home');
+    expect(state, [
+      'global middleware 1 onEnter',
+      '/home onEnter',
+      'global middleware 2 onEnter'
+    ]);
+    state.clear();
+    await QR.navigator.replaceAll('/store');
+    expectedPath('/store');
+    expect(state, [
+      '/home onExit',
+      '/ onExit',
+      'global middleware 1 onEnter',
+      '/store onEnter',
+      'global middleware 2 onEnter'
+    ]);
   });
 }
 

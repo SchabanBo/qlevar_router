@@ -388,6 +388,9 @@ class _QRSettings {
   /// [More info](https://github.com/SchabanBo/qlevar_router##restoration-management)
   bool autoRestoration = false;
 
+  /// The global middlewares to use for all routes. This will be run on every route.
+  final List<QMiddleware> globalMiddlewares = [];
+
   /// reset the settings to the default values.
   void reset() {
     logger = print;
@@ -398,6 +401,7 @@ class _QRSettings {
     oneRouteInstancePerStack = false;
     pagesType = const QPlatformPage();
     mockRoute = null;
+    globalMiddlewares.clear();
   }
 }
 

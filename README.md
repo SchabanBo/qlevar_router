@@ -17,6 +17,8 @@
     - [Hidden params](#hidden-params)
     - [Params features](#params-features)
   - [Middleware](#middleware)
+    - [global middleware](#global-middleware)
+  - [Priority](#priority)
     - [redirectGuard](#redirectguard)
     - [canPop](#canpop)
     - [onMatch](#onmatch)
@@ -218,6 +220,43 @@ class AuthMiddleware extends QMiddleware{
 
 ![Middleware](./example/assets/middleware.png)
 
+### global middleware
+
+you can add global middleware to run on *every* route, to do that add the middlewares to `QR.settings.globalMiddleware`
+
+```dart
+QR.settings.globalMiddleware = [
+  QMiddlewareBuilder(
+      onEnterFunc: () => print('-- Enter Parent page --'),
+      onExitFunc: () => print('-- Exit Parent page --'),
+      onMatchFunc: () => print('-- Parent page Matched --')),
+  AuthMiddleware(),
+];
+```
+
+## Priority
+
+The priority of the middleware, the lower the number the higher the priority. Middleware with the same priority will be executed in the order they were added
+Middleware with higher priority will be executed first.
+
+```dart
+QRoute(
+    path: '/home',
+    builder: () => HomePage(),
+    middleware: [
+      QMiddlewareBuilder(
+          priority: 1,
+          onEnterFunc: () async => print('-- Enter Parent page --'),
+          onExitFunc: () async => print('-- Exit Parent page --'),
+          onMatchFunc: () async => print('-- Parent page Matched --')),
+      QMiddlewareBuilder(
+          priority: 2,
+          onEnterFunc: () async => print('-- Enter Parent page --'),
+          onExitFunc: () async => print('-- Exit Parent page --'),
+          onMatchFunc: () async => print('-- Parent page Matched --')),
+    ])
+```
+
 ### redirectGuard
 
 you can redirect to a new page whenever a page is called using the `redirectGuard`.
@@ -374,6 +413,7 @@ or you set `QR.settings.autoRestoration` to true and the package will set the re
 
 - **NavigatorState**: if you want to set the navigator state in the app, you can do so by pass it to `QRouterDelegate.navkey` when creating the `RouterDelegate`.
 - **BuildContext**: you can get the current context from any where by calling `QR.context`. This will give the current context of the current navigator.
+- **InitPage**: The default page to show when the app starts until the first route is loaded. you can change it by setting `QR.settings.initPage` to the page you want to show.
 
 ## Add or remove routes in run Time
 
