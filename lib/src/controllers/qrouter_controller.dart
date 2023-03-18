@@ -200,7 +200,12 @@ class QRouterController extends QNavigator {
   Future<void> replaceLastName(String name,
       {Map<String, dynamic>? params}) async {
     final last = _pagesController.routes.last;
-    return replaceName(last.name, name, params: params);
+    return replaceName(
+      last.name,
+      name,
+      params: last.params?.asMap,
+      withParams: params,
+    );
   }
 
   @override
