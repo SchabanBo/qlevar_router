@@ -17,6 +17,8 @@
     - [Hidden params](#hidden-params)
     - [Params features](#params-features)
   - [Middleware](#middleware)
+    - [global middleware](#global-middleware)
+  - [Priority](#priority)
     - [redirectGuard](#redirectguard)
     - [canPop](#canpop)
     - [onMatch](#onmatch)
@@ -32,6 +34,8 @@
   - [Page Transition](#page-transition)
     - [Mix it up](#mix-it-up)
     - [App Page Transition](#app-page-transition)
+  - [Restoration management](#restoration-management)
+  - [Other features](#other-features)
   - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
   - [Clean Structure](#clean-structure)
   - [Testing](#testing)
@@ -118,20 +122,20 @@ QR.history.debug() // will show you a dialog contains the history stack for your
 
 ### The example Projects
 
-[Show Demo](https://qlevar-router.netlify.app)
+Please check out the demo of Qlevar Router [here] (https://qlevar-router.netlify.app) to see how it works. You can find the code for this in [here](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib)
 
-You can find the demo code in the [example](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib) project
+The demo includes the following pages:
 
-- [Store](https://qlevar-router.netlify.app/#/store): simple page navigation with passing parameters in the url.
-- [Dashboard](https://qlevar-router.netlify.app/#/dashboard): Authentication middleware and nested routes with sidebar.
-- [MobileStore](https://qlevar-router.netlify.app/#/mobile/stores): a bottom navigation bar example.
-- [Middleware](https://qlevar-router.netlify.app/#/parent): test the different methods for the [middleware](#middleware).
-- [Declarative](https://qlevar-router.netlify.app/#/declarative): navigate base on the state of an object.
-- [EditableRoutes](https://qlevar-router.netlify.app/#/editable-routes/child): add or remove routes from the routes tree in run time.
+- [Store](https://qlevar-router.netlify.app/#/store): A simple page navigation example with passing parameters through the URL.
+- [Dashboard](https://qlevar-router.netlify.app/#/dashboard): An example of authentication middleware and nested routes with sidebar.
+- [MobileStore](https://qlevar-router.netlify.app/#/mobile/stores):  An example of a bottom navigation bar.
+- [Middleware](https://qlevar-router.netlify.app/#/parent):  An example of different methods for the [middleware.](#middleware).
+- [Declarative](https://qlevar-router.netlify.app/#/declarative): An example of navigating based on the state of an object.
+- [EditableRoutes](https://qlevar-router.netlify.app/#/editable-routes/child): An example of adding or removing routes from the routes tree during runtime.
 
 ### The Samples Project
 
-You can check out the [samples project](https://github.com/SchabanBo/qr_samples) for more samples and test some use cases.
+In addition to the demo, you can find more samples and test some use cases in the [samples project](https://github.com/SchabanBo/qr_samples) Here are a few examples:
 
 - [Dashboard with splash page Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/dashboard.dart)
 - [Bottom Navigation bar Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/bottom_nav_bar.dart)
@@ -215,6 +219,43 @@ class AuthMiddleware extends QMiddleware{
 ```
 
 ![Middleware](./example/assets/middleware.png)
+
+### global middleware
+
+you can add global middleware to run on *every* route, to do that add the middlewares to `QR.settings.globalMiddleware`
+
+```dart
+QR.settings.globalMiddleware = [
+  QMiddlewareBuilder(
+      onEnterFunc: () => print('-- Enter Parent page --'),
+      onExitFunc: () => print('-- Exit Parent page --'),
+      onMatchFunc: () => print('-- Parent page Matched --')),
+  AuthMiddleware(),
+];
+```
+
+## Priority
+
+The priority of the middleware, the lower the number the higher the priority. Middleware with the same priority will be executed in the order they were added
+Middleware with higher priority will be executed first. The default priority is 500.
+
+```dart
+QRoute(
+    path: '/home',
+    builder: () => HomePage(),
+    middleware: [
+      QMiddlewareBuilder(
+          priority: 1,
+          onEnterFunc: () async => print('-- Enter Parent page --'),
+          onExitFunc: () async => print('-- Exit Parent page --'),
+          onMatchFunc: () async => print('-- Parent page Matched --')),
+      QMiddlewareBuilder(
+          priority: 2,
+          onEnterFunc: () async => print('-- Enter Parent page --'),
+          onExitFunc: () async => print('-- Exit Parent page --'),
+          onMatchFunc: () async => print('-- Parent page Matched --')),
+    ])
+```
 
 ### redirectGuard
 
@@ -359,6 +400,20 @@ in this case `QFadePage.transitionDurationMilliseconds (1000)` will be used and 
 ### App Page Transition
 
 you can define the Transition for all pages in the app with setting the page type in `QR.settings.pagesType`
+
+## Restoration management
+
+To enable the restoration in the app you need to set `QRouterDelegate.restorationScopeId` and set `QRoute.pageType.restorationId` to the route you want to restore.
+or you set `QR.settings.autoRestoration` to true and the package will set the restoration id for you.
+
+**Note:** don't forget to set `MartialApp.restorationScopeId`.
+
+
+## Other features
+
+- **NavigatorState**: if you want to set the navigator state in the app, you can do so by pass it to `QRouterDelegate.navkey` when creating the `RouterDelegate`.
+- **BuildContext**: you can get the current context from any where by calling `QR.context`. This will give the current context of the current navigator.
+- **InitPage**: The default page to show when the app starts until the first route is loaded. you can change it by setting `QR.settings.initPage` to the page you want to show.
 
 ## Add or remove routes in run Time
 

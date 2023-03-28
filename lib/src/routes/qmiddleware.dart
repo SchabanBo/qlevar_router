@@ -1,74 +1,115 @@
+/// QMiddleware is a class that can be used to add middleware to a route
+/// you can use it to to run code on different route events like onEnter, onExit, onMatch
 class QMiddleware {
+  /// {@template QMiddleware.priority}
+  /// The priority of the middleware, the lower the number the higher the priority
+  /// Middleware with the same priority will be executed in the order they were added
+  /// Middleware with higher priority will be executed first
+  /// {@endtemplate}
+  final int priority;
+
+  /// QMiddleware constructor
+  const QMiddleware({this.priority = 500});
+
+  /// {@template QMiddleware.redirectGuard}
   /// This function will be called before [onEnter] and after [onMatch]
   /// if the result from this page is null the page will be created
   /// or the result should be the path to redirect to.
+  /// {@endtemplate}
   Future<String?> redirectGuard(String path) async => null;
 
-  /// This function will be called before [onEnter] and after [onMatch]
-  /// if the result from this page is null the page will be created
-  /// or the result should be the name of the page to redirect to.
-  Future<QNameRedirect?> redirectGuardToName(String path) async => null;
-
-  /// can this route pop, called when trying to remove the page.
-  Future<bool> canPop() async => true;
-
-  /// This method will be called every time a path match it.
-  Future onMatch() async {}
-
-  /// This method will be called before adding the page to the stack
-  ///  and before the page building
-  Future onEnter() async {}
-
-  /// This method will be called before removing the page from the stack
-  Future onExit() async {}
-
-  /// This method will be called at the end of one frame after the page was
-  /// removed from the stack
-  void onExited() {}
-}
-
-class QMiddlewareBuilder extends QMiddleware {
-  /// This function will be called before [onEnter] and after [onMatch]
-  /// if the result from this page is null the navigation will continue and
-  /// the page will be created or the result should be the path to redirect to.
-  /// ````
-  /// redirectGuardFunc: (s) async => isAuthed ? null : '/login',
-  /// ````
-  final Future<String?> Function(String)? redirectGuardFunc;
-
+  /// {@template QMiddleware.redirectGuardToName}
   /// This function will be called before [onEnter] and after [onMatch]
   /// if the result from this page is null the page will be created
   /// or the result should be the name of the page to redirect to.
   /// but here you can redirect to name with params instead of path.
+  /// {@endtemplate}
+  Future<QNameRedirect?> redirectGuardToName(String path) async => null;
+
+  /// {@template QMiddleware.canPop}
+  /// can this route pop, called when trying to remove the page.
+  /// if this function returns false the page will not be removed
+  /// and the navigation will not continue
+  /// this is useful for example if you want to show a dialog to the user
+  /// to confirm that he wants to leave the page
+  /// and if he doesn't want to leave the page you can return false
+  /// and the page will not be removed
+  /// ````dart
+  /// canPop: () async => await showDialog<bool>(
+  ///   context: context,
+  ///   builder: (context) => AlertDialog(
+  ///     title: Text('Are you sure?'),
+  ///     actions: [
+  ///       TextButton(
+  ///         child: Text('Yes'),
+  ///         onPressed: () => Navigator.of(context).pop(true),
+  ///       ),
+  ///       TextButton(
+  ///         child: Text('No'),
+  ///         onPressed: () => Navigator.of(context).pop(false),
+  ///       ),
+  ///     ],
+  ///   ),
+  /// ) ?? false,
   /// ````
-  /// redirectGuardNameFunc: (s) async =>
-  ///     isAuthed ? null : QNameRedirect(name: Routes.login),
-  /// ````
+  ///{@endtemplate}
+  Future<bool> canPop() async => true;
+
+  /// {@template QMiddleware.onMatch}
+  /// This method will be called every time a path match it.
+  /// {@endtemplate}
+  Future onMatch() async {}
+
+  /// {@template QMiddleware.redirectGuard}
+  /// This method will be called before adding the page to the stack
+  ///  and before the page building
+  /// this is useful for creating the resources needed for the page
+  /// like opening a stream or a controller
+  /// {@endtemplate}
+  Future onEnter() async {}
+
+  /// {@template QMiddleware.onExit}
+  /// This method will be called before removing the page from the stack
+  /// and before the page is disposed
+  /// this is useful for saving data before the page is removed
+  /// {@endtemplate}
+  Future onExit() async {}
+
+  /// {@template QMiddleware.onExited}
+  /// This method will be called after one frame after removing the page from the stack
+  /// this is useful for cleaning up resources that are not needed anymore
+  /// like closing a stream or a controller
+  /// or for example if you want to show a snackbar after the page was removed
+  /// you can use this method to show the snackbar
+  /// {@endtemplate}
+  void onExited() {}
+}
+
+/// QMiddlewareBuilder is a class that can be used to add middleware to a route
+/// it can be used for quick creation of middleware
+class QMiddlewareBuilder extends QMiddleware {
+  /// {@macro QMiddleware.redirectGuard}
+  final Future<String?> Function(String)? redirectGuardFunc;
+
+  /// {@macro QMiddleware.redirectGuardName}
   final Future<QNameRedirect?> Function(String)? redirectGuardNameFunc;
 
-  /// This method will be called every time a path matches the assigned route.
+  /// {@macro QMiddleware.onMatch}
   final Future Function()? onMatchFunc;
 
-  /// This method will be called before adding the page to the stack
-  /// and before the page building function is called.
+  /// {@macro QMiddleware.onEnter}
   final Future Function()? onEnterFunc;
 
-  /// This method will be called before removing the page from the stack
+  /// {@macro QMiddleware.onExit}
   final Future Function()? onExitFunc;
 
-  /// This method will be called at the end of one frame after the page was
-  /// removed from the stack
+  /// {@macro QMiddleware.onExited}
   final Function? onExitedFunc;
 
-  /// Can this route pop, called when trying to remove the page.
-  /// ````
-  /// // if you want to allow the page to pop only when user saves the data
-  /// canPopFunc: () async {
-  ///      return Storage.isDataSaved();
-  /// }
-  /// ````
+  /// {@macro QMiddleware.canPop}
   final Future<bool> Function()? canPopFunc;
 
+  /// QMiddlewareBuilder constructor
   QMiddlewareBuilder({
     this.redirectGuardFunc,
     this.redirectGuardNameFunc,
@@ -77,7 +118,8 @@ class QMiddlewareBuilder extends QMiddleware {
     this.canPopFunc,
     this.onExitFunc,
     this.onExitedFunc,
-  });
+    int priority = 500,
+  }) : super(priority: priority);
 
   @override
   Future onEnter() async {

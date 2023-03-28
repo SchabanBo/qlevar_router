@@ -40,8 +40,7 @@ class QRouteInternal {
     this.child,
   });
 
-  QRouteInternal asNewMatch(QRouteInternal other, String path,
-          {QParams? newParams}) =>
+  QRouteInternal asNewMatch(String path, {QParams? newParams}) =>
       QRouteInternal(
           key: key,
           fullPath: fullPath,

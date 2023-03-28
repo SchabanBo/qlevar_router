@@ -83,13 +83,20 @@ class QRContext {
     String? initPath,
     QRouteInternal? initRoute,
     List<NavigatorObserver>? observers,
+    String? restorationId,
   }) async {
-    final controller = await createRouterController(name,
-        routes: routes,
-        cRoutes: cRoutes,
-        initPath: initPath,
-        initRoute: initRoute);
-    return QRouter(controller, observers: observers);
+    final controller = await createRouterController(
+      name,
+      routes: routes,
+      cRoutes: cRoutes,
+      initPath: initPath,
+      initRoute: initRoute,
+    );
+    return QRouter(
+      controller,
+      observers: observers,
+      restorationId: restorationId,
+    );
   }
 
   /// Remove a navigator with this name
@@ -375,6 +382,16 @@ class _QRSettings {
   /// [More info](https://github.com/SchabanBo/qlevar_router#page-transition)
   QPage pagesType = const QPlatformPage();
 
+  /// Set this to true if you want to enable auto restoration.
+  /// This will set the [Navigator.restorationScopeId] automatically for all navigators
+  /// and will set the restorationId for all routes.
+  /// [More info](https://github.com/SchabanBo/qlevar_router##restoration-management)
+  bool autoRestoration = false;
+
+  /// The global middlewares to use for all routes. This will be run on every route.
+  final List<QMiddleware> globalMiddlewares = [];
+
+  /// reset the settings to the default values.
   void reset() {
     logger = print;
     enableDebugLog = false;
@@ -384,6 +401,7 @@ class _QRSettings {
     oneRouteInstancePerStack = false;
     pagesType = const QPlatformPage();
     mockRoute = null;
+    globalMiddlewares.clear();
   }
 }
 

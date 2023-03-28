@@ -21,6 +21,9 @@ class AppRoutes {
     // enable debug logging for all routes
     QR.settings.enableDebugLog = true;
 
+    // enable auto restoration for all routes
+    QR.settings.autoRestoration = true;
+
     // you can set your own logger
     // QR.settings.logger = (String message) {
     //   print(message);

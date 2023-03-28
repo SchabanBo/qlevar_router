@@ -30,12 +30,20 @@ abstract class _PageConverter {
     return _getMaterialPage(child);
   }
 
+  String? _getRestorationId() {
+    var id = pageType.restorationId;
+    if (id == null && QR.settings.autoRestoration) {
+      id = 'page:${matchKey.name}';
+    }
+    return id;
+  }
+
   QMaterialPageInternal _getMaterialPage(Widget child) => QMaterialPageInternal(
         name: pageName,
         child: child,
         maintainState: pageType.maintainState,
         fullScreenDialog: pageType.fullScreenDialog,
-        restorationId: pageType.restorationId,
+        restorationId: _getRestorationId(),
         key: key,
         addMaterialWidget: pageType is QMaterialPage
             ? (pageType as QMaterialPage).addMaterialWidget
@@ -49,7 +57,7 @@ abstract class _PageConverter {
         child: child,
         maintainState: pageType.maintainState,
         fullScreenDialog: pageType.fullScreenDialog,
-        restorationId: pageType.restorationId,
+        restorationId: _getRestorationId(),
         title: title,
         key: key,
         matchKey: matchKey,
@@ -62,7 +70,7 @@ abstract class _PageConverter {
       child: child,
       maintainState: pageType.maintainState,
       fullScreenDialog: pageType.fullScreenDialog,
-      restorationId: pageType.restorationId,
+      restorationId: _getRestorationId(),
       key: key,
       matchKey: matchKey,
       barrierColor: page.barrierColor,
@@ -85,12 +93,12 @@ abstract class _PageConverter {
       case QSlidePage:
         final slide = type as QSlidePage;
         child = SlideTransition(
-            position: CurvedAnimation(
-                    parent: animation, curve: slide.curve ?? Curves.easeIn)
-                .drive(Tween<Offset>(
-                    end: Offset.zero,
-                    begin: slide.offset ?? const Offset(1, 0))),
-            child: child);
+          position: CurvedAnimation(
+                  parent: animation, curve: slide.curve ?? Curves.easeIn)
+              .drive(Tween<Offset>(
+                  end: Offset.zero, begin: slide.offset ?? const Offset(1, 0))),
+          child: child,
+        );
         break;
       case QFadePage:
         child = FadeTransition(
@@ -130,6 +138,7 @@ class PageCreator extends _PageConverter {
         initPath: qRoute.initRoute ?? '/',
         initRoute: route.child,
         observers: qRoute.observers,
+        restorationId: qRoute.restorationId,
       );
       if (qRoute.initRoute != null && route.child == null) {
         route.activePath = '${route.activePath}${qRoute.initRoute}';

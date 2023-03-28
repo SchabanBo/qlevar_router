@@ -1,6 +1,11 @@
 # CHANGELOG
 
-## Current
+## 1.9.0 28.03.2023
+
+- Fix #111
+- Fix #112
+- Add restorationScopeId for the routers and auto restoration
+- add global middlewares
 
 ## 1.8.1  25.02.2023
 

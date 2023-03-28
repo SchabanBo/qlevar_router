@@ -17,12 +17,17 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     this.withWebBar = false,
     this.alwaysAddInitPath = false,
     List<NavigatorObserver>? observers,
+    this.restorationScopeId,
   }) : key = navKey ?? GlobalKey<NavigatorState>() {
     _createController();
     if (observers != null) {
       this.observers.addAll(observers);
     }
   }
+
+  /// Restoration ID to save and restore the state of the navigator, including
+  /// its history.
+  final String? restorationScopeId;
 
   /// Set this to true if you want always the initial router to be added on the stack
   /// Example.
@@ -74,15 +79,18 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   @override
   Future<void> setInitialRoutePath(String configuration) async {
     await _controllerCompleter.future;
-    if (alwaysAddInitPath) {
-      await _controller.push(initPath ?? '/');
-    }
-    if (configuration != '/') {
+    if (configuration != _slash) {
       QR.log('incoming init path $configuration', isDebug: true);
-      await _controller.push(configuration);
+      if (alwaysAddInitPath) {
+        QR.log(
+            'adding init path $initPath because QRouterDelegate.alwaysAddInitPath is true',
+            isDebug: true);
+        await QR.to(initPath ?? _slash);
+      }
+      await QR.to(configuration);
       return;
     }
-    await _controller.push(initPath ?? configuration);
+    await _controller.push(initPath ?? _slash);
   }
 
   @override
@@ -109,15 +117,22 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     return;
   }
 
-  Navigator get navigator => Navigator(
-        key: key,
-        pages: _controller.pages,
-        observers: observers,
-        onPopPage: (route, result) {
-          _controller.removeLast();
-          return false;
-        },
-      );
+  Navigator get navigator {
+    var scopId = restorationScopeId;
+    if (scopId == null && QR.settings.autoRestoration) {
+      scopId = 'router:${_controller.key.name}';
+    }
+    return Navigator(
+      key: key,
+      pages: _controller.pages,
+      observers: observers,
+      restorationScopeId: restorationScopeId,
+      onPopPage: (route, result) {
+        _controller.removeLast();
+        return false;
+      },
+    );
+  }
 
   Widget _buildNavigator() {
     if (!withWebBar || !BrowserAddressBar.isNeeded) {
@@ -162,3 +177,5 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     );
   }
 }
+
+const _slash = '/';

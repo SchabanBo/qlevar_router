@@ -7,9 +7,19 @@ class MiddlewareController {
   final QRouteInternal route;
   MiddlewareController(this.route);
 
+  List<QMiddleware> get middleware {
+    final list = <QMiddleware>[];
+    if (route.hasMiddleware) {
+      list.addAll(route.route.middleware!);
+    }
+    list.addAll(QR.settings.globalMiddlewares);
+    list.sort((a, b) => a.priority.compareTo(b.priority));
+    return list;
+  }
+
   Future<String?> runRedirect() async {
     final path = route.getLastActivePath();
-    for (var middle in route.route.middleware!) {
+    for (var middle in middleware) {
       final result = await middle.redirectGuard(path);
       if (result != null) {
         return result;
@@ -20,7 +30,7 @@ class MiddlewareController {
 
   Future<QNameRedirect?> runRedirectName() async {
     final path = route.getLastActivePath();
-    for (var middle in route.route.middleware!) {
+    for (var middle in middleware) {
       final result = await middle.redirectGuardToName(path);
       if (result != null) {
         return result;
@@ -30,29 +40,22 @@ class MiddlewareController {
   }
 
   Future runOnEnter() async {
-    if (!route.hasMiddleware) {
-      return;
-    }
-    for (var middle in route.route.middleware!) {
+    for (var middle in middleware) {
       await middle.onEnter();
     }
   }
 
   Future runOnExit() async {
-    if (!route.hasMiddleware) {
-      return;
-    }
-    for (var middle in route.route.middleware!) {
+    for (var middle in middleware) {
       await middle.onExit();
     }
   }
 
   Future scheduleOnExited() async {
-    if (!route.hasMiddleware) return;
-
+    if (middleware.isEmpty) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       WidgetsBinding.instance.endOfFrame.then((_) {
-        for (var middle in route.route.middleware!) {
+        for (var middle in middleware) {
           middle.onExited();
         }
       });
@@ -60,22 +63,14 @@ class MiddlewareController {
   }
 
   Future runOnMatch() async {
-    if (!route.hasMiddleware) {
-      return;
-    }
-    for (var middle in route.route.middleware!) {
+    for (var middle in middleware) {
       await middle.onMatch();
     }
   }
 
   Future<bool> runCanPop() async {
-    if (!route.hasMiddleware) {
-      return true;
-    }
-    for (var middle in route.route.middleware!) {
-      if (!await middle.canPop()) {
-        return false;
-      }
+    for (var middle in middleware) {
+      if (!await middle.canPop()) return false;
     }
     return true;
   }

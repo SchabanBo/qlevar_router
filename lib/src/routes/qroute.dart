@@ -20,7 +20,8 @@ class QRoute {
         observers = null,
         declarativeBuilder = null,
         initRoute = null,
-        builderChild = null;
+        builderChild = null,
+        restorationId = null;
 
   /// Define a declarative router
   const QRoute.declarative({
@@ -35,7 +36,8 @@ class QRoute {
         observers = null,
         builderChild = null,
         builder = null,
-        children = null;
+        children = null,
+        restorationId = null;
 
   /// Call this function to get a [QRouter] to use it for Nested Navigation
   const QRoute.withChild({
@@ -47,10 +49,15 @@ class QRoute {
     this.middleware,
     this.children,
     this.observers,
+    this.restorationId,
     this.meta = const {},
   })  : assert(builderChild != null),
         declarativeBuilder = null,
         builder = null;
+
+  /// Restoration ID to save and restore the state of the navigator, including
+  /// its history.
+  final String? restorationId;
 
   static QRoute empty = QRoute(path: '/', builder: () => const SizedBox());
 
@@ -137,6 +144,7 @@ class QRoute {
       String? initRoute,
       List<QRoute>? children,
       List<NavigatorObserver>? observers,
+      String? restorationId,
       Map<String, dynamic>? meta}) {
     if (withChildRouter) {
       return QRoute.withChild(
@@ -149,6 +157,7 @@ class QRoute {
         children: children ?? this.children,
         observers: observers ?? this.observers,
         meta: meta ?? this.meta,
+        restorationId: restorationId ?? this.restorationId,
       );
     }
 

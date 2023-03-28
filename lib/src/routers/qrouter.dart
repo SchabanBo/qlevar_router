@@ -12,12 +12,20 @@ class QRouter extends StatefulWidget {
 
   late final List<NavigatorObserver> observers = [_controller.observer];
 
-  QRouter(this._controller, {List<NavigatorObserver>? observers, Key? key})
-      : super(key: key) {
+  QRouter(
+    this._controller, {
+    List<NavigatorObserver>? observers,
+    Key? key,
+    this.restorationId,
+  }) : super(key: key) {
     if (observers != null) {
       this.observers.addAll(observers);
     }
   }
+
+  /// Restoration ID to save and restore the state of the navigator, including
+  /// its history.
+  final String? restorationId;
 
   /// Get the name for the current child
   /// This is the name which define in [QRoute.name] if it is null [QRoute.path]
@@ -47,11 +55,17 @@ class _QRouterState extends State<QRouter> {
 
   @override
   Widget build(BuildContext context) {
+    var scopId = widget.restorationId;
+    if (scopId == null && QR.settings.autoRestoration) {
+      scopId = 'router:${widget._controller.key.name}';
+    }
+
     return Navigator(
       key: widget.navKey,
       observers: widget.observers,
       pages: widget._controller.pages,
       onPopPage: _onPopPage,
+      restorationScopeId: scopId,
     );
   }
 
