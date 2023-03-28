@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Current
+## 1.9.0 28.03.2023
 
 - Fix #111
 - Fix #112

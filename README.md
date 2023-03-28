@@ -237,7 +237,7 @@ QR.settings.globalMiddleware = [
 ## Priority
 
 The priority of the middleware, the lower the number the higher the priority. Middleware with the same priority will be executed in the order they were added
-Middleware with higher priority will be executed first.
+Middleware with higher priority will be executed first. The default priority is 500.
 
 ```dart
 QRoute(
