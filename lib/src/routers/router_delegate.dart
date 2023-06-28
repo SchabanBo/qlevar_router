@@ -96,7 +96,9 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   @override
   Future<void> setNewRoutePath(String configuration) async {
     // fix route encoding (order%20home => order home)
-    configuration = Uri.decodeFull(configuration).toString();
+    try {
+      configuration = Uri.decodeFull(configuration).toString();
+    } catch (_) {}
     if (QR.history.hasLast &&
         QR.history.last.path == QR.settings.notFoundPage.path) {
       if (QR.history.length > 2 &&
