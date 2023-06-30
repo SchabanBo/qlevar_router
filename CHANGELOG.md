@@ -1,6 +1,6 @@
 # CHANGELOG
 
-# 1.9.1 
+# 1.9.1 30.06.2023
 
 - Merge #124 by @rounce
 - Fix #129
