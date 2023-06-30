@@ -98,7 +98,9 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     // fix route encoding (order%20home => order home)
     try {
       configuration = Uri.decodeFull(configuration).toString();
-    } catch (_) {}
+    } catch (_) {
+      QR.log('Error while decoding the route $configuration');
+    }
     if (QR.history.hasLast &&
         QR.history.last.path == QR.settings.notFoundPage.path) {
       if (QR.history.length > 2 &&
@@ -108,9 +110,9 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     }
     if (QR.history.hasLast && configuration == QR.history.last.path) {
       QR.log(
-          // ignore: lines_longer_than_80_chars
-          'New route reported that was last visited. using QR.back() to response',
-          isDebug: true);
+        'New route reported that was last visited. using QR.back() to response',
+        isDebug: true,
+      );
 
       QR.back();
       return;
