@@ -400,7 +400,8 @@ class QRouterController extends QNavigator {
       // to be added, so do not run the middleware for it or add it again
       return;
     }
-    if (route.hasMiddleware) {
+    if (route.hasMiddleware ||
+        (QR.settings.globalMiddlewares.isNotEmpty && !route.isNotFound)) {
       final medCont = MiddlewareController(route);
       final result = await medCont.runRedirect();
       if (result != null) {

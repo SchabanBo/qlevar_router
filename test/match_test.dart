@@ -185,5 +185,27 @@ void main() {
       expect(() => QRouteInternal.from(route, '/'),
           throwsA(isA<AssertionError>()));
     });
+
+    testWidgets('#124', (tester) async {
+      QR.reset();
+      await tester.pumpWidget(AppWrapper([
+        QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
+        QRoute(
+            name: 'two',
+            path: '/two/:id',
+            builder: () => const Scaffold(body: WidgetTwo())),
+        QRoute(
+            name: 'three',
+            path: '/three',
+            builder: () => const Scaffold(body: WidgetThree())),
+      ]));
+      await QR.navigator.push('/two/1');
+      QR.updateUrlInfo('/two/1/test');
+      QR.updateUrlInfo('/two/1');
+      await QR.navigator.push('/three');
+      await QR.back();
+      await QR.back();
+      printCurrentHistory();
+    });
   });
 }
