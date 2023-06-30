@@ -180,6 +180,7 @@ class MatchController {
     }
     var match = result;
     while (_searchIndex < path.pathSegments.length) {
+      if (match.children == null) break;
       searchIn = match.children!;
       match.child = await _tryFind(searchIn, _searchIndex);
       if (match.child == null) {
