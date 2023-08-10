@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import '../../qlevar_router.dart';
 import '../helpers/widgets/routes_tree.dart';
 import '../pages/qpage_internal.dart';
-import '../qr.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
 import '../types/qhistory.dart';
@@ -32,55 +31,77 @@ abstract class QNavigator extends ChangeNotifier {
       bool updateParams = false,
       bool addHistory = true});
 
+  /// {@template q.navigator.push}
+  /// Push this [Path] on the top of the stack
+  /// {@endtemplate}
+  Future<void> push(String path);
+
+  /// {@template q.navigator.pushName}
   /// Push tha page with this [name] and this [params] on the top of the stack
+  /// {@endtemplate}
   Future<void> pushName(String name, {Map<String, dynamic>? params});
 
+  /// {@template q.navigator.replace}
+  /// Replace this [path] with this [withPath]
+  /// {@endtemplate}
+  Future<void> replace(String path, String withPath);
+
+  /// {@template q.navigator.replaceName}
+  /// Replace the page with the page with this [name] and this [params]
+  /// {@endtemplate}
   Future<void> replaceName(String name, String withName,
       {Map<String, dynamic>? params, Map<String, dynamic>? withParams});
 
+  /// {@template q.navigator.replaceAll}
+  /// Remove all pages and add the page with [path]
+  /// {@endtemplate}
+  Future<void> replaceAll(String path);
+
+  /// {@template q.navigator.replaceAllWithName}
+  /// remove all pages with the page with this [path] and this [params]
+  /// {@endtemplate}
   Future<void> replaceAllWithName(String name, {Map<String, dynamic>? params});
 
-  @Deprecated('Use popUntilOrPushName instead')
-  Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params});
-
-  Future<void> popUntilOrPushName(String name, {Map<String, dynamic>? params});
-
-  /// Push this [Path] on the top of the stack
-  Future<void> push(String path);
-
-  @Deprecated('Use popUntilOrPush instead')
-  Future<void> popUnitOrPush(String path);
-
+  /// {@template q.navigator.popUntilOrPush}
   /// Push this [Path] on the top of the stack, or pop unit it if it's already
-  /// on the stack
+  /// in the stack
+  /// {@endtemplate}
   Future<void> popUntilOrPush(String path);
 
+  /// {@template q.navigator.popUntilOrPushName}
+  /// Push the page with this [name] on the top of the stack, or pop unit it if it's already
+  /// in the stack
+  /// {@endtemplate}
+  Future<void> popUntilOrPushName(String name, {Map<String, dynamic>? params});
+
+  /// {@template q.navigator.switchTo}
   /// Push this path on the top of the stack if not already on the stack
   /// or bring it to top if already on the stack
   /// This is useful to switch between pages without losing the states of them
   /// the defiance between this and [popUntilOrPush] is that no page will
   /// be popped
+  /// {@endtemplate}
   Future<void> switchTo(String path);
 
+  /// {@template q.navigator.switchToName}
   /// Push this route name on the top of the stack if not already on the stack
   /// or bring it to top if already on the stack
   /// This is useful to switch between pages without losing the states of them
+  /// {@endtemplate}
   Future<void> switchToName(String name, {Map<String, dynamic>? params});
 
-  /// Replace this [path] with this [withPath]
-  Future<void> replace(String path, String withPath);
-
+  /// {@template q.navigator.replaceLast}
   /// Remove the last page in the stack and add the one with this [path]
+  /// {@endtemplate}
   Future<void> replaceLast(String path);
 
+  /// {@template q.navigator.replaceLastName}
   /// Remove the last page in the stack and add the one with this [name]
+  /// {@endtemplate}
   Future<void> replaceLastName(String name, {Map<String, dynamic>? params});
 
-  /// Remove all pages and add the page with [path]
-  Future<void> replaceAll(String path);
-
   /// remove the last page in the stack
-  Future<PopResult> removeLast();
+  Future<PopResult> removeLast({dynamic result});
 
   /// Add Routes to this Navigator
   /// You can extend the defended routes for this navigator.
@@ -93,24 +114,15 @@ abstract class QNavigator extends ChangeNotifier {
 }
 
 class QRouterController extends QNavigator {
-  QRouterController(this.key, this.routes);
-
-  Future<void> initialize({String? initPath, QRouteInternal? initRoute}) async {
-    if (initRoute != null) {
-      await addRouteAsync(initRoute);
-    } else if (initPath != null) {
-      await push(initPath);
-    }
-  }
-
   bool isDisposed = false;
   final QKey key;
   late GlobalKey<NavigatorState> navKey;
+  late final observer = QNavigatorObserver(key.name);
   final QRouteChildren routes;
 
-  late final observer = QNavigatorObserver(key.name);
-
   final _pagesController = PagesController();
+
+  QRouterController(this.key, this.routes);
 
   @override
   void addRoutes(List<QRoute> routes) => this.routes.add(routes);
@@ -124,13 +136,6 @@ class QRouterController extends QNavigator {
   @override
   RoutesChildren get getRoutesWidget =>
       RoutesChildren(routes, parentPath: routes.parentFullPath);
-
-  @override
-  Future<void> popUnitOrPush(String path) => popUntilOrPush(path);
-
-  @override
-  Future<void> popUnitOrPushName(String name, {Map<String, dynamic>? params}) =>
-      popUntilOrPushName(name, params: params);
 
   @override
   Future<void> popUntilOrPush(String path) async {
@@ -155,8 +160,8 @@ class QRouterController extends QNavigator {
       await addRouteAsync(await findName(name, params: params));
 
   @override
-  Future<PopResult> removeLast() async {
-    final isPopped = await _pagesController.removeLast();
+  Future<PopResult> removeLast({dynamic result}) async {
+    final isPopped = await _pagesController.removeLast(result: result);
     if (isPopped == PopResult.Popped) {
       update(withParams: true);
     }
@@ -251,6 +256,14 @@ class QRouterController extends QNavigator {
     update(withParams: updateParams);
     if (!addHistory) {
       QR.history.removeLast();
+    }
+  }
+
+  Future<void> initialize({String? initPath, QRouteInternal? initRoute}) async {
+    if (initRoute != null) {
+      await addRouteAsync(initRoute);
+    } else if (initPath != null) {
+      await push(initPath);
     }
   }
 
@@ -394,6 +407,11 @@ class QRouterController extends QNavigator {
     notifyListeners();
   }
 
+  /// this method is only called when this navigator has a [PopupRoute] to remove it
+  void closePopup<T>(T? result) {
+    Navigator.pop(navKey.currentContext!, result);
+  }
+
   Future<void> _addRoute(QRouteInternal route) async {
     if (_pagesController.exist(route) && route.hasChild) {
       // if page already exist, and has a child, that means the child need
@@ -476,10 +494,5 @@ class QRouterController extends QNavigator {
     }
 
     return route;
-  }
-
-  /// this method is only called when this navigator has a [PopupRoute] to remove it
-  void closePopup() {
-    Navigator.pop(navKey.currentContext!);
   }
 }

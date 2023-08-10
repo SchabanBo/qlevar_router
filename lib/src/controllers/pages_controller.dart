@@ -26,7 +26,8 @@ class PagesController {
     }
   }
 
-  Future<PopResult> removeLast({bool allowEmptyPages = false}) async {
+  Future<PopResult> removeLast(
+      {dynamic result, bool allowEmptyPages = false}) async {
     if (routes.isEmpty) {
       return PopResult.NotPopped;
     }
@@ -53,6 +54,7 @@ class PagesController {
     await _notifyObserverOnPop(route);
     routes.removeLast(); // remove from the routes
     pages.removeLast(); // remove from the pages
+    route.complete(result);
     _checkEmptyStack();
     return PopResult.Popped;
   }
@@ -76,9 +78,9 @@ class PagesController {
 
   Future<PopResult> removeAll() async {
     for (var i = 0; i < routes.length; i++) {
-      final result = await removeLast(allowEmptyPages: true);
-      if (result != PopResult.Popped) {
-        return result;
+      final popResult = await removeLast(allowEmptyPages: true);
+      if (popResult != PopResult.Popped) {
+        return popResult;
       }
       i--;
     }

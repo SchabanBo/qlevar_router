@@ -1,6 +1,7 @@
 import 'src/qr.dart';
 
 export 'src/pages/qpages.dart';
+export 'src/qr.dart';
 export 'src/routers/qdeclarative._router.dart';
 export 'src/routers/qrouter.dart';
 export 'src/routers/router_delegate.dart';
