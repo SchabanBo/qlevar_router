@@ -34,6 +34,7 @@
   - [Page Transition](#page-transition)
     - [Mix it up](#mix-it-up)
     - [App Page Transition](#app-page-transition)
+  - [waiting for page result](#waiting-for-page-result)
   - [Restoration management](#restoration-management)
   - [Other features](#other-features)
   - [Add or remove routes in run Time](#add-or-remove-routes-in-run-time)
@@ -141,7 +142,6 @@ In addition to the demo, you can find more samples and test some use cases in th
 - [Bottom Navigation bar Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/bottom_nav_bar.dart)
 - [TabView Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/tab_view.dart)
 - [NavRail Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/common_cases/nav_rail.dart)
-- [Use data from another page](https://github.com/SchabanBo/qr_samples/blob/main/lib/examples/return_data.dart)
 
 ## Parameters
 
@@ -400,6 +400,23 @@ in this case `QFadePage.transitionDurationMilliseconds (1000)` will be used and 
 ### App Page Transition
 
 you can define the Transition for all pages in the app with setting the page type in `QR.settings.pagesType`
+
+## waiting for page result
+
+If you need to wait for a result from another page, you can do so by setting `waitForResult` to true before navigating to the page.
+More info: [example](https://qlevar-router.netlify.app/#/await-result) | [example code](example\lib\pages\await_result\await_result_view.dart) | [tests](test\waiting_results_test.dart).
+
+```dart
+
+/// navigate to the page using
+final result = await QR.to<String>('/page', waitForResult: true);
+// or by name
+final result = await QR.toName<String>('page', waitForResult: true);
+
+/// in the page you want to get the result from
+QR.back('result');
+
+```
 
 ## Restoration management
 

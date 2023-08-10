@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../qlevar_router.dart';
 import 'qroute_children.dart';
 
@@ -27,6 +29,8 @@ class QRouteInternal {
 
   /// The active child for this route
   QRouteInternal? child;
+
+  Completer? completer;
 
   QRouteInternal({
     required this.key,
@@ -138,5 +142,19 @@ class QRouteInternal {
       childRoute = childRoute.child;
     }
     return result;
+  }
+
+  Future<T> getFuture<T>() {
+    if (child != null) return child!.getFuture();
+    completer ??= Completer<T>();
+    return completer!.future as Future<T>;
+  }
+
+  void complete(dynamic value) {
+    if (completer != null && !completer!.isCompleted) {
+      completer!.complete(value);
+      completer = null;
+    }
+    if (child != null) child!.complete(value);
   }
 }

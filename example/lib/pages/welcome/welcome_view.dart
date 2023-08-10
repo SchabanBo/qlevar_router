@@ -40,6 +40,10 @@ class WelcomeView extends StatelessWidget {
               onPressed: () => QR.to('/parent'),
             ),
             NodeWidget(
+              name: 'Await routes results',
+              onPressed: () => QR.to('/await-result'),
+            ),
+            NodeWidget(
               name: 'Declarative',
               onPressed: () => QR.to('/declarative'),
             ),

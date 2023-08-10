@@ -7,6 +7,7 @@ import '../pages/login/login_view.dart';
 import '../pages/not_found/not_found_view.dart';
 import '../pages/welcome/welcome_view.dart';
 import '../services/auth_service.dart';
+import 'await_result_routes.dart';
 import 'dashboard_routes.dart';
 import 'editable_routes.dart';
 import 'middleware_routes.dart';
@@ -90,6 +91,7 @@ class AppRoutes {
     MobileRoutes().route, // Add the mobile routes
     MiddlewareRoutes().route, // Add the middleware routes
     EditableRoutes().route, // Add the editable routes
+    AwaitResultRoutes().route, // Add the await result routes
     // Add declarative routes
     QRoute.declarative(
       path: '/declarative',

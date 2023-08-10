@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../../qlevar_router.dart';
 import '../controllers/qrouter_controller.dart';
 import '../helpers/widgets/browser_address_bar.dart';
-import '../qr.dart';
 
 /// Qlevar Router implementation for [RouterDelegate]
 // ignore: prefer_mixin

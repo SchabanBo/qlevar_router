@@ -1,6 +1,14 @@
 # CHANGELOG
 
-# 1.9.1 30.06.2023
+## 1.10.0 10.08.2023
+
+- removes `popUnitOrPushName`
+- removes `popUnitOrPush`
+- `push`, `pushName`, `replace`, `replaceName`, `replaceAll`, `replaceAllWithName`, `popUntilOrPush`, `popUntilOrPushName`, `switchTo`, `switchToName`, `replaceLast` and `replaceLastName` has been added to `QR`, which will call that same method on the current navigator.
+- set min SDK to 2.15.0
+- Adds #133
+
+## 1.9.1 30.06.2023
 
 - Merge #124 by @rounce
 - Fix #129

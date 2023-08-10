@@ -1,5 +1,4 @@
 import '../../qlevar_router.dart';
-import '../qr.dart';
 import '../routes/qroute_children.dart';
 import '../routes/qroute_internal.dart';
 import 'middleware_controller.dart';
