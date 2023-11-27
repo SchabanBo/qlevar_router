@@ -70,8 +70,8 @@ class PagesController {
     QR.removeNavigator(route.name); // remove navigator if exist
     QR.history.remove(route); // remove history for this route
     await _notifyObserverOnPop(route);
-    routes.removeAt(index); // remove from the routes
-    pages.removeAt(index); // remove from the pages
+    if(routes.length > 0) routes.removeAt(index); // remove from the routes
+    if(pages.length > 0) pages.removeAt(index); // remove from the pages
     _checkEmptyStack();
     return true;
   }
