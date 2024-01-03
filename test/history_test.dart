@@ -54,6 +54,11 @@ void main() {
 
       await QR.back();
       expectedPath('/nested/child');
+
+      /// test the toString function
+      final beforeLast = QR.history.beforeLast;
+      expect(beforeLast.toString(),
+          'key: ${beforeLast.key}, path: ${beforeLast.path}, navigator: ${beforeLast.navigator}');
       expectedHistoryLength(3);
 
       await QR.back();

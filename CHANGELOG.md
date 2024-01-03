@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.10.1
+
+- #140 Fix route restoration by @rounce
+- Fix #144 by @jessicamrbr
+- add tags to pubspec.yaml
+
 ## 1.10.0 10.08.2023
 
 - removes `popUnitOrPushName`
@@ -8,24 +14,24 @@
 - set min SDK to 2.15.0
 - Adds #133
 
-## 1.9.1 30.06.2023
+## 1.9.1
 
 - Merge #124 by @rounce
 - Fix #129
 
-## 1.9.0 28.03.2023
+## 1.9.0
 
 - Fix #111
 - Fix #112
 - Add restorationScopeId for the routers and auto restoration
 - add global middlewares
 
-## 1.8.1  25.02.2023
+## 1.8.1
 
 - Fix #109
 - add #107
 
-## 1.8.0  10.02.2023
+## 1.8.0
 
 - Throws exception if the route name is not unique.
 - Cleanups analyzer warnings.
@@ -36,7 +42,7 @@
 
 - (Add #105) Replaced milli-seconds by Duration in PageTransition @tejHackerDEV
 
-## [1.7.1] 12.11.2022
+## [1.7.1]
 
 - Fix #90.
 - Fix path will sometime not update when PageAlreadyExistAction.BringToTop is set.

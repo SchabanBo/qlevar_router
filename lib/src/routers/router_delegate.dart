@@ -116,7 +116,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       QR.back();
       return;
     }
-    await QR.to(configuration);
+    await QR.to(configuration, ignoreSamePath: false);
     return;
   }
 
