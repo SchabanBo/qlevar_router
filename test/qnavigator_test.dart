@@ -37,8 +37,8 @@ void main() {
       expect(find.byType(WidgetThree), findsNothing);
       expectedHistoryLength(1);
 
-      await QR.navigator.push('/two');
-      await QR.navigator.push('/three');
+      await QR.push('/two');
+      await QR.push('/three');
 
       expectedPath('/three');
       await tester.pumpAndSettle();
@@ -113,7 +113,7 @@ void main() {
     expect(find.byType(WidgetThree), findsOneWidget);
     expectedHistoryLength(2);
 
-    await QR.navigator.replaceAll('/three');
+    await QR.replaceAll('/three');
     printCurrentHistory();
 
     expectedPath('/three');
@@ -262,7 +262,7 @@ void main() {
     expect(find.byType(WidgetThree), findsNothing);
     expectedHistoryLength(2);
 
-    await QR.navigator.replace('/two', '/three');
+    await QR.replace('/two', '/three');
 
     expectedPath('/three');
     await tester.pumpAndSettle();
@@ -293,7 +293,7 @@ void main() {
     expect(find.byType(WidgetThree), findsNothing);
     expectedHistoryLength(2);
 
-    await QR.navigator.replaceName('two', 'three');
+    await QR.replaceName('two', 'three');
 
     expectedPath('/three');
     await tester.pumpAndSettle();
@@ -324,7 +324,7 @@ void main() {
     expect(find.byType(WidgetThree), findsNothing);
     expectedHistoryLength(2);
 
-    await QR.navigator.replaceLast('/three');
+    await QR.replaceLast('/three');
 
     expectedPath('/three');
     await tester.pumpAndSettle();
@@ -355,7 +355,7 @@ void main() {
     expect(find.byType(WidgetThree), findsNothing);
     expectedHistoryLength(2);
 
-    await QR.navigator.replaceLastName('three');
+    await QR.replaceLastName('three');
 
     expectedPath('/three');
     await tester.pumpAndSettle();

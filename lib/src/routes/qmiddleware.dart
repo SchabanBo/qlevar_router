@@ -34,6 +34,7 @@ class QMiddleware {
   /// to confirm that he wants to leave the page
   /// and if he doesn't want to leave the page you can return false
   /// and the page will not be removed
+  ///{@endtemplate}
   /// ````dart
   /// canPop: () async => await showDialog<bool>(
   ///   context: context,
@@ -52,7 +53,6 @@ class QMiddleware {
   ///   ),
   /// ) ?? false,
   /// ````
-  ///{@endtemplate}
   Future<bool> canPop() async => true;
 
   /// {@template QMiddleware.onMatch}

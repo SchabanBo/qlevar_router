@@ -504,7 +504,7 @@ class AppRoutes {
 
 ## Testing
 
-For easy testing you can use `RouteMock` or `NamedRouteMock` so when navigating while testing you can give which widget should be shown.
+For easy testing you can use `RouteMock` so when navigating while testing you can give which widget should be shown.
 E.x: you have a widget that when clicking on in should navigate to the HomeView. In normal case to test this you should add QRouterDelegate so when clicking on the widget the test wont fail and show the page. But in this case we only what to test if this button send the request to package in a correct way.
 
 ```dart
