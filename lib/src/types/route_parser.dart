@@ -9,7 +9,7 @@ class QRouteInformationParser extends RouteInformationParser<String> {
   @override
   Future<String> parseRouteInformation(
           RouteInformation routeInformation) async =>
-      SynchronousFuture(routeInformation.uri.path);
+      SynchronousFuture(routeInformation.uri.toString());
 
   @override
   RouteInformation restoreRouteInformation(String configuration) =>
