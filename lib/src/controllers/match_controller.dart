@@ -122,6 +122,11 @@ class MatchController {
   }
 
   static String findPathFromName(String name, Map<String, dynamic> params) {
+    // Check if this route should be mocked
+    if (QR.settings.mockRoute != null) {
+      final path = QR.settings.mockRoute!.mockName(name);
+      if (path != null) return path;
+    }
     final isPathFound = QR.treeInfo.namePath[name];
     assert(isPathFound != null, 'Path name not found');
     var newPath = isPathFound!;
