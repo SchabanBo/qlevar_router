@@ -42,7 +42,7 @@ void main() {
 }
 
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class App extends StatelessWidget {
 
 class Dashboard extends StatelessWidget {
   final QRouter router;
-  const Dashboard(this.router, {Key? key}) : super(key: key);
+  const Dashboard(this.router, {super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -96,7 +96,7 @@ class Dashboard extends StatelessWidget {
 }
 
 class Sidebar extends StatelessWidget {
-  const Sidebar({Key? key}) : super(key: key);
+  const Sidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +126,7 @@ class Sidebar extends StatelessWidget {
 class DashboardChild extends StatelessWidget {
   final String name;
   final Color color;
-  const DashboardChild(this.name, this.color, {Key? key}) : super(key: key);
+  const DashboardChild(this.name, this.color, {super.key});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -139,7 +139,7 @@ class DashboardChild extends StatelessWidget {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +195,7 @@ class MyApp extends StatelessWidget {
 
 class DashDashboard extends StatelessWidget {
   final QRouter router;
-  const DashDashboard(this.router, {Key? key}) : super(key: key);
+  const DashDashboard(this.router, {super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -215,7 +215,7 @@ class DashDashboard extends StatelessWidget {
 }
 
 class DashSidebar extends StatelessWidget {
-  const DashSidebar({Key? key}) : super(key: key);
+  const DashSidebar({super.key});
 
   @override
   Widget build(BuildContext context) {

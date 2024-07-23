@@ -1,5 +1,11 @@
 # CHANGELOG
 
+# 1.11.0
+
+- Add `TemporaryQRouter` to use the router in n popups or dialogs. #126
+- Fix #139
+- Set min SDK to 2.17.0
+
 # 1.10.3
 
 - Fixes #148

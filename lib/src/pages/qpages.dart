@@ -75,30 +75,22 @@ class QCustomPage extends QPage {
 
 class QSlidePage extends QCustomPage {
   const QSlidePage({
-    bool fullscreenDialog = false,
-    bool maintainState = true,
-    Color? barrierColor,
-    bool? barrierDismissible,
-    String? barrierLabel,
-    bool? opaque,
+    super.fullscreenDialog,
+    super.maintainState,
+    super.barrierColor,
+    super.barrierDismissible,
+    super.barrierLabel,
+    super.opaque,
     Duration? transitionDuration,
     Duration? reverseTransitionDuration,
-    String? restorationId,
-    QCustomPage? withType,
+    super.restorationId,
+    super.withType,
     this.curve,
     this.offset,
   }) : super(
-          barrierColor: barrierColor,
-          barrierDismissible: barrierDismissible,
-          barrierLabel: barrierLabel,
-          fullscreenDialog: fullscreenDialog,
-          maintainState: maintainState,
-          opaque: opaque,
           transitionDuration: transitionDuration ?? defaultDuration,
           reverseTransitionDuration:
               reverseTransitionDuration ?? defaultDuration,
-          restorationId: restorationId,
-          withType: withType,
         );
 
   final Curve? curve;
@@ -107,29 +99,21 @@ class QSlidePage extends QCustomPage {
 
 class QFadePage extends QCustomPage {
   const QFadePage({
-    bool fullscreenDialog = false,
-    bool maintainState = true,
-    Color? barrierColor,
-    bool? barrierDismissible,
-    String? barrierLabel,
-    bool? opaque,
+    super.fullscreenDialog,
+    super.maintainState,
+    super.barrierColor,
+    super.barrierDismissible,
+    super.barrierLabel,
+    super.opaque,
     Duration? transitionDuration,
     Duration? reverseTransitionDuration,
-    String? restorationId,
-    QCustomPage? withType,
+    super.restorationId,
+    super.withType,
     this.curve,
   }) : super(
-            barrierColor: barrierColor,
-            barrierDismissible: barrierDismissible,
-            barrierLabel: barrierLabel,
-            fullscreenDialog: fullscreenDialog,
-            maintainState: maintainState,
-            opaque: opaque,
             transitionDuration: transitionDuration ?? defaultDuration,
             reverseTransitionDuration:
-                reverseTransitionDuration ?? defaultDuration,
-            restorationId: restorationId,
-            withType: withType);
+                reverseTransitionDuration ?? defaultDuration);
 
   final Curve? curve;
 }

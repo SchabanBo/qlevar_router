@@ -10,8 +10,7 @@ class BrowserAddressBar extends StatefulWidget {
 
   final Function(String) setNewRoute;
   final QRouterController _controller;
-  const BrowserAddressBar(this.setNewRoute, this._controller, {Key? key})
-      : super(key: key);
+  const BrowserAddressBar(this.setNewRoute, this._controller, {super.key});
   @override
   State createState() => _BrowserAddressBarState();
 }

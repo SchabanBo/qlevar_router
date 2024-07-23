@@ -106,7 +106,7 @@ void main() {
 var pageAlreadyExistAction = PageAlreadyExistAction.Remove;
 
 class NavRailExample extends StatefulWidget {
-  const NavRailExample(this.router, {Key? key}) : super(key: key);
+  const NavRailExample(this.router, {super.key});
 
   final QRouter router;
 
@@ -153,7 +153,7 @@ class _NavRailExampleState extends RouterState<NavRailExample> {
 }
 
 class Tab extends StatelessWidget {
-  const Tab(this.name, {Key? key}) : super(key: key);
+  const Tab(this.name, {super.key});
 
   final String name;
 

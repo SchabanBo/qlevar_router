@@ -15,9 +15,9 @@ class QRouter extends StatefulWidget {
   QRouter(
     this._controller, {
     List<NavigatorObserver>? observers,
-    Key? key,
+    super.key,
     this.restorationId,
-  }) : super(key: key) {
+  }) {
     if (observers != null) {
       this.observers.addAll(observers);
     }

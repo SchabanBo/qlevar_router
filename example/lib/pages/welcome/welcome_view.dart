@@ -6,6 +6,7 @@ import '../../routes/mobile_routes.dart';
 import '../../routes/store_routes.dart';
 import 'debug_tools.dart';
 import 'node_widget.dart';
+import 'temporary_router_widget.dart';
 
 class WelcomeView extends StatelessWidget {
   const WelcomeView({Key? key}) : super(key: key);
@@ -51,6 +52,7 @@ class WelcomeView extends StatelessWidget {
               name: 'Editable Routes',
               onPressed: () => QR.to('/editable-routes'),
             ),
+            const SingleNavigatorRouterExample(),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ export 'src/qr.dart';
 export 'src/routers/qdeclarative._router.dart';
 export 'src/routers/qrouter.dart';
 export 'src/routers/router_delegate.dart';
+export 'src/routers/temporary_router.dart';
 export 'src/routes/qdeclarative_route.dart';
 export 'src/routes/qmiddleware.dart';
 export 'src/routes/qroute.dart';

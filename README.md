@@ -34,6 +34,8 @@
   - [Page Transition](#page-transition)
     - [Mix it up](#mix-it-up)
     - [App Page Transition](#app-page-transition)
+  - [Temporary router](#temporary-router)
+    - [Limitations](#limitations)
   - [waiting for page result](#waiting-for-page-result)
   - [Restoration management](#restoration-management)
   - [Other features](#other-features)
@@ -401,13 +403,39 @@ in this case `QFadePage.transitionDurationMilliseconds (1000)` will be used and 
 
 you can define the Transition for all pages in the app with setting the page type in `QR.settings.pagesType`
 
+## Temporary router
+
+It creates a new navigator that is only active while the widget is in view. This is useful for displaying nested routes within a modal or popup without affecting the main navigation stack. and  is automatically removed when the widget is removed from the tree, ensuring that there are no lingering navigators consuming resources.
+
+The temporary routes are the same as those defined in the main application, ensuring consistency and reuse of route definitions.
+
+```dart
+final storeRoutes = StoreRoutes().route;
+showModalBottomSheet(
+  context: context,
+  builder: (_) {
+    return TemporaryQRouter(
+      name: 'temp Store',
+      path: '/temp-store',
+      routes: [storeRoutes],
+      initPath: storeRoutes.path,
+    );
+  },
+);
+```
+This example will show the store page in a bottom sheet. the same routes are defined in the main app routes. and the sane pages will be displayed.
+
+To Check if the temporary router is active or not you can use `QR.navigator.isTemporary`.
+
+### Limitations
+- URL Navigation: The temporary router will not function if the user directly types the path into the URL. This limitation arises because the temporary router is designed to exist only within the widget tree and is destroyed when the widget is removed.
+
 ## waiting for page result
 
 If you need to wait for a result from another page, you can do so by setting `waitForResult` to true before navigating to the page.
 More info: [example](https://qlevar-router.netlify.app/#/await-result) | [example code](example\lib\pages\await_result\await_result_view.dart) | [tests](test\waiting_results_test.dart).
 
 ```dart
-
 /// navigate to the page using
 final result = await QR.to<String>('/page', waitForResult: true);
 // or by name

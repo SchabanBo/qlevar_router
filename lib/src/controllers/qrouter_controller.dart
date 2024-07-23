@@ -18,6 +18,8 @@ abstract class QNavigator extends ChangeNotifier {
   /// Get if the current [QNavigator] can pop or not
   bool get canPop;
 
+  bool get isTemporary;
+
   /// Get the current route for this navigator
   QRoute get currentRoute;
 
@@ -119,10 +121,12 @@ class QRouterController extends QNavigator {
   late GlobalKey<NavigatorState> navKey;
   late final observer = QNavigatorObserver(key.name);
   final QRouteChildren routes;
+  @override
+  final bool isTemporary;
 
   final _pagesController = PagesController();
 
-  QRouterController(this.key, this.routes);
+  QRouterController(this.key, this.routes, this.isTemporary);
 
   @override
   void addRoutes(List<QRoute> routes) => this.routes.add(routes);
@@ -268,8 +272,13 @@ class QRouterController extends QNavigator {
   }
 
   Future<void> disposeAsync() async {
-    await _pagesController.removeAll();
+    if (!isTemporary) await _pagesController.removeAll();
     isDisposed = true;
+    if (isTemporary) {
+      // remove routes from the tree
+      final routesNames = routes.routes.map((e) => e.name).toList();
+      removeRoutes(routesNames);
+    }
     super.dispose();
   }
 

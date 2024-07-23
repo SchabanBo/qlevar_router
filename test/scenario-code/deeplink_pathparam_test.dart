@@ -41,7 +41,7 @@ class Book {
 }
 
 class BooksListScreen extends StatelessWidget {
-  const BooksListScreen({Key? key}) : super(key: key);
+  const BooksListScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +60,7 @@ class BooksListScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  BookDetailsScreen({Key? key}) : super(key: key);
+  BookDetailsScreen({super.key});
   final Book book = books[QR.params['id']!.asInt!];
 
   @override

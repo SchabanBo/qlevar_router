@@ -44,7 +44,7 @@ class _RouteMock extends RouteMock {
 }
 
 class _TestWidget extends StatelessWidget {
-  const _TestWidget({Key? key}) : super(key: key);
+  const _TestWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class _RouteNameMock extends RouteMock {
 }
 
 class _TestNameWidget extends StatelessWidget {
-  const _TestNameWidget({Key? key}) : super(key: key);
+  const _TestNameWidget();
 
   @override
   Widget build(BuildContext context) {

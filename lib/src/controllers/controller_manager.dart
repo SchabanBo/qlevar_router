@@ -13,6 +13,7 @@ class ControllerManager {
     QRouteChildren? cRoutes,
     String? initPath,
     QRouteInternal? initRoute,
+    bool isTemporary,
   ) async {
     if (hasController(name)) {
       QR.log('A navigator with name [$name] already exist', isDebug: true);
@@ -29,7 +30,7 @@ class ControllerManager {
       cRoutes =
           QRouteChildren.from(routes!, key, routePath == '/' ? '' : routePath);
     }
-    final controller = QRouterController(key, cRoutes);
+    final controller = QRouterController(key, cRoutes, isTemporary);
     await controller.initialize(initPath: initPath, initRoute: initRoute);
     controllers.add(controller);
     return controller;
@@ -62,9 +63,10 @@ class ControllerManager {
           QKey(name),
           '/',
         ),
+        false,
       );
     }
-    throw Exception('No router was set in the app');
+    throw Exception('No navigator with name $name was found');
   }
 
   bool hasController(String name) =>
@@ -77,6 +79,7 @@ class ControllerManager {
     final controller = withName(name);
     await controller.disposeAsync();
     controllers.remove(controller);
+    QR.history.removeWithNavigator(name);
     QR.log('Navigator with name [$name] was removed');
     return true;
   }

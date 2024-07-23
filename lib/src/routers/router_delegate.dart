@@ -7,7 +7,6 @@ import '../controllers/qrouter_controller.dart';
 import '../helpers/widgets/browser_address_bar.dart';
 
 /// Qlevar Router implementation for [RouterDelegate]
-// ignore: prefer_mixin
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   QRouterDelegate(
     this.routes, {
@@ -159,6 +158,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     final con = await QR.createRouterController(
       QRContext.rootRouterName,
       routes: routes,
+      isTemporary: false,
     );
     _controller = con;
     _controllerCompleter.complete(con);

@@ -8,8 +8,8 @@ class DebugStackTree extends StatelessWidget {
   final List<QRouterController> _controllers;
   const DebugStackTree(
     this._controllers, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
     return TextButton(

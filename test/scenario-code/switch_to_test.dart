@@ -103,7 +103,7 @@ class PostRoute {
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required this.router}) : super(key: key);
+  const HomeScreen({super.key, required this.router});
   final QRouter router;
   @override
   State createState() => _HomeScreenState();
@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class PostRouteWrapper extends StatelessWidget {
   final QRouter router;
   final String name;
-  const PostRouteWrapper(this.router, this.name, {Key? key}) : super(key: key);
+  const PostRouteWrapper(this.router, this.name, {super.key});
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

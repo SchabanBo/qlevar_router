@@ -57,7 +57,7 @@ void main() {
       printCurrentHistory();
       expectedHistoryLength(2);
 
-      await QR.navigator.push('/three');
+      await QR.push('/three');
 
       expectedPath('/three');
       expectedHistoryLength(3);
@@ -76,7 +76,7 @@ void main() {
       expect(find.byType(WidgetTwo), findsNothing);
       expect(find.byType(WidgetThree), findsOneWidget);
 
-      await QR.navigator.replaceAll('/two');
+      await QR.replaceAll('/two');
 
       printCurrentHistory();
       expectedPath('/two');
@@ -141,7 +141,7 @@ void main() {
   testWidgets('replaceAll with different init route', (tester) async {
     QR.reset();
     await tester.pumpWidget(AppWrapper(pages, initPath: '/three'));
-    await QR.navigator.replaceAll('/two');
+    await QR.replaceAll('/two');
     printCurrentHistory();
     expectedPath('/two');
     await tester.pumpAndSettle();
