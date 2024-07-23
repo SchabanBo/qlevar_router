@@ -41,7 +41,7 @@ class BooksListScreen extends StatelessWidget {
     Book('Fahrenheit 451', 'Ray Bradbury'),
   ];
 
-  BooksListScreen({Key? key}) : super(key: key);
+  BooksListScreen({super.key});
   @override
   Widget build(BuildContext context) {
     final filter = QR.params['filter'];

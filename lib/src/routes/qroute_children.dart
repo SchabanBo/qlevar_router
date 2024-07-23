@@ -39,6 +39,7 @@ class QRouteChildren {
       if (_routes.any(finder)) {
         _routes.removeWhere(finder);
         QR.log('$name is removed from $parentKey');
+        QR.treeInfo.namePath.remove(name);
         return;
       }
       QR.log('$name is not child of from $parentKey. Can not remove it');

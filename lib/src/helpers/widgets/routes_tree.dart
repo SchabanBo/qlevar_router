@@ -8,9 +8,8 @@ import '../../routes/qroute_internal.dart';
 class RoutesChildren extends StatefulWidget {
   final List<_ExpandedQRoute> _children;
   final String parentPath;
-  RoutesChildren(QRouteChildren routes, {Key? key, this.parentPath = ''})
-      : _children = routes.routes.map((e) => _ExpandedQRoute(e)).toList(),
-        super(key: key);
+  RoutesChildren(QRouteChildren routes, {super.key, this.parentPath = ''})
+      : _children = routes.routes.map((e) => _ExpandedQRoute(e)).toList();
   @override
   State createState() => _RoutesChildrenState();
 }
@@ -39,7 +38,7 @@ class _RoutesChildrenState extends State<RoutesChildren> {
 class QRouteInfo extends StatelessWidget {
   final QRoute route;
   final String parentPath;
-  const QRouteInfo(this.route, this.parentPath, {Key? key}) : super(key: key);
+  const QRouteInfo(this.route, this.parentPath, {super.key});
   @override
   Widget build(BuildContext context) {
     return Padding(

@@ -118,8 +118,8 @@ class QMiddlewareBuilder extends QMiddleware {
     this.canPopFunc,
     this.onExitFunc,
     this.onExitedFunc,
-    int priority = 500,
-  }) : super(priority: priority);
+    super.priority,
+  });
 
   @override
   Future onEnter() async {
@@ -180,4 +180,9 @@ class QNameRedirect {
   final String name;
   final Map<String, Object>? params;
   const QNameRedirect({required this.name, this.params});
+
+  @override
+  String toString() {
+    return 'QNameRedirect(name: $name, params: $params)';
+  }
 }

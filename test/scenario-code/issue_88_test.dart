@@ -77,7 +77,7 @@ void main() {
 }
 
 class SignInPage extends StatelessWidget {
-  const SignInPage({Key? key}) : super(key: key);
+  const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,7 @@ class SignInPage extends StatelessWidget {
 }
 
 class SignUpPage extends StatelessWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  const SignUpPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +135,7 @@ class SignUpPage extends StatelessWidget {
 }
 
 class ForgotPassword extends StatelessWidget {
-  const ForgotPassword({Key? key}) : super(key: key);
+  const ForgotPassword({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -156,7 +156,7 @@ class ForgotPassword extends StatelessWidget {
 
 class Dashboard extends StatelessWidget {
   final QRouter router;
-  const Dashboard({Key? key, required this.router}) : super(key: key);
+  const Dashboard({super.key, required this.router});
 
   @override
   Widget build(BuildContext context) => Scaffold(

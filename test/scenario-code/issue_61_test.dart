@@ -155,7 +155,7 @@ class DashboardRoutes {
 }
 
 class StoreWidget extends StatelessWidget {
-  const StoreWidget({Key? key}) : super(key: key);
+  const StoreWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +176,7 @@ class StoreWidget extends StatelessWidget {
 
 class DashboardView extends StatelessWidget {
   final QRouter router;
-  const DashboardView({required this.router, Key? key}) : super(key: key);
+  const DashboardView({required this.router, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +198,7 @@ class DashboardView extends StatelessWidget {
 var shouldSaveState = false;
 
 class SidebarSection extends StatelessWidget {
-  const SidebarSection({Key? key}) : super(key: key);
+  const SidebarSection({super.key});
 
   @override
   Widget build(BuildContext context) {

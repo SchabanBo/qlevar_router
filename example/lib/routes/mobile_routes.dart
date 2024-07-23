@@ -14,28 +14,29 @@ class MobileRoutes {
   ];
 
   final route = QRoute.withChild(
-      path: '/mobile',
-      name: mobile,
-      initRoute: '/stores',
-      builderChild: (router) => MobileView(router),
-      children: [
-        QRoute(
-          path: '/stores',
-          name: tabs[0],
-          pageType: const QFadePage(),
-          builder: () => MobileStoresView(),
-        ),
-        QRoute(
-          path: '/products',
-          name: tabs[1],
-          pageType: const QFadePage(),
-          builder: () => MobileProductsView(),
-        ),
-        QRoute(
-          path: '/settings',
-          name: tabs[2],
-          pageType: const QFadePage(),
-          builder: () => const MobileSettingsView(),
-        ),
-      ]);
+    path: '/mobile',
+    name: mobile,
+    initRoute: '/stores',
+    builderChild: (router) => MobileView(router),
+    children: [
+      QRoute(
+        path: '/stores',
+        name: tabs[0],
+        pageType: const QFadePage(),
+        builder: () => MobileStoresView(),
+      ),
+      QRoute(
+        path: '/products',
+        name: tabs[1],
+        pageType: const QFadePage(),
+        builder: () => MobileProductsView(),
+      ),
+      QRoute(
+        path: '/settings',
+        name: tabs[2],
+        pageType: const QFadePage(),
+        builder: () => const MobileSettingsView(),
+      ),
+    ],
+  );
 }

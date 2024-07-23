@@ -78,7 +78,7 @@ void main() {
 }
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class Dashboard extends StatelessWidget {
   final QRouter router;
-  const Dashboard(this.router, {Key? key}) : super(key: key);
+  const Dashboard(this.router, {super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -120,7 +120,7 @@ class Dashboard extends StatelessWidget {
 class DashboardChild extends StatelessWidget {
   final String name;
   final Color color;
-  const DashboardChild(this.name, this.color, {Key? key}) : super(key: key);
+  const DashboardChild(this.name, this.color, {super.key});
   @override
   Widget build(BuildContext context) {
     return Column(

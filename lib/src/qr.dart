@@ -88,6 +88,7 @@ class QRContext {
     QRouteInternal? initRoute,
     List<NavigatorObserver>? observers,
     String? restorationId,
+    bool isTemporary = true,
   }) async {
     final controller = await createRouterController(
       name,
@@ -95,6 +96,7 @@ class QRContext {
       cRoutes: cRoutes,
       initPath: initPath,
       initRoute: initRoute,
+      isTemporary: isTemporary,
     );
     return QRouter(
       controller,
@@ -152,8 +154,10 @@ class QRContext {
     QRouteChildren? cRoutes,
     String? initPath,
     QRouteInternal? initRoute,
+    bool isTemporary = true,
   }) =>
-      _manager.createController(name, routes, cRoutes, initPath, initRoute);
+      _manager.createController(
+          name, routes, cRoutes, initPath, initRoute, isTemporary);
 
   /// create a state to use with a declarative router
   QDeclarativeController createDeclarativeRouterController(QKey key) =>

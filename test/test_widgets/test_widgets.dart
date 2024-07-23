@@ -4,7 +4,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 class AppWrapper extends StatelessWidget {
   final List<QRoute> pages;
   final String? initPath;
-  const AppWrapper(this.pages, {this.initPath, Key? key}) : super(key: key);
+  const AppWrapper(this.pages, {this.initPath, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,26 +16,26 @@ class AppWrapper extends StatelessWidget {
 }
 
 class WidgetOne extends StatelessWidget {
-  const WidgetOne({Key? key}) : super(key: key);
+  const WidgetOne({super.key});
   @override
   Widget build(BuildContext context) => Container();
 }
 
 class WidgetTwo extends StatelessWidget {
-  const WidgetTwo({Key? key}) : super(key: key);
+  const WidgetTwo({super.key});
   @override
   Widget build(BuildContext context) => Container();
 }
 
 class WidgetThree extends StatelessWidget {
-  const WidgetThree({Key? key}) : super(key: key);
+  const WidgetThree({super.key});
   @override
   Widget build(BuildContext context) => Container();
 }
 
 class TestDashboard extends StatelessWidget {
   final QRouter router;
-  const TestDashboard(this.router, {Key? key}) : super(key: key);
+  const TestDashboard(this.router, {super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(

@@ -17,9 +17,9 @@ extension QRNavigation on QRContext {
     if (ignoreSamePath && isCurrentPath(path)) {
       return null;
     }
-    final controller = _manager.withName(QRContext.rootRouterName);
+    final controller = _manager.withName(activeNavigatorName);
     var match = await controller.findPath(path);
-    await _toMatch(match, pageAlreadyExistAction: pageAlreadyExistAction);
+    await _toMatch(match, activeNavigatorName, pageAlreadyExistAction);
     if (waitForResult) return match.getFuture();
     return null;
   }
@@ -40,9 +40,9 @@ extension QRNavigation on QRContext {
     if (ignoreSamePath && isCurrentName(name, params: params)) {
       return null;
     }
-    final controller = _manager.withName(QRContext.rootRouterName);
+    final controller = _manager.withName(activeNavigatorName);
     var match = await controller.findName(name, params: params);
-    await _toMatch(match, pageAlreadyExistAction: pageAlreadyExistAction);
+    await _toMatch(match, activeNavigatorName, pageAlreadyExistAction);
     if (waitForResult) return match.getFuture();
     return null;
   }
@@ -52,19 +52,12 @@ extension QRNavigation on QRContext {
     if (history.isEmpty) return PopResult.NotPopped;
 
     // is processed by declarative
-    if (_manager.isDeclarative(QR.history.current.key.key)) {
-      final dCon = _manager.getDeclarative(QR.history.current.key.key);
+    if (_manager.isDeclarative(history.current.key.key)) {
+      final dCon = _manager.getDeclarative(history.current.key.key);
       if (dCon.pop()) return PopResult.Popped;
     }
 
-    // check if there is any popups to close, Check [#101]
-    final popupCOntroller = _manager.controllerWithPopup();
-    if (popupCOntroller != null) {
-      popupCOntroller.closePopup(result);
-      return PopResult.PopupDismissed;
-    }
-
-    final lastNavigator = QR.history.current.navigator;
+    final lastNavigator = history.current.navigator;
     if (_manager.hasController(lastNavigator)) {
       final popNavigatorOptions = [lastNavigator];
       // Should navigator be removed? if the last path in history is the last
@@ -75,7 +68,16 @@ extension QRNavigation on QRContext {
       }
 
       for (final navigator in popNavigatorOptions) {
-        final controller = navigatorOf(navigator);
+        final controller = navigatorOf(navigator) as QRouterController;
+        if (!controller.isTemporary) {
+          // check if there is any popups to close, Check [#101]
+          final popupController = _manager.controllerWithPopup();
+          if (popupController != null) {
+            popupController.closePopup(result);
+            QR.updateUrlInfo(QR.currentPath, addHistory: false);
+            return PopResult.PopupDismissed;
+          }
+        }
         final popResult = await controller.removeLast(result: result);
 
         switch (popResult) {
@@ -95,6 +97,10 @@ extension QRNavigation on QRContext {
             if (_isOnlyNavigatorLeft(popNavigatorOptions)) {
               history.removeWithNavigator(navigator);
             }
+            // if this navigator is temporary then remove it, because it can't pop
+            if (controller.isTemporary) {
+              await removeNavigator(navigator);
+            }
             break;
           case PopResult.Popped:
             // if this navigator popped and was not the root navigator then
@@ -110,7 +116,7 @@ extension QRNavigation on QRContext {
     }
 
     to(history.last.path);
-    QR.history.removeLast(count: 2);
+    history.removeLast(count: 2);
     return PopResult.Popped;
   }
 
@@ -171,11 +177,8 @@ extension QRNavigation on QRContext {
     return true;
   }
 
-  Future<void> _toMatch(
-    QRouteInternal match, {
-    String forController = QRContext.rootRouterName,
-    PageAlreadyExistAction? pageAlreadyExistAction,
-  }) async {
+  Future<void> _toMatch(QRouteInternal match, String forController,
+      PageAlreadyExistAction? pageAlreadyExistAction) async {
     final controller = _manager.withName(forController);
     await controller.popUntilOrPushMatch(
       match,
@@ -186,9 +189,7 @@ extension QRNavigation on QRContext {
     if (match.hasChild && !match.isProcessed) {
       final newControllerName =
           _manager.hasController(match.name) ? match.name : forController;
-      await _toMatch(match.child!,
-          forController: newControllerName,
-          pageAlreadyExistAction: pageAlreadyExistAction);
+      await _toMatch(match.child!, newControllerName, pageAlreadyExistAction);
       return;
     }
 

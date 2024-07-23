@@ -6,16 +6,10 @@ import '../types/qroute_key.dart';
 abstract class QPageInternal<T> extends Page {
   const QPageInternal(
       {required this.matchKey,
-      LocalKey? key,
-      String? restorationId,
-      String? name,
-      Object? arguments})
-      : super(
-          arguments: arguments,
-          key: key,
-          name: name,
-          restorationId: restorationId,
-        );
+      super.key,
+      super.restorationId,
+      super.name,
+      super.arguments});
 
   final QKey matchKey;
 
@@ -25,21 +19,15 @@ abstract class QPageInternal<T> extends Page {
 class QMaterialPageInternal<T> extends QPageInternal<T> {
   const QMaterialPageInternal({
     required this.child,
-    required QKey matchKey,
+    required super.matchKey,
     this.maintainState = true,
     this.addMaterialWidget = true,
     this.fullScreenDialog = false,
-    LocalKey? key,
-    String? restorationId,
-    String? name,
-    Object? arguments,
-  }) : super(
-          matchKey: matchKey,
-          key: key,
-          name: name,
-          arguments: arguments,
-          restorationId: restorationId,
-        );
+    super.key,
+    super.restorationId,
+    super.name,
+    super.arguments,
+  });
 
   final bool addMaterialWidget;
   final Widget child;
@@ -83,22 +71,16 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
 
 class QCupertinoPageInternal<T> extends QPageInternal<T> {
   const QCupertinoPageInternal({
-    required QKey matchKey,
+    required super.matchKey,
     required this.child,
     this.title,
     this.maintainState = true,
     this.fullScreenDialog = false,
-    LocalKey? key,
-    String? restorationId,
-    String? name,
-    Object? arguments,
-  }) : super(
-          key: key,
-          name: name,
-          restorationId: restorationId,
-          arguments: arguments,
-          matchKey: matchKey,
-        );
+    super.key,
+    super.restorationId,
+    super.name,
+    super.arguments,
+  });
 
   final Widget child;
   final bool fullScreenDialog;
@@ -140,7 +122,7 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
 class QCustomPageInternal extends QPageInternal {
   const QCustomPageInternal({
     required this.child,
-    required QKey matchKey,
+    required super.matchKey,
     required this.transitionDuration,
     required this.reverseTransitionDuration,
     required this.transitionsBuilder,
@@ -150,17 +132,11 @@ class QCustomPageInternal extends QPageInternal {
     this.barrierLabel,
     this.barrierDismissible,
     this.opaque,
-    LocalKey? key,
-    String? restorationId,
-    String? name,
-    Object? arguments,
-  }) : super(
-          key: key,
-          name: name,
-          arguments: arguments,
-          matchKey: matchKey,
-          restorationId: restorationId,
-        );
+    super.key,
+    super.restorationId,
+    super.name,
+    super.arguments,
+  });
 
   final Color? barrierColor;
   final bool? barrierDismissible;
