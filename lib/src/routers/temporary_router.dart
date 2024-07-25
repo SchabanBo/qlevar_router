@@ -72,14 +72,18 @@ class _TemporaryQRouterState extends State<TemporaryQRouter> {
 
   @override
   void dispose() {
-    QR.removeNavigator(name);
+    _removeNavigator();
+    super.dispose();
+  }
+
+  void _removeNavigator() async {
+    await QR.removeNavigator(name);
     QR.treeInfo.namePath.remove(name);
     QR.activeNavigatorName = QRContext.rootRouterName;
     _treeAdjuster.reset();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       QR.updateUrlInfo(originalRoute, addHistory: false);
     });
-    super.dispose();
   }
 
   @override
