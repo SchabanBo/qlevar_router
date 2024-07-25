@@ -2,6 +2,10 @@
 
 # 1.11.0
 
+- Fix error removing route from the stack in the `TemporaryQRouter` 
+
+# 1.11.0
+
 - Add `TemporaryQRouter` to use the router in n popups or dialogs. #126
 - Fix #139
 - Set min SDK to 2.17.0
