@@ -272,8 +272,8 @@ class QRouterController extends QNavigator {
   }
 
   Future<void> disposeAsync() async {
-    if (!isTemporary) await _pagesController.removeAll();
     isDisposed = true;
+    await _pagesController.removeAll();
     if (isTemporary) {
       // remove routes from the tree
       final routesNames = routes.routes.map((e) => e.name).toList();

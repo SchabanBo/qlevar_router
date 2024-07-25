@@ -35,6 +35,7 @@
     - [Mix it up](#mix-it-up)
     - [App Page Transition](#app-page-transition)
   - [Temporary router](#temporary-router)
+    - [Example](#example)
     - [Limitations](#limitations)
   - [waiting for page result](#waiting-for-page-result)
   - [Restoration management](#restoration-management)
@@ -426,6 +427,8 @@ showModalBottomSheet(
 This example will show the store page in a bottom sheet. the same routes are defined in the main app routes. and the sane pages will be displayed.
 
 To Check if the temporary router is active or not you can use `QR.navigator.isTemporary`.
+
+### [Example](https://github.com/SchabanBo/qr_samples/blob/main/lib/examples/temporary_router.dart)
 
 ### Limitations
 - URL Navigation: The temporary router will not function if the user directly types the path into the URL. This limitation arises because the temporary router is designed to exist only within the widget tree and is destroyed when the widget is removed.
