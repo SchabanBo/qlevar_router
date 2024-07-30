@@ -13,7 +13,7 @@ class MatchController {
     }
     QR.log(
         // ignore: lines_longer_than_80_chars
-        '${'Finding Match for $sPath under '}${foundPath.isEmpty ? 'root' : 'path $foundPath'}');
+        '${'Finding Match for $sPath under '}${foundPath.isEmpty ? 'root' : 'path $foundPath'} with params $params');
   }
 
   factory MatchController.fromName(

@@ -82,7 +82,7 @@ class _TemporaryQRouterState extends State<TemporaryQRouter> {
     QR.activeNavigatorName = QRContext.rootRouterName;
     _treeAdjuster.reset();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      QR.updateUrlInfo(originalRoute, addHistory: false);
+      QR.updateUrlInfo(originalRoute);
     });
   }
 
