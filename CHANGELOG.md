@@ -1,6 +1,10 @@
 # CHANGELOG
 
-# 1.11.0
+# 1.11.2
+
+- Fix error that the routes will be deleted when `TemporaryQRouter` is closed.
+
+# 1.11.1
 
 - Fix error removing route from the stack in the `TemporaryQRouter` 
 

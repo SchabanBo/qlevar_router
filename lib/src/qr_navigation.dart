@@ -49,6 +49,7 @@ extension QRNavigation on QRContext {
 
   /// try to pop the last active navigator or go to last path in the history
   Future<PopResult> back([dynamic result]) async {
+    log('Back to previous path');
     if (history.isEmpty) return PopResult.NotPopped;
 
     // is processed by declarative

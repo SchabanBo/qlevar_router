@@ -6,6 +6,7 @@ import '../helpers.dart';
 
 void main() {
   testWidgets('Test Temporary router', (tester) async {
+    QR.reset();
     tester.view.devicePixelRatio = 1.0;
     tester.view.physicalSize = const Size(400, 600);
     addTearDown(tester.view.resetPhysicalSize);
