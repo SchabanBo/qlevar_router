@@ -188,6 +188,16 @@ class MatchController {
       searchIn = match.children!;
       match.child = await _tryFind(searchIn, _searchIndex);
       if (match.child == null) {
+        _searchIndex = 0;
+        foundPath = '';
+        final match = await _tryFind(
+          routes,
+          _searchIndex,
+          forcePath: path.pathSegments.join('/'),
+        );
+        if (match != null) {
+          return match;
+        }
         return QRouteInternal.notFound(parentPath + path.toString());
       }
       match = match.child!;
@@ -197,8 +207,8 @@ class MatchController {
   }
 
   Future<QRouteInternal?> _tryFind(QRouteChildren routes, int index,
-      {bool updatePath = true}) async {
-    final path = index == -1 ? '' : this.path.pathSegments[index];
+      {bool updatePath = true, String? forcePath}) async {
+    final path = index == -1 ? '' : forcePath ?? this.path.pathSegments[index];
 
     bool isSamePath(QRouteInternal route) => route.route.path == '/$path';
 
