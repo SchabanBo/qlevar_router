@@ -27,6 +27,9 @@ abstract class _PageConverter {
     if (pageType is QCustomPage) {
       return _getCustomPage(child);
     }
+    if (pageType is QBottomSheetPage) {
+      return _getBottomSheet(child);
+    }
     return _getMaterialPage(child);
   }
 
@@ -80,6 +83,25 @@ abstract class _PageConverter {
       transitionDuration: page.transitionDuration,
       reverseTransitionDuration: page.reverseTransitionDuration,
       transitionsBuilder: page.transitionsBuilder ?? _buildTransaction,
+    );
+  }
+
+  QBottomSheetInternal _getBottomSheet(Widget child) {
+    final page = pageType as QBottomSheetPage;
+    return QBottomSheetInternal(
+      name: pageName,
+      child: child,
+      restorationId: _getRestorationId(),
+      key: key,
+      matchKey: matchKey,
+      isScrollControlled: page.isScrollControlled,
+      isDismissible: page.isDismissible,
+      enableDrag: page.enableDrag,
+      showDragHandle: page.showDragHandle,
+      useSafeArea: page.useSafeArea,
+      barrierOnTapHint: page.barrierOnTapHint,
+      barrierLabel: page.barrierOnTapHint,
+      anchorPoint: page.anchorPoint,
     );
   }
 

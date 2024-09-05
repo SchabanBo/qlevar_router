@@ -117,3 +117,27 @@ class QFadePage extends QCustomPage {
 
   final Curve? curve;
 }
+
+class QBottomSheetPage extends QPage {
+  const QBottomSheetPage({
+    this.isScrollControlled = false,
+    this.isDismissible=true,
+    this.barrierDismissible=true,
+    this.enableDrag=true,
+    this.useSafeArea=false,
+    this.showDragHandle,
+    this.barrierLabel,
+    this.barrierOnTapHint,
+    this.anchorPoint,
+    String? restorationId,
+  }) : super(false, false, restorationId);
+  final bool isScrollControlled;
+  final bool isDismissible;
+  final bool barrierDismissible;
+  final bool enableDrag;
+  final bool useSafeArea;
+  final bool? showDragHandle;
+  final String? barrierLabel;
+  final String? barrierOnTapHint;
+  final Offset? anchorPoint;
+}

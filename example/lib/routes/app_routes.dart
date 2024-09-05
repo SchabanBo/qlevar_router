@@ -5,6 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import '../pages/declarative/declarative_view.dart';
 import '../pages/login/login_view.dart';
 import '../pages/not_found/not_found_view.dart';
+import '../pages/welcome/bottom_sheet_page.dart';
 import '../pages/welcome/welcome_view.dart';
 import '../services/auth_service.dart';
 import 'await_result_routes.dart';
@@ -17,6 +18,8 @@ import 'store_routes.dart';
 class AppRoutes {
   static const String root = 'root';
   static const String login = 'login';
+  static const String bottomSheetPage = 'bottom_sheet_page';
+
 
   void setup() {
     // enable debug logging for all routes
@@ -96,6 +99,17 @@ class AppRoutes {
     QRoute.declarative(
       path: '/declarative',
       declarativeBuilder: (k) => DeclarativePage(k),
+    ),
+    // Add bottom sheet page route
+    QRoute(
+      path: '/bottom-sheet',
+      name: bottomSheetPage,
+      pageType: const QBottomSheetPage(
+        showDragHandle: true,
+        isDismissible: true,
+        anchorPoint: Offset(100, 200)
+      ),
+      builder: () => const BottomSheetPage(),
     ),
   ];
 }
