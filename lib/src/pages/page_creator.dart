@@ -27,8 +27,8 @@ abstract class _PageConverter {
     if (pageType is QCustomPage) {
       return _getCustomPage(child);
     }
-    if (pageType is QBottomSheetPage) {
-      return _getBottomSheet(child);
+    if (pageType is QModalBottomSheetPage) {
+      return _getModalBottomSheetPage(child);
     }
     return _getMaterialPage(child);
   }
@@ -86,9 +86,9 @@ abstract class _PageConverter {
     );
   }
 
-  QBottomSheetInternal _getBottomSheet(Widget child) {
-    final page = pageType as QBottomSheetPage;
-    return QBottomSheetInternal(
+  QModalBottomSheetPageInternal _getModalBottomSheetPage(Widget child) {
+    final page = pageType as QModalBottomSheetPage;
+    return QModalBottomSheetPageInternal(
       name: pageName,
       child: child,
       restorationId: _getRestorationId(),

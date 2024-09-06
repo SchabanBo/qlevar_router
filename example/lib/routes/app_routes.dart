@@ -20,7 +20,6 @@ class AppRoutes {
   static const String login = 'login';
   static const String bottomSheetPage = 'bottom_sheet_page';
 
-
   void setup() {
     // enable debug logging for all routes
     QR.settings.enableDebugLog = true;
@@ -104,11 +103,10 @@ class AppRoutes {
     QRoute(
       path: '/bottom-sheet',
       name: bottomSheetPage,
-      pageType: const QBottomSheetPage(
-        showDragHandle: true,
-        isDismissible: true,
-        anchorPoint: Offset(100, 200)
-      ),
+      pageType: const QModalBottomSheetPage(
+          showDragHandle: true,
+          isDismissible: true,
+          anchorPoint: Offset(100, 200)),
       builder: () => const BottomSheetPage(),
     ),
   ];

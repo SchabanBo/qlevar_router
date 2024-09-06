@@ -167,8 +167,8 @@ class QCustomPageInternal extends QPageInternal {
   }
 }
 
-class QBottomSheetInternal extends QPageInternal {
-  const QBottomSheetInternal({
+class QModalBottomSheetPageInternal extends QPageInternal {
+  const QModalBottomSheetPageInternal({
     required this.child,
     required super.matchKey,
     this.isDismissible = true,
