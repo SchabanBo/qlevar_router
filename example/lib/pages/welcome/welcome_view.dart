@@ -9,7 +9,7 @@ import 'node_widget.dart';
 import 'temporary_router_widget.dart';
 
 class WelcomeView extends StatelessWidget {
-  const WelcomeView({Key? key}) : super(key: key);
+  const WelcomeView({super.key});
 
   @override
   Widget build(BuildContext context) {

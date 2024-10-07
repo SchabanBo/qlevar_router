@@ -5,7 +5,7 @@ import '../../routes/mobile_routes.dart';
 
 class MobileView extends StatefulWidget {
   final QRouter router;
-  const MobileView(this.router, {Key? key}) : super(key: key);
+  const MobileView(this.router, {super.key});
   @override
   RouterState<MobileView> createState() => _MobileViewState();
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 class GetResultView extends StatelessWidget {
-  const GetResultView({Key? key}) : super(key: key);
+  const GetResultView({super.key});
 
   @override
   Widget build(BuildContext context) {

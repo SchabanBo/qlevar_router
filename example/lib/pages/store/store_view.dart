@@ -14,7 +14,7 @@ class StoreView extends StatelessWidget {
   late final store = Get.find<StorageService>().stores[storeId];
 
   final bool fromDashboard;
-  StoreView({Key? key, this.fromDashboard = false}) : super(key: key);
+  StoreView({super.key, this.fromDashboard = false});
 
   @override
   Widget build(BuildContext context) {

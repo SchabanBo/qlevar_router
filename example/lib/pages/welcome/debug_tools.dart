@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 class DebugTools extends StatelessWidget {
-  const DebugTools({Key? key}) : super(key: key);
+  const DebugTools({super.key});
 
   @override
   Widget build(BuildContext context) {

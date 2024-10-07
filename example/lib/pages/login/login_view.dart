@@ -5,7 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import '../../services/auth_service.dart';
 
 class LoginView extends StatelessWidget {
-  const LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {

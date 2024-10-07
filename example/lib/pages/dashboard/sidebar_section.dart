@@ -4,7 +4,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import '../../routes/dashboard_routes.dart';
 
 class SidebarSection extends StatelessWidget {
-  const SidebarSection({Key? key}) : super(key: key);
+  const SidebarSection({super.key});
 
   @override
   Widget build(BuildContext context) {

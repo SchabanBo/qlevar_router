@@ -8,7 +8,7 @@ import 'sidebar_section.dart';
 
 class DashboardView extends StatelessWidget {
   final QRouter router;
-  const DashboardView({required this.router, Key? key}) : super(key: key);
+  const DashboardView({required this.router, super.key});
 
   @override
   Widget build(BuildContext context) {

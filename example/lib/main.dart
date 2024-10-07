@@ -13,7 +13,7 @@ void main() {
 }
 
 class QlevarApp extends StatelessWidget {
-  const QlevarApp({Key? key}) : super(key: key);
+  const QlevarApp({super.key});
 
   @override
   Widget build(BuildContext context) {

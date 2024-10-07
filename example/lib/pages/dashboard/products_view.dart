@@ -6,7 +6,7 @@ import '../../services/storage_service.dart';
 
 class ProductsView extends StatelessWidget {
   final storage = Get.find<StorageService>();
-  ProductsView({Key? key}) : super(key: key);
+  ProductsView({super.key});
 
   @override
   Widget build(BuildContext context) {

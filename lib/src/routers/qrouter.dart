@@ -64,19 +64,11 @@ class _QRouterState extends State<QRouter> {
       key: widget.navKey,
       observers: widget.observers,
       pages: widget._controller.pages,
-      onPopPage: _onPopPage,
+      onDidRemovePage: (_) {
+        QR.back();
+      },
       restorationScopeId: scopId,
     );
-  }
-
-  bool _onPopPage(route, result) {
-    // // remove the page from the list
-    // widget._controller.removeLast();
-    // // tell the root navigator to update the url
-    // (QR.rootNavigator as QRouterController).update(withParams: false);
-
-    QR.back();
-    return false;
   }
 
   @override

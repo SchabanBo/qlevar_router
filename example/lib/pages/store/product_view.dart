@@ -14,7 +14,7 @@ class ProductView extends StatelessWidget {
   late final product =
       Get.find<StorageService>().stores[storeId].products[productId];
 
-  ProductView({Key? key}) : super(key: key);
+  ProductView({super.key});
 
   @override
   Widget build(BuildContext context) {

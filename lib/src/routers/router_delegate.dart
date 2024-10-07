@@ -119,20 +119,24 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     return;
   }
 
-  Navigator get navigator {
+  PopScope get navigator {
     var scopId = restorationScopeId;
     if (scopId == null && QR.settings.autoRestoration) {
       scopId = 'router:${_controller.key.name}';
     }
-    return Navigator(
-      key: key,
-      pages: _controller.pages,
-      observers: observers,
-      restorationScopeId: restorationScopeId,
-      onPopPage: (route, result) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
         _controller.removeLast();
-        return false;
       },
+      child: Navigator(
+        key: key,
+        pages: _controller.pages,
+        observers: observers,
+        restorationScopeId: restorationScopeId,
+        onDidRemovePage: (_) {},
+      ),
     );
   }
 

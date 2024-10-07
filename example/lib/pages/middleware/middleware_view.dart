@@ -5,7 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import '../../services/storage_service.dart';
 
 class MiddlewareView extends StatelessWidget {
-  const MiddlewareView({Key? key}) : super(key: key);
+  const MiddlewareView({super.key});
 
   @override
   Widget build(BuildContext context) {

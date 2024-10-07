@@ -3,7 +3,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 class AddRemoveRoutes extends StatefulWidget {
   final QRouter route;
-  const AddRemoveRoutes(this.route, {Key? key}) : super(key: key);
+  const AddRemoveRoutes(this.route, {super.key});
   @override
   State<AddRemoveRoutes> createState() => _AddRemoveRoutesState();
 }
@@ -106,7 +106,7 @@ In the right section you can find all routes under [/add-remove-routes] so you c
 
 class AddRemoveChild extends StatelessWidget {
   final String text;
-  const AddRemoveChild(this.text, {Key? key}) : super(key: key);
+  const AddRemoveChild(this.text, {super.key});
   @override
   Widget build(BuildContext context) {
     return Center(

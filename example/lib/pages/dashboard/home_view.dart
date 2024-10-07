@@ -6,7 +6,7 @@ import '../../services/storage_service.dart';
 
 class HomeView extends StatelessWidget {
   final storage = Get.find<StorageService>();
-  HomeView({Key? key}) : super(key: key);
+  HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {

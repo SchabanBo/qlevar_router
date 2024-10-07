@@ -10,7 +10,7 @@ import '../welcome/debug_tools.dart';
 class StoresView extends StatelessWidget {
   final storage = Get.find<StorageService>();
   final bool fromDashboard;
-  StoresView({Key? key, this.fromDashboard = false}) : super(key: key);
+  StoresView({super.key, this.fromDashboard = false});
 
   @override
   Widget build(BuildContext context) {

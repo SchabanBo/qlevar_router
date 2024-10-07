@@ -43,7 +43,9 @@ class QDeclarativeController extends State<QDeclarative> {
   /// Did the pop proceed
   bool pop() {
     final pop = routes!.last.onPop!();
-    update();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      update();
+    });
     return pop ?? true;
   }
 
@@ -51,15 +53,19 @@ class QDeclarativeController extends State<QDeclarative> {
   Widget build(BuildContext context) {
     updatePages();
     assert(_pages.isNotEmpty);
-    return Navigator(
-      key: navKey,
-      pages: List.unmodifiable(_pages),
-      onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
         }
-        return pop();
+        pop();
       },
+      child: Navigator(
+        key: navKey,
+        pages: List.unmodifiable(_pages),
+        onDidRemovePage: (page) {},
+      ),
     );
   }
 
