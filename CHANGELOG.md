@@ -4,6 +4,7 @@
 
 - add bottomSheet page type #155 by @miaosun009
 - Full path matching is attempted when the child route cannot be matched #154 by @miaosun009
+- Fix Crash in _BrowserAddressBarState #151 by BarashkovaElena
 
 # 1.11.2
 

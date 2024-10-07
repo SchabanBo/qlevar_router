@@ -20,17 +20,25 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
   final controller = TextEditingController(text: QR.currentPath);
   String path = '/';
 
+  void _listener() {
+    setState(() {
+      controller.text = QR.currentPath;
+      if (_paths.isNotEmpty && QR.currentPath != _paths.last) {
+        _paths.clear();
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    widget._controller.addListener(() {
-      setState(() {
-        controller.text = QR.currentPath;
-        if (_paths.isNotEmpty && QR.currentPath != _paths.last) {
-          _paths.clear();
-        }
-      });
-    });
+    widget._controller.addListener(_listener);
+  }
+
+  @override
+  void dispose() {
+    widget._controller.removeListener(_listener);
+    super.dispose();
   }
 
   @override
