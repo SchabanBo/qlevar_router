@@ -166,3 +166,48 @@ class QCustomPageInternal extends QPageInternal {
     );
   }
 }
+
+class QModalBottomSheetPageInternal extends QPageInternal {
+  const QModalBottomSheetPageInternal({
+    required this.child,
+    required super.matchKey,
+    this.isDismissible = true,
+    this.isScrollControlled = false,
+    this.enableDrag = true,
+    this.showDragHandle,
+    this.useSafeArea = false,
+    this.barrierLabel,
+    this.barrierOnTapHint,
+    this.anchorPoint,
+    super.key,
+    super.restorationId,
+    super.name,
+    super.arguments,
+  });
+
+  final Widget child;
+  final bool isScrollControlled;
+  final bool? showDragHandle;
+  final bool isDismissible;
+  final bool enableDrag;
+  final bool useSafeArea;
+  final String? barrierLabel;
+  final String? barrierOnTapHint;
+  final Offset? anchorPoint;
+
+  @override
+  Route createRoute(BuildContext context) {
+    return ModalBottomSheetRoute(
+      settings: this,
+      builder: (_) => child,
+      isScrollControlled: isScrollControlled,
+      barrierLabel: barrierLabel,
+      barrierOnTapHint: barrierOnTapHint,
+      isDismissible: isDismissible,
+      showDragHandle: showDragHandle,
+      enableDrag: enableDrag,
+      useSafeArea: useSafeArea,
+      anchorPoint: anchorPoint,
+    );
+  }
+}
