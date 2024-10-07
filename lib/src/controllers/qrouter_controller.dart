@@ -71,7 +71,7 @@ abstract class QNavigator extends ChangeNotifier {
   Future<void> popUntilOrPush(String path);
 
   /// {@template q.navigator.popUntilOrPushName}
-  /// Push the page with this [name] on the top of the stack, or pop unit it if it's already
+  /// Push the page with this [name] on the top of the stack, or pop until it if it's already
   /// in the stack
   /// {@endtemplate}
   Future<void> popUntilOrPushName(String name, {Map<String, dynamic>? params});
