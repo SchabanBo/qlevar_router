@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.12.0
+
+- add bottomSheet page type #155 by @miaosun009
+- Full path matching is attempted when the child route cannot be matched #154 by @miaosun009
+
 # 1.11.2
 
 - Fix error that the routes will be deleted when `TemporaryQRouter` is closed.

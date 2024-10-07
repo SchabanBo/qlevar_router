@@ -207,5 +207,39 @@ void main() {
       await QR.back();
       printCurrentHistory();
     });
+
+    testWidgets('#154', (tester) async {
+      QR.reset();
+      await tester.pumpWidget(AppWrapper([
+        QRoute(
+          path: '/',
+          builder: () => const Scaffold(body: WidgetOne()),
+        ),
+        QRoute.withChild(
+          path: '/auth',
+          children: [
+            QRoute(
+              path: 'login',
+              builder: () => const Text("login"),
+            )
+          ],
+          builderChild: (r) {
+            return Scaffold(body: r);
+          },
+        ),
+        QRoute(
+          path: '/auth/home',
+          builder: () => const Text("home"),
+        ),
+      ]));
+      await QR.to('/auth/login');
+      await tester.pumpAndSettle();
+      expect(find.text('login'), findsOneWidget);
+      expectedPath('/auth/login');
+      await QR.to('/auth/home');
+      await tester.pumpAndSettle();
+      expect(find.text('home'), findsOneWidget);
+      expectedPath('/auth/home');
+    });
   });
 }
