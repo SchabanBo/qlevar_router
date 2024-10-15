@@ -126,7 +126,7 @@ QR.history.debug() // will show you a dialog contains the history stack for your
 
 ### The example Projects
 
-Please check out the demo of Qlevar Router [here] (https://qlevar-router.netlify.app) to see how it works. You can find the code for this in [here](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib)
+Please check out the demo of Qlevar Router [here](https://qlevar-router.netlify.app) to see how it works. You can find the code for this in [here](https://github.com/SchabanBo/qlevar_router/tree/master/example/lib)
 
 The demo includes the following pages:
 
