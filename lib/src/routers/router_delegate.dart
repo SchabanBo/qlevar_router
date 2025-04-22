@@ -79,6 +79,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   @override
   Future<void> setInitialRoutePath(String configuration) async {
     await _controllerCompleter.future;
+    configuration = _decodeConfigurations(configuration);
     if (configuration != _slash) {
       QR.log('incoming init path $configuration', isDebug: true);
       if (alwaysAddInitPath) {
@@ -93,14 +94,21 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     await _controller.push(initPath ?? _slash);
   }
 
-  @override
-  Future<void> setNewRoutePath(String configuration) async {
-    // fix route encoding (order%20home => order home)
+  String _decodeConfigurations(String configuration) {
     try {
       configuration = Uri.decodeFull(configuration).toString();
+      final uri = Uri.tryParse(configuration);
+      if (uri?.hasFragment ?? false) configuration = uri!.fragment;
     } catch (_) {
       QR.log('Error while decoding the route $configuration');
     }
+    return configuration;
+  }
+
+  @override
+  Future<void> setNewRoutePath(String configuration) async {
+    // fix route encoding (order%20home => order home)
+    configuration = _decodeConfigurations(configuration);
     if (QR.history.hasLast &&
         QR.history.last.path == QR.settings.notFoundPage.path) {
       if (QR.history.length > 2 &&
