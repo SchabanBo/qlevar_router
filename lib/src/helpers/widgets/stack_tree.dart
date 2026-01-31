@@ -29,6 +29,53 @@ class DebugStackTree extends StatelessWidget {
   }
 }
 
+class _ControllerInfo {
+  final String key;
+  final List<_ControllerInfo> children = [];
+  final List<_PageInfo> pages;
+  _ControllerInfo(QRouterController controller)
+      : key = controller.key.toString(),
+        pages = controller.pages.map((e) => _PageInfo(e)).toList();
+
+  Widget getWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Card(
+        color: Colors.teal.withAlpha(77),
+        elevation: 5,
+        child: Column(children: [
+          const SizedBox(height: 10),
+          Row(children: [
+            const SizedBox(width: 10),
+            Text(key),
+            const SizedBox(width: 5),
+          ]),
+          ...pages.map((page) => Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Card(
+                  color: Colors.teal.withAlpha(77),
+                  elevation: 5,
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      Text(page.key),
+                    ],
+                  )))),
+          ...children.map((e) => Padding(
+                padding: const EdgeInsets.all(8),
+                child: e.getWidget(),
+              ))
+        ]),
+      ),
+    );
+  }
+}
+
+class _PageInfo {
+  final String key;
+  _PageInfo(QPageInternal page) : key = page.matchKey.toString();
+}
+
 class _StackTree extends StatelessWidget {
   final List<_ControllerInfo> _controllers = [];
   _StackTree(List<QRouterController> controllers) {
@@ -51,51 +98,4 @@ class _StackTree extends StatelessWidget {
         child:
             Column(children: _controllers.map((e) => e.getWidget()).toList()));
   }
-}
-
-class _ControllerInfo {
-  final String key;
-  final List<_ControllerInfo> children = [];
-  final List<_PageInfo> pages;
-  _ControllerInfo(QRouterController controller)
-      : key = controller.key.toString(),
-        pages = controller.pages.map((e) => _PageInfo(e)).toList();
-
-  Widget getWidget() {
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: Card(
-        color: Colors.teal.withOpacity(0.3),
-        elevation: 5,
-        child: Column(children: [
-          const SizedBox(height: 10),
-          Row(children: [
-            const SizedBox(width: 10),
-            Text(key),
-            const SizedBox(width: 5),
-          ]),
-          ...pages.map((page) => Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Card(
-                  color: Colors.teal.withOpacity(0.3),
-                  elevation: 5,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 10),
-                      Text(page.key),
-                    ],
-                  )))),
-          ...children.map((e) => Padding(
-                padding: const EdgeInsets.all(8),
-                child: e.getWidget(),
-              ))
-        ]),
-      ),
-    );
-  }
-}
-
-class _PageInfo {
-  final String key;
-  _PageInfo(QPageInternal page) : key = page.matchKey.toString();
 }

@@ -17,7 +17,7 @@ class DebugHistory extends StatelessWidget {
               children: history
                   .map(
                     (e) => Container(
-                      color: Colors.teal.withOpacity(0.3),
+                      color: Colors.teal.withAlpha(77),
                       margin: const EdgeInsets.all(5),
                       child: Row(
                         children: [
