@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.12.1
+
+- Enhance QRouterDelegate with configuration decoding to handle deep links.
+
 ## 1.12.0
 
 - add bottomSheet page type #155 by @miaosun009

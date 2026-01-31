@@ -465,6 +465,29 @@ void main() {
     });
   });
 
+  test('Deep link path test', () async {
+    QR.reset();
+    final delegate = QRouterDelegate([
+      QRoute(path: '/', builder: () => const Scaffold(body: WidgetOne())),
+      QRoute(path: '/info', builder: () => const SizedBox()),
+      QRoute(path: '/cart/:id', builder: () => const SizedBox()),
+      QRoute(path: '/order', builder: () => const SizedBox()),
+    ]);
+    await delegate.setInitialRoutePath('/order?id=55');
+    expect(QR.currentPath, '/order?id=55');
+    expect(QR.params['id']!.toString(), '55');
+    await delegate.setNewRoutePath('/cart/5');
+    expect(QR.currentPath, '/cart/5');
+    expect(QR.params['id']!.asInt, 5);
+    const url = "https://www.example.com/#";
+    await delegate.setNewRoutePath('$url/order?id=56');
+    expect(QR.currentPath, '/order?id=56');
+    expect(QR.params['id']!.toString(), '56');
+    await delegate.setNewRoutePath('$url/cart/4');
+    expect(QR.currentPath, '/cart/4');
+    expect(QR.params['id']!.asInt, 4);
+  });
+
   test('ensureExist / updateParam', () async {
     QR.reset();
     int? oldValue;

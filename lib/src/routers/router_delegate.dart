@@ -8,23 +8,10 @@ import '../../qlevar_router.dart';
 import '../controllers/qrouter_controller.dart';
 import '../helpers/widgets/browser_address_bar.dart';
 
+const _slash = '/';
+
 /// Qlevar Router implementation for [RouterDelegate]
 class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
-  QRouterDelegate(
-    this.routes, {
-    GlobalKey<NavigatorState>? navKey,
-    this.initPath,
-    this.withWebBar = false,
-    this.alwaysAddInitPath = false,
-    List<NavigatorObserver>? observers,
-    this.restorationScopeId,
-  }) : key = navKey ?? GlobalKey<NavigatorState>() {
-    _createController();
-    if (observers != null) {
-      this.observers.addAll(observers);
-    }
-  }
-
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
@@ -56,8 +43,81 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   late final QRouterController _controller;
 
+  final _controllerCompleter = Completer<QRouterController>();
+
+  QRouterDelegate(
+    this.routes, {
+    GlobalKey<NavigatorState>? navKey,
+    this.initPath,
+    this.withWebBar = false,
+    this.alwaysAddInitPath = false,
+    List<NavigatorObserver>? observers,
+    this.restorationScopeId,
+  }) : key = navKey ?? GlobalKey<NavigatorState>() {
+    _createController();
+    if (observers != null) {
+      this.observers.addAll(observers);
+    }
+  }
+
   @override
   String get currentConfiguration => QR.currentPath;
+
+  Navigator get navigator {
+    var scopId = restorationScopeId;
+    if (scopId == null && QR.settings.autoRestoration) {
+      scopId = 'router:${_controller.key.name}';
+    }
+    return Navigator(
+      key: key,
+      pages: _controller.pages,
+      observers: observers,
+      restorationScopeId: restorationScopeId,
+      onPopPage: (route, result) {
+        _controller.removeLast();
+        return false;
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _controllerCompleter.future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _buildNavigator();
+        }
+        return QR.settings.initPage;
+      },
+    );
+  }
+
+  String decodeConfigurations(String configuration) {
+    try {
+      final decoded = Uri.decodeFull(configuration);
+      final uri = Uri.tryParse(decoded);
+
+      if (uri == null) return configuration;
+
+      // 1. If it's a Hash Strategy URL (contains #)
+      if (uri.hasFragment) return uri.fragment;
+
+      // 2. If it's a Full URL or just a Path
+      // uri.path handles both:
+      // 'https://app.example.com/products/123' -> '/products/123'
+      // '/products/123' -> '/products/123'
+      if (uri.path.isNotEmpty) {
+        if (uri.hasQuery) return '${uri.path}?${uri.query}';
+        return uri.path;
+      }
+
+      return decoded;
+    } catch (e) {
+      QR.log('Error while decoding the route $configuration: $e');
+      return configuration;
+    }
+  }
 
   @override
   void dispose() {
@@ -79,6 +139,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   @override
   Future<void> setInitialRoutePath(String configuration) async {
     await _controllerCompleter.future;
+    configuration = decodeConfigurations(configuration);
     if (configuration != _slash) {
       QR.log('incoming init path $configuration', isDebug: true);
       if (alwaysAddInitPath) {
@@ -96,11 +157,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   @override
   Future<void> setNewRoutePath(String configuration) async {
     // fix route encoding (order%20home => order home)
-    try {
-      configuration = Uri.decodeFull(configuration).toString();
-    } catch (_) {
-      QR.log('Error while decoding the route $configuration');
-    }
+    configuration = decodeConfigurations(configuration);
     if (QR.history.hasLast &&
         QR.history.last.path == QR.settings.notFoundPage.path) {
       if (QR.history.length > 2 &&
@@ -121,23 +178,6 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     return;
   }
 
-  Navigator get navigator {
-    var scopId = restorationScopeId;
-    if (scopId == null && QR.settings.autoRestoration) {
-      scopId = 'router:${_controller.key.name}';
-    }
-    return Navigator(
-      key: key,
-      pages: _controller.pages,
-      observers: observers,
-      restorationScopeId: restorationScopeId,
-      onPopPage: (route, result) {
-        _controller.removeLast();
-        return false;
-      },
-    );
-  }
-
   Widget _buildNavigator() {
     if (!withWebBar || !BrowserAddressBar.isNeeded) {
       return navigator;
@@ -154,8 +194,6 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     );
   }
 
-  final _controllerCompleter = Completer<QRouterController>();
-
   Future<void> _createController() async {
     final con = await QR.createRouterController(
       QRContext.rootRouterName,
@@ -168,19 +206,4 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     observers.add(_controller.observer);
     _controller.navKey = key;
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _controllerCompleter.future,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return _buildNavigator();
-        }
-        return QR.settings.initPage;
-      },
-    );
-  }
 }
-
-const _slash = '/';
