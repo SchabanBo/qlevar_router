@@ -195,10 +195,10 @@ class ParamValue {
   T? valueAs<T>() => value as T;
 
   /// Get the param as int
-  int? get asInt => hasValue ? int.parse(toString()) : null;
+  int? get asInt => hasValue ? int.tryParse(toString()) : null;
 
   /// Get the param as double
-  double? get asDouble => hasValue ? double.parse(toString()) : null;
+  double? get asDouble => hasValue ? double.tryParse(toString()) : null;
 
   @override
   String toString() => hasValue ? value!.toString() : 'null';

@@ -5,13 +5,10 @@ import '../routes/qroute_internal.dart';
 import 'middleware_controller.dart';
 
 class PagesController {
-  final routes = <QRouteInternal>[];
-  late final pages = <QPageInternal>[_initPage];
-
-  bool exist(QRouteInternal route) =>
-      routes.any((element) => element.key.isSame(route.key));
-
   static const String _initPageKey = 'Init Page';
+  final routes = <QRouteInternal>[];
+
+  late final pages = <QPageInternal>[_initPage];
 
   QMaterialPageInternal get _initPage => QMaterialPageInternal(
       child: QR.settings.initPage, matchKey: QKey(_initPageKey));
@@ -24,6 +21,37 @@ class PagesController {
     if (pages.any((element) => element.matchKey.hasName(_initPageKey))) {
       pages.removeWhere((element) => element.matchKey.hasName(_initPageKey));
     }
+  }
+
+  bool exist(QRouteInternal route) =>
+      routes.any((element) => element.key.isSame(route.key));
+
+  Future<PopResult> removeAll() async {
+    for (var i = 0; i < routes.length; i++) {
+      final popResult = await removeLast(allowEmptyPages: true);
+      if (popResult != PopResult.Popped) {
+        return popResult;
+      }
+      i--;
+    }
+    return PopResult.Popped;
+  }
+
+  Future<bool> removeIndex(int index) async {
+    final route = routes[index]; // find the page
+
+    final middleware = MiddlewareController(route);
+    if (!await middleware.runCanPop()) return false;
+    await middleware.runOnExit(); // run on exit
+    middleware.scheduleOnExited(); // schedule on exited
+
+    QR.removeNavigator(route.name); // remove navigator if exist
+    QR.history.remove(route); // remove history for this route
+    await _notifyObserverOnPop(route);
+    if (routes.isNotEmpty) routes.removeAt(index); // remove from the routes
+    if (pages.isNotEmpty) pages.removeAt(index); // remove from the pages
+    _checkEmptyStack();
+    return true;
   }
 
   Future<PopResult> removeLast(
@@ -47,39 +75,19 @@ class PagesController {
       QR.history.removeLast();
     }
     await _notifyObserverOnPop(route);
-    routes.removeLast(); // remove from the routes
-    pages.removeLast(); // remove from the pages
+    if (routes.isNotEmpty) routes.removeLast(); // remove from the routes
+    if (pages.isNotEmpty) pages.removeLast(); // remove from the pages
     route.complete(result);
     _checkEmptyStack();
     return PopResult.Popped;
   }
 
-  Future<bool> removeIndex(int index) async {
-    final route = routes[index]; // find the page
-
-    final middleware = MiddlewareController(route);
-    if (!await middleware.runCanPop()) return false;
-    await middleware.runOnExit(); // run on exit
-    middleware.scheduleOnExited(); // schedule on exited
-
-    QR.removeNavigator(route.name); // remove navigator if exist
-    QR.history.remove(route); // remove history for this route
-    await _notifyObserverOnPop(route);
-    if (routes.isNotEmpty) routes.removeAt(index); // remove from the routes
-    if (pages.isNotEmpty) pages.removeAt(index); // remove from the pages
-    _checkEmptyStack();
-    return true;
-  }
-
-  Future<PopResult> removeAll() async {
-    for (var i = 0; i < routes.length; i++) {
-      final popResult = await removeLast(allowEmptyPages: true);
-      if (popResult != PopResult.Popped) {
-        return popResult;
-      }
-      i--;
+  /// show init page when a middleware has something to do,
+  /// so no red screen will be showed
+  void _checkEmptyStack() {
+    if (pages.isEmpty) {
+      pages.add(_initPage);
     }
-    return PopResult.Popped;
   }
 
   Future _notifyObserverOnNavigation(QRouteInternal route) async {
@@ -91,14 +99,6 @@ class PagesController {
   Future _notifyObserverOnPop(QRouteInternal route) async {
     for (var onPop in QR.observer.onPop) {
       await onPop(route.activePath!, route.route);
-    }
-  }
-
-  /// show init page when a middleware has something to do,
-  /// so no red screen will be showed
-  void _checkEmptyStack() {
-    if (pages.isEmpty) {
-      pages.add(_initPage);
     }
   }
 }

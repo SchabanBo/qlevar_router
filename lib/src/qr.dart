@@ -16,6 +16,13 @@ import 'types/qobserver.dart';
 
 part 'qr_navigation.dart';
 
+const Widget _initPage = Material(child: Center(child: Text('Loading')));
+
+final _notFoundPage = QRoute(
+  path: '/notfound',
+  builder: () => const Material(child: Center(child: Text('Page Not Found'))),
+);
+
 class QRContext {
   static const rootRouterName = 'Root';
 
@@ -24,7 +31,7 @@ class QRContext {
   /// For example if you work on a dashboard and you want to do your changes
   /// from now on only on the dashboard Navigator. Then set this value
   /// to the Dashboard Navigator name and every time you call [QR.navigator]
-  /// the Dashboard navigator will be called instated of root navigator
+  /// the Dashboard navigator will be called instead of root navigator
   String activeNavigatorName = QRContext.rootRouterName;
 
   /// This history for the navigation. It is internal history to help with
@@ -49,16 +56,19 @@ class QRContext {
 
   final _manager = ControllerManager();
 
+  /// Lock to prevent concurrent back() calls (e.g. double-tap)
+  Completer<void>? _backLock;
+
+  /// Get the current context of the active navigator
+  BuildContext? get context =>
+      (navigator as QRouterController).navKey.currentContext;
+
   /// This is the url of the current route
   String get currentPath => history.isEmpty ? '/' : history.current.path;
 
   /// Get the current route [QRoute] of the active navigator [navigator]
   /// to change the active navigator use [activeNavigatorName]
   QRoute get currentRoute => navigator.currentRoute;
-
-  /// Get the root navigator
-  /// This is the default navigator of the app
-  QNavigator get rootNavigator => navigatorOf(QRContext.rootRouterName);
 
   /// Get the active navigator by [activeNavigatorName]
   /// by default it is the root navigator
@@ -68,15 +78,13 @@ class QRContext {
   /// the Dashboard navigator will be called instated of root navigator
   QNavigator get navigator => navigatorOf(activeNavigatorName);
 
-  /// return router for a name
-  QNavigator navigatorOf(String name) => _manager.withName(name);
+  /// Get the root navigator
+  /// This is the default navigator of the app
+  QNavigator get rootNavigator => navigatorOf(QRContext.rootRouterName);
 
-  /// Check if navigator with this name exists
-  bool hasNavigator(String name) => _manager.hasController(name);
-
-  /// Get the current context of the active navigator
-  BuildContext? get context =>
-      (navigator as QRouterController).navKey.currentContext;
+  /// create a state to use with a declarative router
+  QDeclarativeController createDeclarativeRouterController(QKey key) =>
+      _manager.createDeclarativeRouterController(key);
 
   ///  return a router [QRouter] for the given routes
   /// you do not need to give the [initRoute]
@@ -105,8 +113,59 @@ class QRContext {
     );
   }
 
+  /// create a controller to use with a Navigator
+  Future<QRouterController> createRouterController(
+    String name, {
+    List<QRoute>? routes,
+    QRouteChildren? cRoutes,
+    String? initPath,
+    QRouteInternal? initRoute,
+    bool isTemporary = true,
+  }) =>
+      _manager.createController(
+          name, routes, cRoutes, initPath, initRoute, isTemporary);
+
+  /// return the current tree widget
+  Widget getActiveTree() {
+    return DebugStackTree(_manager.controllers);
+  }
+
+  /// Check if navigator with this name exists
+  bool hasNavigator(String name) => _manager.hasController(name);
+
+  /// check if the current path is the same as the given name and params
+  bool isCurrentName(String name, {Map<String, dynamic>? params}) =>
+      currentPath ==
+      MatchController.findPathFromName(name, params ?? <String, dynamic>{});
+
+  /// check if the current path is the same as the given path
+  bool isCurrentPath(String path) => currentPath == path;
+
+  /// Print a message from the package
+  void log(String mes, {bool isDebug = false}) {
+    if (settings.enableLog && (!isDebug || settings.enableDebugLog)) {
+      settings.logger('QR: $mes');
+    }
+  }
+
+  /// return router for a name
+  QNavigator navigatorOf(String name) => _manager.withName(name);
+
   /// Remove a navigator with this name
   Future<bool> removeNavigator(String name) => _manager.removeNavigator(name);
+
+  /// Clear everything.
+  void reset() {
+    _manager.controllers.clear();
+    params.clear();
+    history.clear();
+    treeInfo.namePath.clear();
+    observer.onNavigate.clear();
+    observer.onPop.clear();
+    treeInfo.namePath[rootRouterName] = '/';
+    treeInfo.routeIndexer = -1;
+    settings.reset();
+  }
 
   /// Remove the hashtag from url,
   /// call this function before running your app,
@@ -115,14 +174,6 @@ class QRContext {
   /// QR.setUrlStrategy();
   /// ```
   void setUrlStrategy() => configureApp();
-
-  /// check if the current path is the same as the given path
-  bool isCurrentPath(String path) => currentPath == path;
-
-  /// check if the current path is the same as the given name and params
-  bool isCurrentName(String name, {Map<String, dynamic>? params}) =>
-      currentPath ==
-      MatchController.findPathFromName(name, params ?? <String, dynamic>{});
 
   /// Update the browser url
   void updateUrlInfo(
@@ -141,54 +192,7 @@ class QRContext {
         updateParams: updateParams,
         addHistory: addHistory,
       );
-
-  /// return the current tree widget
-  Widget getActiveTree() {
-    return DebugStackTree(_manager.controllers);
-  }
-
-  /// create a controller to use with a Navigator
-  Future<QRouterController> createRouterController(
-    String name, {
-    List<QRoute>? routes,
-    QRouteChildren? cRoutes,
-    String? initPath,
-    QRouteInternal? initRoute,
-    bool isTemporary = true,
-  }) =>
-      _manager.createController(
-          name, routes, cRoutes, initPath, initRoute, isTemporary);
-
-  /// create a state to use with a declarative router
-  QDeclarativeController createDeclarativeRouterController(QKey key) =>
-      _manager.createDeclarativeRouterController(key);
-
-  /// Print a message from the package
-  void log(String mes, {bool isDebug = false}) {
-    if (settings.enableLog && (!isDebug || settings.enableDebugLog)) {
-      settings.logger('QR: $mes');
-    }
-  }
-
-  /// Clear everything.
-  void reset() {
-    _manager.controllers.clear();
-    params.clear();
-    history.clear();
-    treeInfo.namePath.clear();
-    observer.onNavigate.clear();
-    observer.onPop.clear();
-    treeInfo.namePath[rootRouterName] = '/';
-    treeInfo.routeIndexer = -1;
-    settings.reset();
-  }
 }
-
-const Widget _iniPage = Material(child: Center(child: Text('Loading')));
-final _notFoundPage = QRoute(
-  path: '/notfound',
-  builder: () => const Material(child: Center(child: Text('Page Not Found'))),
-);
 
 class _QRSettings {
   /// The logger function to use. By default it uses the print function.
@@ -203,7 +207,7 @@ class _QRSettings {
   bool enableLog = true;
 
   /// The default page to show when the app starts until the first route is loaded.
-  Widget initPage = _iniPage;
+  Widget initPage = _initPage;
 
   /// This can be used for testing. if this is set the package will use the given route
   /// and there will be no need for setting the route tree.
@@ -241,7 +245,7 @@ class _QRSettings {
     logger = print;
     enableDebugLog = false;
     enableLog = true;
-    initPage = _iniPage;
+    initPage = _initPage;
     notFoundPage = _notFoundPage;
     oneRouteInstancePerStack = false;
     pagesType = const QPlatformPage();
