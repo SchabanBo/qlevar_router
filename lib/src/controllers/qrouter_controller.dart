@@ -94,7 +94,7 @@ abstract class QNavigator extends ChangeNotifier {
   /// Push this path on the top of the stack if not already on the stack
   /// or bring it to top if already on the stack
   /// This is useful to switch between pages without losing the states of them
-  /// the defiance between this and [popUntilOrPush] is that no page will
+  /// the difference between this and [popUntilOrPush] is that no page will
   /// be popped
   /// {@endtemplate}
   Future<void> switchTo(String path);
@@ -382,6 +382,9 @@ class QRouterController extends QNavigator {
   }
 
   void update({bool withParams = false}) {
+    if (isDisposed) {
+      return;
+    }
     if (withParams && QR.history.entries.isNotEmpty) {
       QR.params.updateParams(QR.history.current.params);
     }

@@ -1,6 +1,69 @@
 part of 'qr.dart';
 
 extension QRNavigation on QRContext {
+  /// try to pop the last active navigator or go to last path in the history
+  Future<PopResult> back([dynamic result]) async {
+    // Prevent concurrent back() calls (e.g. double-tap)
+    if (_backLock != null) {
+      await _backLock!.future;
+      return PopResult.NotPopped;
+    }
+    _backLock = Completer<void>();
+    try {
+      return await _backInternal(result);
+    } finally {
+      _backLock!.complete();
+      _backLock = null;
+    }
+  }
+
+  /// {@macro q.navigator.popUntilOrPush}
+  Future<void> popUntilOrPush(String path) => navigator.popUntilOrPush(path);
+
+  /// {@macro q.navigator.popUntilOrPushName}
+  Future<void> popUntilOrPushName(String name,
+          {Map<String, dynamic>? params}) =>
+      navigator.popUntilOrPushName(name, params: params);
+
+  /// {@macro q.navigator.push}
+  Future<void> push(String path) => navigator.push(path);
+
+  /// {@macro q.navigator.pushName}
+  Future<void> pushName(String name, {Map<String, dynamic>? params}) =>
+      navigator.pushName(name, params: params);
+
+  /// {@macro q.navigator.replace}
+  Future<void> replace(String path, String withPath) =>
+      navigator.replace(path, withPath);
+
+  /// {@macro q.navigator.replaceAll}
+  Future<void> replaceAll(String path) => navigator.replaceAll(path);
+
+  /// {@macro q.navigator.replaceAllWithName}
+  Future<void> replaceAllWithName(String name,
+          {Map<String, dynamic>? params}) =>
+      navigator.replaceAllWithName(name, params: params);
+
+  /// {@macro q.navigator.replaceLast}
+  Future<void> replaceLast(String path) => navigator.replaceLast(path);
+
+  /// {@macro q.navigator.replaceLastName}
+  Future<void> replaceLastName(String name, {Map<String, dynamic>? params}) =>
+      navigator.replaceLastName(name, params: params);
+
+  /// {@macro q.navigator.replaceName}
+  Future<void> replaceName(String name, String withName,
+          {Map<String, dynamic>? params, Map<String, dynamic>? withParams}) =>
+      navigator.replaceName(name, withName,
+          params: params, withParams: withParams);
+
+  /// {@macro q.navigator.switchTo}
+  Future<void> switchTo(String path) => navigator.switchTo(path);
+
+  /// {@macro q.navigator.switchToName}
+  Future<void> switchToName(String name, {Map<String, dynamic>? params}) =>
+      navigator.switchToName(name, params: params);
+
   /// Navigate to this path.
   /// The package will try to get the right navigator to this path.
   /// Set [ignoreSamePath] to true to ignore the navigation if the current path
@@ -47,8 +110,7 @@ extension QRNavigation on QRContext {
     return null;
   }
 
-  /// try to pop the last active navigator or go to last path in the history
-  Future<PopResult> back([dynamic result]) async {
+  Future<PopResult> _backInternal([dynamic result]) async {
     log('Back to previous path');
     if (history.isEmpty) return PopResult.NotPopped;
 
@@ -116,57 +178,14 @@ extension QRNavigation on QRContext {
       }
     }
 
-    to(history.last.path);
+    if (!history.hasLast) {
+      return PopResult.NotPopped;
+    }
+
+    await to(history.last.path);
     history.removeLast(count: 2);
     return PopResult.Popped;
   }
-
-  /// {@macro q.navigator.push}
-  Future<void> push(String path) => navigator.push(path);
-
-  /// {@macro q.navigator.pushName}
-  Future<void> pushName(String name, {Map<String, dynamic>? params}) =>
-      navigator.pushName(name, params: params);
-
-  /// {@macro q.navigator.replace}
-  Future<void> replace(String path, String withPath) =>
-      navigator.replace(path, withPath);
-
-  /// {@macro q.navigator.replaceName}
-  Future<void> replaceName(String name, String withName,
-          {Map<String, dynamic>? params, Map<String, dynamic>? withParams}) =>
-      navigator.replaceName(name, withName,
-          params: params, withParams: withParams);
-
-  /// {@macro q.navigator.replaceAll}
-  Future<void> replaceAll(String path) => navigator.replaceAll(path);
-
-  /// {@macro q.navigator.replaceAllWithName}
-  Future<void> replaceAllWithName(String name,
-          {Map<String, dynamic>? params}) =>
-      navigator.replaceAllWithName(name, params: params);
-
-  /// {@macro q.navigator.popUntilOrPush}
-  Future<void> popUntilOrPush(String path) => navigator.popUntilOrPush(path);
-
-  /// {@macro q.navigator.popUntilOrPushName}
-  Future<void> popUntilOrPushName(String name,
-          {Map<String, dynamic>? params}) =>
-      navigator.popUntilOrPushName(name, params: params);
-
-  /// {@macro q.navigator.switchTo}
-  Future<void> switchTo(String path) => navigator.switchTo(path);
-
-  /// {@macro q.navigator.switchToName}
-  Future<void> switchToName(String name, {Map<String, dynamic>? params}) =>
-      navigator.switchToName(name, params: params);
-
-  /// {@macro q.navigator.replaceLast}
-  Future<void> replaceLast(String path) => navigator.replaceLast(path);
-
-  /// {@macro q.navigator.replaceLastName}
-  Future<void> replaceLastName(String name, {Map<String, dynamic>? params}) =>
-      navigator.replaceLastName(name, params: params);
 
   /// check if the given navigator is the only one in the history
   bool _isOnlyNavigatorLeft(List<String> navigators) {

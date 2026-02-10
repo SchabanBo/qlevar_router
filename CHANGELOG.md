@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.12.3
+
+- Fix problem when back action is called when back process is already running.
+
 ## 1.12.1
 
 - Enhance QRouterDelegate with configuration decoding to handle deep links.
