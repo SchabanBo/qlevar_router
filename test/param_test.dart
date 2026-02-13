@@ -204,7 +204,7 @@ void main() {
       });
       expect(4, QR.params.length);
       expectedPath('/TestObject{name: name, age: 15}?in=3&str=test&bool=true');
-      expect(testObj, QR.params['categoryId']!.value!);
+      expect(testObj.toString(), QR.params['categoryId']!.value!.toString());
       expect(3, QR.params['in']!.value!);
       expect('test', QR.params['str']!.value!);
       expect(true, QR.params['bool']!.value!);

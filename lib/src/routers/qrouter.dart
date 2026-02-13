@@ -14,6 +14,10 @@ class QRouter extends StatefulWidget {
 
   late final List<NavigatorObserver> observers = [_controller.observer];
 
+  /// Restoration ID to save and restore the state of the navigator, including
+  /// its history.
+  final String? restorationId;
+
   QRouter(
     this._controller, {
     List<NavigatorObserver>? observers,
@@ -25,9 +29,8 @@ class QRouter extends StatefulWidget {
     }
   }
 
-  /// Restoration ID to save and restore the state of the navigator, including
-  /// its history.
-  final String? restorationId;
+  /// Get the [QNavigator] for this [QRouter] to add or remove pages to it.
+  QNavigator get navigator => _controller;
 
   /// Get the name for the current child
   /// This is the name which define in [QRoute.name] if it is null [QRoute.path]
@@ -35,26 +38,11 @@ class QRouter extends StatefulWidget {
   String get routeName =>
       _controller.currentRoute.name ?? _controller.currentRoute.path;
 
-  /// Get the [QNavigator] for this [QRouter] to add or remove pages to it.
-  QNavigator get navigator => _controller;
-
   @override
   State createState() => _QRouterState();
 }
 
 class _QRouterState extends State<QRouter> {
-  @override
-  void initState() {
-    super.initState();
-    if (widget._controller.isDisposed) return;
-    widget._controller.addListener(update);
-    widget._controller.navKey = widget.navKey;
-  }
-
-  void update() {
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     var scopId = widget.restorationId;
@@ -71,7 +59,27 @@ class _QRouterState extends State<QRouter> {
     );
   }
 
-  bool _onPopPage(route, result) {
+  @override
+  void dispose() {
+    if (!widget._controller.isDisposed) {
+      widget._controller.removeListener(update);
+    }
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget._controller.isDisposed) return;
+    widget._controller.addListener(update);
+    widget._controller.navKey = widget.navKey;
+  }
+
+  void update() {
+    setState(() {});
+  }
+
+  bool _onPopPage(Route<dynamic> route, dynamic result) {
     // // remove the page from the list
     // widget._controller.removeLast();
     // // tell the root navigator to update the url
@@ -79,13 +87,5 @@ class _QRouterState extends State<QRouter> {
 
     QR.back();
     return false;
-  }
-
-  @override
-  void dispose() {
-    if (!widget._controller.isDisposed) {
-      widget._controller.removeListener(update);
-    }
-    super.dispose();
   }
 }

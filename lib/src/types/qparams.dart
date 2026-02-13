@@ -1,20 +1,65 @@
 import 'package:flutter/foundation.dart';
 
+typedef ParamChanged = Function(Object?, Object?);
+
+/// Class represent the param value
+class ParamValue {
+  final Object? _value;
+  bool keepAlive;
+  int? cleanupAfter;
+  ParamChanged? onChange;
+  Function()? onDelete;
+
+  ParamValue(
+    this._value, {
+    this.keepAlive = false,
+    this.cleanupAfter,
+    this.onChange,
+    this.onDelete,
+  });
+
+  /// Get the param as double
+  double? get asDouble => hasValue ? double.tryParse(toString()) : null;
+
+  /// Get the param as int
+  int? get asInt => hasValue ? int.tryParse(toString()) : null;
+
+  /// is param has value
+  bool get hasValue => _value != null;
+
+  /// Get the param value as String
+  Object? get value => _value;
+
+  ParamValue copyWith({
+    Object? value,
+    bool? keepAlive,
+    int? cleanupAfter,
+    ParamChanged? onChange,
+    Function()? onDelete,
+  }) {
+    return ParamValue(
+      value ?? _value,
+      keepAlive: keepAlive ?? this.keepAlive,
+      cleanupAfter: cleanupAfter ?? this.cleanupAfter,
+      onChange: onChange ?? this.onChange,
+      onDelete: onDelete ?? this.onDelete,
+    );
+  }
+
+  bool isSame(ParamValue other) => _value == other.value;
+
+  @override
+  String toString() => hasValue ? value!.toString() : 'null';
+
+  T? valueAs<T>() => value as T;
+}
+
 /// The params for the route
 class QParams {
   final Map<String, ParamValue> _params;
 
   QParams({Map<String, ParamValue>? params})
       : _params = params ?? <String, ParamValue>{};
-
-  QParams copyWith() => QParams(params: Map.from(_params));
-
-  /// Get param from key
-  ParamValue? operator [](String key) => _params[key];
-
-  /// set new param
-  void operator []=(String key, Object value) =>
-      _params[key] = ParamValue(value);
 
   /// get the params as map
   Map<String, ParamValue> get asMap => _params;
@@ -27,7 +72,41 @@ class QParams {
     return result;
   }
 
-  /// Get the params as Map<String,String>
+  /// Whether there is no params.
+  bool get isEmpty => _params.isEmpty;
+
+  /// Whether there is at least one param.
+  bool get isNotEmpty => _params.isNotEmpty;
+
+  /// get the params keys
+  List<String> get keys => _params.keys.toList();
+
+  /// params count
+  int get length => _params.length;
+
+  /// Get param from key
+  ParamValue? operator [](String key) => _params[key];
+
+  /// set new param
+  void operator []=(String key, Object value) =>
+      _params[key] = ParamValue(value);
+
+  /// Add params
+  void addAll(Map<String, dynamic> other) => _params
+      .addAll(other.map((key, value) => MapEntry(key, ParamValue(value))));
+
+  /// Add a param without showing it in the path, as default this param will
+  /// be automatically deleted after one page navigation, to change this,
+  /// change the [cleanUpAfter] value to keep it from more navigation times
+  void addAsHidden(String key, Object value, {int cleanUpAfter = 1}) {
+    _params[key] = ParamValue(
+      value,
+      cleanupAfter: cleanUpAfter,
+      keepAlive: true,
+    );
+  }
+
+  /// Get the params as Map
   Map<String, String> asStringMap() {
     final result = <String, String>{};
     for (var item in _params.entries) {
@@ -36,24 +115,10 @@ class QParams {
     return result;
   }
 
-  /// params count
-  int get length => _params.length;
-
-  /// Whether there is no params.
-  bool get isEmpty => _params.isEmpty;
-
-  /// Whether there is at least one param.
-  bool get isNotEmpty => _params.isNotEmpty;
-
   /// remove all params
   void clear() => _params.clear();
 
-  /// get the params keys
-  List<String> get keys => _params.keys.toList();
-
-  /// Add params
-  void addAll(Map<String, dynamic> other) => _params
-      .addAll(other.map((key, value) => MapEntry(key, ParamValue(value))));
+  QParams copyWith() => QParams(params: Map.from(_params));
 
   /// See if a parameter is Exist, if not create it with this `initValue`.
   /// if you set `keepAlive` to true then the package will not remove this param
@@ -82,16 +147,8 @@ class QParams {
     );
   }
 
-  /// Add a param without showing it in the path, as default this param will
-  /// be automatically deleted after one page navigation, to change this,
-  /// change the [cleanUpAfter] value to keep it from more navigation times
-  void addAsHidden(String key, Object value, {int cleanUpAfter = 1}) {
-    _params[key] = ParamValue(
-      value,
-      cleanupAfter: cleanUpAfter,
-      keepAlive: true,
-    );
-  }
+  bool isSame(QParams other) =>
+      length == other.length && mapEquals(asValueMap, other.asValueMap);
 
   void updateParam(
     String name,
@@ -147,61 +204,4 @@ class QParams {
       }
     }
   }
-
-  bool isSame(QParams other) =>
-      length == other.length && mapEquals(asValueMap, other.asValueMap);
 }
-
-/// Class represent the param value
-class ParamValue {
-  final Object? _value;
-  bool keepAlive;
-  int? cleanupAfter;
-  ParamChanged? onChange;
-  Function()? onDelete;
-
-  ParamValue(
-    this._value, {
-    this.keepAlive = false,
-    this.cleanupAfter,
-    this.onChange,
-    this.onDelete,
-  });
-
-  ParamValue copyWith({
-    Object? value,
-    bool? keepAlive,
-    int? cleanupAfter,
-    ParamChanged? onChange,
-    Function()? onDelete,
-  }) {
-    return ParamValue(
-      value ?? _value,
-      keepAlive: keepAlive ?? this.keepAlive,
-      cleanupAfter: cleanupAfter ?? this.cleanupAfter,
-      onChange: onChange ?? this.onChange,
-      onDelete: onDelete ?? this.onDelete,
-    );
-  }
-
-  bool isSame(ParamValue other) => _value == other.value;
-
-  /// is param has value
-  bool get hasValue => _value != null;
-
-  /// Get the param value as String
-  Object? get value => _value;
-
-  T? valueAs<T>() => value as T;
-
-  /// Get the param as int
-  int? get asInt => hasValue ? int.tryParse(toString()) : null;
-
-  /// Get the param as double
-  double? get asDouble => hasValue ? double.tryParse(toString()) : null;
-
-  @override
-  String toString() => hasValue ? value!.toString() : 'null';
-}
-
-typedef ParamChanged = Function(Object?, Object?);
