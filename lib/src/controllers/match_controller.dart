@@ -4,6 +4,16 @@ import '../routes/qroute_internal.dart';
 import 'middleware_controller.dart';
 
 class MatchController {
+  String foundPath;
+
+  final params = QParams();
+
+  final String parentPath;
+  final Uri path;
+  final QRouteChildren routes;
+
+  /// index of the path segment we are searching for
+  int _searchIndex = -1;
   MatchController(String sPath, this.foundPath, this.routes,
       {Map<String, dynamic>? params})
       : path = _fixedPathUri(sPath),
@@ -33,14 +43,44 @@ class MatchController {
     return MatchController(path, foundPath, routes, params: params);
   }
 
-  String foundPath;
-  final params = QParams();
-  final String parentPath;
-  final Uri path;
-  final QRouteChildren routes;
+  Future<QRouteInternal> get match async {
+    // Check if this route should be mocked
+    final isMocked = _isMocked();
+    if (isMocked != null) return isMocked;
+    final result = await _searchMatch();
+    QR.params.updateParams(result.getAllParams());
+    return result;
+  }
 
-  /// index of the path segment we are searching for
-  int _searchIndex = -1;
+  bool isSameComponent(String routeSegment, String segment) {
+    if (routeSegment.startsWith('/:')) {
+      var name = routeSegment.replaceAll('/:', '');
+      if (name.contains('(') && name.contains(')')) {
+        try {
+          final regexRule = name.substring(name.indexOf('('));
+          name = name.substring(0, name.indexOf('('));
+          final regex = RegExp(regexRule);
+          if (regex.hasMatch(segment)) {
+            params[name] = segment;
+            return true;
+          }
+          return false;
+        } on FormatException catch (e) {
+          QR.log('Error finding regex match for $name: $e');
+          return false;
+        }
+      }
+      if (!params.asMap.containsKey(name)) {
+        params[name] = segment;
+      } else {
+        QR.log(
+            'Duplicate param name $name. replacing old value ${params[name]} with new value $segment');
+        params[name] = segment;
+      }
+      return true;
+    }
+    return false;
+  }
 
   void updateFoundPath(String segment) {
     foundPath += "/$segment";
@@ -68,22 +108,6 @@ class MatchController {
     _searchIndex++;
   }
 
-  Future<QRouteInternal> get match async {
-    // Check if this route should be mocked
-    final isMocked = _isMocked();
-    if (isMocked != null) return isMocked;
-    final result = await _searchMatch();
-    QR.params.updateParams(result.getAllParams());
-    return result;
-  }
-
-  QRouteInternal? _isMocked() {
-    if (QR.settings.mockRoute == null) return null;
-    final route = QR.settings.mockRoute!.mockPath(path.toString());
-    if (route == null) return null;
-    return QRouteInternal.mocked(path.toString(), route);
-  }
-
   Future<QRouteInternal?> _addInitRouterIfNeeded(QRouteInternal route) async {
     // There is no init route
     if (!route.route.withChildRouter) return null;
@@ -93,76 +117,11 @@ class MatchController {
     return await _tryFind(route.children!, -1);
   }
 
-  bool isSameComponent(String routeSegment, String segment) {
-    if (routeSegment.startsWith('/:')) {
-      var name = routeSegment.replaceAll('/:', '');
-      if (name.contains('(') && name.contains(')')) {
-        try {
-          final regexRule = name.substring(name.indexOf('('));
-          name = name.substring(0, name.indexOf('('));
-          final regex = RegExp(regexRule);
-          if (regex.hasMatch(segment)) {
-            params[name] = segment;
-            return true;
-          }
-          return false;
-        } on FormatException catch (e) {
-          QR.log('Error finding regex match for $name: $e');
-          return false;
-        }
-      }
-      if (!params.asMap.containsKey(name)) {
-        params[name] = segment;
-      } else {
-        QR.log('Duplicate param name $name');
-      }
-      return true;
-    }
-    return false;
-  }
-
-  static String findPathFromName(String name, Map<String, dynamic> params) {
-    // Check if this route should be mocked
-    if (QR.settings.mockRoute != null) {
-      final path = QR.settings.mockRoute!.mockName(name);
-      if (path != null) return path;
-    }
-    final isPathFound = QR.treeInfo.namePath[name];
-    assert(isPathFound != null, 'Path name not found');
-    var newPath = isPathFound!;
-    final pathParams = <String, dynamic>{};
-
-    // Search for component params
-    for (var param in params.entries) {
-      if (newPath.contains(':${param.key}')) {
-        newPath =
-            newPath.replaceAll(':${param.key}', _getParamString(param.value));
-      } else {
-        pathParams.addEntries([param]);
-      }
-    }
-
-    // Replace old component
-    for (var param in QR.params.asMap.entries) {
-      if (newPath.contains(':${param.key}')) {
-        newPath =
-            newPath.replaceAll(':${param.key}', _getParamString(param.value));
-      }
-    }
-
-    if (pathParams.isNotEmpty) {
-      newPath = '$newPath?';
-
-      // Build the params
-      for (var i = 0; i < pathParams.length; i++) {
-        final param = pathParams.entries.toList()[i];
-        newPath = '$newPath${param.key}=${_getParamString(param.value)}';
-        if (i != pathParams.length - 1) {
-          newPath = '$newPath&';
-        }
-      }
-    }
-    return newPath;
+  QRouteInternal? _isMocked() {
+    if (QR.settings.mockRoute == null) return null;
+    final route = QR.settings.mockRoute!.mockPath(path.toString());
+    if (route == null) return null;
+    return QRouteInternal.mocked(path.toString(), route);
   }
 
   Future<QRouteInternal> _searchMatch() async {
@@ -302,12 +261,48 @@ class MatchController {
     return null;
   }
 
-  static String _getParamString(dynamic value) {
-    if (value is String) return value;
-    if (value is int || value is double || value is bool) {
-      return value.toString();
+  static String findPathFromName(String name, Map<String, dynamic> params) {
+    // Check if this route should be mocked
+    if (QR.settings.mockRoute != null) {
+      final path = QR.settings.mockRoute!.mockName(name);
+      if (path != null) return path;
     }
-    return value.toString();
+    final isPathFound = QR.treeInfo.namePath[name];
+    assert(isPathFound != null, 'Path name not found');
+    var newPath = isPathFound!;
+    final pathParams = <String, dynamic>{};
+
+    // Search for component params
+    for (var param in params.entries) {
+      if (newPath.contains(':${param.key}')) {
+        newPath =
+            newPath.replaceAll(':${param.key}', _getParamString(param.value));
+      } else {
+        pathParams.addEntries([param]);
+      }
+    }
+
+    // Replace old component
+    for (var param in QR.params.asMap.entries) {
+      if (newPath.contains(':${param.key}')) {
+        newPath =
+            newPath.replaceAll(':${param.key}', _getParamString(param.value));
+      }
+    }
+
+    if (pathParams.isNotEmpty) {
+      newPath = '$newPath?';
+
+      // Build the params
+      for (var i = 0; i < pathParams.length; i++) {
+        final param = pathParams.entries.toList()[i];
+        newPath = '$newPath${param.key}=${_getParamString(param.value)}';
+        if (i != pathParams.length - 1) {
+          newPath = '$newPath&';
+        }
+      }
+    }
+    return newPath;
   }
 
   static Uri _fixedPathUri(String path) {
@@ -322,5 +317,13 @@ class MatchController {
       );
     }
     return fixedPath;
+  }
+
+  static String _getParamString(dynamic value) {
+    if (value is String) return value;
+    if (value is int || value is double || value is bool) {
+      return value.toString();
+    }
+    return value.toString();
   }
 }

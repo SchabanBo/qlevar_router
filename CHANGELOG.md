@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.12.4
+
+- Fix problem param will not update when page that used this param is opened.
+
 ## 1.12.3
 
 - Fix problem when back action is called when back process is already running.
