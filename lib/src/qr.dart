@@ -56,8 +56,8 @@ class QRContext {
 
   final _manager = ControllerManager();
 
-  /// Lock to prevent concurrent back() calls (e.g. double-tap)
-  Completer<void>? _backLock;
+  /// The running back() call; concurrent calls (e.g. double-tap) join it
+  Future<PopResult>? _backInFlight;
 
   /// Get the current context of the active navigator
   BuildContext? get context =>

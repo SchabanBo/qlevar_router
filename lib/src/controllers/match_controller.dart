@@ -38,7 +38,12 @@ class MatchController {
     }
     var path = findPathFromName(name, params ?? <String, dynamic>{});
     if (foundPath != '/' && path.startsWith(foundPath)) {
-      path = path.replaceAll(foundPath, '');
+      // strip the parent path only as a whole prefix: '/shop' from
+      // '/shop/shop-items' is '/shop-items', and '/shopping' stays as is
+      final rest = path.substring(foundPath.length);
+      if (rest.isEmpty || rest.startsWith('/') || rest.startsWith('?')) {
+        path = rest;
+      }
     }
     return MatchController(path, foundPath, routes, params: params);
   }

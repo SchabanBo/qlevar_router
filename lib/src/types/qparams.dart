@@ -51,7 +51,7 @@ class ParamValue {
   @override
   String toString() => hasValue ? value!.toString() : 'null';
 
-  T? valueAs<T>() => value as T;
+  T? valueAs<T>() => value as T?;
 }
 
 /// The params for the route

@@ -100,7 +100,9 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    // Material, not a colored Container: ListTile paints its ink on the
+    // nearest Material and asserts when a colored box would hide it
+    return Material(
       color: Colors.grey.shade800,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -219,7 +221,9 @@ class DashSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    // Material, not a colored Container: ListTile paints its ink on the
+    // nearest Material and asserts when a colored box would hide it
+    return Material(
       color: Colors.grey.shade800,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

@@ -270,6 +270,7 @@ or it takes `null` so the page can be accessed.
 ### canPop
 
 can this route pop, called when trying to remove the page.
+It runs for pops that go through the router (`QR.back`, the Android back button, `QR.to`...). Pops that Flutter does itself (iOS swipe back, the default `AppBar` back button, `Navigator.pop`) have already happened and can not be vetoed; a `PopScope` in the page blocks swipe back and the `AppBar` back button.
 
 ### onMatch
 

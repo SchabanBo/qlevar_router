@@ -7,6 +7,9 @@ class ControllerManager {
   final controllers = <QRouterController>[];
   final dControllers = <QDeclarativeController>[];
 
+  /// Navigators still initializing, they join [controllers] when done
+  final _creating = <String, Future<QRouterController>>{};
+
   Future<QRouterController> createController(
     String name,
     List<QRoute>? routes,
@@ -19,6 +22,25 @@ class ControllerManager {
       QR.log('A navigator with name [$name] already exist', isDebug: true);
       return controllers.firstWhere((element) => element.key.hasName(name));
     }
+    // a second create while the first one is initializing gets the same one
+    final creating = _creating[name];
+    if (creating != null) return creating;
+    try {
+      return await (_creating[name] = _createController(
+          name, routes, cRoutes, initPath, initRoute, isTemporary));
+    } finally {
+      _creating.remove(name);
+    }
+  }
+
+  Future<QRouterController> _createController(
+    String name,
+    List<QRoute>? routes,
+    QRouteChildren? cRoutes,
+    String? initPath,
+    QRouteInternal? initRoute,
+    bool isTemporary,
+  ) async {
     final routePath = QR.treeInfo.namePath[name];
     if (routePath == null) {
       throw Exception('Route with name $name was not found in the tree info');

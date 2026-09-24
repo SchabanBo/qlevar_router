@@ -3,17 +3,19 @@ part of 'qr.dart';
 extension QRNavigation on QRContext {
   /// try to pop the last active navigator or go to last path in the history
   Future<PopResult> back([dynamic result]) async {
-    // Prevent concurrent back() calls (e.g. double-tap)
-    if (_backLock != null) {
-      await _backLock!.future;
-      return PopResult.NotPopped;
+    // A back while another is running (double-tap, or a second system back
+    // while a canPop dialog is open) must not answer NotPopped:
+    // QRouterDelegate.popRoute would return false and Flutter closes the app.
+    // It dismisses the open popup, otherwise it joins the running back.
+    final running = _backInFlight;
+    if (running != null) {
+      if (_dismissPopup(result)) return PopResult.PopupDismissed;
+      return running;
     }
-    _backLock = Completer<void>();
     try {
-      return await _backInternal(result);
+      return await (_backInFlight = _backInternal(result));
     } finally {
-      _backLock!.complete();
-      _backLock = null;
+      _backInFlight = null;
     }
   }
 
@@ -132,14 +134,8 @@ extension QRNavigation on QRContext {
 
       for (final navigator in popNavigatorOptions) {
         final controller = navigatorOf(navigator) as QRouterController;
-        if (!controller.isTemporary) {
-          // check if there is any popups to close, Check [#101]
-          final popupController = _manager.controllerWithPopup();
-          if (popupController != null) {
-            popupController.closePopup(result);
-            QR.updateUrlInfo(QR.currentPath, addHistory: false);
-            return PopResult.PopupDismissed;
-          }
+        if (!controller.isTemporary && _dismissPopup(result)) {
+          return PopResult.PopupDismissed;
         }
         final popResult = await controller.removeLast(result: result);
 
@@ -185,6 +181,15 @@ extension QRNavigation on QRContext {
     await to(history.last.path);
     history.removeLast(count: 2);
     return PopResult.Popped;
+  }
+
+  /// Close an open popup (dialog, bottom sheet) if there is one, see [#101]
+  bool _dismissPopup(dynamic result) {
+    final popupController = _manager.controllerWithPopup();
+    if (popupController == null) return false;
+    popupController.closePopup(result);
+    QR.updateUrlInfo(QR.currentPath, addHistory: false);
+    return true;
   }
 
   /// check if the given navigator is the only one in the history

@@ -33,7 +33,10 @@ class QMiddleware {
   /// this is useful for example if you want to show a dialog to the user
   /// to confirm that he wants to leave the page
   /// and if he doesn't want to leave the page you can return false
-  /// and the page will not be removed
+  /// and the page will not be removed.
+  /// It is not called for pops Flutter does itself (iOS swipe back, the
+  /// default AppBar back button, Navigator.pop): they already happened. A
+  /// PopScope in the page blocks swipe back and the AppBar back button
   ///{@endtemplate}
   /// ````dart
   /// canPop: () async => await showDialog<bool>(
