@@ -170,7 +170,7 @@ class QRouterController extends QNavigator {
 
   Future<void> disposeAsync() async {
     isDisposed = true;
-    await _pagesController.removeAll();
+    await _pagesController.removeAll(updateHistory: false);
     if (isTemporary) {
       // remove routes from the tree
       final routesNames = routes.routes.map((e) => e.name).toList();
@@ -469,7 +469,9 @@ class QRouterController extends QNavigator {
     // if page children should not be ignored, then bring the page to the top
     // with its children too in the same order
     final routesWithSamePath = _pagesController.routes
-        .where((element) => element.fullPath.contains(route.fullPath))
+        .where((element) =>
+            element.fullPath == route.fullPath ||
+            element.fullPath.startsWith('${route.fullPath}/'))
         .toList();
     QR.log('bring page to top with children: $routesWithSamePath',
         isDebug: true);

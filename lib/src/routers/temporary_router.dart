@@ -66,6 +66,11 @@ class _TemporaryQRouterState extends State<TemporaryQRouter> {
       initPath: widget.initPath,
       routes: widget.routes,
     );
+    if (!mounted) {
+      // disposed while the navigator was created, do not leave it active
+      await QR.removeNavigator(name);
+      return;
+    }
     _completer.complete(router);
     QR.activeNavigatorName = name;
   }

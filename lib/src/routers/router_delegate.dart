@@ -72,7 +72,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       key: key,
       pages: _controller.pages,
       observers: observers,
-      restorationScopeId: restorationScopeId,
+      restorationScopeId: scopId,
       onPopPage: (route, result) {
         _controller.removeLast();
         return false;
@@ -95,24 +95,20 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   String decodeConfigurations(String configuration) {
     try {
-      final decoded = Uri.decodeFull(configuration);
-      final uri = Uri.tryParse(decoded);
+      var uri = Uri.parse(configuration);
 
-      if (uri == null) return configuration;
+      // 1. If it's a Hash Strategy URL (contains #) the route is the fragment
+      if (uri.hasFragment) uri = Uri.parse(uri.fragment);
 
-      // 1. If it's a Hash Strategy URL (contains #)
-      if (uri.hasFragment) return uri.fragment;
-
-      // 2. If it's a Full URL or just a Path
-      // uri.path handles both:
+      // 2. Keep only the path and query of a full URL
       // 'https://app.example.com/products/123' -> '/products/123'
-      // '/products/123' -> '/products/123'
-      if (uri.path.isNotEmpty) {
-        if (uri.hasQuery) return '${uri.path}?${uri.query}';
-        return uri.path;
-      }
-
-      return decoded;
+      // Only the path is decoded (order%20home, %2Fpath%2Fto). The query stays
+      // encoded until the match reads it, so an escaped &, # or + inside a
+      // value is not taken as a separator or a fragment.
+      final path =
+          Uri.parse(Uri.decodeFull(uri.path.isEmpty ? _slash : uri.path))
+              .toString();
+      return uri.hasQuery ? '$path?${uri.query}' : path;
     } catch (e) {
       QR.log('Error while decoding the route $configuration: $e');
       return configuration;

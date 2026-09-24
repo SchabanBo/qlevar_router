@@ -65,9 +65,13 @@ class PagesController {
   bool exist(QRouteInternal route) =>
       routes.any((element) => element.key.isSame(route.key));
 
-  Future<PopResult> removeAll() async {
+  /// [updateHistory] is false when the navigator is being disposed: the
+  /// history entries of a navigator are removed by its name afterwards, and
+  /// popping the newest entries here removed other navigators' entries.
+  Future<PopResult> removeAll({bool updateHistory = true}) async {
     for (var i = 0; i < routes.length; i++) {
-      final popResult = await removeLast(allowEmptyPages: true);
+      final popResult =
+          await removeLast(allowEmptyPages: true, updateHistory: updateHistory);
       if (popResult != PopResult.Popped) {
         return popResult;
       }
@@ -84,16 +88,20 @@ class PagesController {
     await middleware.runOnExit(); // run on exit
     middleware.scheduleOnExited(); // schedule on exited
 
-    QR.removeNavigator(route.name); // remove navigator if exist
+    await QR.removeNavigator(route.name); // remove navigator if exist
     QR.history.remove(route); // remove history for this route
     await _notifyObserverOnPop(route);
     _remove(route);
+    route.complete(null); // release anyone waiting for a result
     _checkEmptyStack();
     return true;
   }
 
-  Future<PopResult> removeLast(
-      {dynamic result, bool allowEmptyPages = false}) async {
+  Future<PopResult> removeLast({
+    dynamic result,
+    bool allowEmptyPages = false,
+    bool updateHistory = true,
+  }) async {
     if (routes.isEmpty) {
       return PopResult.NotPopped;
     }
@@ -108,9 +116,11 @@ class PagesController {
     await middleware.runOnExit(); // run on exit
     middleware.scheduleOnExited(); // schedule on exited
     await QR.removeNavigator(route.name); // remove navigator if exist
-    QR.history.removeLast(); // remove history for this route
-    if (QR.history.hasLast && QR.history.current.path == route.activePath) {
-      QR.history.removeLast();
+    if (updateHistory) {
+      QR.history.removeLast(); // remove history for this route
+      if (QR.history.hasLast && QR.history.current.path == route.activePath) {
+        QR.history.removeLast();
+      }
     }
     await _notifyObserverOnPop(route);
     _remove(route);
