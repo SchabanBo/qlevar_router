@@ -13,14 +13,53 @@ class PagesController {
   QMaterialPageInternal get _initPage => QMaterialPageInternal(
       child: QR.settings.initPage, matchKey: QKey(_initPageKey));
 
+  // Routes whose [add] is still awaiting middleware or page creation. They are
+  // in [routes] but have no page in [pages] yet, so a route index is not a
+  // page index: translate with [_pageIndex] (RangeError in _bringPageToTop).
+  final _entering = <QRouteInternal>{};
+
+  int _pageIndex(int routeIndex) =>
+      routeIndex - routes.take(routeIndex).where(_entering.contains).length;
+
   Future<void> add(QRouteInternal route) async {
     routes.add(route);
-    await MiddlewareController(route).runOnEnter();
-    await _notifyObserverOnNavigation(route);
-    pages.add(await PageCreator(route).create());
+    _entering.add(route);
+    try {
+      await MiddlewareController(route).runOnEnter();
+      await _notifyObserverOnNavigation(route);
+      final page = await PageCreator(route).create();
+      final index = routes.indexOf(route);
+      if (index == -1) return; // popped while its page was being created
+      pages.insert(_pageIndex(index), page);
+    } catch (_) {
+      routes.remove(route);
+      rethrow;
+    } finally {
+      _entering.remove(route);
+    }
     if (pages.any((element) => element.matchKey.hasName(_initPageKey))) {
       pages.removeWhere((element) => element.matchKey.hasName(_initPageKey));
     }
+  }
+
+  /// Moves [route] and its page (if already created) to the top.
+  void moveToTop(QRouteInternal route) {
+    final page = _entering.contains(route)
+        ? null
+        : pages.removeAt(_pageIndex(routes.indexOf(route)));
+    routes.remove(route);
+    routes.add(route);
+    if (page != null) pages.add(page);
+  }
+
+  void _remove(QRouteInternal route) {
+    final index = routes.indexOf(route);
+    if (index == -1) return;
+    final pageIndex = _pageIndex(index);
+    if (!_entering.contains(route) && pageIndex < pages.length) {
+      pages.removeAt(pageIndex);
+    }
+    routes.removeAt(index);
   }
 
   bool exist(QRouteInternal route) =>
@@ -48,8 +87,7 @@ class PagesController {
     QR.removeNavigator(route.name); // remove navigator if exist
     QR.history.remove(route); // remove history for this route
     await _notifyObserverOnPop(route);
-    if (routes.isNotEmpty) routes.removeAt(index); // remove from the routes
-    if (pages.isNotEmpty) pages.removeAt(index); // remove from the pages
+    _remove(route);
     _checkEmptyStack();
     return true;
   }
@@ -75,8 +113,7 @@ class PagesController {
       QR.history.removeLast();
     }
     await _notifyObserverOnPop(route);
-    if (routes.isNotEmpty) routes.removeLast(); // remove from the routes
-    if (pages.isNotEmpty) pages.removeLast(); // remove from the pages
+    _remove(route);
     route.complete(result);
     _checkEmptyStack();
     return PopResult.Popped;

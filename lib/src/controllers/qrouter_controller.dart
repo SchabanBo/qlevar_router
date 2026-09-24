@@ -267,7 +267,7 @@ class QRouterController extends QNavigator {
       default:
         // page is exist and has no children
         // then pop until it or replace it
-        if (index == _pagesController.pages.length - 1) {
+        if (index == _pagesController.routes.length - 1) {
           // if the same page is on the top, then replace it.
           // remove it from the top and add it again
           if (await _pagesController.removeLast(allowEmptyPages: true) !=
@@ -278,8 +278,8 @@ class QRouterController extends QNavigator {
           return;
         }
         // page exist remove unit it
-        final pagesLength = _pagesController.pages.length;
-        for (var i = index + 1; i < pagesLength; i++) {
+        final routesLength = _pagesController.routes.length;
+        for (var i = index + 1; i < routesLength; i++) {
           if (await _pagesController.removeLast() != PopResult.Popped) return;
         }
     }
@@ -463,11 +463,7 @@ class QRouterController extends QNavigator {
   QRouteInternal _bringPageToTop(int index, bool shouldIgnoreChildren) {
     var route = _pagesController.routes[index];
     if (shouldIgnoreChildren) {
-      final page = _pagesController.pages[index];
-      _pagesController.routes.remove(route);
-      _pagesController.pages.remove(page);
-      _pagesController.routes.add(route);
-      _pagesController.pages.add(page);
+      _pagesController.moveToTop(route);
       return route;
     }
     // if page children should not be ignored, then bring the page to the top
@@ -478,12 +474,7 @@ class QRouterController extends QNavigator {
     QR.log('bring page to top with children: $routesWithSamePath',
         isDebug: true);
     for (route in routesWithSamePath) {
-      index = _pagesController.routes.indexOf(route);
-      final page = _pagesController.pages[index];
-      _pagesController.routes.remove(route);
-      _pagesController.pages.remove(page);
-      _pagesController.routes.add(route);
-      _pagesController.pages.add(page);
+      _pagesController.moveToTop(route);
       _updatePathWhenBringingPageToTop(route);
     }
 
