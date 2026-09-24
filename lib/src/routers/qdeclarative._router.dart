@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
@@ -56,12 +54,8 @@ class QDeclarativeController extends State<QDeclarative> {
     return Navigator(
       key: navKey,
       pages: List.unmodifiable(_pages),
-      onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
-        }
-        return pop();
-      },
+      // Flutter already popped the page, let the state follow
+      onDidRemovePage: (_) => pop(),
     );
   }
 

@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import '../../qlevar_router.dart';
 import '../pages/page_creator.dart';
 import '../pages/qpage_internal.dart';
@@ -113,6 +115,31 @@ class PagesController {
       return PopResult.NotPopped;
     }
 
+    await _exit(route, updateHistory: updateHistory);
+    _remove(route);
+    route.complete(result);
+    _checkEmptyStack();
+    return PopResult.Popped;
+  }
+
+  /// Flutter already popped [page] (swipe back, the AppBar back button,
+  /// Navigator.pop), so there is no canPop to ask. Returns false when the
+  /// page is not in this stack.
+  Future<bool> removePage(Page page) async {
+    final index = pages.indexWhere((p) => identical(p, page));
+    if (index == -1) return false;
+    // pages only exist for routes that finished entering
+    final route = routes.where((r) => !_entering.contains(r)).elementAt(index);
+    // remove it before awaiting, a rebuild would push the popped page again
+    _remove(route);
+    _checkEmptyStack();
+    await _exit(route);
+    route.complete(null);
+    return true;
+  }
+
+  Future<void> _exit(QRouteInternal route, {bool updateHistory = true}) async {
+    final middleware = MiddlewareController(route);
     await middleware.runOnExit(); // run on exit
     middleware.scheduleOnExited(); // schedule on exited
     await QR.removeNavigator(route.name); // remove navigator if exist
@@ -123,10 +150,6 @@ class PagesController {
       }
     }
     await _notifyObserverOnPop(route);
-    _remove(route);
-    route.complete(result);
-    _checkEmptyStack();
-    return PopResult.Popped;
   }
 
   /// show init page when a middleware has something to do,

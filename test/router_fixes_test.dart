@@ -196,4 +196,45 @@ void main() {
     expect(QR.activeNavigatorName, QRContext.rootRouterName);
     expect(QR.hasNavigator('/temp'), isFalse);
   });
+
+  testWidgets('A page Flutter pops itself leaves the stack without canPop',
+      (tester) async {
+    QR.reset();
+    final exiting = Completer<void>();
+    var canPopAsked = false;
+    await tester.pumpWidget(MaterialApp.router(
+      routeInformationParser: const QRouteInformationParser(),
+      routerDelegate: QRouterDelegate([
+        QRoute(path: '/', builder: () => const Text('home')),
+        QRoute(
+          path: '/two',
+          middleware: [
+            QMiddlewareBuilder(
+              canPopFunc: () async => canPopAsked = true,
+              onExitFunc: () => exiting.future,
+            ),
+          ],
+          builder: () => const Text('two'),
+        ),
+      ]),
+    ));
+    await tester.pumpAndSettle();
+    await QR.to('/two');
+    await tester.pumpAndSettle();
+
+    // what swipe back and the AppBar back button do
+    tester.state<NavigatorState>(find.byType(Navigator)).pop();
+    await tester.pumpAndSettle();
+    // a rebuild while onExit still runs must not push the page again
+    QR.updateUrlInfo(QR.currentPath, addHistory: false);
+    await tester.pumpAndSettle();
+    expect(find.text('two'), findsNothing);
+
+    exiting.complete();
+    await tester.pumpAndSettle();
+    expect(find.text('home'), findsOneWidget);
+    expectedPath('/');
+    expect(QR.rootNavigator.currentRoute.path, '/');
+    expect(canPopAsked, isFalse);
+  });
 }

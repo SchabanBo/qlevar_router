@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -73,10 +71,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       pages: _controller.pages,
       observers: observers,
       restorationScopeId: scopId,
-      onPopPage: (route, result) {
-        _controller.removeLast();
-        return false;
-      },
+      onDidRemovePage: _controller.onPageRemoved,
     );
   }
 

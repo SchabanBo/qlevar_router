@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
@@ -54,7 +52,7 @@ class _QRouterState extends State<QRouter> {
       key: widget.navKey,
       observers: widget.observers,
       pages: widget._controller.pages,
-      onPopPage: _onPopPage,
+      onDidRemovePage: widget._controller.onPageRemoved,
       restorationScopeId: scopId,
     );
   }
@@ -77,15 +75,5 @@ class _QRouterState extends State<QRouter> {
 
   void update() {
     setState(() {});
-  }
-
-  bool _onPopPage(Route<dynamic> route, dynamic result) {
-    // // remove the page from the list
-    // widget._controller.removeLast();
-    // // tell the root navigator to update the url
-    // (QR.rootNavigator as QRouterController).update(withParams: false);
-
-    QR.back();
-    return false;
   }
 }

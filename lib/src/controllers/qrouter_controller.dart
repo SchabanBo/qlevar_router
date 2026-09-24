@@ -313,6 +313,16 @@ class QRouterController extends QNavigator {
     return isPopped;
   }
 
+  /// [Navigator.onDidRemovePage]: Flutter popped [page] itself (swipe back,
+  /// the AppBar back button, Navigator.pop), sync the stack and the url
+  Future<void> onPageRemoved(Page page) async {
+    if (!await _pagesController.removePage(page)) return;
+    update(withParams: true);
+    if (key.name != QRContext.rootRouterName) {
+      (QR.rootNavigator as QRouterController).update();
+    }
+  }
+
   @override
   void removeRoutes(List<String> routesNames) => routes.remove(routesNames);
 
