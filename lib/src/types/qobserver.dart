@@ -12,7 +12,7 @@ class QNavigatorObserver extends NavigatorObserver {
   void didPop(Route route, Route? previousRoute) {
     _log('Pop', route);
     _routes.remove(route);
-    super.didRemove(route, previousRoute);
+    super.didPop(route, previousRoute);
   }
 
   @override
@@ -22,11 +22,25 @@ class QNavigatorObserver extends NavigatorObserver {
     super.didPush(route, previousRoute);
   }
 
-  /// check if there is a popup route in the tree
-  bool hasPopupRoute() {
-    if (_routes.isEmpty) return false;
-    return _routes.any((element) => element is PopupRoute);
+  /// A page removed from the pages list below the top one, or a dialog above
+  /// it, is removed without a pop. Keeping it here made [hasPopupRoute] true
+  /// and the next back popped a page as if it was a dialog.
+  @override
+  void didRemove(Route route, Route? previousRoute) {
+    _log('Remove', route);
+    _routes.remove(route);
+    super.didRemove(route, previousRoute);
   }
+
+  @override
+  void didReplace({Route? newRoute, Route? oldRoute}) {
+    _routes.remove(oldRoute);
+    if (newRoute != null) _routes.add(newRoute);
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+  }
+
+  /// check if there is a popup route in the tree
+  bool hasPopupRoute() => _routes.any((element) => element is PopupRoute);
 
   void _log(String message, Route route) {
     if (route.settings is QPageInternal) {
@@ -40,8 +54,8 @@ class QNavigatorObserver extends NavigatorObserver {
 
 class QObserver {
   /// add listeners to every new route that will be added to the tree
-  final onNavigate = <Future Function(String, QRoute)>[];
+  final onNavigate = <Future<void> Function(String, QRoute)>[];
 
   /// Add listener to every route that will be deleted from the tree
-  final onPop = <Future Function(String, QRoute)>[];
+  final onPop = <Future<void> Function(String, QRoute)>[];
 }

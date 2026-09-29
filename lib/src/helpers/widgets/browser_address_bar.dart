@@ -38,6 +38,7 @@ class _BrowserAddressBarState extends State<BrowserAddressBar> {
   @override
   void dispose() {
     widget._controller.removeListener(_listener);
+    controller.dispose();
     super.dispose();
   }
 

@@ -160,13 +160,13 @@ class PagesController {
     }
   }
 
-  Future _notifyObserverOnNavigation(QRouteInternal route) async {
+  Future<void> _notifyObserverOnNavigation(QRouteInternal route) async {
     for (var onNavigate in QR.observer.onNavigate) {
       await onNavigate(route.activePath!, route.route);
     }
   }
 
-  Future _notifyObserverOnPop(QRouteInternal route) async {
+  Future<void> _notifyObserverOnPop(QRouteInternal route) async {
     for (var onPop in QR.observer.onPop) {
       await onPop(route.activePath!, route.route);
     }

@@ -27,7 +27,7 @@ class ParamValue {
   /// is param has value
   bool get hasValue => _value != null;
 
-  /// Get the param value as String
+  /// Get the param value
   Object? get value => _value;
 
   ParamValue copyWith({
@@ -176,17 +176,14 @@ class QParams {
     for (var key in keys) {
       // is deleted
       if (!newKeys.contains(key)) {
-        if (_params[key]?.onDelete != null) {
-          _params[key]!.onDelete!();
-        }
-        if (!_params[key]!.keepAlive) {
+        final param = _params[key]!;
+        final cleanupAfter = param.cleanupAfter;
+        if (!param.keepAlive || (cleanupAfter != null && cleanupAfter <= 0)) {
+          // before removing, so onDelete can still read it (e.g. to dispose)
+          param.onDelete?.call();
           _params.remove(key);
-        } else if (_params[key]!.cleanupAfter != null) {
-          if (_params[key]!.cleanupAfter! <= 0) {
-            _params.remove(key);
-          } else {
-            _params[key]!.cleanupAfter = _params[key]!.cleanupAfter! - 1;
-          }
+        } else if (cleanupAfter != null) {
+          param.cleanupAfter = cleanupAfter - 1;
         }
       }
     }

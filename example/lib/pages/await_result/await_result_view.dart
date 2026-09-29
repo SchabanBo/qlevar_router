@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 class AwaitResultView extends StatefulWidget {
-  const AwaitResultView({Key? key}) : super(key: key);
+  const AwaitResultView({super.key});
 
   @override
   State<AwaitResultView> createState() => _AwaitResultViewState();

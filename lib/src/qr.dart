@@ -134,9 +134,13 @@ class QRContext {
   bool hasNavigator(String name) => _manager.hasController(name);
 
   /// check if the current path is the same as the given name and params
-  bool isCurrentName(String name, {Map<String, dynamic>? params}) =>
-      currentPath ==
-      MatchController.findPathFromName(name, params ?? <String, dynamic>{});
+  bool isCurrentName(String name, {Map<String, dynamic>? params}) {
+    final uri = Uri.parse(
+        MatchController.findPathFromName(name, params ?? <String, dynamic>{}));
+    // the same form as the found path: decoded path, encoded query
+    final path = Uri.decodeFull(uri.path);
+    return currentPath == (uri.hasQuery ? '$path?${uri.query}' : path);
+  }
 
   /// check if the current path is the same as the given path
   bool isCurrentPath(String path) => currentPath == path;
@@ -156,9 +160,12 @@ class QRContext {
 
   /// Clear everything.
   void reset() {
-    _manager.controllers.clear();
+    _manager.clear();
+    _backInFlight = null;
+    activeNavigatorName = rootRouterName;
     params.clear();
     history.clear();
+    history.allowDuplications = false;
     treeInfo.namePath.clear();
     observer.onNavigate.clear();
     observer.onPop.clear();
@@ -250,6 +257,7 @@ class _QRSettings {
     oneRouteInstancePerStack = false;
     pagesType = const QPlatformPage();
     mockRoute = null;
+    autoRestoration = false;
     globalMiddlewares.clear();
   }
 }

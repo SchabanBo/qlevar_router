@@ -64,7 +64,8 @@ class MatchController {
         try {
           final regexRule = name.substring(name.indexOf('('));
           name = name.substring(0, name.indexOf('('));
-          final regex = RegExp(regexRule);
+          // the whole segment has to match, not only a part of it
+          final regex = RegExp('^(?:$regexRule)\$');
           if (regex.hasMatch(segment)) {
             params[name] = segment;
             return true;
@@ -101,7 +102,9 @@ class MatchController {
     }
 
     if (_searchIndex + 1 == path.pathSegments.length && path.hasQuery) {
-      foundPath += '?${Uri.decodeFull(path.query)}';
+      // keep the query encoded, decoded a `&` or `=` in a value would be
+      // taken as a separator when the path is parsed again
+      foundPath += '?${path.query}';
       // Add the query params to the params map if they are not already there
       for (var queryParam in path.queryParameters.entries) {
         if (!params.asMap.containsKey(queryParam.key)) {
@@ -272,41 +275,29 @@ class MatchController {
       final path = QR.settings.mockRoute!.mockName(name);
       if (path != null) return path;
     }
-    final isPathFound = QR.treeInfo.namePath[name];
-    assert(isPathFound != null, 'Path name not found');
-    var newPath = isPathFound!;
-    final pathParams = <String, dynamic>{};
-
-    // Search for component params
-    for (var param in params.entries) {
-      if (newPath.contains(':${param.key}')) {
-        newPath =
-            newPath.replaceAll(':${param.key}', _getParamString(param.value));
-      } else {
-        pathParams.addEntries([param]);
-      }
+    final routePath = QR.treeInfo.namePath[name];
+    if (routePath == null) {
+      throw ArgumentError.value(name, 'name', 'No route with this name');
     }
+    // Replace whole segments, so `:id` does not touch `:idType`
+    final pathKeys = <String>{};
+    var newPath = routePath.split('/').map((segment) {
+      if (!segment.startsWith(':')) return segment;
+      final regexStart = segment.indexOf('(');
+      final key = segment.substring(1, regexStart == -1 ? null : regexStart);
+      pathKeys.add(key);
+      if (params.containsKey(key)) return _encode(params[key]);
+      // or keep the current value
+      final current = QR.params[key];
+      return current == null ? segment : _encode(current);
+    }).join('/');
 
-    // Replace old component
-    for (var param in QR.params.asMap.entries) {
-      if (newPath.contains(':${param.key}')) {
-        newPath =
-            newPath.replaceAll(':${param.key}', _getParamString(param.value));
-      }
-    }
-
-    if (pathParams.isNotEmpty) {
-      newPath = '$newPath?';
-
-      // Build the params
-      for (var i = 0; i < pathParams.length; i++) {
-        final param = pathParams.entries.toList()[i];
-        newPath = '$newPath${param.key}=${_getParamString(param.value)}';
-        if (i != pathParams.length - 1) {
-          newPath = '$newPath&';
-        }
-      }
-    }
+    final queryParams = [
+      for (final param in params.entries)
+        if (!pathKeys.contains(param.key))
+          '${_encode(param.key)}=${_encode(param.value)}',
+    ];
+    if (queryParams.isNotEmpty) newPath = '$newPath?${queryParams.join('&')}';
     return newPath;
   }
 
@@ -324,11 +315,6 @@ class MatchController {
     return fixedPath;
   }
 
-  static String _getParamString(dynamic value) {
-    if (value is String) return value;
-    if (value is int || value is double || value is bool) {
-      return value.toString();
-    }
-    return value.toString();
-  }
+  /// Encoded so a `&`, `=`, `/`, `#` or `%` in a value can not break the path
+  static String _encode(dynamic value) => Uri.encodeComponent('$value');
 }

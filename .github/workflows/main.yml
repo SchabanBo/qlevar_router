@@ -8,10 +8,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: subosito/flutter-action@v1
+    - uses: actions/checkout@v4
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: stable
     - run: flutter pub get
-    - run: dart format .
+    - run: dart format --set-exit-if-changed .
     - run: flutter analyze
     - run: flutter test --coverage
-    - uses: codecov/codecov-action@v1
+    - uses: codecov/codecov-action@v5
+      with:
+        files: coverage/lcov.info
+        token: ${{ secrets.CODECOV_TOKEN }}

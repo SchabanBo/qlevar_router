@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ChildView extends StatelessWidget {
   final String name;
-  const ChildView(this.name, {Key? key}) : super(key: key);
+  const ChildView(this.name, {super.key});
 
   @override
   Widget build(BuildContext context) {

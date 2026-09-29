@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../services/storage_service.dart';
 
 class HomeView extends StatelessWidget {
-  final storage = Get.find<StorageService>();
-  HomeView({Key? key}) : super(key: key);
+  final storage = storageService;
+  HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {

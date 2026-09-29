@@ -1,5 +1,55 @@
 # CHANGELOG
 
+## 2.0.0
+
+Requires Flutter 3.24 / Dart 3.5 or newer. For older Flutter versions use `1.12.4`.
+
+### Breaking changes
+
+- Name based navigation (`toName`, `pushName`, ...) URL-encodes the param values, so a value can contain `&`, `=`, `#`, `/` or `%`. Remove your own `Uri.encodeComponent` from the values, or they are encoded twice. A path param value with a `/` stays one segment (`/files/docs%2Fx`), it does not span two segments anymore.
+- `QR.currentPath` and the history paths keep the query encoded: `QR.toName('search', params: {'q': 'a b'})` gives `/search?q=a%20b`. The path part stays decoded. Compare with the encoded form, or read the values from `QR.params`.
+- `canPop: false` on a page also blocks `QR.back()`, `QR.navigator.removeLast()` and the Android back button. They return `PopResult.NotAllowedToPop` and call `onPopInvoked` with `didPop: false`.
+- `onDelete` of a param is called once, when the param is deleted, and not on every navigation while the param is kept alive. A `keepAlive` param without `cleanupAfter` is never deleted, so its `onDelete` is never called.
+- A regex path param has to match the whole segment: `/:id([0-9]+)` does not match `12a` anymore. Regexes written as `(^...$)` work as before.
+- A `QDRoute` without `onPop` does not handle `QR.back()`, the router does, the same as returning `false`. When Flutter pops its page (swipe back, `AppBar` back button), the page leaves the stack, and the next rebuild adds it again if its `when` is still true.
+- `QPlatformPage` uses `defaultTargetPlatform`, so `debugDefaultTargetPlatformOverride` works and tests give the same result on every host.
+- `QRouteInformationParser` answers synchronously, so the route is handled one frame earlier.
+
+### New
+
+- Add `canPop` and `onPopInvoked` to all page types. They are passed to Flutter's `Page`, so `canPop: false` blocks iOS swipe back and the `AppBar` back button for that page, and the router pops too, see above.
+
+### Fixes
+
+- Replace the deprecated `onPopPage` with `onDidRemovePage` (#158).
+- Fix RangeError when navigating while a page is still being added.
+- Fix back, deep link, history and navigator creation bugs.
+- Fix a popup (dialog, bottom sheet page) removed below the top page staying marked as open, so the next back popped a page instead.
+- Fix params with `&`, `=`, `#`, `/` or `%` breaking name based navigation, and changing after a refresh or browser back.
+- Fix `toName` replacing `:id` inside `:idType`, and regex path params (`/:id([0-9]+)`) with `toName`.
+- Fix `isCurrentName` taking different params as the same path when they decode to the same string.
+- Fix `onDelete` of a param not being able to read the param.
+- Fix `QRoute.declarative` failing when its path has no leading `/`.
+- Fix `QModalBottomSheetPage.barrierLabel` getting the `barrierOnTapHint` value.
+- Fix `QDeclarative` keeping every built route in memory, and crashing on pop when the route has no `onPop`.
+- Fix `QDeclarative` popping again for pages it removed itself on older Flutter versions, so one back unwound the whole flow.
+- Fix `QDeclarative` keeping the first built page of a route, a rebuild updates it with the newest builder and page type.
+- An unknown route name throws an `ArgumentError` instead of a null check error in release mode.
+- An error while creating the root navigator is shown instead of the loading page forever.
+- `QRouterDelegate.dispose` removes its root navigator right away, so a new delegate does not get the disposed one. After `QR.reset` it does not touch the navigator of a newer delegate.
+- `QR.removeNavigator` removes the navigator before disposing it, so nothing gets it while it is disposing.
+- `QR.reset` also resets `activeNavigatorName`, `settings.autoRestoration`, `history.allowDuplications`, the declarative routers and the navigators still being created.
+
+### Deprecations
+
+- `QModalBottomSheetPage.barrierDismissible` was never used, use `isDismissible`.
+
+### Other
+
+- `QMiddleware`, `QMiddlewareBuilder` and `QObserver` callbacks are typed as `Future<void>`.
+- README: add installation and page `canPop` sections, fix code samples that did not compile.
+- The example does not depend on `get` anymore.
+
 ## 1.12.4
 
 - Fix problem param will not update when page that used this param is opened.
@@ -18,25 +68,25 @@
 - Full path matching is attempted when the child route cannot be matched #154 by @miaosun009
 - Fix Crash in _BrowserAddressBarState #151 by BarashkovaElena
 
-# 1.11.2
+## 1.11.2
 
 - Fix error that the routes will be deleted when `TemporaryQRouter` is closed.
 
-# 1.11.1
+## 1.11.1
 
 - Fix error removing route from the stack in the `TemporaryQRouter` 
 
-# 1.11.0
+## 1.11.0
 
 - Add `TemporaryQRouter` to use the router in n popups or dialogs. #126
 - Fix #139
 - Set min SDK to 2.17.0
 
-# 1.10.3
+## 1.10.3
 
 - Fixes #148
 
-# 1.10.2
+## 1.10.2
 
 - Fixes #147
 

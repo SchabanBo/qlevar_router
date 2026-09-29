@@ -264,7 +264,6 @@ class QRouterController extends QNavigator {
         match.isProcessed = true;
         break;
       case PageAlreadyExistAction.Remove:
-      default:
         // page is exist and has no children
         // then pop until it or replace it
         if (index == _pagesController.routes.length - 1) {
@@ -306,6 +305,15 @@ class QRouterController extends QNavigator {
 
   @override
   Future<PopResult> removeLast({dynamic result}) async {
+    // QR.back and the Android back button respect the page canPop too
+    if (_pagesController.routes.isNotEmpty) {
+      final route = _pagesController.routes.last.route;
+      final pageType = route.pageType ?? QR.settings.pagesType;
+      if (!pageType.canPop) {
+        pageType.onPopInvoked?.call(false, result);
+        return PopResult.NotAllowedToPop;
+      }
+    }
     final isPopped = await _pagesController.removeLast(result: result);
     if (isPopped == PopResult.Popped) {
       update(withParams: true);

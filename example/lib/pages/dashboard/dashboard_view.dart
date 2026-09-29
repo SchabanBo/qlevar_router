@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../services/auth_service.dart';
@@ -8,7 +7,7 @@ import 'sidebar_section.dart';
 
 class DashboardView extends StatelessWidget {
   final QRouter router;
-  const DashboardView({required this.router, Key? key}) : super(key: key);
+  const DashboardView({required this.router, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +19,14 @@ class DashboardView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.home),
             onPressed: () {
-              Get.find<AuthService>().isAuth = false;
+              authService.isAuth = false;
               QR.navigator.replaceAll('/');
             },
           ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              Get.find<AuthService>().isAuth = false;
+              authService.isAuth = false;
               QR.navigator.replaceAll('/login');
             },
           ),

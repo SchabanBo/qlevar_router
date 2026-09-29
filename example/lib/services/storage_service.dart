@@ -141,3 +141,5 @@ class Store {
     required this.products,
   });
 }
+
+final storageService = StorageService();

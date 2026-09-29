@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../routes/dashboard_routes.dart';
@@ -8,9 +7,9 @@ import '../../services/storage_service.dart';
 import '../welcome/debug_tools.dart';
 
 class StoresView extends StatelessWidget {
-  final storage = Get.find<StorageService>();
+  final storage = storageService;
   final bool fromDashboard;
-  StoresView({Key? key, this.fromDashboard = false}) : super(key: key);
+  StoresView({super.key, this.fromDashboard = false});
 
   @override
   Widget build(BuildContext context) {

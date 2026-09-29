@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../pages/middleware/child_view.dart';
@@ -32,7 +31,7 @@ class MiddlewareRoutes {
               QMiddlewareBuilder(
                 redirectGuardFunc: (s) => Future.delayed(
                   const Duration(milliseconds: 100),
-                  () => Get.find<StorageService>().canNavigateToChild
+                  () => storageService.canNavigateToChild
                       ? null
                       : '/parent/child-1',
                 ),

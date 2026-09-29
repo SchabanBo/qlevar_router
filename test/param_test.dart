@@ -217,8 +217,9 @@ void main() {
       await QR.navigator.pushName('path-params',
           params: {'obj': testObj, 'in': 3, 'str': 'test', 'bool': true});
       expect(4, QR.params.length);
-      expectedPath(
-          '/params?obj=TestObject{name: name, age: 15}&in=3&str=test&bool=true');
+      // the query stays encoded, the path is decoded
+      expectedPath('/params?obj=TestObject%7Bname%3A%20name%2C%20age%3A%2015%7D'
+          '&in=3&str=test&bool=true');
       expect(testObj, QR.params['obj']!.value!);
       expect(3, QR.params['in']!.value!);
       expect('test', QR.params['str']!.value!);
