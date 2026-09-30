@@ -1,22 +1,27 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../qlevar_router.dart';
-import '../helpers/platform/platform_web.dart'
-    if (dart.library.io) '../helpers/platform/platform_io.dart';
 import '../routes/qroute_internal.dart';
 import 'qpage_internal.dart';
 
 abstract class _PageConverter {
-  _PageConverter(this.pageName, this.matchKey, this.pageType);
+  _PageConverter(this.pageName, this.matchKey, this.pageType, {LocalKey? key})
+      : key = key ?? UniqueKey();
 
-  late final key = ValueKey<int>(hashCode);
+  final LocalKey key;
   final QKey matchKey;
   final String? pageName;
   final QPage pageType;
 
+  static bool get _isApple =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS);
+
   QPageInternal createWithChild(Widget child) {
     if (pageType is QPlatformPage) {
-      if (!QPlatform.isWeb && QPlatform.isIOS) {
+      if (_isApple) {
         return _getCupertinoPage(pageName, child);
       }
       return _getMaterialPage(child);
@@ -52,6 +57,8 @@ abstract class _PageConverter {
             ? (pageType as QMaterialPage).addMaterialWidget
             : true,
         matchKey: matchKey,
+        canPop: pageType.canPop,
+        onPopInvoked: pageType.onPopInvoked,
       );
 
   QCupertinoPageInternal _getCupertinoPage(String? title, Widget child) =>
@@ -64,6 +71,8 @@ abstract class _PageConverter {
         title: title,
         key: key,
         matchKey: matchKey,
+        canPop: pageType.canPop,
+        onPopInvoked: pageType.onPopInvoked,
       );
 
   QCustomPageInternal _getCustomPage(Widget child) {
@@ -76,6 +85,8 @@ abstract class _PageConverter {
       restorationId: _getRestorationId(),
       key: key,
       matchKey: matchKey,
+      canPop: pageType.canPop,
+      onPopInvoked: pageType.onPopInvoked,
       barrierColor: page.barrierColor,
       barrierDismissible: page.barrierDismissible,
       barrierLabel: page.barrierLabel,
@@ -94,13 +105,15 @@ abstract class _PageConverter {
       restorationId: _getRestorationId(),
       key: key,
       matchKey: matchKey,
+      canPop: pageType.canPop,
+      onPopInvoked: pageType.onPopInvoked,
       isScrollControlled: page.isScrollControlled,
       isDismissible: page.isDismissible,
       enableDrag: page.enableDrag,
       showDragHandle: page.showDragHandle,
       useSafeArea: page.useSafeArea,
       barrierOnTapHint: page.barrierOnTapHint,
-      barrierLabel: page.barrierOnTapHint,
+      barrierLabel: page.barrierLabel,
       anchorPoint: page.anchorPoint,
     );
   }
@@ -111,26 +124,21 @@ abstract class _PageConverter {
 
   Widget _getTransaction(
       QCustomPage type, Widget child, Animation<double> animation) {
-    switch (type.runtimeType) {
-      case QSlidePage:
-        final slide = type as QSlidePage;
-        child = SlideTransition(
-          position: CurvedAnimation(
-                  parent: animation, curve: slide.curve ?? Curves.easeIn)
-              .drive(Tween<Offset>(
-                  end: Offset.zero, begin: slide.offset ?? const Offset(1, 0))),
-          child: child,
-        );
-        break;
-      case QFadePage:
-        child = FadeTransition(
-          opacity: CurvedAnimation(
-                  parent: animation,
-                  curve: (type as QFadePage).curve ?? Curves.easeIn)
-              .drive(Tween<double>(end: 1, begin: 0)),
-          child: child,
-        );
-        break;
+    if (type is QSlidePage) {
+      child = SlideTransition(
+        position: CurvedAnimation(
+                parent: animation, curve: type.curve ?? Curves.easeIn)
+            .drive(Tween<Offset>(
+                end: Offset.zero, begin: type.offset ?? const Offset(1, 0))),
+        child: child,
+      );
+    } else if (type is QFadePage) {
+      child = FadeTransition(
+        opacity: CurvedAnimation(
+                parent: animation, curve: type.curve ?? Curves.easeIn)
+            .drive(Tween<double>(end: 1, begin: 0)),
+        child: child,
+      );
     }
 
     return type.withType == null
@@ -178,6 +186,8 @@ class PageCreator extends _PageConverter {
 }
 
 class DeclarativePageCreator extends _PageConverter {
-  DeclarativePageCreator(String? pageName, QKey key, QPage? type)
-      : super(pageName, key, type ?? QR.settings.pagesType);
+  /// Give the [pageKey] of the old page to update it instead of pushing a new one
+  DeclarativePageCreator(String? pageName, QKey key, QPage? type,
+      {LocalKey? pageKey})
+      : super(pageName, key, type ?? QR.settings.pagesType, key: pageKey);
 }

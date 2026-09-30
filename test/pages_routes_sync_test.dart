@@ -7,7 +7,8 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'test_widgets/test_widgets.dart';
 
 void main() {
-  testWidgets('Switching tabs while a page is still entering keeps pages in sync',
+  testWidgets(
+      'Switching tabs while a page is still entering keeps pages in sync',
       (tester) async {
     QR.reset();
     final entering = Completer<void>();
@@ -18,8 +19,10 @@ void main() {
         builderChild: (c) => TestDashboard(c),
         initRoute: '/main',
         children: [
-          QRoute(path: '/main', name: 'main', builder: () => const Text('main')),
-          QRoute(path: '/cart', name: 'cart', builder: () => const Text('cart')),
+          QRoute(
+              path: '/main', name: 'main', builder: () => const Text('main')),
+          QRoute(
+              path: '/cart', name: 'cart', builder: () => const Text('cart')),
         ],
       ),
       QRoute(

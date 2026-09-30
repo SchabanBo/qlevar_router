@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import '../types/qroute_key.dart';
 
 abstract class QPageInternal<T> extends Page {
-  const QPageInternal(
-      {required this.matchKey,
-      super.key,
-      super.restorationId,
-      super.name,
-      super.arguments});
+  const QPageInternal({
+    required this.matchKey,
+    super.key,
+    super.restorationId,
+    super.name,
+    super.arguments,
+    super.canPop,
+    PopInvokedWithResultCallback<dynamic>? onPopInvoked,
+  }) : super(onPopInvoked: onPopInvoked ?? _ignorePopInvoked);
+
+  static void _ignorePopInvoked(bool didPop, dynamic result) {}
 
   final QKey matchKey;
 
@@ -27,6 +32,8 @@ class QMaterialPageInternal<T> extends QPageInternal<T> {
     super.restorationId,
     super.name,
     super.arguments,
+    super.canPop,
+    super.onPopInvoked,
   });
 
   final bool addMaterialWidget;
@@ -80,6 +87,8 @@ class QCupertinoPageInternal<T> extends QPageInternal<T> {
     super.restorationId,
     super.name,
     super.arguments,
+    super.canPop,
+    super.onPopInvoked,
   });
 
   final Widget child;
@@ -136,6 +145,8 @@ class QCustomPageInternal extends QPageInternal {
     super.restorationId,
     super.name,
     super.arguments,
+    super.canPop,
+    super.onPopInvoked,
   });
 
   final Color? barrierColor;
@@ -183,6 +194,8 @@ class QModalBottomSheetPageInternal extends QPageInternal {
     super.restorationId,
     super.name,
     super.arguments,
+    super.canPop,
+    super.onPopInvoked,
   });
 
   final Widget child;

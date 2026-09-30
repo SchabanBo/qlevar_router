@@ -3,7 +3,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 class DeclarativePage extends StatefulWidget {
   final QKey dKey;
-  const DeclarativePage(this.dKey, {Key? key}) : super(key: key);
+  const DeclarativePage(this.dKey, {super.key});
   @override
   State<DeclarativePage> createState() => _DeclarativePageState();
 }

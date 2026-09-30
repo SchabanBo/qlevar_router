@@ -59,7 +59,8 @@ class QRoute {
   /// its history.
   final String? restorationId;
 
-  static QRoute empty = QRoute(path: '/', builder: () => const SizedBox());
+  static final QRoute empty =
+      QRoute(path: '/', builder: () => const SizedBox());
 
   /// The default widget builder for this route
   final PageBuilder? builder;
@@ -81,7 +82,7 @@ class QRoute {
   /// you can use it to pass any data to the route
   /// and receive it using the navigator
   /// ```dart
-  /// QR.to('/path', meta: {'key': 'value'});
+  /// QRoute(path: '/path', builder: ..., meta: {'key': 'value'});
   ///
   /// QR.navigator.currentRoute.meta['key'] // value
   /// // if you have more than one navigator you can use
@@ -158,6 +159,17 @@ class QRoute {
         observers: observers ?? this.observers,
         meta: meta ?? this.meta,
         restorationId: restorationId ?? this.restorationId,
+      );
+    }
+
+    if (isDeclarative) {
+      return QRoute.declarative(
+        path: path ?? this.path,
+        name: name ?? this.name,
+        declarativeBuilder: declarativeBuilder,
+        pageType: pageType ?? this.pageType,
+        middleware: middleware ?? this.middleware,
+        meta: meta ?? this.meta,
       );
     }
 

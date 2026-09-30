@@ -10,6 +10,17 @@ class ControllerManager {
   /// Navigators still initializing, they join [controllers] when done
   final _creating = <String, Future<QRouterController>>{};
 
+  /// Increased by [clear], a navigator created before it is not added
+  int _generation = 0;
+
+  /// Forget every navigator, see [QRContext.reset]
+  void clear() {
+    controllers.clear();
+    dControllers.clear();
+    _creating.clear();
+    _generation++;
+  }
+
   Future<QRouterController> createController(
     String name,
     List<QRoute>? routes,
@@ -25,11 +36,14 @@ class ControllerManager {
     // a second create while the first one is initializing gets the same one
     final creating = _creating[name];
     if (creating != null) return creating;
+    final future = _createController(
+        name, routes, cRoutes, initPath, initRoute, isTemporary);
+    _creating[name] = future;
     try {
-      return await (_creating[name] = _createController(
-          name, routes, cRoutes, initPath, initRoute, isTemporary));
+      return await future;
     } finally {
-      _creating.remove(name);
+      // after clear() a newer navigator may be creating with this name
+      if (identical(_creating[name], future)) _creating.remove(name);
     }
   }
 
@@ -53,8 +67,10 @@ class ControllerManager {
           QRouteChildren.from(routes!, key, routePath == '/' ? '' : routePath);
     }
     final controller = QRouterController(key, cRoutes, isTemporary);
+    final generation = _generation;
     await controller.initialize(initPath: initPath, initRoute: initRoute);
-    controllers.add(controller);
+    // not after QR.reset(), it belongs to the old route tree
+    if (generation == _generation) controllers.add(controller);
     return controller;
   }
 
@@ -99,9 +115,11 @@ class ControllerManager {
       return false;
     }
     final controller = withName(name);
-    await controller.disposeAsync();
+    // remove it before awaiting, nobody may get it while it is disposing,
+    // and a new navigator with this name keeps its history
     controllers.remove(controller);
     QR.history.removeWithNavigator(name);
+    await controller.disposeAsync();
     QR.log('Navigator with name [$name] was removed');
     return true;
   }

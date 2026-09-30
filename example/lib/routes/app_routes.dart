@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../pages/declarative/declarative_view.dart';
@@ -78,7 +77,7 @@ class AppRoutes {
         QMiddlewareBuilder(
           redirectGuardFunc: (_) async {
             // if user is already logged in, redirect to dashboard
-            if (Get.find<AuthService>().isAuth) {
+            if (authService.isAuth) {
               return '/dashboard';
             }
             return null;

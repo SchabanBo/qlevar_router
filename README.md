@@ -1,13 +1,15 @@
 # Qlevar Router (QR)
 
+[![pub version](https://img.shields.io/pub/v/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
 [![likes](https://img.shields.io/pub/likes/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
-[![popularity](https://img.shields.io/pub/popularity/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
+[![downloads](https://img.shields.io/pub/dm/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router)
 [![pub points](https://img.shields.io/pub/points/qlevar_router?logo=dart)](https://pub.dev/packages/qlevar_router) 
 [![codecov](https://codecov.io/gh/SchabanBo/qlevar_router/branch/master/graph/badge.svg?token=WF1RBRWTN1)](https://codecov.io/gh/SchabanBo/qlevar_router)
 [![HitCount](https://hits.dwyl.com/SchabanBo/qlevar_router.svg?style=flat-square)](https://pub.dev/packages/qlevar_router)
 
 
 - [Qlevar Router (QR)](#qlevar-router-qr)
+  - [Installation](#installation)
   - [Demo](#demo)
     - [The example Projects](#the-example-projects)
     - [The Samples Project](#the-samples-project)
@@ -34,6 +36,7 @@
   - [Page Transition](#page-transition)
     - [Mix it up](#mix-it-up)
     - [App Page Transition](#app-page-transition)
+    - [Block pops on a page](#block-pops-on-a-page)
   - [Temporary router](#temporary-router)
     - [Example](#example)
     - [Limitations](#limitations)
@@ -59,20 +62,22 @@ With Navigator 2.0 Manage your project routes and create nested routes. Change o
 ```dart
 // Define your routes
 class AppRoutes {
-  static String homePage = 'Home Page';
-  static String userPage = 'User Page';
+  static const homePage = 'Home Page';
+  static const userPage = 'User Page';
+  static const userSettings = 'User Settings';
+  static const userProfile = 'User Profile';
   final routes = [
-    QRoute(name: homePage, path: '/', builder: () => HomePage()),   
+    QRoute(name: homePage, path: '/', builder: () => HomePage()),
     QRoute(
         name: userPage,
         path: '/user/:userId',
         builder: () => HomePage(),
         children: [
-          QRoute(name: homePage, path: '/settings', builder: () => SettingsPage()),
-          QRoute(name: homePage, path: '/profile', builder: () => ProfilePage()),
+          QRoute(name: userSettings, path: '/settings', builder: () => SettingsPage()),
+          QRoute(name: userProfile, path: '/profile', builder: () => ProfilePage()),
         ]),
-    QRoute(path: '/products/:category(\w)', builder: () => ProductCategory()),
-    QRoute(path: '/products/:id((^[0-9]\$))', builder: () => ProductDetails()),
+    QRoute(path: '/products/:category([a-z]+)', builder: () => ProductCategory()),
+    QRoute(path: '/products/:id([0-9]+)', builder: () => ProductDetails()),
   ];
 }
 
@@ -90,9 +95,9 @@ QR.toName(AppRoutes.userPage, params:{'userId':2});
 QR.to('/user/2');
 
 QR.to('/user/6/profile')  // Here the Stack will be HomePage -> ProfilePage()
-QR.to('products/456')     // Will call ProductDetails page
-QR.to('products/garden')  // Will call ProductCategory page
-QR.back()                 // Go back to the last page(in this case 'products/456')
+QR.to('/products/456')    // Will call ProductDetails page
+QR.to('/products/garden') // Will call ProductCategory page
+QR.back()                 // Go back to the last page(in this case '/products/456')
 QR.currentPath            // will show the current path 
 ```
 
@@ -121,6 +126,15 @@ Use these functions to see your navigators and Stack history and active pages in
 QR.getActiveTree() // Will show you a dialog contains the tree of the active navigator and pages
 QR.history.debug() // will show you a dialog contains the history stack for your current page.
 ```
+
+## Installation
+
+```yaml
+dependencies:
+  qlevar_router: ^2.0.0
+```
+
+Requires Flutter 3.24 (Dart 3.5) or newer. For older Flutter versions use `qlevar_router: 1.12.4`.
 
 ## Demo
 
@@ -153,11 +167,12 @@ send your params with the route. The params could be any object type.
 ### Path Parameters
 
 ```dart
-QRoute(path: '/:orderId',page: (child) => OrderDetails()),
+QRoute(path: '/:orderId', builder: () => OrderDetails()),
 
 // User regex to define what this parameter can be
-// like this parameters can only be numbers
-QRoute(path: '/:id(^[0-9]+\$)', builder: () => Text('Case 2')), 
+// like this parameters can only be numbers.
+// The regex has to match the whole segment, so `/12a` does not match
+QRoute(path: '/:id([0-9]+)', builder: () => Text('Case 2')), 
 
 // and this receive it in your page
 final orderId = QR.params['orderId'].toString()
@@ -171,6 +186,14 @@ final orderId = QR.params['orderId'].toString()
 // and this receive it in your page
 final itemName = QR.params['itemName'].toString()
 final numbers = QR.params['numbers']
+```
+
+When navigating by name, the params that are not part of the path are added as query params.
+The values are URL-encoded, so a value can contain `&`, `=`, `/`, `#` or `%`.
+
+```dart
+QR.toName('search', params: {'q': 'fish & chips'}); // /search?q=fish%20%26%20chips
+QR.params['q'].toString(); // fish & chips
 ```
 
 ### Hidden params
@@ -187,7 +210,7 @@ QR.params.addAsHidden('param3', true, cleanUpAfter: 2);
 
 - **keepAlive**: by default, the param will be deleted when navigating to a new route that does not contain it, so if you don't what to delete it in this case set this property to true, and *the package will not delete **as long as** this property is true*
 - **onChange**: set function to be called when this param will be changed it gives the current value and the new value
-- **onDelete**: set function to be called when this param will be deleted
+- **onDelete**: set function to be called once, when this param is deleted
 - **asInt**: Will return the value as int?
 - **asDouble**: Will return the value as double
 - **valueAs<T>**: Will return the value as the given type
@@ -206,16 +229,16 @@ to define them add `QMiddlewareBuilder` or a custom class that extends 'QMiddlew
     },
     middleware: [
       QMiddlewareBuilder(
-          onEnterFunc: () => print('-- Enter Parent page --'),
-          onExitFunc: () => print('-- Exit Parent page --'),
-          onMatchFunc: () => print('-- Parent page Matched --')),
+          onEnterFunc: () async => print('-- Enter Parent page --'),
+          onExitFunc: () async => print('-- Exit Parent page --'),
+          onMatchFunc: () async => print('-- Parent page Matched --')),
       AuthMiddleware(),
     ])
 
 class AuthMiddleware extends QMiddleware{
   final dataStorage = // Get you Data storage
   @override
-  bool canPop() => dataStorage.canLeave;
+  Future<bool> canPop() async => dataStorage.canLeave;
   @override
   Future<String?> redirectGuard(String path) async => dataStorage.isLoggedIn ? null: '/parent/child-2';
 }
@@ -225,16 +248,16 @@ class AuthMiddleware extends QMiddleware{
 
 ### global middleware
 
-you can add global middleware to run on *every* route, to do that add the middlewares to `QR.settings.globalMiddleware`
+you can add global middleware to run on *every* route, to do that add the middlewares to `QR.settings.globalMiddlewares`
 
 ```dart
-QR.settings.globalMiddleware = [
+QR.settings.globalMiddlewares.addAll([
   QMiddlewareBuilder(
-      onEnterFunc: () => print('-- Enter Parent page --'),
-      onExitFunc: () => print('-- Exit Parent page --'),
-      onMatchFunc: () => print('-- Parent page Matched --')),
+      onEnterFunc: () async => print('-- Enter Parent page --'),
+      onExitFunc: () async => print('-- Exit Parent page --'),
+      onMatchFunc: () async => print('-- Parent page Matched --')),
   AuthMiddleware(),
-];
+]);
 ```
 
 ## Priority
@@ -270,7 +293,7 @@ or it takes `null` so the page can be accessed.
 ### canPop
 
 can this route pop, called when trying to remove the page.
-It runs for pops that go through the router (`QR.back`, the Android back button, `QR.to`...). Pops that Flutter does itself (iOS swipe back, the default `AppBar` back button, `Navigator.pop`) have already happened and can not be vetoed; a `PopScope` in the page blocks swipe back and the `AppBar` back button.
+It runs for pops that go through the router (`QR.back`, the Android back button, `QR.to`...). Pops that Flutter does itself (iOS swipe back, the default `AppBar` back button, `Navigator.pop`) have already happened and can not be vetoed; to block them set `canPop: false` on the page type, see [Block pops on a page](#block-pops-on-a-page), or use a `PopScope` in the page.
 
 ### onMatch
 
@@ -314,24 +337,24 @@ see the example for more details.
 
 if you want to save the state of the pages when navigating between them, you have tow options:
 
-1- when navigating between the pages, set `pageAlreadyExistAction` to 'bringToTop', this will bring the page to the top of the stack. if this page has any child pages, they will be reordered to be on top of the stack the same way as they were before.
-2- you can use 'QR.navigatorOf(DashboardRoutes.dashboard).switchTo('home');' to switch between the pages, this will keep the state of the pages. This will internally set `pageAlreadyExistAction` to 'bringToTop'.
+1- when navigating between the pages, set `pageAlreadyExistAction` to `PageAlreadyExistAction.BringToTop`, this will bring the page to the top of the stack. if this page has any child pages, they will be reordered to be on top of the stack the same way as they were before.
+2- you can use `QR.navigatorOf(DashboardRoutes.dashboard).switchTo('/home');` to switch between the pages, this will keep the state of the pages. This will internally set `pageAlreadyExistAction` to `PageAlreadyExistAction.BringToTop`.
 
 ### PageAlreadyExistAction
 
 This parameter will be used when you navigate to a page that already exists in the stack.
 
-- **bringToTop**: will bring the page to the top of the stack, if the page has any child pages, they will be reordered to be on top of the stack the same way as they were before. see #61
+- **BringToTop**: will bring the page to the top of the stack, if the page has any child pages, they will be reordered to be on top of the stack the same way as they were before. see #61
 *NOTE:* this will not work for the route with `/` path
 - **IgnoreChildrenAndBringToTop**: will bring just the page to the top of the stack, if the page has any child pages, they will be ignored.
-- **remove**: if the page already exists, this will remove all pages on the top  until the page is on the top of the stack. 
+- **Remove** (default): if the page already exists, this will remove all pages on the top  until the page is on the top of the stack. 
 
 ## Observer
 
 To set your observers to the navigators for the root navigator you need to pass them to `QRouterDelegate`
 
 ```dart
-RouterDelegate(
+QRouterDelegate(
   appRoutes.routes,
   observers: [
     // Your observers
@@ -358,6 +381,11 @@ QObserver can have :
 - **onNavigate**: add listener to every new route that will be added to the tree
 - **onPop**: Add listener to every route that will be deleted from the tree
 
+```dart
+QR.observer.onNavigate.add((path, route) async => print('navigated to $path'));
+QR.observer.onPop.add((path, route) async => print('popped $path'));
+```
+
 ## Not found page
 
 you can set your custom not found page to show it whenever a page was not found, or a default one will be set.
@@ -373,12 +401,13 @@ For web application you can split your compiled java script files to moe than on
 
 To chose the Transition for your page set the `QRoute.pageType` to the of the types:
 
-- **QPlatformPage**: This type will be set as *QCupertinoPage* on IOS devices otherwise it will be *QMaterialPage*.
+- **QPlatformPage**: This type will be set as *QCupertinoPage* on iOS and macOS (not on web) otherwise it will be *QMaterialPage*. It follows `defaultTargetPlatform`, so `debugDefaultTargetPlatformOverride` works in tests.
 - **QMaterialPage**: It will use the default MaterialRouteTransition
 - **QCupertinoPage**: It will use the default CupertinoRouteTransition
 - **QCustomPage**: to define a custom transition for your page.
 - **QSlidePage**: a predefined slide transition
 - **QFadePage**: a predefined fade transition
+- **QModalBottomSheetPage**: show the page as a modal bottom sheet
 
 ### Mix it up
 
@@ -387,23 +416,42 @@ so if you want to show slide and fade transition you can do
 
 ```dart
 QRoute(
-      path: '/child',
-      pageType: QFadePage(
-          transitionDurationMilliseconds: 1000,
-          withType: QSlidePage(transitionDurationMilliseconds: 5000), // set the type to mix with
-          ),
-      builder: () => TextPage('Hi child 4')),
-]),
+    path: '/child',
+    pageType: const QFadePage(
+      transitionDuration: Duration(milliseconds: 1000),
+      // set the type to mix with
+      withType: QSlidePage(transitionDuration: Duration(milliseconds: 5000)),
+    ),
+    builder: () => TextPage('Hi child 4')),
 ```
 
 please note that when you mix transitions the only the first transition duration will be used
-in this case `QFadePage.transitionDurationMilliseconds (1000)` will be used and `QSlidePage.transitionDurationMilliseconds (5000)` will be ignored
+in this case `QFadePage.transitionDuration (1000ms)` will be used and `QSlidePage.transitionDuration (5000ms)` will be ignored
 
 **QPlatformPage**, **QMaterialPage** and **QCupertinoPage** CANNOT be mixed.
 
 ### App Page Transition
 
 you can define the Transition for all pages in the app with setting the page type in `QR.settings.pagesType`
+
+### Block pops on a page
+
+Every page type takes `canPop` and `onPopInvoked`, they are passed to Flutter's [Page.canPop](https://api.flutter.dev/flutter/widgets/Page/canPop.html).
+With `canPop: false` the page can not be popped: iOS swipe back, the `AppBar` back button, `Navigator.maybePop`, the Android back button and `QR.back()` are blocked, and `onPopInvoked` is called with `didPop: false`.
+To decide asynchronously for the pops that go through the router, use the middleware [canPop](#canpop).
+
+```dart
+QRoute(
+  path: '/checkout',
+  pageType: QMaterialPage(
+    canPop: false,
+    onPopInvoked: (didPop, result) {
+      if (!didPop) print('swipe back was blocked');
+    },
+  ),
+  builder: () => CheckoutPage(),
+),
+```
 
 ## Temporary router
 
@@ -455,12 +503,12 @@ QR.back('result');
 To enable the restoration in the app you need to set `QRouterDelegate.restorationScopeId` and set `QRoute.pageType.restorationId` to the route you want to restore.
 or you set `QR.settings.autoRestoration` to true and the package will set the restoration id for you.
 
-**Note:** don't forget to set `MartialApp.restorationScopeId`.
+**Note:** don't forget to set `MaterialApp.restorationScopeId`.
 
 
 ## Other features
 
-- **NavigatorState**: if you want to set the navigator state in the app, you can do so by pass it to `QRouterDelegate.navkey` when creating the `RouterDelegate`.
+- **NavigatorState**: if you want to set the navigator state in the app, you can do so by pass it to `QRouterDelegate(navKey: ...)` when creating the `RouterDelegate`.
 - **BuildContext**: you can get the current context from any where by calling `QR.context`. This will give the current context of the current navigator.
 - **InitPage**: The default page to show when the app starts until the first route is loaded. you can change it by setting `QR.settings.initPage` to the page you want to show.
 
@@ -472,7 +520,7 @@ Just chose which navigator you want to add the routes to and then call
 ```dart
 final navigator = QR.rootNavigator; // to add routes to the root navigator
 final navigator = QR.navigatorOf('/dashboard') // or add the routes to the dashboard navigator
-navigator.addRoutes([QRoute(path: '/payrolls', builder:()=> PayrollsPage()]);
+navigator.addRoutes([QRoute(path: '/payrolls', builder: () => PayrollsPage())]);
 // now the use can navigate to the payrolls page
 navigator.removeRoutes(['/payrolls']);
 // now if the use navigate to the payrolls page he will get not found page
@@ -506,8 +554,8 @@ class HomeRoutes {
 
   QRoute routes() => QRoute.withChild(
           name: home,
-          path: '/store',
-          builderChild: (child) => StorePage(child),
+          path: '/home',
+          builderChild: (child) => HomePage(child),
           initRoute: '/info',
           children: [
             QRoute(name: info, path: '/info', builder: () => InfoPage()),
@@ -575,7 +623,7 @@ class _RouteMock extends RouteMock {
 }
 
 class _TestWidget extends StatelessWidget {
-  const _TestWidget({Key? key}) : super(key: key);
+  const _TestWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -616,9 +664,10 @@ The `QDeclarative` required two parameters
 ```dart
 QDeclarative(
       routeKey: widget.dKey, // give the key you got from QRoute
-      builder: () => [ 
-               name: 'Hungry',
-              builder: () =>getQuestion((v) => state.loveCoffee = v, 'Do you love Coffee?'),
+      builder: () => [
+            QDRoute(
+              name: 'Hungry',
+              builder: () => getQuestion((v) => state.loveCoffee = v, 'Do you love Coffee?'),
               when: () => state.loveCoffee == null,
               // when this route pop, if you want to get out of the declarative
               // router give false as result so the router know that this
@@ -651,7 +700,7 @@ This route is used with `QDeclarative` to define the pages to show according to 
 - **name:** this name will be used as a key to define the route.
 - **builder:** here you give the widget to show.
 - **when:** when should the page be shown. here you can set the condition that defines if the page should be added to the page list.
-- **onPop:** this function will be called when the user what to go back, this will be trigger with `QR.back`, android back button, and browser back button. if you want on a page to get out of the `QDeclarative` to the previews page in the normal router give this function a false as a result so the router knows that this page has not been processed and the router needs to process it.
+- **onPop:** this function will be called when the user what to go back, this will be trigger with `QR.back`, android back button, and browser back button. if you want on a page to get out of the `QDeclarative` to the previews page in the normal router give this function a false as a result so the router knows that this page has not been processed and the router needs to process it. A route without `onPop` works the same as returning false.
 - **pageType**: [The page Transition](#page-transition)
 
 ### How Declarative router works

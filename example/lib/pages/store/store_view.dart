@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../routes/dashboard_routes.dart';
@@ -11,10 +10,10 @@ class StoreView extends StatelessWidget {
   // receive the store id from the previous screen
   final storeId = QR.params['id']!.asInt!;
 
-  late final store = Get.find<StorageService>().stores[storeId];
+  late final store = storageService.stores[storeId];
 
   final bool fromDashboard;
-  StoreView({Key? key, this.fromDashboard = false}) : super(key: key);
+  StoreView({super.key, this.fromDashboard = false});
 
   @override
   Widget build(BuildContext context) {

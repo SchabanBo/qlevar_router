@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../services/storage_service.dart';
 
 class MiddlewareView extends StatelessWidget {
-  const MiddlewareView({Key? key}) : super(key: key);
+  const MiddlewareView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final storage = Get.find<StorageService>();
+    final storage = storageService;
     final style = Theme.of(context)
         .textTheme
         .headlineMedium!
@@ -47,15 +46,13 @@ class MiddlewareView extends StatelessWidget {
                       onPressed: () => QR.to('/parent/child-2'),
                       child: Text('Child-2', style: style),
                     ),
-                    ObxValue<RxBool>(
-                        (v) => Checkbox(
-                              value: v.value,
-                              onChanged: (e) {
-                                storage.canNavigateToChild = e ?? true;
-                                v(e);
-                              },
-                            ),
-                        storage.canNavigateToChild.obs),
+                    StatefulBuilder(
+                      builder: (context, setState) => Checkbox(
+                        value: storage.canNavigateToChild,
+                        onChanged: (e) => setState(
+                            () => storage.canNavigateToChild = e ?? true),
+                      ),
+                    ),
                     const Text(
                         // ignore: lines_longer_than_80_chars,
                         'If this is check, this page will redirect to child-1 and will never be opened, this uses redirect by path'),

@@ -6,11 +6,26 @@ const defaultDuration = Duration(milliseconds: 300);
 /// you can use [QMaterialPage], [QCupertinoPage] or [QPlatformPage]
 /// The default is [QPlatformPage]
 abstract class QPage {
-  const QPage(this.fullScreenDialog, this.maintainState, this.restorationId);
+  const QPage(
+    this.fullScreenDialog,
+    this.maintainState,
+    this.restorationId, {
+    this.canPop = true,
+    this.onPopInvoked,
+  });
 
   final bool fullScreenDialog;
   final bool maintainState;
   final String? restorationId;
+
+  /// Set it to false to block popping this page: iOS swipe back, the AppBar
+  /// back button, `Navigator.maybePop`, the Android back button and
+  /// `QR.back()`, see [Page.canPop].
+  final bool canPop;
+
+  /// Called when this page was popped, or a pop was blocked because
+  /// [canPop] is false, see [Page.onPopInvoked].
+  final PopInvokedWithResultCallback<dynamic>? onPopInvoked;
 }
 
 /// This type will set the page type as [MaterialPage]
@@ -20,6 +35,8 @@ class QMaterialPage extends QPage {
     bool maintainState = true,
     this.addMaterialWidget = true,
     String? restorationId,
+    super.canPop,
+    super.onPopInvoked,
   }) : super(fullscreenDialog, maintainState, restorationId);
 
   final bool addMaterialWidget;
@@ -32,6 +49,8 @@ class QCupertinoPage extends QPage {
     bool maintainState = true,
     String? restorationId,
     this.title,
+    super.canPop,
+    super.onPopInvoked,
   }) : super(fullscreenDialog, maintainState, restorationId);
 
   final String? title;
@@ -44,6 +63,8 @@ class QPlatformPage extends QPage {
     bool fullscreenDialog = false,
     bool maintainState = true,
     String? restorationId,
+    super.canPop,
+    super.onPopInvoked,
   }) : super(fullscreenDialog, maintainState, restorationId);
 }
 
@@ -61,6 +82,8 @@ class QCustomPage extends QPage {
     this.transitionsBuilder,
     String? restorationId,
     this.withType,
+    super.canPop,
+    super.onPopInvoked,
   }) : super(fullscreenDialog, maintainState, restorationId);
 
   final Color? barrierColor;
@@ -85,6 +108,8 @@ class QSlidePage extends QCustomPage {
     Duration? reverseTransitionDuration,
     super.restorationId,
     super.withType,
+    super.canPop,
+    super.onPopInvoked,
     this.curve,
     this.offset,
   }) : super(
@@ -109,6 +134,8 @@ class QFadePage extends QCustomPage {
     Duration? reverseTransitionDuration,
     super.restorationId,
     super.withType,
+    super.canPop,
+    super.onPopInvoked,
     this.curve,
   }) : super(
             transitionDuration: transitionDuration ?? defaultDuration,
@@ -122,7 +149,7 @@ class QModalBottomSheetPage extends QPage {
   const QModalBottomSheetPage({
     this.isScrollControlled = false,
     this.isDismissible = true,
-    this.barrierDismissible = true,
+    @Deprecated('Not used, use isDismissible') this.barrierDismissible = true,
     this.enableDrag = true,
     this.useSafeArea = false,
     this.showDragHandle,
@@ -130,9 +157,12 @@ class QModalBottomSheetPage extends QPage {
     this.barrierOnTapHint,
     this.anchorPoint,
     String? restorationId,
+    super.canPop,
+    super.onPopInvoked,
   }) : super(false, false, restorationId);
   final bool isScrollControlled;
   final bool isDismissible;
+  @Deprecated('Not used, use isDismissible')
   final bool barrierDismissible;
   final bool enableDrag;
   final bool useSafeArea;

@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import 'routes/app_routes.dart';
-import 'services/auth_service.dart';
-import 'services/storage_service.dart';
 
 void main() {
-  Get.lazyPut(() => AuthService());
-  Get.lazyPut(() => StorageService());
   runApp(const QlevarApp());
 }
 
 class QlevarApp extends StatelessWidget {
-  const QlevarApp({Key? key}) : super(key: key);
+  const QlevarApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../../services/auth_service.dart';
 
 class LoginView extends StatelessWidget {
-  const LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class LoginView extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            Get.find<AuthService>().isAuth = true;
+            authService.isAuth = true;
             QR.navigator.replaceLast('/dashboard');
           },
           child: const Text('Login'),

@@ -5,7 +5,7 @@ import '../../routes/store_routes.dart';
 import 'node_widget.dart';
 
 class SingleNavigatorRouterExample extends StatelessWidget {
-  const SingleNavigatorRouterExample({Key? key}) : super(key: key);
+  const SingleNavigatorRouterExample({super.key});
 
   @override
   Widget build(BuildContext context) {

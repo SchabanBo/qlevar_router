@@ -61,22 +61,22 @@ class QMiddleware {
   /// {@template QMiddleware.onMatch}
   /// This method will be called every time a path match it.
   /// {@endtemplate}
-  Future onMatch() async {}
+  Future<void> onMatch() async {}
 
-  /// {@template QMiddleware.redirectGuard}
+  /// {@template QMiddleware.onEnter}
   /// This method will be called before adding the page to the stack
   ///  and before the page building
   /// this is useful for creating the resources needed for the page
   /// like opening a stream or a controller
   /// {@endtemplate}
-  Future onEnter() async {}
+  Future<void> onEnter() async {}
 
   /// {@template QMiddleware.onExit}
   /// This method will be called before removing the page from the stack
   /// and before the page is disposed
   /// this is useful for saving data before the page is removed
   /// {@endtemplate}
-  Future onExit() async {}
+  Future<void> onExit() async {}
 
   /// {@template QMiddleware.onExited}
   /// This method will be called after one frame after removing the page from the stack
@@ -94,20 +94,20 @@ class QMiddlewareBuilder extends QMiddleware {
   /// {@macro QMiddleware.redirectGuard}
   final Future<String?> Function(String)? redirectGuardFunc;
 
-  /// {@macro QMiddleware.redirectGuardName}
+  /// {@macro QMiddleware.redirectGuardToName}
   final Future<QNameRedirect?> Function(String)? redirectGuardNameFunc;
 
   /// {@macro QMiddleware.onMatch}
-  final Future Function()? onMatchFunc;
+  final Future<void> Function()? onMatchFunc;
 
   /// {@macro QMiddleware.onEnter}
-  final Future Function()? onEnterFunc;
+  final Future<void> Function()? onEnterFunc;
 
   /// {@macro QMiddleware.onExit}
-  final Future Function()? onExitFunc;
+  final Future<void> Function()? onExitFunc;
 
   /// {@macro QMiddleware.onExited}
-  final Function? onExitedFunc;
+  final void Function()? onExitedFunc;
 
   /// {@macro QMiddleware.canPop}
   final Future<bool> Function()? canPopFunc;
@@ -125,14 +125,14 @@ class QMiddlewareBuilder extends QMiddleware {
   });
 
   @override
-  Future onEnter() async {
+  Future<void> onEnter() async {
     if (onEnterFunc != null) {
       await onEnterFunc!();
     }
   }
 
   @override
-  Future onExit() async {
+  Future<void> onExit() async {
     if (onExitFunc != null) {
       await onExitFunc!();
     }
@@ -146,7 +146,7 @@ class QMiddlewareBuilder extends QMiddleware {
   }
 
   @override
-  Future onMatch() async {
+  Future<void> onMatch() async {
     if (onMatchFunc != null) {
       await onMatchFunc!();
     }

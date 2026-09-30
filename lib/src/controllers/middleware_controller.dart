@@ -39,19 +39,19 @@ class MiddlewareController {
     return null;
   }
 
-  Future runOnEnter() async {
+  Future<void> runOnEnter() async {
     for (var middle in middleware) {
       await middle.onEnter();
     }
   }
 
-  Future runOnExit() async {
+  Future<void> runOnExit() async {
     for (var middle in middleware) {
       await middle.onExit();
     }
   }
 
-  Future scheduleOnExited() async {
+  Future<void> scheduleOnExited() async {
     if (middleware.isEmpty) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       WidgetsBinding.instance.endOfFrame.then((_) {
@@ -62,7 +62,7 @@ class MiddlewareController {
     });
   }
 
-  Future runOnMatch() async {
+  Future<void> runOnMatch() async {
     for (var middle in middleware) {
       await middle.onMatch();
     }

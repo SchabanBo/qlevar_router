@@ -39,7 +39,10 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   /// This app bar will not be added in the release mode
   final bool withWebBar;
 
-  late final QRouterController _controller;
+  /// Null until it is created
+  QRouterController? _controller;
+
+  bool _isDisposed = false;
 
   final _controllerCompleter = Completer<QRouterController>();
 
@@ -64,14 +67,14 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   Navigator get navigator {
     var scopId = restorationScopeId;
     if (scopId == null && QR.settings.autoRestoration) {
-      scopId = 'router:${_controller.key.name}';
+      scopId = 'router:${_controller!.key.name}';
     }
     return Navigator(
       key: key,
-      pages: _controller.pages,
+      pages: _controller!.pages,
       observers: observers,
       restorationScopeId: scopId,
-      onDidRemovePage: _controller.onPageRemoved,
+      onDidRemovePage: _controller!.onPageRemoved,
     );
   }
 
@@ -80,6 +83,10 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
     return FutureBuilder(
       future: _controllerCompleter.future,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          Error.throwWithStackTrace(
+              snapshot.error!, snapshot.stackTrace ?? StackTrace.empty);
+        }
         if (snapshot.connectionState == ConnectionState.done) {
           return _buildNavigator();
         }
@@ -112,8 +119,26 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
 
   @override
   void dispose() {
-    _controller.disposeAsync();
+    _isDisposed = true;
+    final controller = _controller;
+    // still creating, _createController removes it when done
+    if (controller != null) _removeController(controller);
     super.dispose();
+  }
+
+  /// Remove it from QR too, a new delegate must not get the disposed one.
+  /// Only if it is still registered: after QR.reset() a newer delegate may
+  /// already use the root name.
+  void _removeController(QRouterController controller) {
+    controller.removeListener(notifyListeners);
+    if (QR.hasNavigator(QRContext.rootRouterName) &&
+        identical(QR.rootNavigator, controller)) {
+      QR.removeNavigator(QRContext.rootRouterName);
+    } else {
+      // dropped by QR.reset(), disposeAsync would remove the history and
+      // the nested navigators of the new tree, they use the same names
+      controller.isDisposed = true;
+    }
   }
 
   @override
@@ -142,7 +167,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       await QR.to(configuration);
       return;
     }
-    await _controller.push(initPath ?? _slash);
+    await _controller!.push(initPath ?? _slash);
   }
 
   @override
@@ -162,7 +187,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
         isDebug: true,
       );
 
-      QR.back();
+      await QR.back();
       return;
     }
     await QR.to(configuration, ignoreSamePath: false);
@@ -178,7 +203,7 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
       children: [
         SizedBox(
           height: 40,
-          child: BrowserAddressBar(setNewRoutePath, _controller),
+          child: BrowserAddressBar(setNewRoutePath, _controller!),
         ),
         Expanded(child: navigator),
       ],
@@ -186,15 +211,26 @@ class QRouterDelegate extends RouterDelegate<String> with ChangeNotifier {
   }
 
   Future<void> _createController() async {
-    final con = await QR.createRouterController(
-      QRContext.rootRouterName,
-      routes: routes,
-      isTemporary: false,
-    );
+    final QRouterController con;
+    try {
+      con = await QR.createRouterController(
+        QRContext.rootRouterName,
+        routes: routes,
+        isTemporary: false,
+      );
+    } catch (e, s) {
+      // show the error instead of the init page forever
+      _controllerCompleter.completeError(e, s);
+      return;
+    }
+    if (_isDisposed) {
+      _removeController(con);
+      return;
+    }
     _controller = con;
+    con.addListener(notifyListeners);
+    observers.add(con.observer);
+    con.navKey = key;
     _controllerCompleter.complete(con);
-    _controller.addListener(notifyListeners);
-    observers.add(_controller.observer);
-    _controller.navKey = key;
   }
 }
